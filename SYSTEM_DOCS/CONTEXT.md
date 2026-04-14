@@ -8,11 +8,17 @@
 ## What this system is
 
 A **private, fully-local RAG system** for medical and acupuncture literature.
+Built for **Axel Biere** (NRT-Amsterdam.nl), complementary therapist, Amsterdam.
 Access via **Tailscale only**. All inference runs on a single Hetzner server.
 
+> Full practice context — modalities, protocol structure, image requirements, writing rules:
+> **→ read `SYSTEM_DOCS/PRACTICE_CONTEXT.md` before generating any content**
+
+**Treatment modalities (always combined):** NRT · QAT · GTR · Tit Tar · PEMF · RLT
+
 **Primary outputs:**
-1. **Word documents** — treatment protocols (condition overview, acupuncture points + images, cited appendix)
-2. **Blog articles** for nrt-amsterdam.nl — grounded in retrieved literature
+1. **Word documents** — treatment protocols: §1 Klachtbeeld · §2 Behandeling (with anatomical + acupuncture images) · §3 Bijlagen/Rationale (page-cited)
+2. **Blog articles** for nrt-amsterdam.nl — accessible prose, grounded in retrieved literature, Dutch writing rules apply
 3. **Ad hoc Q&A** — free-form questions answered against the book database, with citations
 
 All outputs cite exact page numbers and source documents. No hallucinated references.
@@ -60,6 +66,7 @@ All outputs cite exact page numbers and source documents. No hallucinated refere
 ├── PROJECT_STATE.md        ← live server state (update & commit after each task)
 └── SYSTEM_DOCS/
     ├── CONTEXT.md          ← this file
+    ├── PRACTICE_CONTEXT.md ← practitioner, modalities, protocol structure, image rules, writing rules
     ├── REQUIREMENTS.md     ← FR + NFR (updated 2026-04-14)
     ├── ARCHITECTURE.md     ← full stack description
     ├── CHANGELOG.md        ← dated history of all changes
