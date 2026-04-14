@@ -64,7 +64,9 @@ All access to the server must go through Tailscale (`100.66.194.55`).
 │   ├── ingest_books.py           # PDF + EPUB ingestion (all content types)
 │   ├── ingest_text.py            # Plain text / Markdown ingestion
 │   ├── transcribe_videos.py      # Whisper video transcription + ingest
-│   └── fetch_book_metadata.py    # OpenLibrary + Google Books metadata
+│   ├── fetch_book_metadata.py    # OpenLibrary + Google Books metadata
+│   ├── run_tests.py              # Test suite → SYSTEM_DOCS/TEST_REPORT.md
+│   └── nightly_maintenance.py   # Snapshots, consistency, cleanup, git push
 ├── SYSTEM_DOCS/                  # Technical documentation
 ├── CLAUDE.md                     # Standing instructions
 ├── PROJECT_STATE.md              # This file
@@ -137,6 +139,13 @@ Collection config (applied at creation time):
 | `medical-rag-web` | `/etc/systemd/system/medical-rag-web.service` | 8000 | **Active (running)** |
 | `medical-rag-state` | `/etc/systemd/system/medical-rag-state.service` | 8080 | **Disabled / stopped** |
 
+### Systemd Timers
+
+| Timer | Service | Schedule | Purpose |
+|---|---|---|---|
+| `medical-rag-tests.timer` | `medical-rag-tests.service` | Daily 00:00 UTC | Run test suite → TEST_REPORT.md |
+| `medical-rag-maintenance.timer` | `medical-rag-maintenance.service` | Daily 00:30 UTC | Snapshots, consistency, cleanup, git push |
+
 **`medical-rag-web.service`** (FastAPI):
 ```ini
 [Service]
@@ -159,11 +168,14 @@ Dashboard accessible at: `http://100.66.194.55:8000` (Tailscale only)
 |---|---|---|
 | `GET /` | Dashboard — system stats, service health, RAG stats, dir sizes | **Live** |
 | `GET /health` | JSON health check | **Live** |
+| `GET /videos` | Video overview by type; per-video metadata + transcription status | **Live** |
+| `POST /videos/upload` | Upload video file to correct type directory | **Live** |
+| `POST /videos/transcribe` | Start Whisper transcription as background task | **Live** |
+| `GET /videos/transcript/{type}/{stem}` | Timestamped segment viewer | **Live** |
 | `GET /library` | Book management — upload, metadata, ingestion | Planned |
 | `GET /images` | Image browser with tissue/structure filter | Planned |
 | `GET /protocols` | Protocol builder + Word document generation | Planned |
 | `GET /search` | Multi-collection RAG search | Planned |
-| `GET /videos` | Video upload + Whisper transcription trigger | Planned |
 
 Dashboard features:
 - System stats: CPU%, RAM, disk with progress bars
@@ -260,36 +272,33 @@ Three-pass extraction with cross-reference map for anatomy atlases where images 
 | `ebooklib` | **Installed** | EPUB parsing |
 | `beautifulsoup4` | **Installed** | HTML parsing for EPUB |
 | `lxml` | **Installed** (system dep) | XML/HTML parser |
-| `docling` | Not installed | PDF extraction, figure detection |
-| `easyocr` | Not installed | OCR for scanned PDFs + figure labels |
-| `openai-whisper` | Not installed | Video transcription |
-| `llama-index` | Not installed | Chunking, VectorStoreIndex |
-| `llama-index-vector-stores-qdrant` | Not installed | Qdrant backend |
-| `llama-index-embeddings-huggingface` | Not installed | Local embeddings |
-| `qdrant-client` | Not installed | Qdrant REST/gRPC client |
-| `pypdf` | Not installed | PDF text density pre-scan |
-| `pillow` | Not installed | PIL image handling |
+| `docling` | **Installed** | PDF extraction, figure detection |
+| `easyocr` | **Installed** | OCR for scanned PDFs + figure labels |
+| `openai-whisper` | **Installed** | Video transcription |
+| `ffmpeg` | **Installed** (apt) | Audio extraction for Whisper |
+| `llama-index` | **Installed** | Chunking, VectorStoreIndex |
+| `llama-index-vector-stores-qdrant` | **Installed** | Qdrant backend |
+| `llama-index-embeddings-huggingface` | **Installed** | Local embeddings |
+| `sentence-transformers` | **Installed** | `BAAI/bge-large-en-v1.5` embeddings |
+| `qdrant-client` | **Installed** | Qdrant REST/gRPC client |
+| `pypdf` | **Installed** | PDF text density pre-scan |
+| `pillow` | **Installed** | PIL image handling |
+| `opencv-python-headless` | **Installed** | Headless OpenCV (no libGL.so.1) |
 
-**Install remaining dependencies:**
-```bash
-pip install docling docling-core easyocr openai-whisper \
-    llama-index llama-index-vector-stores-qdrant \
-    llama-index-embeddings-huggingface \
-    qdrant-client pypdf pillow numpy \
-    --break-system-packages
-apt-get install -y ffmpeg
-```
+**All ingestion dependencies installed.** `BAAI/bge-large-en-v1.5` model cached and verified (1024-dim).
 
 ---
 
 ## 10. Pending Tasks
 
-- [ ] **Install ingestion dependencies** — `pip install docling easyocr openai-whisper llama-index qdrant-client pypdf pillow --break-system-packages` + `apt install ffmpeg`
 - [ ] **Add books** — Drop `.pdf`/`.epub` into `./books/`, run `fetch_book_metadata.py` then `ingest_books.py --content-type medical_literature`
 - [ ] **Add training videos** — Drop `.mp4` into `./videos/nrt/` and `./videos/qat/`, run `transcribe_videos.py --type nrt --ingest`
 - [ ] **Add device docs** — Drop PEMF/RLT PDFs or `.md` settings files, run ingestion with `--content-type device_pemf` / `device_rlt`
-- [ ] **Build remaining web pages** — `/library`, `/images`, `/protocols`, `/search`, `/videos`
-- [ ] **Multi-collection query** — Build `query_rag.py` that queries all three collections in parallel and merges results
+- [ ] **Build `/library` page** — Book upload, metadata cards, ingestion trigger, processing status
+- [ ] **Build `/search` page** — Multi-collection RAG search with citation display
+- [ ] **Build `/images` page** — Image browser with tissue/structure filter
+- [ ] **Build `/protocols` page** — Protocol builder + Word document generation
+- [ ] **Build `query_rag.py`** — Multi-collection search across all three Qdrant collections in parallel
 - [ ] **Word output** — Generate `.docx` treatment protocols (§1 Klachtbeeld / §2 Behandeling / §3 Bijlagen)
 - [ ] **Tailscale ACL** — Restrict which Tailscale devices can access the server
 

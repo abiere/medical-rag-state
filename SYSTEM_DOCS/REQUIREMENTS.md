@@ -51,20 +51,23 @@
 
 ## Non-Functional Requirements
 
-### NFR-1 — Security
+### NFR-1 — Security ✅
 - All interfaces reachable via **Tailscale only**
 - No public internet exposure for any application endpoint
 - Secrets (API keys, tokens) stored in `.env` files, never committed to git
+- **Status:** Tailscale active (`100.66.194.55`); UFW blocks all public ingress; port 8080 disabled
 
-### NFR-2 — Rollback & Safety
+### NFR-2 — Rollback & Safety ✅
 - Create a **git tag** before every significant change: `git tag -a v<date>-<description>`
 - Create **Docker volume snapshots** of `data/qdrant/` and `data/ollama/` before any ingestion run that modifies an existing collection
 - Document rollback procedure in `SYSTEM_DOCS/` before executing irreversible operations
+- **Status:** Nightly maintenance handles automated Qdrant snapshots (max 7) and weekly git tags
 
-### NFR-3 — Testing
+### NFR-3 — Testing ✅
 - Automated tests must pass before every deploy
 - Test results written to `SYSTEM_DOCS/TEST_REPORT.md` after each test run
 - Test areas: ingestion idempotency, embedding dimension, Qdrant round-trip, Ollama inference, citation integrity, FastAPI endpoints
+- **Status:** 24/24 tests passing; `medical-rag-tests.timer` runs daily at 00:00 UTC; deploy gate in `CLAUDE.md`
 
 ### NFR-4 — Batch Processing
 - **Pre-check** available RAM and disk before large ingestion operations
@@ -89,13 +92,14 @@
 
 ## Functional Requirements — Extended
 
-### FR-7 — Video transcription (NRT / QAT extra muscle resets)
+### FR-7 — Video transcription (NRT / QAT extra muscle resets) ✅
 - Accept MP4/MOV/MKV/M4V video files in `videos/{nrt,qat,pemf,rlt}/`
 - Transcribe locally with OpenAI Whisper (model: `medium`; language hint: `nl`)
 - Save timestamped segments to `data/transcripts/{stem}.json` and `.txt`
 - Ingest transcript segments into Qdrant (`training_materials` or `device_protocols`)
 - Cross-reference transcript chunks with related PDF sections via `see_also` field
 - Idempotent: skip transcription if transcript file already exists
+- **Status:** `scripts/transcribe_videos.py` complete; `GET /videos` + upload/transcribe routes live; ffmpeg + Whisper installed
 
 ### FR-8 — PEMF / RLT structured settings extraction
 - For every chunk with `content_type: device_pemf` or `device_rlt`, automatically

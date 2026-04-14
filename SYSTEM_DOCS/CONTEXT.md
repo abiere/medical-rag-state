@@ -113,8 +113,8 @@ All outputs cite exact page numbers and source documents. No hallucinated refere
 | Docling | PDF parsing — text, images, page numbers | Not yet installed |
 | EasyOCR | OCR for scanned PDFs + figure labels | Not yet installed |
 | BAAI/bge-large-en-v1.5 | Local embeddings, 1024-dim | Not yet installed |
-| OpenAI Whisper (local) | Video transcription | Not yet installed |
-| ffmpeg | Audio extraction for Whisper | Not yet installed |
+| OpenAI Whisper (local) | Video transcription | **Installed** |
+| ffmpeg | Audio extraction for Whisper | **Installed** |
 | LLaVA (vision) | Figure descriptions from images | Not yet pulled |
 | python-docx | Word document output | Not yet installed |
 
@@ -172,12 +172,11 @@ python scripts/ingest_books.py --books-dir ./books/pemf --content-type device_pe
 
 ## Immediate next steps
 
-1. **Install ingestion deps:** `pip install docling easyocr openai-whisper llama-index qdrant-client pypdf pillow --break-system-packages` + `apt install ffmpeg`
-2. **Add books:** Drop `.pdf`/`.epub` into `./books/` → `fetch_book_metadata.py` → `ingest_books.py`
-3. **Add videos:** Drop `.mp4` into `./videos/nrt/` and `./videos/qat/` → `transcribe_videos.py --ingest`
-4. **Build `query_rag.py`** — multi-collection search across all three collections
-5. **Build remaining web pages:** `/library`, `/images`, `/protocols`, `/search`, `/videos`
-6. **Word output:** `.docx` treatment protocols (§1 Klachtbeeld / §2 Behandeling / §3 Bijlagen)
+1. **Add books:** Drop `.pdf`/`.epub` into `./books/` → `fetch_book_metadata.py` → `ingest_books.py`
+2. **Add videos:** Drop `.mp4` into `./videos/nrt/` and `./videos/qat/` → `transcribe_videos.py --ingest`
+3. **Build `query_rag.py`** — multi-collection search across all three collections
+4. **Build remaining web pages:** `/library`, `/images`, `/protocols`, `/search`
+5. **Word output:** `.docx` treatment protocols (§1 Klachtbeeld / §2 Behandeling / §3 Bijlagen)
 
 ---
 

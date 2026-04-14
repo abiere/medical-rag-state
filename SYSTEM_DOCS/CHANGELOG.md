@@ -130,6 +130,54 @@ image memory, processing logs, pre/post checks.
 
 **PROJECT_STATE.md** and **CONTEXT.md** updated with new folder structure, Qdrant collections, stack table, and ingestion commands.
 
+### Tailscale + UFW security (`fad9f7c`)
+- Tailscale installed and active — server accessible at `100.66.194.55` (Tailscale only)
+- UFW firewall active — all public ingress blocked; allow SSH + `tailscale0` only
+- Old `medical-rag-state.service` (port 8080) stopped and disabled
+- Public IP `178.104.77.146` no longer reachable from outside
+
+### FastAPI dashboard live (`e6826a0` + `fad9f7c`)
+- `web/app.py` — FastAPI + Uvicorn on port 8000, systemd `medical-rag-web.service`
+- Dashboard: CPU/RAM/disk progress bars, Qdrant + Ollama health cards, RAG stats, dir sizes
+- 30 s auto-refresh, Dutch interface, no external CSS/JS dependencies (inline HTML only)
+- Jinja2 version conflict resolved — all pages use inline HTML string generation
+- Company name corrected to `NRT-Amsterdam.nl` throughout
+
+### Comprehensive test suite (`dc8ad99`)
+- `scripts/run_tests.py` — 4 classes, 24 tests; 24/24 passing
+- Classes: InfrastructureTests, PipelineTests, QualityTests, IntegrationTests
+- Results written to `SYSTEM_DOCS/TEST_REPORT.md` and `## Test status` in `CONTEXT.md`
+- Auto git add + commit + push after every run
+- Deploy gate added to `CLAUDE.md` — no deploy if any test FAIL or ERROR
+
+### Nightly maintenance pipeline
+- `scripts/nightly_maintenance.py` — 6 phases: pre_check, qdrant, consistency, software, cleanup, backup
+- Writes `SYSTEM_DOCS/MAINTENANCE_REPORT.md` and updates `## Maintenance status` in `CONTEXT.md`
+- systemd timer `medical-rag-maintenance.timer` at 00:30 UTC (`Persistent=true`, `RandomizedDelaySec=120`)
+- systemd timer `medical-rag-tests.timer` at 00:00 UTC (daily test run)
+- Qdrant snapshots: max 7 per collection; metadata backups: max 30 daily copies
+- Weekly git tag on Sundays; git push after every maintenance run
+
+### Video transcription pipeline + /videos page
+- `ffmpeg` installed (apt) — `ffmpeg version 6.1.1-3ubuntu5`
+- `openai-whisper` installed — Whisper `medium` model, Dutch language hint
+- `scripts/transcribe_videos.py` — idempotent transcription; saves `data/transcripts/{stem}.json` + `.txt`
+- `GET /videos` — four-section overview (NRT / QAT / PEMF / RLT) with per-video metadata
+- `POST /videos/upload` — file upload with filename sanitisation
+- `POST /videos/transcribe` — background task via FastAPI `BackgroundTasks`
+- `GET /videos/transcript/{type}/{stem}` — timestamped segment viewer
+- Treatment method names corrected: Neural Reset Therapy, Quantum Alignment Technique, Pulsed Electromagnetic Field, Red Light Therapy
+
+### All ingestion dependencies installed
+- `docling`, `easyocr`, `qdrant-client`, `sentence-transformers`, `llama-index` + integrations
+- `pypdf`, `pillow`, `numpy`, `opencv-python-headless` (headless — no libGL.so.1 required)
+- `BAAI/bge-large-en-v1.5` embedding model cached and verified (1024-dim)
+- Debian `jsonschema` conflict resolved with `--ignore-installed`
+- OpenCV headless substituted for `opencv-python` to fix `libGL.so.1` ImportError
+
+### Git identity
+- `Axel Biere <axelbiere@gmail.com>` set as git user for all commits
+
 ---
 
 ## Pending
