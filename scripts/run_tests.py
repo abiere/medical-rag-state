@@ -19,7 +19,8 @@ from pathlib import Path
 from datetime import datetime
 
 BASE = Path(__file__).parent.parent
-REPORT_PATH = BASE / "SYSTEM_DOCS" / "TEST_REPORT.md"
+REPORT_PATH   = BASE / "SYSTEM_DOCS" / "TEST_REPORT.md"
+CONTEXT_PATH  = BASE / "SYSTEM_DOCS" / "CONTEXT.md"
 
 # ── Custom test result tracker ────────────────────────────────────────────────
 
@@ -187,6 +188,59 @@ def write_report(result: TimedResult, total_duration: float):
 
     REPORT_PATH.write_text("\n".join(lines))
     return overall
+
+
+def _update_context_status(result: TimedResult, total_duration: float):
+    """Vervangt de ## Test status sectie in CONTEXT.md met de actuele testuitslag."""
+    import re
+
+    now = datetime.now().strftime("%d-%m-%Y %H:%M")
+    records = result.records
+    n_pass = sum(1 for r in records if r["status"] == "PASS")
+    n_fail = sum(1 for r in records if r["status"] in ("FAIL", "ERROR"))
+    n_skip = sum(1 for r in records if r["status"] == "SKIP")
+    n_run  = n_pass + n_fail
+
+    if n_fail == 0:
+        uitslag = f"✅ GESLAAGD — {n_pass}/{n_run} geslaagd, {n_skip} overgeslagen"
+    else:
+        uitslag = f"❌ MISLUKT — {n_pass}/{n_run} geslaagd, {n_fail} mislukt, {n_skip} overgeslagen"
+
+    lines = [
+        "## Test status",
+        "",
+        f"**Laatste run:** {now} ({total_duration:.1f}s)  ",
+        f"**Uitslag:** {uitslag}  ",
+    ]
+
+    failed = [r for r in records if r["status"] in ("FAIL", "ERROR")]
+    if failed:
+        names = ", ".join(f"`{r['name']}`" for r in failed)
+        lines.append(f"**Mislukt:** {names}  ")
+
+    lines.append("")
+
+    new_section = "\n".join(lines)
+
+    ctx = CONTEXT_PATH.read_text()
+
+    # Replace the existing ## Test status block (up to the next \n--- or \n## or EOF)
+    pattern = re.compile(
+        r"## Test status\n.*?(?=\n---|\n## |\Z)",
+        re.DOTALL,
+    )
+    if pattern.search(ctx):
+        ctx = pattern.sub(new_section.rstrip() + "\n", ctx)
+    else:
+        # Section missing — insert before ## Git / state tracking
+        insert_at = "## Git / state tracking"
+        if insert_at in ctx:
+            idx = ctx.index(insert_at)
+            ctx = ctx[:idx] + new_section + "\n---\n\n" + ctx[idx:]
+        else:
+            ctx = ctx.rstrip() + "\n\n---\n\n" + new_section
+
+    CONTEXT_PATH.write_text(ctx)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -742,6 +796,7 @@ def main():
 
     total = time.monotonic() - t0
     overall = write_report(result, total)
+    _update_context_status(result, total)
 
     n_pass  = sum(1 for r in result.records if r["status"] == "PASS")
     n_skip  = sum(1 for r in result.records if r["status"] == "SKIP")
@@ -756,6 +811,25 @@ def main():
     print(f"  Duur      : {total:.1f}s")
     print(f"  Rapport   : {REPORT_PATH}")
     print(f"{'─'*50}")
+
+    # Commit and push both updated files
+    import subprocess
+    subprocess.run(
+        ["git", "add",
+         "SYSTEM_DOCS/TEST_REPORT.md",
+         "SYSTEM_DOCS/CONTEXT.md"],
+        cwd=BASE, check=False
+    )
+    commit_msg = (
+        f"test: auto-report {datetime.now().strftime('%Y-%m-%d %H:%M')} "
+        f"— {n_pass}/{n_total - n_skip} geslaagd"
+        + (f", {n_fail} mislukt" if n_fail else "")
+    )
+    subprocess.run(
+        ["git", "commit", "-m", commit_msg],
+        cwd=BASE, check=False
+    )
+    subprocess.run(["git", "push"], cwd=BASE, check=False)
 
     return 0 if n_fail == 0 else 1
 
