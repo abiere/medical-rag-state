@@ -168,6 +168,12 @@ python scripts/ingest_books.py --books-dir ./books/pemf --content-type device_pe
 
 ---
 
+## Test status
+
+**Laatste run:** 14-04-2026 18:52 (0.9s)  
+**Uitslag:** ✅ GESLAAGD — 15/15 geslaagd, 9 overgeslagen
+---
+
 ## Git / state tracking
 
 - Repo: https://github.com/abiere/medical-rag-state (private)
@@ -175,4 +181,4 @@ python scripts/ingest_books.py --books-dir ./books/pemf --content-type device_pe
   ```bash
   git add PROJECT_STATE.md && git commit -m "state: [description]" && git push
   ```
-- Live state always readable at: http://100.66.194.55 (Tailscale):8080/PROJECT_STATE.md
+- Live state always readable at: http://100.66.194.55 (Tailscale):8000
