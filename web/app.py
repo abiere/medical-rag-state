@@ -1,6 +1,6 @@
 from fastapi import FastAPI, BackgroundTasks, UploadFile, File, Form
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
-import httpx, psutil, subprocess, json, os, re, shutil
+import httpx, psutil, subprocess, json, os, re, shutil, time
 from pathlib import Path
 from datetime import datetime
 
@@ -481,13 +481,9 @@ async def videos_status(video_type: str, filename: str):
     stem = Path(safe).stem
     if (TRANS_DIR / f"{stem}.json").exists():
         return {"status": "done"}
-    try:
-        r = subprocess.run(["ps", "aux"], capture_output=True, text=True, timeout=5)
-        full_path = str(VIDEOS_DIR / video_type / safe)
-        if "transcribe_videos.py" in r.stdout and full_path in r.stdout:
-            return {"status": "running"}
-    except Exception:
-        pass
+    log = Path(f"/tmp/transcribe_{safe}.log")
+    if log.exists() and os.path.getmtime(log) > time.time() - 300:
+        return {"status": "running"}
     return {"status": "waiting"}
 
 
@@ -722,9 +718,26 @@ async def videos_page():
             f'</div>'
         )
 
+    # Count transcriptions currently running (log modified in last 300 s, no JSON yet)
+    n_running = 0
+    for vt in VIDEO_TYPES:
+        for v in _list_videos(vt):
+            if not v["transcribed"]:
+                lp = Path(f"/tmp/transcribe_{v['name']}.log")
+                if lp.exists() and os.path.getmtime(lp) > time.time() - 300:
+                    n_running += 1
+
+    warn_html = (
+        f'<div style="background:#fef3c7;border:1px solid #f59e0b;border-radius:8px;'
+        f'padding:12px 16px;margin-bottom:16px;font-size:14px;color:#92400e">'
+        f'⚠️ {n_running} transcriptie{"s" if n_running != 1 else ""} actief tegelijk — '
+        f'dit kan lang duren en veel RAM gebruiken.</div>'
+    ) if n_running > 3 else ""
+
     body = (
         f'<div class="wrap">'
         f'<h1 style="font-size:22px;font-weight:700;margin-bottom:20px">Video\'s</h1>'
+        f'{warn_html}'
         f'{sections_html}'
         f'</div>'
         + _VIDEO_SCRIPT
