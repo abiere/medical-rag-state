@@ -243,15 +243,29 @@ def _list_videos(vtype: str) -> list[dict]:
             })
     return out
 
+_CONTENT_TYPE_MAP = {
+    "nrt":  "training_nrt",
+    "qat":  "training_qat",
+    "pemf": "device_pemf",
+    "rlt":  "device_rlt",
+}
+
 def _run_transcription(video_path: str, video_type: str) -> None:
-    """Background task: runs transcribe_videos.py for one file."""
-    subprocess.run(
+    """Background task: transcribes one file via --file (mutually exclusive with --type).
+    Correct content-type is passed explicitly. Output logged to /tmp/transcribe_{name}.log.
+    """
+    content_type = _CONTENT_TYPE_MAP.get(video_type, "training_nrt")
+    log_path     = Path(f"/tmp/transcribe_{Path(video_path).name}.log")
+    result = subprocess.run(
         ["python3", str(BASE / "scripts" / "transcribe_videos.py"),
          "--file", video_path,
-         "--type", video_type],
+         "--content-type", content_type],
         cwd=BASE,
         capture_output=True,
+        text=True,
     )
+    with open(log_path, "w") as lf:
+        lf.write(f"=== stdout ===\n{result.stdout}\n=== stderr ===\n{result.stderr}\n")
 
 # ── routes ───────────────────────────────────────────────────────────────────
 
@@ -479,7 +493,7 @@ async def videos_status(video_type: str, filename: str):
 
 # ── GET /videos ───────────────────────────────────────────────────────────────
 
-_VIDEO_SCRIPT = """
+_VIDEO_SCRIPT = r"""
 <style>
 @keyframes _vspin{to{transform:rotate(360deg)}}
 .vspin{display:inline-block;width:11px;height:11px;border:2px solid #93c5fd;
@@ -487,70 +501,29 @@ _VIDEO_SCRIPT = """
        animation:_vspin .8s linear infinite;vertical-align:middle;margin-right:5px}
 </style>
 <script>
-function doUpload(vtype) {
-  const inp = document.getElementById('file-' + vtype);
-  if (!inp.files.length) { alert('Selecteer eerst een videobestand'); return; }
-  const fd = new FormData();
-  fd.append('file', inp.files[0]);
-  fd.append('video_type', vtype);
-  document.getElementById('progress-' + vtype).style.display = 'block';
-  const xhr = new XMLHttpRequest();
-  xhr.upload.addEventListener('progress', e => {
-    if (e.lengthComputable) {
-      const pct = Math.round(e.loaded / e.total * 100);
-      document.getElementById('pct-' + vtype).textContent = pct + '%';
-      document.getElementById('bar-' + vtype).style.width = pct + '%';
-      document.getElementById('mb-' + vtype).textContent =
-        (e.loaded/1e6).toFixed(1) + ' MB / ' + (e.total/1e6).toFixed(1) + ' MB';
-    }
-  });
-  xhr.addEventListener('load', () => {
-    if (xhr.status === 200) {
-      const d = JSON.parse(xhr.responseText);
-      document.getElementById('pct-' + vtype).textContent = '✓';
-      document.getElementById('mb-' + vtype).textContent = 'Transcriptie wordt gestart...';
-      const tf = new FormData();
-      tf.append('video_type', vtype);
-      tf.append('filename', d.filename);
-      fetch('/videos/transcribe', {method:'POST', body:tf}).then(() => location.reload());
-    } else {
-      document.getElementById('msg-' + vtype).textContent = 'Upload mislukt. Probeer opnieuw.';
-      document.getElementById('msg-' + vtype).style.display = 'block';
-      document.getElementById('progress-' + vtype).style.display = 'none';
-    }
-  });
-  xhr.addEventListener('error', () => {
-    document.getElementById('msg-' + vtype).textContent = 'Verbindingsfout. Probeer opnieuw.';
-    document.getElementById('msg-' + vtype).style.display = 'block';
-    document.getElementById('progress-' + vtype).style.display = 'none';
-  });
-  xhr.open('POST', '/videos/upload');
-  xhr.send(fd);
-}
-
-function manualTranscribe(vtype, filename, safeId) {
-  const fd = new FormData();
-  fd.append('video_type', vtype);
-  fd.append('filename', filename);
-  fetch('/videos/transcribe', {method:'POST', body:fd})
-    .then(r => r.json())
-    .then(d => {
-      if (d.status === 'started') { setRunning(vtype, safeId); startPoll(vtype, filename, safeId); }
-    });
-}
+const _timers = {};
+function _clearTimer(k) { if (_timers[k]) { clearInterval(_timers[k]); delete _timers[k]; } }
 
 function setRunning(vtype, safeId) {
   document.getElementById('status-' + vtype + '-' + safeId).innerHTML =
     '<span style="background:#dbeafe;color:#1e40af;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:600">' +
     '<span class="vspin"></span>Bezig</span>';
-  document.getElementById('actions-' + vtype + '-' + safeId).innerHTML =
-    '<span style="color:#6b7280;font-size:13px;font-style:italic">Transcriptie bezig...</span>';
+  const actEl = document.getElementById('actions-' + vtype + '-' + safeId);
+  const key = vtype + '-' + safeId;
+  let secs = 0;
+  actEl.innerHTML = '<span id="timer-' + key + '" style="color:#6b7280;font-size:13px;font-style:italic">Bezig... 0:00</span>';
+  _timers[key] = setInterval(() => {
+    secs++;
+    const el = document.getElementById('timer-' + key);
+    if (el) el.textContent = 'Bezig... ' + Math.floor(secs/60) + ':' + String(secs%60).padStart(2,'0');
+  }, 1000);
 }
 
 function setDone(vtype, safeId, filename) {
-  const stem = filename.replace(/\\.[^.]+$/, '');
+  _clearTimer(vtype + '-' + safeId);
+  const stem = filename.replace(/\.[^.]+$/, '');
   document.getElementById('status-' + vtype + '-' + safeId).innerHTML =
-    '<span style="background:#dcfce7;color:#166534;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:600">✓ Klaar</span>';
+    '<span style="background:#dcfce7;color:#166534;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:600">&#10003; Klaar</span>';
   document.getElementById('actions-' + vtype + '-' + safeId).innerHTML =
     '<a href="/videos/transcript/' + vtype + '/' + stem + '" class="btn btn-secondary">Transcript bekijken</a>';
 }
@@ -562,13 +535,88 @@ function startPoll(vtype, filename, safeId) {
       .then(d => {
         if (d.status === 'done') { clearInterval(iv); setDone(vtype, safeId, filename); }
         else if (d.status === 'error') {
-          clearInterval(iv);
+          clearInterval(iv); _clearTimer(vtype + '-' + safeId);
           document.getElementById('actions-' + vtype + '-' + safeId).innerHTML =
             '<span style="color:#ef4444;font-size:13px">Fout bij transcriptie</span>';
         }
       })
       .catch(() => clearInterval(iv));
   }, 5000);
+}
+
+function manualTranscribe(vtype, filename, safeId) {
+  const fd = new FormData();
+  fd.append('video_type', vtype);
+  fd.append('filename', filename);
+  fetch('/videos/transcribe', {method:'POST', body:fd})
+    .then(r => r.json())
+    .then(d => {
+      if (d.status === 'started') {
+        if (document.getElementById('status-' + vtype + '-' + safeId)) {
+          setRunning(vtype, safeId);
+          startPoll(vtype, filename, safeId);
+        } else {
+          location.reload();
+        }
+      }
+    });
+}
+
+function _uploadFile(vtype, file, idx, total) {
+  return new Promise(resolve => {
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('video_type', vtype);
+    const lbl = document.getElementById('upload-label-' + vtype);
+    if (lbl) lbl.textContent = total > 1 ? 'Bestand ' + idx + '/' + total + ' uploaden...' : 'Bezig met uploaden...';
+    document.getElementById('pct-' + vtype).textContent = '0%';
+    document.getElementById('bar-' + vtype).style.width = '0%';
+    document.getElementById('mb-' + vtype).textContent = '';
+    const xhr = new XMLHttpRequest();
+    xhr.upload.addEventListener('progress', e => {
+      if (e.lengthComputable) {
+        const pct = Math.round(e.loaded / e.total * 100);
+        document.getElementById('pct-' + vtype).textContent = pct + '%';
+        document.getElementById('bar-' + vtype).style.width = pct + '%';
+        document.getElementById('mb-' + vtype).textContent =
+          (e.loaded/1e6).toFixed(1) + ' MB / ' + (e.total/1e6).toFixed(1) + ' MB';
+      }
+    });
+    xhr.addEventListener('load', () => {
+      if (xhr.status === 200) resolve(JSON.parse(xhr.responseText));
+      else resolve(null);
+    });
+    xhr.addEventListener('error', () => resolve(null));
+    xhr.open('POST', '/videos/upload');
+    xhr.send(fd);
+  });
+}
+
+async function doUpload(vtype) {
+  const inp = document.getElementById('file-' + vtype);
+  if (!inp.files.length) { alert('Selecteer eerst een videobestand'); return; }
+  const files = Array.from(inp.files);
+  document.getElementById('progress-' + vtype).style.display = 'block';
+  const uploaded = [];
+  for (let i = 0; i < files.length; i++) {
+    const d = await _uploadFile(vtype, files[i], i + 1, files.length);
+    if (d) uploaded.push(d.filename);
+    else {
+      document.getElementById('msg-' + vtype).textContent = 'Upload mislukt: ' + files[i].name;
+      document.getElementById('msg-' + vtype).style.display = 'block';
+    }
+  }
+  if (!uploaded.length) { document.getElementById('progress-' + vtype).style.display = 'none'; return; }
+  document.getElementById('pct-' + vtype).textContent = '&#10003;';
+  document.getElementById('mb-' + vtype).textContent =
+    uploaded.length + (uploaded.length === 1 ? ' bestand' : ' bestanden') + ' ge\u00fcpload. Transcriptie wordt gestart...';
+  for (const filename of uploaded) {
+    const fd = new FormData();
+    fd.append('video_type', vtype);
+    fd.append('filename', filename);
+    await fetch('/videos/transcribe', {method:'POST', body:fd});
+  }
+  setTimeout(() => location.reload(), 300);
 }
 
 window.addEventListener('load', () => {
@@ -647,7 +695,7 @@ async def videos_page():
             f'<div style="padding:16px 20px;background:#f9fafb;border-top:1px solid #f3f4f6">'
             f'<div id="progress-{vtype}" style="display:none;margin-bottom:12px">'
             f'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'
-            f'<span style="font-size:13px;color:#374151;font-weight:500">Bezig met uploaden...</span>'
+            f'<span id="upload-label-{vtype}" style="font-size:13px;color:#374151;font-weight:500">Bezig met uploaden...</span>'
             f'<span id="pct-{vtype}" style="font-size:13px;font-weight:700;color:{color}">0%</span>'
             f'</div>'
             f'<div style="background:#e5e7eb;border-radius:6px;height:8px;overflow:hidden">'
@@ -656,7 +704,7 @@ async def videos_page():
             f'<div id="mb-{vtype}" style="font-size:12px;color:#9ca3af;margin-top:4px"></div>'
             f'</div>'
             f'<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">'
-            f'<input type="file" id="file-{vtype}" accept=".mp4,.mov,.mkv,.m4v" style="flex:1;min-width:200px">'
+            f'<input type="file" id="file-{vtype}" multiple accept=".mp4,.mov,.mkv,.m4v" style="flex:1;min-width:200px">'
             f'<button onclick="doUpload(\'{vtype}\')" class="btn" style="background:{color};color:#fff">'
             f'Uploaden naar {vtype.upper()}</button>'
             f'</div>'
