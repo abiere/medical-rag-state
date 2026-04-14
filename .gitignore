@@ -8,8 +8,11 @@ books/
 .env.*
 *.env
 
-# Data directories (Docker volumes, extracted images, model weights)
-data/
+# Data directories — ignore large/generated content, track metadata files
+data/extracted_images/
+data/ollama/
+data/qdrant/
+data/processing_logs/
 
 # Python
 __pycache__/

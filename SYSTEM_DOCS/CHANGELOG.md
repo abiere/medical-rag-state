@@ -54,6 +54,37 @@ Format: `[YYYY-MM-DD] — description (git commit)`
 - `SYSTEM_DOCS/TEST_REPORT.md` — placeholder
 - `SYSTEM_DOCS/CONTEXT.md` — compact session loader
 
+### Ingestion pipeline — major update *(this commit)*
+
+**scripts/ingest_books.py** rewritten:
+- Scanned PDF auto-detection: density pre-scan via pypdf; EasyOCR enabled if < 50 chars/page
+- Figure naming changed to `{slug}_p{page}_fig{n}.png` (was MD5 hash — now human-readable)
+- New Qdrant payload fields: `caption`, `figure_labels`, `image_type`, `image_description`, `figure_number`
+- Figure label extraction via EasyOCR (lazy-init singleton, CPU mode)
+- Ollama vision description (LLaVA if loaded; "pending" otherwise)
+- Figure number detection: regex for `Fig./Figure/Afb./Abb.` patterns
+- Full citation object on every chunk: loaded from `books_metadata.json`, APA + Vancouver formats
+- Processing logs per book → `data/processing_logs/{slug}.json`
+- `data/image_memory.json` initialised on first run
+- `extract_pdf` / `extract_epub` now return `(sections, stats)` tuple
+
+**scripts/fetch_book_metadata.py** (new):
+- EPUB OPF metadata extraction (dc:title, dc:creator, dc:identifier, dc:publisher, dc:date)
+- PDF XMP + DocInfo extraction
+- ISBN regex extraction from filename as fallback
+- OpenLibrary API: full metadata by ISBN; title search as fallback
+- Google Books API: description, categories, language, thumbnail
+- Citation generation: APA 7th, Vancouver (ICMJE), Chicago 17th
+- `data/books_metadata.json` creation and update
+- CLI: `--books-dir`, `--file`, `--isbn`, `--refresh --slug`
+
+**data/books_metadata.json** (new): empty template, populated by fetch_book_metadata.py
+
+**SYSTEM_DOCS/TECHNICAL_DESIGN.md** (new): full technical reference documenting
+ingestion flow, scanned-PDF detection, figure extraction, bibliographic metadata
+pipeline, citation formats (APA/Vancouver/Chicago), Qdrant payload schema,
+image memory, processing logs, pre/post checks.
+
 ---
 
 ## Pending

@@ -67,8 +67,9 @@ All outputs cite exact page numbers and source documents. No hallucinated refere
 └── SYSTEM_DOCS/
     ├── CONTEXT.md          ← this file
     ├── PRACTICE_CONTEXT.md ← practitioner, modalities, protocol structure, image rules, writing rules
-    ├── REQUIREMENTS.md     ← FR + NFR (updated 2026-04-14)
+    ├── REQUIREMENTS.md     ← FR + NFR
     ├── ARCHITECTURE.md     ← full stack description
+    ├── TECHNICAL_DESIGN.md ← ingestion pipeline, metadata pipeline, Qdrant payload, citations
     ├── CHANGELOG.md        ← dated history of all changes
     └── TEST_REPORT.md      ← test results (no tests yet)
 ```
@@ -79,11 +80,13 @@ All outputs cite exact page numbers and source documents. No hallucinated refere
 
 | Component | Role | Status |
 |---|---|---|
-| Docling | PDF parsing — text, images, page numbers | Ready |
-| ebooklib + BS4 | EPUB parsing (Docling doesn't support EPUB) | Ready |
-| BAAI/bge-large-en-v1.5 | Local embeddings, 1024-dim | Ready |
+| Docling | PDF parsing — text, images, page numbers | Ready (not yet installed) |
+| EasyOCR | OCR for scanned PDFs + figure labels | Ready (not yet installed) |
+| ebooklib + BS4 | EPUB parsing (Docling doesn't support EPUB) | Installed |
+| BAAI/bge-large-en-v1.5 | Local embeddings, 1024-dim | Ready (not yet installed) |
 | Qdrant | Vector store | Running |
 | Ollama / llama3.1:8b | Local LLM inference | Running |
+| LLaVA (vision) | Figure descriptions | Not yet pulled |
 | FastAPI | Web layer — upload, status, Q&A, generation | **Planned** |
 | python-docx | Word document output | **Planned** |
 | Tailscale | Access control | **Planned / pending setup** |
@@ -93,6 +96,10 @@ All outputs cite exact page numbers and source documents. No hallucinated refere
 ## Ingestion pipeline
 
 ```bash
+# Step 1: fetch bibliographic metadata (run once per new book)
+python scripts/fetch_book_metadata.py --books-dir ./books
+
+# Step 2: ingest into Qdrant
 python scripts/ingest_books.py \
   --collection <name> \
   --subject <subject> \
@@ -102,7 +109,12 @@ python scripts/ingest_books.py \
 - Chunking: 512 tokens / 64 overlap / SentenceSplitter
 - Qdrant collection auto-created on first run (Cosine / 1024-dim)
 - Idempotent — `chunk_hash` prevents duplicate vectors
-- Payload fields: `page_number`, `section_number`, `text`, `image_links`, `source_file`, `format`, `chunk_hash`
+- Figures named: `{slug}_p{page}_fig{n}.png` — deterministic, traceable
+- Payload fields: `page_number`, `section_number`, `text`, `image_links`, `caption`,
+  `figure_labels`, `image_type`, `image_description`, `figure_number`, `citation`, `citation_apa`
+- Scanned PDFs: auto-detected (< 50 chars/page) → EasyOCR enabled
+- Citations: loaded from `data/books_metadata.json`; APA + Vancouver per chunk
+- Logs: `data/processing_logs/{slug}.json` written after each book
 - **Pre/post-check RAM and disk** before running on large collections (NFR-4)
 
 ---
