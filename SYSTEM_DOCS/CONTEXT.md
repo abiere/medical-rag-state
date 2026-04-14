@@ -29,11 +29,13 @@ All outputs cite exact page numbers and source documents. No hallucinated refere
 
 | Property | Value |
 |---|---|
-| Host | Hetzner CX53 — 100.66.194.55 (Tailscale) |
+| Host | Hetzner CX53 — **100.66.194.55 (Tailscale only)** — public IP blocked by UFW |
 | vCPUs / RAM / Disk | 16 / 30 GiB / 301 GB |
 | OS | Ubuntu, kernel 6.8.0-79-generic |
 | Docker | 29.1.3 — use `docker-compose` (v1), NOT `docker compose` |
 | Python | 3.12 system — `pip install --break-system-packages` |
+| Git identity | Axel Biere `<axelbiere@gmail.com>` |
+| UFW | **Active** — deny all except tailscale0 and loopback |
 
 ---
 
@@ -43,9 +45,12 @@ All outputs cite exact page numbers and source documents. No hallucinated refere
 |---|---|---|---|
 | Qdrant | Docker | 6333 (REST), 6334 (gRPC) | Up, healthy |
 | Ollama | Docker | 11434 | Up, healthy |
-| State HTTP server | systemd `medical-rag-state.service` | 8080 | Active |
+| FastAPI dashboard | systemd `medical-rag-web.service` | **8000** | **Active** |
+| State HTTP server | systemd `medical-rag-state.service` | 8080 | **Disabled** |
 
 **Ollama model loaded:** `llama3.1:8b` (4.92 GB, Q4_K_M)
+
+**Dashboard:** `http://100.66.194.55:8000` (Tailscale only)
 
 ---
 

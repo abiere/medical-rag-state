@@ -17,10 +17,28 @@
 | Docker | 29.1.3 |
 | docker-compose | 1.29.2 (v1 — use `docker-compose`, not `docker compose`) |
 | Python | 3.12 (`/usr/bin/python3`) — no venv, packages installed with `--break-system-packages` |
+| Git identity | Axel Biere `<axelbiere@gmail.com>` |
 
 ---
 
-## 2. Folder Structure
+## 2. Security
+
+| Property | Value |
+|---|---|
+| Tailscale IP | `100.66.194.55` |
+| Public IP | `178.104.77.146` (blocked by UFW — do not use) |
+| UFW | **Active** — deny all incoming by default |
+| UFW rules | Allow SSH + all traffic on `tailscale0`; reject everything else |
+| Port 8080 | **Disabled** — old `medical-rag-state.service` stopped and disabled |
+| Port 8000 | FastAPI dashboard — reachable only via Tailscale |
+| Port 6333/6334 | Qdrant — reachable only via Tailscale |
+| Port 11434 | Ollama — reachable only via Tailscale |
+
+All access to the server must go through Tailscale (`100.66.194.55`).
+
+---
+
+## 3. Folder Structure
 
 ```
 /root/medical-rag/
@@ -40,6 +58,8 @@
 │   ├── processing_logs/          # Per-book ingestion stats
 │   ├── ollama/                   # Ollama model weights (Docker volume)
 │   └── qdrant/                   # Qdrant vector storage (Docker volume)
+├── web/
+│   └── app.py                    # FastAPI dashboard + routes (:8000)
 ├── scripts/
 │   ├── ingest_books.py           # PDF + EPUB ingestion (all content types)
 │   ├── ingest_text.py            # Plain text / Markdown ingestion
@@ -48,7 +68,6 @@
 ├── SYSTEM_DOCS/                  # Technical documentation
 ├── CLAUDE.md                     # Standing instructions
 ├── PROJECT_STATE.md              # This file
-├── serve_state.py                # HTTP state server (:8080)
 └── docker-compose.yml
 ```
 
@@ -57,7 +76,7 @@
 
 ---
 
-## 3. Infrastructure
+## 4. Infrastructure
 
 ### docker-compose.yml — key settings
 
@@ -66,7 +85,7 @@
 | `qdrant` | `qdrant/qdrant:latest` | 6333 (REST), 6334 (gRPC) | 8 GB | 6 | unless-stopped |
 | `ollama` | `ollama/ollama:latest` | 11434 | 16 GB | 8 | unless-stopped |
 
-**RAM budget:** Qdrant 8 GB + Ollama 16 GB + OS ~1.2 GB = ~25 GB of 30 GB. ~5 GB headroom.
+**RAM budget:** Qdrant 8 GB + Ollama 16 GB + OS ~1.2 GB + FastAPI ~0.1 GB = ~25 GB of 30 GB. ~5 GB headroom.
 
 **Qdrant performance tuning applied:**
 - `MAX_SEARCH_THREADS: 8`
@@ -79,12 +98,12 @@
 exec 3<>/dev/tcp/localhost/PORT && echo -e 'GET /path HTTP/1.0\r\n\r\n' >&3 && grep -q 'expected_string' <&3
 ```
 
-### Live Container State *(last checked: 2026-04-14 ~15:10 UTC)*
+### Live Container State *(last checked: 2026-04-14 ~18:30 UTC)*
 
 | Container | Image | Ports | Status | RAM used | CPU |
 |---|---|---|---|---|---|
-| `qdrant` | `qdrant/qdrant:latest` | 6333 (REST), 6334 (gRPC) | Up 4 h, **healthy** | 32 MiB / 8 GiB | 0.28% |
-| `ollama` | `ollama/ollama:latest` | 11434 | Up 4 h, **healthy** | 12 MiB / 16 GiB | 0.00% |
+| `qdrant` | `qdrant/qdrant:latest` | 6333 (REST), 6334 (gRPC) | Up, **healthy** | 32 MiB / 8 GiB | 0.23% |
+| `ollama` | `ollama/ollama:latest` | 11434 | Up, **healthy** | 12 MiB / 16 GiB | 0.00% |
 
 ### Ollama Models
 
@@ -96,7 +115,13 @@ exec 3<>/dev/tcp/localhost/PORT && echo -e 'GET /path HTTP/1.0\r\n\r\n' >&3 && g
 
 ### Qdrant Collections
 
-No collections yet. The `medical_rag` collection is created automatically on the first run of `ingest_books.py`.
+No collections yet. The collections are created automatically on the first run of `ingest_books.py`.
+
+| Collection | content_type(s) | Status |
+|---|---|---|
+| `medical_literature` | `medical_literature` | Not yet created (no books ingested) |
+| `training_materials` | `training_nrt`, `training_qat` | Not yet created |
+| `device_protocols` | `device_pemf`, `device_rlt` | Not yet created |
 
 Collection config (applied at creation time):
 - Vector size: **1024** (matches `BAAI/bge-large-en-v1.5`)
@@ -105,7 +130,54 @@ Collection config (applied at creation time):
 
 ---
 
-## 4. Ingestion Pipeline (`scripts/ingest_books.py`)
+## 5. Systemd Services
+
+| Service | Unit file | Port | Status |
+|---|---|---|---|
+| `medical-rag-web` | `/etc/systemd/system/medical-rag-web.service` | 8000 | **Active (running)** |
+| `medical-rag-state` | `/etc/systemd/system/medical-rag-state.service` | 8080 | **Disabled / stopped** |
+
+**`medical-rag-web.service`** (FastAPI):
+```ini
+[Service]
+WorkingDirectory=/root/medical-rag/web
+ExecStart=/usr/bin/python3 -m uvicorn app:app --host 0.0.0.0 --port 8000 --no-access-log
+Restart=always
+User=root
+```
+Dashboard accessible at: `http://100.66.194.55:8000` (Tailscale only)
+
+---
+
+## 6. Web Interface (`web/app.py`)
+
+**Framework:** FastAPI + Uvicorn (inline HTML — no Jinja2 templates)
+
+**Note on Jinja2:** System jinja2 (`/usr/lib/python3/dist-packages/jinja2`) conflicts with starlette's LRU cache using dict keys. Fixed by generating HTML as inline strings — no `TemplateResponse` used.
+
+| Route | Description | Status |
+|---|---|---|
+| `GET /` | Dashboard — system stats, service health, RAG stats, dir sizes | **Live** |
+| `GET /health` | JSON health check | **Live** |
+| `GET /library` | Book management — upload, metadata, ingestion | Planned |
+| `GET /images` | Image browser with tissue/structure filter | Planned |
+| `GET /protocols` | Protocol builder + Word document generation | Planned |
+| `GET /search` | Multi-collection RAG search | Planned |
+| `GET /videos` | Video upload + Whisper transcription trigger | Planned |
+
+Dashboard features:
+- System stats: CPU%, RAM, disk with progress bars
+- Service health: Qdrant (collections + vector counts), Ollama (models + sizes)
+- Docker container status
+- RAG stats: books total/ingested/pending, chunks, figures, transcripts, protocols
+- Directory sizes: books/, data/qdrant/, data/ollama/
+- Quick action buttons for all major workflows
+- Auto-refresh every 30 seconds
+- Mobile-friendly, Dutch interface, no external CSS/JS dependencies
+
+---
+
+## 7. Ingestion Pipeline (`scripts/ingest_books.py`)
 
 ### Supported formats
 | Extension | Backend |
@@ -142,7 +214,7 @@ All fields above are stored as Qdrant payload. Fields excluded from LLM context 
 
 ---
 
-## 5. Image Extraction Logic
+## 8. Image Extraction Logic
 
 ### PDF — Docling `PictureItem`
 
@@ -160,41 +232,11 @@ for element, _ in result.document.iterate_items():
         caption   = element.caption_text(doc=doc)  # str | ""
 ```
 
-Images are saved as PNG regardless of source format. Filename: `{book_stem}_{md5_of_bytes[:10]}.png`.
+Images are saved as PNG regardless of source format. Filename: `{slug}_p{page}_fig{n}.png`.
 
 ### EPUB — ebooklib + BeautifulSoup4 (three-pass)
 
-**Pass 1 — image asset index**
-Iterates `book.get_items_of_type(ITEM_IMAGE)`. Builds `epub_item_name → (bytes, ext)`. SVG files are skipped (decorative in medical books). Supported MIME types: `image/jpeg`, `image/png`, `image/gif`, `image/webp`, `image/tiff`.
-
-**Pass 2 — hyperlink cross-reference map** *(the "Historical Anatomy" logic)*
-Iterates every HTML item and, for each `<a href="…#anchor">`, records the full parent paragraph text under `anchor_id` as a key:
-
-```python
-# Example: descriptions chapter
-# <p><a href="plates.xhtml#plate_i">Plate I.</a> The brachial plexus, C5-T1…</p>
-# → cross_ref["plate_i"] = ["Plate I. The brachial plexus, C5-T1…"]
-```
-
-This resolves the pattern in older anatomy atlases where images live in a "Plates" chapter and their verbose descriptions live in a separate "Descriptions / Legends" chapter, linked by HTML anchors.
-
-**Pass 3 — spine-order extraction**
-Processes HTML items in reading order (via `book.spine`). For each `<img>`:
-
-1. Resolve `src` relative path → canonical EPUB item name (`_resolve_epub_img_src`)
-2. Look up bytes in asset map, save to disk
-3. Collect immediate context via `_image_surrounding_text`:
-   - `alt` attribute
-   - `<figcaption>` inside the nearest `<figure>` or `<div>`
-   - Up to 2 sibling block elements before and after the image container
-4. Climb the DOM to find the nearest ancestor with an `id` attribute
-5. Look that `id` up in the cross-reference map; attach up to 3 matching descriptions
-6. Combine into an inline text marker:
-   ```
-   [Image: alt | figcaption | sibling text | Plate I. The brachial plexus…]
-   ```
-
-This marker is embedded into the text stream so the semantic embedding captures the figure's meaning even in chunks that don't include surrounding body text.
+Three-pass extraction with cross-reference map for anatomy atlases where images live in a "Plates" chapter and descriptions live in a separate "Descriptions / Legends" chapter, linked by HTML anchors.
 
 ### Image filename convention
 ```
@@ -202,42 +244,33 @@ This marker is embedded into the text stream so the semantic embedding captures 
 # e.g. sobotta_vol1_p147_fig1.png
 ```
 
-- **Deterministic**: book + page + figure index → same name on re-run
-- **Idempotent**: skips write if file already exists
-- **Traceable**: human-readable source identification
-
 ---
 
-## 6. Qdrant Collections
-
-| Collection | content_type(s) | Status |
-|---|---|---|
-| `medical_literature` | `medical_literature` | Not yet created (no books ingested) |
-| `training_materials` | `training_nrt`, `training_qat` | Not yet created |
-| `device_protocols` | `device_pemf`, `device_rlt` | Not yet created |
-
-Collections are auto-created on first ingestion run.
-
----
-
-## 7. Installed Python Dependencies
+## 9. Installed Python Dependencies
 
 | Package | Status | Purpose |
 |---|---|---|
-| `docling` | **Not installed** | PDF extraction, figure detection |
-| `easyocr` | **Not installed** | OCR for scanned PDFs + figure labels |
-| `openai-whisper` | **Not installed** | Video transcription |
-| `llama-index` | **Not installed** | Chunking, VectorStoreIndex |
-| `llama-index-vector-stores-qdrant` | **Not installed** | Qdrant backend |
-| `llama-index-embeddings-huggingface` | **Not installed** | Local embeddings |
-| `qdrant-client` | **Not installed** | Qdrant REST/gRPC client |
-| `pypdf` | **Not installed** | PDF text density pre-scan |
-| `pillow` | **Not installed** | PIL image handling |
-| `ebooklib` | Installed | EPUB parsing |
-| `beautifulsoup4` | Installed | HTML parsing for EPUB |
-| `lxml` | System dep | XML/HTML parser |
+| `fastapi` | **Installed** | Web framework |
+| `uvicorn` | **Installed** | ASGI server |
+| `httpx` | **Installed** | Async HTTP client (service health checks) |
+| `psutil` | **Installed** | System metrics (CPU, RAM, disk) |
+| `python-multipart` | **Installed** | File upload support |
+| `aiofiles` | **Installed** | Async file I/O |
+| `jinja2` | Installed (system) | **Not used** — version conflict with starlette LRU cache |
+| `ebooklib` | **Installed** | EPUB parsing |
+| `beautifulsoup4` | **Installed** | HTML parsing for EPUB |
+| `lxml` | **Installed** (system dep) | XML/HTML parser |
+| `docling` | Not installed | PDF extraction, figure detection |
+| `easyocr` | Not installed | OCR for scanned PDFs + figure labels |
+| `openai-whisper` | Not installed | Video transcription |
+| `llama-index` | Not installed | Chunking, VectorStoreIndex |
+| `llama-index-vector-stores-qdrant` | Not installed | Qdrant backend |
+| `llama-index-embeddings-huggingface` | Not installed | Local embeddings |
+| `qdrant-client` | Not installed | Qdrant REST/gRPC client |
+| `pypdf` | Not installed | PDF text density pre-scan |
+| `pillow` | Not installed | PIL image handling |
 
-**Install all at once:**
+**Install remaining dependencies:**
 ```bash
 pip install docling docling-core easyocr openai-whisper \
     llama-index llama-index-vector-stores-qdrant \
@@ -249,22 +282,25 @@ apt-get install -y ffmpeg
 
 ---
 
-## 8. Pending Tasks
+## 10. Pending Tasks
 
-- [ ] **Install Python dependencies** — `pip install docling easyocr openai-whisper llama-index qdrant-client pypdf pillow --break-system-packages` + `apt install ffmpeg`
+- [ ] **Install ingestion dependencies** — `pip install docling easyocr openai-whisper llama-index qdrant-client pypdf pillow --break-system-packages` + `apt install ffmpeg`
 - [ ] **Add books** — Drop `.pdf`/`.epub` into `./books/`, run `fetch_book_metadata.py` then `ingest_books.py --content-type medical_literature`
 - [ ] **Add training videos** — Drop `.mp4` into `./videos/nrt/` and `./videos/qat/`, run `transcribe_videos.py --type nrt --ingest`
 - [ ] **Add device docs** — Drop PEMF/RLT PDFs or `.md` settings files, run ingestion with `--content-type device_pemf` / `device_rlt`
-- [ ] **Multi-collection query** — Build `query_rag.py` that queries `medical_literature` + `training_materials` + `device_protocols` in parallel and merges results
-- [ ] **FastAPI web layer** — Upload UI, metadata review cards, Q&A endpoint, protocol generation, blog generation
+- [ ] **Build remaining web pages** — `/library`, `/images`, `/protocols`, `/search`, `/videos`
+- [ ] **Multi-collection query** — Build `query_rag.py` that queries all three collections in parallel and merges results
 - [ ] **Word output** — Generate `.docx` treatment protocols (§1 Klachtbeeld / §2 Behandeling / §3 Bijlagen)
-- [ ] **Tailscale** — Configure access control
+- [ ] **Tailscale ACL** — Restrict which Tailscale devices can access the server
 
-## 8. Known Issues
+---
+
+## 11. Known Issues
 
 | Issue | Severity | Notes |
 |---|---|---|
 | EPUB has no real page numbers | Low | `page_number` stores spine position (1-based reading order). Acceptable for retrieval; note in any UI. |
 | Docling EPUB support | Low | Tracked upstream as issue #515. Current workaround (ebooklib) is full-featured for the anatomy use case. |
 | No swap configured | Medium | If both Qdrant and Ollama are under peak load simultaneously and exceed their memory limits, the kernel OOM killer may intervene. Monitor with `docker stats` during heavy ingestion. |
+| Jinja2 version conflict | Low | System jinja2 conflicts with pip-installed starlette's LRU cache (`unhashable type: 'dict'`). Resolved by generating all HTML as inline strings — no templates used. |
 | `docker-compose` v1 bug with new images | Resolved | v1.29.2 throws `KeyError: 'ContainerConfig'` on recreate. Workaround: always `docker-compose down` before `docker-compose up -d`. |
