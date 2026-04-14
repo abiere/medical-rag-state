@@ -78,6 +78,39 @@
 - `CHANGELOG.md` updated with a dated entry for every session's work
 - `CONTEXT.md` reflects current stack status and next steps at all times
 
+### NFR-6 — Unified multi-collection search
+- A single treatment protocol query MUST search all three Qdrant collections
+  (`medical_literature`, `training_materials`, `device_protocols`) simultaneously
+- Results are merged by cosine similarity score before ranking
+- Each result carries its `content_type` so the protocol generator can route
+  it to the correct section (§1 Klachtbeeld / §2 Behandeling / §3 Bijlagen)
+
+---
+
+## Functional Requirements — Extended
+
+### FR-7 — Video transcription (NRT / QAT extra muscle resets)
+- Accept MP4/MOV/MKV/M4V video files in `videos/{nrt,qat,pemf,rlt}/`
+- Transcribe locally with OpenAI Whisper (model: `medium`; language hint: `nl`)
+- Save timestamped segments to `data/transcripts/{stem}.json` and `.txt`
+- Ingest transcript segments into Qdrant (`training_materials` or `device_protocols`)
+- Cross-reference transcript chunks with related PDF sections via `see_also` field
+- Idempotent: skip transcription if transcript file already exists
+
+### FR-8 — PEMF / RLT structured settings extraction
+- For every chunk with `content_type: device_pemf` or `device_rlt`, automatically
+  extract structured fields from the text:
+  `setting`, `program`, `intensity_range`, `duration_minutes`,
+  `indication`, `contraindication`, `body_region`
+- Store as Qdrant payload for direct use in §2 (Behandeling) of treatment protocols
+- Protocol generator auto-formats: "PEMF: Setting 3, Intensity 4-6, 20 min op lumbale regio"
+
+### FR-9 — Plain text / Markdown import (QAT and others)
+- Accept `.txt` and `.md` files via `scripts/ingest_text.py`
+- CLI arguments: `--content-type`, `--title`, `--author`, `--year`, `--publisher`
+- Same chunking, embedding, and citation pipeline as PDF/EPUB
+- Updates `books_metadata.json` with `media_type: "text"` and `internal_only: true`
+
 ---
 
 ## Explicit Exclusions

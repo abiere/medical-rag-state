@@ -13,6 +13,8 @@ data/extracted_images/
 data/ollama/
 data/qdrant/
 data/processing_logs/
+data/transcripts/*.json
+data/transcripts/*.txt
 
 # Python
 __pycache__/

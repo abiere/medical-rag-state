@@ -306,11 +306,170 @@ Stored separately from anatomy images (different directory, TBD).
 
 | Path | Purpose |
 |---|---|
-| `scripts/ingest_books.py` | Main ingestion pipeline |
+| `scripts/ingest_books.py` | PDF/EPUB ingestion (all content types) |
+| `scripts/ingest_text.py` | Plain text / Markdown ingestion |
+| `scripts/transcribe_videos.py` | Video → Whisper transcript → Qdrant |
 | `scripts/fetch_book_metadata.py` | Bibliographic metadata fetcher |
 | `data/books_metadata.json` | Per-book metadata + citation strings |
 | `data/image_memory.json` | Axel's image selections per tissue |
-| `data/extracted_images/` | Extracted figures (naming: `{slug}_p{page}_fig{n}.png`) |
+| `data/video_document_links.json` | Video ↔ PDF cross-references |
+| `data/extracted_images/` | Extracted figures |
+| `data/transcripts/` | Whisper JSON + TXT transcripts |
+| `data/device_settings/` | Curated PEMF / RLT settings files |
 | `data/processing_logs/{slug}.json` | Per-book ingestion stats |
+| `videos/nrt/` | NRT training videos |
+| `videos/qat/` | QAT training videos |
+| `videos/pemf/` | PEMF instruction videos |
+| `videos/rlt/` | RLT instruction videos |
 | `docker-compose.yml` | Qdrant + Ollama services |
 | `SYSTEM_DOCS/CONTEXT.md` | Session loader (read first) |
+
+---
+
+## 10. Content Types
+
+Every Qdrant chunk carries a `content_type` field. This determines which
+collection it lives in and how the protocol generator uses it.
+
+| content_type | Qdrant collection | Source | Used in protocol |
+|---|---|---|---|
+| `medical_literature` | `medical_literature` | Anatomy/clinical EPUBs/PDFs | §1 Klachtbeeld, §3 Bijlagen |
+| `training_nrt` | `training_materials` | NRT PDFs + video transcripts | §2 NRT muscle resets |
+| `training_qat` | `training_materials` | QAT text/PDFs + video transcripts | §2 QAT tissue sequence |
+| `device_pemf` | `device_protocols` | PEMF manuals/videos/settings | §2 PEMF settings |
+| `device_rlt` | `device_protocols` | RLT manuals/videos/settings | §2 RLT settings |
+
+### Ingestion command per content type
+
+```bash
+# Medical literature (anatomy, clinical)
+python scripts/ingest_books.py --books-dir ./books --content-type medical_literature
+
+# NRT training PDFs
+python scripts/ingest_books.py --books-dir ./books/nrt --content-type training_nrt
+
+# QAT plain text manual
+python scripts/ingest_text.py --file books/QAT_Manual.txt \
+  --content-type training_qat --title "QAT Manual"
+
+# PEMF device manual (PDF)
+python scripts/ingest_books.py --books-dir ./books/pemf --content-type device_pemf
+
+# NRT video transcripts
+python scripts/transcribe_videos.py --type nrt --ingest
+```
+
+---
+
+## 11. Video Transcription Pipeline
+
+### Dependencies
+```bash
+pip install openai-whisper --break-system-packages
+apt-get install -y ffmpeg
+```
+
+### Flow per video
+```
+videos/{type}/{file}.mp4
+        │
+        ▼
+ffmpeg → 16 kHz mono WAV (temporary)
+        │
+        ▼
+whisper.load_model("medium")
+whisper.transcribe(audio, language="nl")
+        │
+        ├─ data/transcripts/{stem}.json  — {"segments": [{"start","end","text"}]}
+        ├─ data/transcripts/{stem}.txt   — plain text
+        │
+        ├─ _find_related_documents()     — name-match against books/
+        ├─ video_document_links.json     — updated
+        │
+        └─ (optional) _ingest_transcript() → Qdrant training_materials
+```
+
+### Whisper model tradeoffs
+
+| Model | VRAM | Speed | Accuracy | Recommended for |
+|---|---|---|---|---|
+| `tiny` | ~1 GB | 32× RT | low | Quick test |
+| `small` | ~2 GB | 8× RT | medium | Short clips |
+| `medium` | ~5 GB | 2× RT | high | **Default — NRT/QAT** |
+| `large` | ~10 GB | 1× RT | highest | Critical accuracy |
+
+RT = real-time. On 16 vCPU CPU-only: `medium` ≈ 3–4× real-time.
+RAM budget: `medium` model needs ~3 GB; safe alongside Qdrant (32 MiB) + Ollama idle.
+
+### Video–document linking
+
+`data/video_document_links.json` maps video filenames to related content:
+```json
+{
+  "NRT_Shoulder_Advanced.mp4": {
+    "related_muscles":   ["M. infraspinatus", "M. supraspinatus"],
+    "related_pdf_pages": [
+      {"file": "NRT_Training_Manual.pdf", "page": 47}
+    ]
+  }
+}
+```
+
+Auto-populated by name matching; manually refined via web interface.
+The `see_also` field on transcript chunks links to related PDF files.
+
+### Idempotency
+Transcription is skipped if `data/transcripts/{stem}.json` already exists.
+Delete the file to force re-transcription.
+
+---
+
+## 12. Multi-Collection Search Strategy
+
+The treatment protocol generator queries all three collections and merges results.
+
+### Query flow (planned FastAPI endpoint)
+```
+POST /api/generate/protocol  { "condition": "lumbale pijn" }
+        │
+        ├─ embed(condition) → query_vector
+        │
+        ├─ Qdrant search: medical_literature  (top 10, cosine)
+        ├─ Qdrant search: training_materials  (top 5, cosine)
+        └─ Qdrant search: device_protocols    (top 5, cosine)
+                │
+                ▼  merge + re-rank by score
+                │
+        ├─ content_type=medical_literature → §1 + §3 (anatomy, rationale)
+        ├─ content_type=training_nrt/qat   → §2 (muscle resets, tissue sequence)
+        └─ content_type=device_pemf/rlt    → §2 (device settings, auto-formatted)
+                │
+                ▼
+        Ollama llama3.1:8b  →  structured Word document
+```
+
+### Collection filter examples (Qdrant Python client)
+```python
+from qdrant_client.models import Filter, FieldCondition, MatchValue
+
+# Only PEMF results for a body region
+result = client.search(
+    collection_name="device_protocols",
+    query_vector=embed(question),
+    query_filter=Filter(must=[
+        FieldCondition(key="content_type",  match=MatchValue(value="device_pemf")),
+        FieldCondition(key="body_region",   match=MatchValue(value="lumbal")),
+    ]),
+    limit=5,
+)
+
+# Only chunks with images
+result = client.search(
+    collection_name="medical_literature",
+    query_vector=embed(question),
+    query_filter=Filter(must_not=[
+        FieldCondition(key="image_links", match=MatchValue(value=[])),
+    ]),
+    limit=10,
+)
+```

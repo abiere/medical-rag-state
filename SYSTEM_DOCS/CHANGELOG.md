@@ -85,6 +85,51 @@ ingestion flow, scanned-PDF detection, figure extraction, bibliographic metadata
 pipeline, citation formats (APA/Vancouver/Chicago), Qdrant payload schema,
 image memory, processing logs, pre/post checks.
 
+### Content types, video transcription, device extraction *(this commit)*
+
+**scripts/ingest_books.py** extended:
+- `content_type` field on every Qdrant chunk (5 types: medical_literature, training_nrt/qat, device_pemf/rlt)
+- `--content-type` CLI arg; collection auto-derived from content type
+- PEMF/RLT structured extraction: setting, program, intensity_range, duration_minutes, indication, contraindication, body_region
+- `see_also` cross-reference field on all chunks
+- `_collection_for_content_type()` router; `CONTENT_TYPE_COLLECTION_MAP` constant
+- `_ensure_video_document_links()` init function
+
+**scripts/transcribe_videos.py** (new):
+- Whisper `medium` model, Dutch language hint; idempotent transcript cache
+- ffmpeg audio extraction (16 kHz mono WAV)
+- Saves `data/transcripts/{stem}.json` + `.txt` per video
+- Auto-links videos to related PDFs by name matching
+- `data/video_document_links.json` updated per run
+- Optional `--ingest` flag to push segments into Qdrant
+- Content types: training_nrt, training_qat, device_pemf, device_rlt
+- CLI: `--type`, `--file`, `--model`, `--language`, `--ingest`, `--dry-run`
+
+**scripts/ingest_text.py** (new):
+- Ingests `.txt` / `.md` files into Qdrant without PDF/EPUB pipeline
+- Paragraph-aware chunking with sentence-level fallback
+- Full citation metadata (APA + Vancouver)
+- Updates `books_metadata.json` with `media_type: "text"`, `internal_only: true`
+- CLI: `--file`, `--content-type`, `--title`, `--author`, `--year`, `--publisher`
+
+**New directories:** `videos/nrt/`, `videos/qat/`, `videos/pemf/`, `videos/rlt/`,
+`data/transcripts/`, `data/device_settings/` — each with README.md
+
+**New data files:** `data/video_document_links.json` (empty template, tracked in git)
+
+**SYSTEM_DOCS/TECHNICAL_DESIGN.md** extended:
+- Section 10: Content Types (table + ingestion commands per type)
+- Section 11: Video Transcription Pipeline (Whisper model tradeoffs, flow diagram, idempotency)
+- Section 12: Multi-Collection Search Strategy (query flow, Qdrant filter examples)
+
+**SYSTEM_DOCS/REQUIREMENTS.md** extended:
+- FR-7: Video transcription
+- FR-8: PEMF/RLT structured settings extraction
+- FR-9: Plain text/Markdown import
+- NFR-6: Unified multi-collection search
+
+**PROJECT_STATE.md** and **CONTEXT.md** updated with new folder structure, Qdrant collections, stack table, and ingestion commands.
+
 ---
 
 ## Pending

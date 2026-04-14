@@ -87,11 +87,21 @@ All outputs cite exact page numbers and source documents. No hallucinated refere
 | Qdrant | Vector store | Running |
 | Ollama / llama3.1:8b | Local LLM inference | Running |
 | LLaVA (vision) | Figure descriptions | Not yet pulled |
+| OpenAI Whisper (local) | Video transcription | Ready (not yet installed) |
+| ffmpeg | Audio extraction for Whisper | Not yet installed |
 | FastAPI | Web layer — upload, status, Q&A, generation | **Planned** |
 | python-docx | Word document output | **Planned** |
 | Tailscale | Access control | **Planned / pending setup** |
 
 ---
+
+## Qdrant collections
+
+| Collection | content_type(s) | What goes in |
+|---|---|---|
+| `medical_literature` | `medical_literature` | Anatomy/clinical EPUBs + PDFs |
+| `training_materials` | `training_nrt`, `training_qat` | NRT/QAT PDFs, video transcripts, text |
+| `device_protocols` | `device_pemf`, `device_rlt` | Device manuals, settings, videos |
 
 ## Ingestion pipeline
 
@@ -99,23 +109,33 @@ All outputs cite exact page numbers and source documents. No hallucinated refere
 # Step 1: fetch bibliographic metadata (run once per new book)
 python scripts/fetch_book_metadata.py --books-dir ./books
 
-# Step 2: ingest into Qdrant
-python scripts/ingest_books.py \
-  --collection <name> \
-  --subject <subject> \
-  --books-dir ./books
+# Step 2a: medical books
+python scripts/ingest_books.py --books-dir ./books --content-type medical_literature
+
+# Step 2b: NRT/QAT plain text
+python scripts/ingest_text.py --file books/QAT_Manual.txt \
+  --content-type training_qat --title "QAT Manual"
+
+# Step 2c: training videos
+python scripts/transcribe_videos.py --type nrt --ingest
+python scripts/transcribe_videos.py --type qat --ingest
+
+# Step 2d: device PDFs
+python scripts/ingest_books.py --books-dir ./books/pemf --content-type device_pemf
 ```
 
 - Chunking: 512 tokens / 64 overlap / SentenceSplitter
 - Qdrant collection auto-created on first run (Cosine / 1024-dim)
 - Idempotent — `chunk_hash` prevents duplicate vectors
 - Figures named: `{slug}_p{page}_fig{n}.png` — deterministic, traceable
-- Payload fields: `page_number`, `section_number`, `text`, `image_links`, `caption`,
-  `figure_labels`, `image_type`, `image_description`, `figure_number`, `citation`, `citation_apa`
-- Scanned PDFs: auto-detected (< 50 chars/page) → EasyOCR enabled
-- Citations: loaded from `data/books_metadata.json`; APA + Vancouver per chunk
-- Logs: `data/processing_logs/{slug}.json` written after each book
-- **Pre/post-check RAM and disk** before running on large collections (NFR-4)
+- Payload: `content_type`, `page_number`, `image_links`, `caption`, `figure_labels`,
+  `image_type`, `image_description`, `figure_number`, `citation`, `citation_apa`,
+  `see_also`, `device`, `setting`, `intensity_range`, `duration_minutes`,
+  `indication`, `contraindication`, `body_region`
+- Scanned PDFs: auto-detected (< 50 chars/page) → EasyOCR
+- PEMF/RLT: structured settings extracted automatically
+- Video transcripts: Whisper `medium`, Dutch language hint (`nl`)
+- **Pre/post-check RAM and disk** before large runs (NFR-4)
 
 ---
 
@@ -133,11 +153,13 @@ python scripts/ingest_books.py \
 
 ## Immediate next steps
 
-1. Add `.pdf` / `.epub` books to `./books/` and run ingestion (with pre-check)
-2. Build `query_rag.py` — embed question → Qdrant retrieval → Ollama → cited answer
-3. Build FastAPI web layer: book upload, processing status, usability rating, Q&A, generation
-4. Implement Word output for treatment protocols (3-section structure — see FR-3)
-5. Set up Tailscale access control
+1. Install dependencies: `pip install docling easyocr openai-whisper llama-index qdrant-client pypdf pillow --break-system-packages` + `apt install ffmpeg`
+2. Add `.pdf` / `.epub` books to `./books/` → run `fetch_book_metadata.py` → run `ingest_books.py`
+3. Add NRT/QAT videos to `./videos/nrt/` and `./videos/qat/` → run `transcribe_videos.py --ingest`
+4. Build `query_rag.py` — multi-collection search across all three collections
+5. Build FastAPI web layer: upload, status, Q&A, protocol generation, metadata review card
+6. Implement Word output for treatment protocols (§1/§2/§3 structure — see FR-3)
+7. Set up Tailscale access control
 
 ---
 

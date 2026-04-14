@@ -69,7 +69,17 @@ BASE_DIR            = Path("/root/medical-rag")
 IMAGES_DIR          = BASE_DIR / "data" / "extracted_images"
 LOGS_DIR            = BASE_DIR / "data" / "processing_logs"
 IMAGE_MEMORY_PATH   = BASE_DIR / "data" / "image_memory.json"
-BOOKS_METADATA_PATH = BASE_DIR / "data" / "books_metadata.json"
+BOOKS_METADATA_PATH        = BASE_DIR / "data" / "books_metadata.json"
+VIDEO_DOCUMENT_LINKS_PATH  = BASE_DIR / "data" / "video_document_links.json"
+
+# Maps content_type → Qdrant collection name
+CONTENT_TYPE_COLLECTION_MAP: dict[str, str] = {
+    "medical_literature": "medical_literature",
+    "training_nrt":       "training_materials",
+    "training_qat":       "training_materials",
+    "device_pemf":        "device_protocols",
+    "device_rlt":         "device_protocols",
+}
 
 # If a PDF averages fewer characters per page than this, enable OCR
 OCR_CHARS_PER_PAGE_THRESHOLD = 50
@@ -89,6 +99,23 @@ _FIGURE_NUMBER_RE = re.compile(
     r"(\d+[\.\-]\d+(?:[\.\-]\d+)?|\d+)",  # number (e.g. 4.52 or 12)
     re.IGNORECASE,
 )
+
+# Device settings extraction — PEMF / RLT documents
+_DEV_SETTING_RE   = re.compile(r"\bsetting\s+(\d+)",                        re.IGNORECASE)
+_DEV_PROGRAM_RE   = re.compile(r"\bprogram(?:ma)?\s+(\d+)",                 re.IGNORECASE)
+_DEV_INTENSITY_RE = re.compile(r"\bintensit(?:y|eit)\s*([\d]+(?:[-–]\d+)?)", re.IGNORECASE)
+_DEV_DURATION_RE  = re.compile(
+    r"\b(?:duur|duration)[:\s]+(\d+)\s*min(?:uten?)?",                      re.IGNORECASE
+)
+_DEV_INDICATIE_RE = re.compile(r"\bindicati[eo][:\s]+([^.\n;]{3,80})",      re.IGNORECASE)
+_DEV_CONTRA_RE    = re.compile(
+    r"\bcontra[-\s]?indicati[eo][:\s]+([^.\n;]{3,80})",                     re.IGNORECASE
+)
+_BODY_REGION_KEYWORDS: list[str] = [
+    "lumbal", "cervical", "thoracal", "knie", "schouder", "heup",
+    "pols", "enkel", "rug", "nek", "elleboog", "bekken", "ribben",
+    "sacral", "gluteal", "hamstring", "quadriceps",
+]
 
 # ---------------------------------------------------------------------------
 # Lazy singletons  (initialised on first use, shared across all books)
@@ -331,6 +358,74 @@ def _build_citation_payload(
         "apa":            apa,
         "vancouver":      vancouver,
     }
+
+
+# ---------------------------------------------------------------------------
+# Content-type routing and device settings extraction
+# ---------------------------------------------------------------------------
+
+def _collection_for_content_type(content_type: str) -> str:
+    """Return the Qdrant collection name for a given content_type."""
+    return CONTENT_TYPE_COLLECTION_MAP.get(content_type, "medical_literature")
+
+
+def _extract_device_settings(text: str, content_type: str) -> dict:
+    """
+    Parse structured PEMF / RLT settings from a text chunk.
+
+    Detects: setting, program, intensity range, duration, indication,
+    contraindication, and body region.  Returns a dict of those fields
+    (values are None when not found so they remain filterable in Qdrant).
+    """
+    device = "PEMF" if content_type == "device_pemf" else "RLT"
+
+    def _first(pattern: re.Pattern, txt: str):
+        m = pattern.search(txt)
+        return m.group(1).strip() if m else None
+
+    setting      = _first(_DEV_SETTING_RE,   text)
+    program      = _first(_DEV_PROGRAM_RE,   text)
+    intensity    = _first(_DEV_INTENSITY_RE, text)
+    duration_raw = _first(_DEV_DURATION_RE,  text)
+    indication   = _first(_DEV_INDICATIE_RE, text)
+    contraindic  = _first(_DEV_CONTRA_RE,    text)
+
+    duration_min: int | None = None
+    if duration_raw and duration_raw.isdigit():
+        duration_min = int(duration_raw)
+
+    body_region: str = ""
+    text_lower = text.lower()
+    for kw in _BODY_REGION_KEYWORDS:
+        if kw in text_lower:
+            body_region = kw
+            break
+    # Also check indication text
+    if not body_region and indication:
+        ind_lower = indication.lower()
+        for kw in _BODY_REGION_KEYWORDS:
+            if kw in ind_lower:
+                body_region = kw
+                break
+
+    return {
+        "device":              device,
+        "setting":             setting,
+        "program":             program,
+        "intensity_range":     intensity,
+        "duration_minutes":    duration_min,
+        "indication":          indication,
+        "contraindication":    contraindic,
+        "body_region":         body_region,
+    }
+
+
+def _ensure_video_document_links(path: Path) -> None:
+    """Create data/video_document_links.json as an empty object if absent."""
+    if not path.exists():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("{}\n")
+        logger.info("Initialised video_document_links: %s", path)
 
 
 # ---------------------------------------------------------------------------
@@ -928,20 +1023,30 @@ def sections_to_llama_documents(sections: list[dict]):
 
     Metadata stored in Qdrant payload:
         source_file, source_path, page_number, section_number, format,
-        subject, chapter, image_links, chunk_hash,
+        content_type, subject, chapter, image_links, chunk_hash,
         caption, figure_labels, image_type, image_description,
-        figure_number, citation (nested dict)
+        figure_number, citation (nested dict),
+        see_also (cross-references to related video/pdf chunks),
+        device, setting, program, intensity_range, duration_minutes,
+        indication, contraindication, body_region  (device docs only)
 
-    Excluded from LLM prompt (structural, not useful as reasoning text):
-        source_path, chunk_hash, image_links, figure_labels, image_type
+    Excluded from LLM prompt: source_path, chunk_hash, image_links,
+        figure_labels, image_type, citation, see_also, device,
+        setting, program, intensity_range  (structural / redundant)
 
-    Excluded from embedding (same + citation dicts):
-        source_path, chunk_hash, image_links, figure_labels, image_type, citation
+    Excluded from embedding: same as above + citation
     """
     try:
         from llama_index.core import Document  # type: ignore
     except ImportError as exc:
         raise ImportError("pip install llama-index") from exc
+
+    _llm_exclude = [
+        "source_path", "chunk_hash", "image_links",
+        "figure_labels", "image_type", "citation", "see_also",
+        "device", "setting", "program", "intensity_range",
+    ]
+    _embed_exclude = _llm_exclude  # same set
 
     documents = []
     for sec in sections:
@@ -953,6 +1058,7 @@ def sections_to_llama_documents(sections: list[dict]):
                 "page_number":       sec["page_number"],
                 "section_number":    sec["section_number"],
                 "format":            sec["format"],
+                "content_type":      sec.get("content_type", "medical_literature"),
                 "subject":           sec.get("subject", ""),
                 "chapter":           "",
                 "image_links":       sec["image_links"],
@@ -963,19 +1069,23 @@ def sections_to_llama_documents(sections: list[dict]):
                 "image_type":        sec.get("image_type", ""),
                 "image_description": sec.get("image_description", ""),
                 "figure_number":     sec.get("figure_number", ""),
-                # Citation (full nested dict stored in Qdrant payload)
+                # Citation
                 "citation":          sec.get("citation", {}),
-                # Flat citation string for LLM context
                 "citation_apa":      sec.get("citation", {}).get("apa", ""),
+                # Cross-references (video ↔ document linking)
+                "see_also":          sec.get("see_also", []),
+                # Device settings (populated for device_pemf / device_rlt)
+                "device":            sec.get("device", ""),
+                "setting":           sec.get("setting"),
+                "program":           sec.get("program"),
+                "intensity_range":   sec.get("intensity_range"),
+                "duration_minutes":  sec.get("duration_minutes"),
+                "indication":        sec.get("indication"),
+                "contraindication":  sec.get("contraindication"),
+                "body_region":       sec.get("body_region", ""),
             },
-            excluded_llm_metadata_keys=[
-                "source_path", "chunk_hash", "image_links",
-                "figure_labels", "image_type", "citation",
-            ],
-            excluded_embed_metadata_keys=[
-                "source_path", "chunk_hash", "image_links",
-                "figure_labels", "image_type", "citation",
-            ],
+            excluded_llm_metadata_keys=_llm_exclude,
+            excluded_embed_metadata_keys=_embed_exclude,
         )
         documents.append(doc)
     return documents
@@ -1037,21 +1147,44 @@ def build_index(documents, collection_name: str) -> None:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Ingest medical PDFs and EPUBs into Qdrant via Docling + LlamaIndex",
+        description="Ingest medical PDFs/EPUBs into Qdrant via Docling + LlamaIndex",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument("--books-dir",  type=Path, default=Path("./books"))
-    parser.add_argument("--images-dir", type=Path, default=IMAGES_DIR)
-    parser.add_argument("--collection", default="medical_rag")
-    parser.add_argument("--subject",    default="")
-    parser.add_argument("--dry-run",    action="store_true")
+    parser.add_argument("--books-dir",    type=Path, default=Path("./books"))
+    parser.add_argument("--images-dir",   type=Path, default=IMAGES_DIR)
+    parser.add_argument(
+        "--content-type",
+        default="medical_literature",
+        choices=list(CONTENT_TYPE_COLLECTION_MAP.keys()),
+        help=(
+            "Content type tag stored on every chunk. "
+            "Also determines the target Qdrant collection unless "
+            "--collection is given explicitly. "
+            f"Choices: {', '.join(CONTENT_TYPE_COLLECTION_MAP)}"
+        ),
+    )
+    parser.add_argument(
+        "--collection",
+        default=None,
+        help=(
+            "Qdrant collection name. "
+            "Defaults to the collection mapped from --content-type."
+        ),
+    )
+    parser.add_argument("--subject",  default="")
+    parser.add_argument("--dry-run",  action="store_true")
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
-    books_dir:  Path = args.books_dir.resolve()
-    images_dir: Path = args.images_dir.resolve()
+    books_dir:    Path = args.books_dir.resolve()
+    images_dir:   Path = args.images_dir.resolve()
+    content_type: str  = args.content_type
+    collection:   str  = args.collection or _collection_for_content_type(content_type)
+
+    logger.info("Content type : %s", content_type)
+    logger.info("Collection   : %s", collection)
 
     if not books_dir.exists():
         logger.error("Books directory not found: %s", books_dir)
@@ -1073,6 +1206,7 @@ def main() -> None:
 
     # ── One-time initialisation ──────────────────────────────────────────────
     _ensure_image_memory(IMAGE_MEMORY_PATH)
+    _ensure_video_document_links(VIDEO_DOCUMENT_LINKS_PATH)
     books_meta = _load_books_metadata()
     if books_meta:
         logger.info("Loaded bibliographic metadata for %d book(s)", len(books_meta))
@@ -1082,6 +1216,8 @@ def main() -> None:
             "Run scripts/fetch_book_metadata.py to populate."
         )
 
+    is_device_content = content_type in ("device_pemf", "device_rlt")
+
     # ── Extract books ────────────────────────────────────────────────────────
     all_sections: list[dict] = []
 
@@ -1089,15 +1225,23 @@ def main() -> None:
         slug = _book_slug(book_path)
         sections, stats = extract_book(book_path, images_dir)
 
-        if args.subject:
-            for s in sections:
-                s["subject"] = args.subject
-
-        # Attach citation objects from books_metadata.json
-        book_meta = books_meta.get(slug, {})
         for sec in sections:
-            fig_num = sec.get("figure_number", "")
-            caption = sec.get("caption", "")
+            # Content type on every chunk
+            sec["content_type"] = content_type
+            sec["see_also"]     = []
+
+            if args.subject:
+                sec["subject"] = args.subject
+
+            # Device settings extraction for PEMF / RLT documents
+            if is_device_content:
+                device_fields = _extract_device_settings(sec["text"], content_type)
+                sec.update(device_fields)
+
+            # Citation from books_metadata.json
+            book_meta = books_meta.get(slug, {})
+            fig_num   = sec.get("figure_number", "")
+            caption   = sec.get("caption", "")
             sec["citation"] = _build_citation_payload(
                 book_meta, sec["page_number"], fig_num, caption
             )
@@ -1121,8 +1265,8 @@ def main() -> None:
 
     total_figures = sum(len(s["image_links"]) for s in all_sections)
     logger.info(
-        "Total: %d sections across %d book(s), %d figures",
-        len(all_sections), len(book_files), total_figures,
+        "Total: %d sections, %d book(s), %d figures  [content_type=%s → %s]",
+        len(all_sections), len(book_files), total_figures, content_type, collection,
     )
 
     if args.dry_run:
@@ -1131,10 +1275,12 @@ def main() -> None:
             preview.append({
                 "source_file":    s["source_file"],
                 "format":         s["format"],
+                "content_type":   s["content_type"],
                 "page_number":    s["page_number"],
                 "image_links":    s["image_links"],
-                "caption":        s["caption"],
-                "figure_number":  s["figure_number"],
+                "caption":        s.get("caption", ""),
+                "figure_number":  s.get("figure_number", ""),
+                "body_region":    s.get("body_region", ""),
                 "citation_apa":   s.get("citation", {}).get("apa", ""),
                 "text_preview":   s["text"][:140].replace("\n", " "),
             })
@@ -1143,7 +1289,7 @@ def main() -> None:
         return
 
     documents = sections_to_llama_documents(all_sections)
-    build_index(documents, collection_name=args.collection)
+    build_index(documents, collection_name=collection)
 
 
 if __name__ == "__main__":

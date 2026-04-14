@@ -24,19 +24,36 @@
 
 ```
 /root/medical-rag/
-├── books/                        # Drop PDFs and EPUBs here before ingestion  ← EMPTY
+├── books/                        # Drop PDFs/EPUBs here  ← EMPTY
+├── videos/
+│   ├── nrt/                      # NRT training videos  ← EMPTY
+│   ├── qat/                      # QAT training videos  ← EMPTY
+│   ├── pemf/                     # PEMF instruction videos  ← EMPTY
+│   └── rlt/                      # RLT instruction videos  ← EMPTY
 ├── data/
-│   ├── extracted_images/         # Saved figures — {book_stem}_{md5[:10]}.{ext}
-│   ├── ollama/                   # Ollama model weights (persistent volume)
-│   └── qdrant/                   # Qdrant vector storage (persistent volume)
+│   ├── books_metadata.json       # Bibliographic metadata + citations (tracked in git)
+│   ├── video_document_links.json # Video ↔ PDF cross-references (tracked in git)
+│   ├── image_memory.json         # Axel's image selections per tissue (tracked in git)
+│   ├── extracted_images/         # Saved figures — {slug}_p{page}_fig{n}.png
+│   ├── transcripts/              # Whisper JSON + TXT transcripts
+│   ├── device_settings/          # Curated PEMF/RLT settings files
+│   ├── processing_logs/          # Per-book ingestion stats
+│   ├── ollama/                   # Ollama model weights (Docker volume)
+│   └── qdrant/                   # Qdrant vector storage (Docker volume)
 ├── scripts/
-│   └── ingest_books.py           # Main ingestion pipeline (PDF + EPUB)
+│   ├── ingest_books.py           # PDF + EPUB ingestion (all content types)
+│   ├── ingest_text.py            # Plain text / Markdown ingestion
+│   ├── transcribe_videos.py      # Whisper video transcription + ingest
+│   └── fetch_book_metadata.py    # OpenLibrary + Google Books metadata
+├── SYSTEM_DOCS/                  # Technical documentation
+├── CLAUDE.md                     # Standing instructions
+├── PROJECT_STATE.md              # This file
+├── serve_state.py                # HTTP state server (:8080)
 └── docker-compose.yml
 ```
 
-**Disk usage (2026-04-14):** `/dev/sda1` — 301 GB total, 17 GB used (6%), 272 GB free. `/root/medical-rag/` — 4.6 GB (mostly Ollama model weights in `data/ollama/`).
-
-**books/ directory:** Currently empty. Add `.pdf` or `.epub` files before running ingestion.
+**Disk usage (2026-04-14):** `/dev/sda1` — 301 GB total, 17 GB used (6%), 272 GB free.
+**books/ and videos/:** All empty — no content ingested yet.
 
 ---
 
@@ -181,39 +198,67 @@ This marker is embedded into the text stream so the semantic embedding captures 
 
 ### Image filename convention
 ```
-{book_stem}_{md5_of_content[:10]}{ext}
-# e.g. gray_anatomy_a3f9b21c04.jpg
+{slug}_p{page}_fig{n}.png
+# e.g. sobotta_vol1_p147_fig1.png
 ```
 
-- **Deterministic**: same image always produces the same filename
-- **Idempotent**: re-running ingestion does not duplicate files
-- **Traceable**: prefix identifies the source book
+- **Deterministic**: book + page + figure index → same name on re-run
+- **Idempotent**: skips write if file already exists
+- **Traceable**: human-readable source identification
 
 ---
 
-## 6. Installed Python Dependencies
+## 6. Qdrant Collections
 
-| Package | Purpose |
-|---|---|
-| `docling` | PDF extraction, layout analysis, figure detection |
-| `llama-index` | Document → node chunking, VectorStoreIndex |
-| `llama-index-vector-stores-qdrant` | Qdrant backend for LlamaIndex |
-| `llama-index-embeddings-huggingface` | Local HuggingFace embedding model |
-| `qdrant-client` | Python client for Qdrant REST/gRPC |
-| `ebooklib` | EPUB parsing (spine, items, assets) |
-| `beautifulsoup4` | HTML parsing for EPUB chapters |
-| `lxml` | Fast HTML/XML parser backend for BeautifulSoup4 |
+| Collection | content_type(s) | Status |
+|---|---|---|
+| `medical_literature` | `medical_literature` | Not yet created (no books ingested) |
+| `training_materials` | `training_nrt`, `training_qat` | Not yet created |
+| `device_protocols` | `device_pemf`, `device_rlt` | Not yet created |
+
+Collections are auto-created on first ingestion run.
 
 ---
 
-## 7. Pending Tasks
+## 7. Installed Python Dependencies
 
-- [ ] **Add books** — Drop `.pdf` / `.epub` files into `./books/` and run ingestion
-- [ ] **Run first ingestion** — `python scripts/ingest_books.py --collection anatomy --subject anatomy --books-dir ./books`
-- [ ] **Query script** — Build `query_rag.py` that: embeds a question, retrieves top-K chunks from Qdrant (with optional `image_links` filter), passes context to `llama3.1:8b` via Ollama, returns answer + image paths
-- [ ] **Chapter metadata** — Add a TOC-parsing pass to populate the `chapter` metadata field (currently always `""`)
-- [ ] **Payload index on `image_links`** — If filtering "only chunks with images" becomes a frequent query, add: `client.create_payload_index(collection, "image_links", PayloadSchemaType.KEYWORD)`
-- [ ] **Multimodal upgrade path** — When a multimodal Ollama model is available (e.g. LLaVA), feed the extracted image paths alongside the text context for visual question answering on anatomy illustrations
+| Package | Status | Purpose |
+|---|---|---|
+| `docling` | **Not installed** | PDF extraction, figure detection |
+| `easyocr` | **Not installed** | OCR for scanned PDFs + figure labels |
+| `openai-whisper` | **Not installed** | Video transcription |
+| `llama-index` | **Not installed** | Chunking, VectorStoreIndex |
+| `llama-index-vector-stores-qdrant` | **Not installed** | Qdrant backend |
+| `llama-index-embeddings-huggingface` | **Not installed** | Local embeddings |
+| `qdrant-client` | **Not installed** | Qdrant REST/gRPC client |
+| `pypdf` | **Not installed** | PDF text density pre-scan |
+| `pillow` | **Not installed** | PIL image handling |
+| `ebooklib` | Installed | EPUB parsing |
+| `beautifulsoup4` | Installed | HTML parsing for EPUB |
+| `lxml` | System dep | XML/HTML parser |
+
+**Install all at once:**
+```bash
+pip install docling docling-core easyocr openai-whisper \
+    llama-index llama-index-vector-stores-qdrant \
+    llama-index-embeddings-huggingface \
+    qdrant-client pypdf pillow numpy \
+    --break-system-packages
+apt-get install -y ffmpeg
+```
+
+---
+
+## 8. Pending Tasks
+
+- [ ] **Install Python dependencies** — `pip install docling easyocr openai-whisper llama-index qdrant-client pypdf pillow --break-system-packages` + `apt install ffmpeg`
+- [ ] **Add books** — Drop `.pdf`/`.epub` into `./books/`, run `fetch_book_metadata.py` then `ingest_books.py --content-type medical_literature`
+- [ ] **Add training videos** — Drop `.mp4` into `./videos/nrt/` and `./videos/qat/`, run `transcribe_videos.py --type nrt --ingest`
+- [ ] **Add device docs** — Drop PEMF/RLT PDFs or `.md` settings files, run ingestion with `--content-type device_pemf` / `device_rlt`
+- [ ] **Multi-collection query** — Build `query_rag.py` that queries `medical_literature` + `training_materials` + `device_protocols` in parallel and merges results
+- [ ] **FastAPI web layer** — Upload UI, metadata review cards, Q&A endpoint, protocol generation, blog generation
+- [ ] **Word output** — Generate `.docx` treatment protocols (§1 Klachtbeeld / §2 Behandeling / §3 Bijlagen)
+- [ ] **Tailscale** — Configure access control
 
 ## 8. Known Issues
 
