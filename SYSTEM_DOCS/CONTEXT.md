@@ -11,9 +11,11 @@ A **private, fully-local RAG system** for medical and acupuncture literature.
 Access via **Tailscale only**. All inference runs on a single Hetzner server.
 
 **Primary outputs:**
-1. Word documents — treatment protocols with acupuncture points, images, page-cited sources
-2. Blog articles for nrt-amsterdam.nl — grounded in retrieved literature
-3. Ad hoc Q&A — free-form questions answered against the book database, with citations
+1. **Word documents** — treatment protocols (condition overview, acupuncture points + images, cited appendix)
+2. **Blog articles** for nrt-amsterdam.nl — grounded in retrieved literature
+3. **Ad hoc Q&A** — free-form questions answered against the book database, with citations
+
+All outputs cite exact page numbers and source documents. No hallucinated references.
 
 ---
 
@@ -56,7 +58,12 @@ Access via **Tailscale only**. All inference runs on a single Hetzner server.
 ├── docker-compose.yml
 ├── CLAUDE.md               ← standing instructions
 ├── PROJECT_STATE.md        ← live server state (update & commit after each task)
-└── SYSTEM_DOCS/            ← this directory
+└── SYSTEM_DOCS/
+    ├── CONTEXT.md          ← this file
+    ├── REQUIREMENTS.md     ← FR + NFR (updated 2026-04-14)
+    ├── ARCHITECTURE.md     ← full stack description
+    ├── CHANGELOG.md        ← dated history of all changes
+    └── TEST_REPORT.md      ← test results (no tests yet)
 ```
 
 ---
@@ -70,7 +77,7 @@ Access via **Tailscale only**. All inference runs on a single Hetzner server.
 | BAAI/bge-large-en-v1.5 | Local embeddings, 1024-dim | Ready |
 | Qdrant | Vector store | Running |
 | Ollama / llama3.1:8b | Local LLM inference | Running |
-| FastAPI | Web layer — upload, Q&A, generation | **Planned** |
+| FastAPI | Web layer — upload, status, Q&A, generation | **Planned** |
 | python-docx | Word document output | **Planned** |
 | Tailscale | Access control | **Planned / pending setup** |
 
@@ -89,15 +96,28 @@ python scripts/ingest_books.py \
 - Qdrant collection auto-created on first run (Cosine / 1024-dim)
 - Idempotent — `chunk_hash` prevents duplicate vectors
 - Payload fields: `page_number`, `section_number`, `text`, `image_links`, `source_file`, `format`, `chunk_hash`
+- **Pre/post-check RAM and disk** before running on large collections (NFR-4)
+
+---
+
+## Standing rules (from CLAUDE.md + NFR)
+
+| Rule | When |
+|---|---|
+| `git add PROJECT_STATE.md && git commit -m "state: ..." && git push` | After every significant task |
+| `git tag -a v<date>-<desc>` | Before every significant change |
+| Docker volume snapshot of `data/qdrant/` | Before any ingestion that modifies an existing collection |
+| Update `CHANGELOG.md` with a dated entry | End of every session |
+| Automated tests pass + `TEST_REPORT.md` updated | Before every deploy |
 
 ---
 
 ## Immediate next steps
 
-1. Add `.pdf` / `.epub` books to `./books/` and run ingestion
+1. Add `.pdf` / `.epub` books to `./books/` and run ingestion (with pre-check)
 2. Build `query_rag.py` — embed question → Qdrant retrieval → Ollama → cited answer
-3. Build FastAPI web layer (upload + Q&A + generation endpoints)
-4. Generate first treatment protocol (Word output with citations)
+3. Build FastAPI web layer: book upload, processing status, usability rating, Q&A, generation
+4. Implement Word output for treatment protocols (3-section structure — see FR-3)
 5. Set up Tailscale access control
 
 ---
