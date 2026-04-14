@@ -16,6 +16,10 @@ data/processing_logs/
 data/transcripts/*.json
 data/transcripts/*.txt
 
+# Backup files — large binaries and daily JSON copies, not tracked in git
+backups/qdrant/
+backups/metadata/
+
 # Python
 __pycache__/
 *.py[cod]
