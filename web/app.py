@@ -1,5 +1,5 @@
 from fastapi import FastAPI, BackgroundTasks, UploadFile, File, Form
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 import httpx, psutil, subprocess, json, os, re, shutil
 from pathlib import Path
 from datetime import datetime
@@ -457,7 +457,135 @@ setInterval(() => {{
     return html
 
 
+# ── GET /videos/status ────────────────────────────────────────────────────────
+
+@app.get("/videos/status/{video_type}/{filename}")
+async def videos_status(video_type: str, filename: str):
+    if video_type not in VIDEO_TYPES:
+        return {"status": "error"}
+    safe = Path(filename).name          # strip any path traversal
+    stem = Path(safe).stem
+    if (TRANS_DIR / f"{stem}.json").exists():
+        return {"status": "done"}
+    try:
+        r = subprocess.run(["ps", "aux"], capture_output=True, text=True, timeout=5)
+        full_path = str(VIDEOS_DIR / video_type / safe)
+        if "transcribe_videos.py" in r.stdout and full_path in r.stdout:
+            return {"status": "running"}
+    except Exception:
+        pass
+    return {"status": "waiting"}
+
+
 # ── GET /videos ───────────────────────────────────────────────────────────────
+
+_VIDEO_SCRIPT = """
+<style>
+@keyframes _vspin{to{transform:rotate(360deg)}}
+.vspin{display:inline-block;width:11px;height:11px;border:2px solid #93c5fd;
+       border-top-color:#1d4ed8;border-radius:50%;
+       animation:_vspin .8s linear infinite;vertical-align:middle;margin-right:5px}
+</style>
+<script>
+function doUpload(vtype) {
+  const inp = document.getElementById('file-' + vtype);
+  if (!inp.files.length) { alert('Selecteer eerst een videobestand'); return; }
+  const fd = new FormData();
+  fd.append('file', inp.files[0]);
+  fd.append('video_type', vtype);
+  document.getElementById('progress-' + vtype).style.display = 'block';
+  const xhr = new XMLHttpRequest();
+  xhr.upload.addEventListener('progress', e => {
+    if (e.lengthComputable) {
+      const pct = Math.round(e.loaded / e.total * 100);
+      document.getElementById('pct-' + vtype).textContent = pct + '%';
+      document.getElementById('bar-' + vtype).style.width = pct + '%';
+      document.getElementById('mb-' + vtype).textContent =
+        (e.loaded/1e6).toFixed(1) + ' MB / ' + (e.total/1e6).toFixed(1) + ' MB';
+    }
+  });
+  xhr.addEventListener('load', () => {
+    if (xhr.status === 200) {
+      const d = JSON.parse(xhr.responseText);
+      document.getElementById('pct-' + vtype).textContent = '✓';
+      document.getElementById('mb-' + vtype).textContent = 'Transcriptie wordt gestart...';
+      const tf = new FormData();
+      tf.append('video_type', vtype);
+      tf.append('filename', d.filename);
+      fetch('/videos/transcribe', {method:'POST', body:tf}).then(() => location.reload());
+    } else {
+      document.getElementById('msg-' + vtype).textContent = 'Upload mislukt. Probeer opnieuw.';
+      document.getElementById('msg-' + vtype).style.display = 'block';
+      document.getElementById('progress-' + vtype).style.display = 'none';
+    }
+  });
+  xhr.addEventListener('error', () => {
+    document.getElementById('msg-' + vtype).textContent = 'Verbindingsfout. Probeer opnieuw.';
+    document.getElementById('msg-' + vtype).style.display = 'block';
+    document.getElementById('progress-' + vtype).style.display = 'none';
+  });
+  xhr.open('POST', '/videos/upload');
+  xhr.send(fd);
+}
+
+function manualTranscribe(vtype, filename, safeId) {
+  const fd = new FormData();
+  fd.append('video_type', vtype);
+  fd.append('filename', filename);
+  fetch('/videos/transcribe', {method:'POST', body:fd})
+    .then(r => r.json())
+    .then(d => {
+      if (d.status === 'started') { setRunning(vtype, safeId); startPoll(vtype, filename, safeId); }
+    });
+}
+
+function setRunning(vtype, safeId) {
+  document.getElementById('status-' + vtype + '-' + safeId).innerHTML =
+    '<span style="background:#dbeafe;color:#1e40af;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:600">' +
+    '<span class="vspin"></span>Bezig</span>';
+  document.getElementById('actions-' + vtype + '-' + safeId).innerHTML =
+    '<span style="color:#6b7280;font-size:13px;font-style:italic">Transcriptie bezig...</span>';
+}
+
+function setDone(vtype, safeId, filename) {
+  const stem = filename.replace(/\\.[^.]+$/, '');
+  document.getElementById('status-' + vtype + '-' + safeId).innerHTML =
+    '<span style="background:#dcfce7;color:#166534;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:600">✓ Klaar</span>';
+  document.getElementById('actions-' + vtype + '-' + safeId).innerHTML =
+    '<a href="/videos/transcript/' + vtype + '/' + stem + '" class="btn btn-secondary">Transcript bekijken</a>';
+}
+
+function startPoll(vtype, filename, safeId) {
+  const iv = setInterval(() => {
+    fetch('/videos/status/' + vtype + '/' + encodeURIComponent(filename))
+      .then(r => r.json())
+      .then(d => {
+        if (d.status === 'done') { clearInterval(iv); setDone(vtype, safeId, filename); }
+        else if (d.status === 'error') {
+          clearInterval(iv);
+          document.getElementById('actions-' + vtype + '-' + safeId).innerHTML =
+            '<span style="color:#ef4444;font-size:13px">Fout bij transcriptie</span>';
+        }
+      })
+      .catch(() => clearInterval(iv));
+  }, 5000);
+}
+
+window.addEventListener('load', () => {
+  document.querySelectorAll('tr[data-transcribed="false"]').forEach(row => {
+    const vtype    = row.dataset.vtype;
+    const filename = row.dataset.filename;
+    const safeId   = row.dataset.safeId;
+    fetch('/videos/status/' + vtype + '/' + encodeURIComponent(filename))
+      .then(r => r.json())
+      .then(d => {
+        if (d.status === 'running') { setRunning(vtype, safeId); startPoll(vtype, filename, safeId); }
+        else if (d.status === 'done') { setDone(vtype, safeId, filename); }
+      });
+  });
+});
+</script>"""
+
 
 @app.get("/videos", response_class=HTMLResponse)
 async def videos_page():
@@ -473,58 +601,66 @@ async def videos_page():
         if videos:
             rows = ""
             for v in videos:
-                badge = (
-                    '<span style="background:#dcfce7;color:#166534;border-radius:999px;'
-                    'padding:2px 9px;font-size:12px;font-weight:600">✓ Klaar</span>'
-                    if v["transcribed"] else
-                    '<span style="background:#fef3c7;color:#92400e;border-radius:999px;'
-                    'padding:2px 9px;font-size:12px;font-weight:600">Wachten</span>'
-                )
-                view_btn = (
-                    f'<a href="/videos/transcript/{vtype}/{v["path"].stem}" '
-                    f'class="btn btn-secondary" style="margin-right:6px">Bekijk</a>'
-                    if v["transcribed"] else ""
-                )
-                transcribe_btn = (
-                    f'<form method="post" action="/videos/transcribe" style="display:inline">'
-                    f'<input type="hidden" name="video_type" value="{vtype}">'
-                    f'<input type="hidden" name="filename" value="{v["name"]}">'
-                    f'<button type="submit" class="btn btn-primary">Transcribeer</button>'
-                    f'</form>'
-                    if not v["transcribed"] else ""
-                )
+                safe_id  = re.sub(r"[^\w]", "_", v["name"])
+                esc_name = v["name"].replace("'", "\\'")
+                if v["transcribed"]:
+                    badge   = (
+                        '<span style="background:#dcfce7;color:#166534;border-radius:999px;'
+                        'padding:2px 9px;font-size:12px;font-weight:600">✓ Klaar</span>'
+                    )
+                    actions = (
+                        f'<a href="/videos/transcript/{vtype}/{v["path"].stem}" '
+                        f'class="btn btn-secondary">Bekijk</a>'
+                    )
+                else:
+                    badge = (
+                        '<span style="background:#fef3c7;color:#92400e;border-radius:999px;'
+                        'padding:2px 9px;font-size:12px;font-weight:600">Wachten</span>'
+                    )
+                    actions = (
+                        f"<button onclick=\"manualTranscribe('{vtype}','{esc_name}','{safe_id}')\" "
+                        f'class="btn btn-primary">Transcribeer</button>'
+                    )
                 rows += (
-                    f"<tr>"
+                    f'<tr data-vtype="{vtype}" data-filename="{v["name"]}" '
+                    f'data-safe-id="{safe_id}" data-transcribed="{str(v["transcribed"]).lower()}">'
                     f'<td style="font-weight:500">{v["name"]}</td>'
                     f'<td class="hide-sm">{v["size"]}</td>'
                     f'<td class="hide-sm">{v["duration"]}</td>'
-                    f'<td>{badge}</td>'
-                    f'<td style="white-space:nowrap">{view_btn}{transcribe_btn}</td>'
-                    f"</tr>"
+                    f'<td id="status-{vtype}-{safe_id}">{badge}</td>'
+                    f'<td id="actions-{vtype}-{safe_id}" style="white-space:nowrap">{actions}</td>'
+                    f'</tr>'
                 )
             table = (
-                f'<table><thead><tr>'
-                f'<th>Bestandsnaam</th>'
-                f'<th class="hide-sm">Grootte</th>'
-                f'<th class="hide-sm">Duur</th>'
-                f'<th>Status</th>'
-                f'<th>Acties</th>'
+                '<table><thead><tr>'
+                '<th>Bestandsnaam</th>'
+                '<th class="hide-sm">Grootte</th>'
+                '<th class="hide-sm">Duur</th>'
+                '<th>Status</th>'
+                '<th>Acties</th>'
                 f'</tr></thead><tbody>{rows}</tbody></table>'
             )
         else:
             table = f'<div class="empty">Geen video\'s in {vname} — upload hieronder.</div>'
 
-        # upload form
         upload = (
             f'<div style="padding:16px 20px;background:#f9fafb;border-top:1px solid #f3f4f6">'
-            f'<form method="post" action="/videos/upload" enctype="multipart/form-data" '
-            f'style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">'
-            f'<input type="hidden" name="video_type" value="{vtype}">'
-            f'<input type="file" name="file" accept=".mp4,.mov,.mkv,.m4v" required '
-            f'style="flex:1;min-width:200px">'
-            f'<button type="submit" class="btn" '
-            f'style="background:{color};color:#fff">Uploaden naar {vtype.upper()}</button>'
-            f'</form>'
+            f'<div id="progress-{vtype}" style="display:none;margin-bottom:12px">'
+            f'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'
+            f'<span style="font-size:13px;color:#374151;font-weight:500">Bezig met uploaden...</span>'
+            f'<span id="pct-{vtype}" style="font-size:13px;font-weight:700;color:{color}">0%</span>'
+            f'</div>'
+            f'<div style="background:#e5e7eb;border-radius:6px;height:8px;overflow:hidden">'
+            f'<div id="bar-{vtype}" style="width:0%;background:{color};height:8px;border-radius:6px;transition:width .15s"></div>'
+            f'</div>'
+            f'<div id="mb-{vtype}" style="font-size:12px;color:#9ca3af;margin-top:4px"></div>'
+            f'</div>'
+            f'<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">'
+            f'<input type="file" id="file-{vtype}" accept=".mp4,.mov,.mkv,.m4v" style="flex:1;min-width:200px">'
+            f'<button onclick="doUpload(\'{vtype}\')" class="btn" style="background:{color};color:#fff">'
+            f'Uploaden naar {vtype.upper()}</button>'
+            f'</div>'
+            f'<div id="msg-{vtype}" style="margin-top:8px;font-size:13px;color:#dc2626;display:none"></div>'
             f'</div>'
         )
 
@@ -543,6 +679,7 @@ async def videos_page():
         f'<h1 style="font-size:22px;font-weight:700;margin-bottom:20px">Video\'s</h1>'
         f'{sections_html}'
         f'</div>'
+        + _VIDEO_SCRIPT
     )
     return _page_shell("Video's", "/videos", body)
 
@@ -555,7 +692,7 @@ async def videos_upload(
     video_type: str  = Form(...),
 ):
     if video_type not in VIDEO_TYPES:
-        return HTMLResponse("Ongeldig videotype", status_code=400)
+        return JSONResponse({"status": "error", "message": "Ongeldig videotype"}, status_code=400)
 
     dest_dir = VIDEOS_DIR / video_type
     dest_dir.mkdir(parents=True, exist_ok=True)
@@ -567,7 +704,7 @@ async def videos_upload(
     with open(dest, "wb") as f:
         shutil.copyfileobj(file.file, f)
 
-    return RedirectResponse("/videos", status_code=303)
+    return {"status": "ok", "filename": safe_name, "video_type": video_type}
 
 
 # ── POST /videos/transcribe ───────────────────────────────────────────────────
@@ -586,7 +723,7 @@ async def videos_transcribe(
         return {"status": "error", "message": f"Bestand niet gevonden: {filename}"}
 
     background_tasks.add_task(_run_transcription, str(video_path), video_type)
-    return RedirectResponse("/videos", status_code=303)
+    return {"status": "started", "filename": filename, "video_type": video_type}
 
 
 # ── GET /videos/transcript/{video_type}/{stem} ────────────────────────────────
