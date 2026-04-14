@@ -10,10 +10,10 @@ VIDEOS_DIR   = BASE / "videos"
 TRANS_DIR    = BASE / "data" / "transcripts"
 
 VIDEO_TYPES = {
-    "nrt":  "NRT — Neuro-Reflextherapie",
-    "qat":  "QAT",
-    "pemf": "PEMF",
-    "rlt":  "RLT",
+    "nrt":  "NRT — Neural Reset Therapy",
+    "qat":  "QAT — Quantum Alignment Technique",
+    "pemf": "PEMF — Pulsed Electromagnetic Field",
+    "rlt":  "RLT — Red Light Therapy",
 }
 VIDEO_TYPE_COLORS = {
     "nrt":  "#2563eb",
