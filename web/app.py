@@ -189,7 +189,7 @@ def _page_shell(title: str, active: str, body: str) -> str:
   <div style="max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
     <div>
       <div style="color:#fff;font-size:20px;font-weight:700;letter-spacing:-.02em">⚕ Medical RAG</div>
-      <div style="color:#93c5fd;font-size:13px">NRT-Amsterdam &bull; Axel Biere</div>
+      <div style="color:#93c5fd;font-size:13px">NRT-Amsterdam.nl</div>
     </div>
     <div style="display:flex;gap:6px;flex-wrap:wrap">{nav}</div>
   </div>
@@ -407,7 +407,7 @@ async def dashboard():
   <div style="max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
     <div>
       <div style="color:#fff;font-size:20px;font-weight:700;letter-spacing:-.02em">⚕ Medical RAG</div>
-      <div style="color:#93c5fd;font-size:13px">NRT-Amsterdam &bull; Axel Biere</div>
+      <div style="color:#93c5fd;font-size:13px">NRT-Amsterdam.nl</div>
     </div>
     <div style="display:flex;gap:6px;flex-wrap:wrap">{nav_links}</div>
   </div>
