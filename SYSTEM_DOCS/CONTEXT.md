@@ -29,7 +29,7 @@ All outputs cite exact page numbers and source documents. No hallucinated refere
 
 | Property | Value |
 |---|---|
-| Host | Hetzner CX53 — 178.104.77.146 |
+| Host | Hetzner CX53 — 100.66.194.55 (Tailscale) |
 | vCPUs / RAM / Disk | 16 / 30 GiB / 301 GB |
 | OS | Ubuntu, kernel 6.8.0-79-generic |
 | Docker | 29.1.3 — use `docker-compose` (v1), NOT `docker compose` |
@@ -170,4 +170,4 @@ python scripts/ingest_books.py --books-dir ./books/pemf --content-type device_pe
   ```bash
   git add PROJECT_STATE.md && git commit -m "state: [description]" && git push
   ```
-- Live state always readable at: http://178.104.77.146:8080/PROJECT_STATE.md
+- Live state always readable at: http://100.66.194.55 (Tailscale):8080/PROJECT_STATE.md
