@@ -64,7 +64,7 @@ All outputs cite exact page numbers and source documents. No hallucinated refere
 ```
 /root/medical-rag/
 ├── books/                        ← drop PDFs/EPUBs here (empty — no books ingested yet)
-├── videos/{nrt,qat,pemf,rlt}/   ← drop .mp4 files here
+├── videos/{nrt,qat,pemf,rlt}/   ← drop .mp4 files here (qat: 15 videos, transcriptie bezig)
 ├── data/
 │   ├── books_metadata.json       ← bibliographic metadata + citations
 │   ├── video_document_links.json ← video ↔ PDF cross-references
@@ -110,9 +110,9 @@ All outputs cite exact page numbers and source documents. No hallucinated refere
 | Qdrant | Vector store | Running |
 | Ollama / llama3.1:8b | Local LLM inference | Running |
 | ebooklib + BS4 | EPUB parsing (Docling doesn't support EPUB) | Installed |
-| Docling | PDF parsing — text, images, page numbers | Not yet installed |
-| EasyOCR | OCR for scanned PDFs + figure labels | Not yet installed |
-| BAAI/bge-large-en-v1.5 | Local embeddings, 1024-dim | Not yet installed |
+| Docling | PDF parsing — text, images, page numbers | **Installed** |
+| EasyOCR | OCR for scanned PDFs + figure labels | **Installed** |
+| BAAI/bge-large-en-v1.5 | Local embeddings, 1024-dim | **Installed** (cached) |
 | OpenAI Whisper (local) | Video transcription | **Installed** |
 | ffmpeg | Audio extraction for Whisper | **Installed** |
 | LLaVA (vision) | Figure descriptions from images | Not yet pulled |
@@ -172,11 +172,12 @@ python scripts/ingest_books.py --books-dir ./books/pemf --content-type device_pe
 
 ## Immediate next steps
 
-1. **Add books:** Drop `.pdf`/`.epub` into `./books/` → `fetch_book_metadata.py` → `ingest_books.py`
-2. **Add videos:** Drop `.mp4` into `./videos/nrt/` and `./videos/qat/` → `transcribe_videos.py --ingest`
-3. **Build `query_rag.py`** — multi-collection search across all three collections
-4. **Build remaining web pages:** `/library`, `/images`, `/protocols`, `/search`
-5. **Word output:** `.docx` treatment protocols (§1 Klachtbeeld / §2 Behandeling / §3 Bijlagen)
+1. **Check QAT transcriptions** — `ls data/transcripts/*.json | wc -l` (15 videos started 2026-04-14 22:30 UTC, Whisper medium CPU ~40–90 min each)
+2. **Build `/library` page** — PDF/EPUB upload, metadata cards, ingestion trigger, processing status
+3. **Build `/search` page** — multi-collection RAG search with citation display
+4. **Add books:** Drop `.pdf`/`.epub` into `./books/` → `fetch_book_metadata.py` → `ingest_books.py`
+5. **Build remaining web pages:** `/images`, `/protocols`
+6. **Word output:** `.docx` treatment protocols (§1 Klachtbeeld / §2 Behandeling / §3 Bijlagen)
 
 ---
 

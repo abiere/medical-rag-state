@@ -292,7 +292,8 @@ Three-pass extraction with cross-reference map for anatomy atlases where images 
 ## 10. Pending Tasks
 
 - [ ] **Add books** — Drop `.pdf`/`.epub` into `./books/`, run `fetch_book_metadata.py` then `ingest_books.py --content-type medical_literature`
-- [ ] **Add training videos** — Drop `.mp4` into `./videos/nrt/` and `./videos/qat/`, run `transcribe_videos.py --type nrt --ingest`
+- [~] **QAT-videos transcriberen** — 15 videos gestart 2026-04-14 22:30 UTC; Whisper draait op achtergrond; controleer `ls data/transcripts/*.json | wc -l`
+- [ ] **NRT-videos transcriberen** — Drop `.mp4` into `./videos/nrt/`, start via `/videos` pagina of `transcribe_videos.py --type nrt`
 - [ ] **Add device docs** — Drop PEMF/RLT PDFs or `.md` settings files, run ingestion with `--content-type device_pemf` / `device_rlt`
 - [ ] **Build `/library` page** — Book upload, metadata cards, ingestion trigger, processing status
 - [ ] **Build `/search` page** — Multi-collection RAG search with citation display
@@ -313,3 +314,44 @@ Three-pass extraction with cross-reference map for anatomy atlases where images 
 | No swap configured | Medium | If both Qdrant and Ollama are under peak load simultaneously and exceed their memory limits, the kernel OOM killer may intervene. Monitor with `docker stats` during heavy ingestion. |
 | Jinja2 version conflict | Low | System jinja2 conflicts with pip-installed starlette's LRU cache (`unhashable type: 'dict'`). Resolved by generating all HTML as inline strings — no templates used. |
 | `docker-compose` v1 bug with new images | Resolved | v1.29.2 throws `KeyError: 'ContainerConfig'` on recreate. Workaround: always `docker-compose down` before `docker-compose up -d`. |
+| Some QAT videos show "Wachten" despite process started | Low | Status detection uses log file mtime (300 s window). If Whisper takes > 5 min to write its first log line the status briefly shows "Wachten". Resolves automatically once the log is touched. |
+
+---
+
+## 12. Session 2026-04-14 (evening) — Video Transcription System
+
+### Wat gebouwd
+
+| Feature | Status |
+|---|---|
+| Upload progress bar via XHR (% + MB/s) | ✅ |
+| Auto-transcribe na upload (geen knop klik nodig) | ✅ |
+| Status endpoint via logfile mtime detectie | ✅ |
+| Elapsed timer "Bezig... 0:12" in UI per video | ✅ |
+| RAM warning bij >3 parallelle transcripties | ✅ |
+| Multi-file select op upload input | ✅ |
+| Batch start 15 QAT-videos via curl loop | ✅ |
+
+### Bug fix: `_run_transcription` args
+- Removed `--type` (mutually exclusive with `--file` in argparse — caused silent failure)
+- Added `--content-type training_qat` etc. via `_CONTENT_TYPE_MAP`
+- Added log output to `/tmp/transcribe_{filename}.log` for debugging
+
+### Commits
+| Hash | Beschrijving |
+|---|---|
+| `8b9ee02` | feat: upload progress, auto-transcribe, progress polling |
+| `3522abc` | fix: transcription args, auto-transcribe, spinner timer, multi-select, batch start QAT |
+| `439cb6c` | fix: status detection via logfile, RAM warning |
+
+### Transcriptie status 22:30 UTC
+- **15 QAT-videos** gestart via batch curl loop
+- Whisper `medium` model, CPU-only (FP32), ~40–90 min per video verwacht
+- Logs beschikbaar in `/tmp/transcribe_*.log`
+- Verwacht klaar: vroeg op 15-04-2026
+
+### Volgende sessie — prioriteiten
+1. Controleer hoeveel QAT-transcripties klaar zijn (`ls data/transcripts/*.json | wc -l`)
+2. Bouw `/library` pagina — PDF/EPUB upload, metadata cards, ingestie trigger
+3. Bouw `/search` pagina — multi-collectie RAG zoekopdracht met citaten
+4. Start NRT-video transcripties als RAM beschikbaar is
