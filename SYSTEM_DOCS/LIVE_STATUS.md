@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 10:09:34 UTC**
+> Last update: **2026-04-15 10:11:54 UTC**
 
 ## Services
 | Service | Status |
@@ -30,10 +30,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 11.87 GB / 32.86 GB (36%) |
-| CPU | 96.6% |
+| RAM used | 12.01 GB / 32.86 GB (36%) |
+| CPU | 100.0% |
 | Disk used | 39.7 GB / 322.3 GB (13%) |
-| Uptime | up 1 day, 26 minutes |
+| Uptime | up 1 day, 29 minutes |
 
 ## Recent markers
 - `2026-04-15T10:08:53.430330+00:00` **book_ingested** — test_acupuncture.pdf → acupuncture_points: 2 chunks, score 5.00
