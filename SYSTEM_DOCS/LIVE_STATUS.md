@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 11:21:51 UTC**
+> Last update: **2026-04-15 11:26:54 UTC**
 
 ## Services
 | Service | Status |
@@ -32,10 +32,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 5.48 GB / 32.86 GB (17%) |
+| RAM used | 5.6 GB / 32.86 GB (17%) |
 | CPU | 92.9% |
 | Disk used | 39.7 GB / 322.3 GB (13%) |
-| Uptime | up 1 day, 1 hour, 39 minutes |
+| Uptime | up 1 day, 1 hour, 44 minutes |
 
 ## Recent markers
 - `2026-04-15T11:20:11` **transcription_done** — Provocative_Testing.mp4 complete (14/15)
