@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 18:23:03 UTC**
+> Last update: **2026-04-15 18:28:04 UTC**
 
 ## Services
 | Service | Status |
@@ -11,31 +11,32 @@
 | qdrant | ✅ healthy |
 | ollama | ✅ healthy |
 
-## Library
+## Book Ingest
 | Metric | Value |
 |---|---|
+| Current job | `pdfcoffee.com_a-manual-of-acupuncture-peter-deadmanpdf-4-pdf-free.pdf` (141 min) |
+| Queued | 2 |
 | Total books | 3 |
 | Ingested | 1 |
-| Queued | 2 |
-| Current job | `pdfcoffee.com_a-manual-of-acupuncture-peter-deadmanpdf-4-pdf-free.pdf` |
+| Vectors in medical\_library | 2 |
 | Images pending approval | 0 |
 | Images approved | 0 |
 
-## Transcription
+## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Lower_Body_Techniques.mp4` (since 2026-04-15T16:06:26) |
+| Current job | `1.Lower_Body_Techniques.mp4` (141 min) |
 | Queued | 20 |
-| Done | 15 |
-| Total videos | 35 |
+| Done | 15 / 35 |
+| Vectors in video\_transcripts | 6 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 11.54 GB / 32.86 GB (35%) |
-| CPU | 93.3% |
+| RAM used | 11.58 GB / 32.86 GB (35%) |
+| CPU | 97.9% |
 | Disk used | 53.4 GB / 322.3 GB (17%) |
-| Uptime | up 1 day, 8 hours, 40 minutes |
+| Uptime | up 1 day, 8 hours, 45 minutes |
 
 ## Recent markers
 - `2026-04-15T11:28:04` **queue_empty** — All 15 videos transcribed
