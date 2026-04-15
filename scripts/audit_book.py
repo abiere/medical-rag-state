@@ -86,8 +86,13 @@ def structural_audit(chunks: list[dict]) -> dict:
             "short_chunks": 0, "long_chunks": 0,
             "point_codes_found": 0, "figure_refs_found": 0,
             "images_extracted": 0, "translation_applied": False,
-            "epub_strategy": None,
+            "epub_strategy": None, "pdf_type": None,
         }
+
+    # Extract OCR stats embedded in first chunk by parse_pdf.py (remove so it
+    # doesn't end up in Qdrant payload after audit)
+    ocr_stats = chunks[0].pop("_ocr_stats", None)
+    pdf_type  = chunks[0].get("pdf_type")
 
     word_counts = [len(c.get("text", "").split()) for c in chunks]
     avg_words   = sum(word_counts) / len(word_counts) if word_counts else 0
@@ -100,17 +105,43 @@ def structural_audit(chunks: list[dict]) -> dict:
     translated  = any(c.get("text_original") for c in chunks)
     strategy    = chunks[0].get("epub_strategy") if chunks else None
 
-    return {
-        "total_chunks":      len(chunks),
-        "avg_chunk_words":   round(avg_words, 1),
-        "short_chunks":      short,
-        "long_chunks":       long,
-        "point_codes_found": point_total,
-        "figure_refs_found": fig_total,
-        "images_extracted":  img_total,
+    # Per-engine OCR usage from chunk payloads (supplements ocr_stats for
+    # native PDFs that don't produce an explicit ocr_stats dict)
+    engine_counts: dict[str, int] = {}
+    conf_values: list[float] = []
+    for c in chunks:
+        eng = c.get("ocr_engine", "")
+        if eng:
+            engine_counts[eng] = engine_counts.get(eng, 0) + 1
+        conf = c.get("ocr_confidence")
+        if conf is not None and conf < 1.0:
+            conf_values.append(conf)
+
+    result: dict = {
+        "total_chunks":        len(chunks),
+        "avg_chunk_words":     round(avg_words, 1),
+        "short_chunks":        short,
+        "long_chunks":         long,
+        "point_codes_found":   point_total,
+        "figure_refs_found":   fig_total,
+        "images_extracted":    img_total,
         "translation_applied": translated,
-        "epub_strategy":     strategy,
+        "epub_strategy":       strategy,
+        "pdf_type":            pdf_type,
     }
+
+    # Attach OCR statistics if present (scanned/mixed PDFs)
+    if ocr_stats is not None:
+        result["ocr_statistics"] = ocr_stats
+    elif engine_counts:
+        # Build lightweight stats from chunk fields for native PDFs
+        result["ocr_statistics"] = {
+            "engine_usage":   engine_counts,
+            "avg_confidence": round(sum(conf_values) / len(conf_values), 3)
+                              if conf_values else 1.0,
+        }
+
+    return result
 
 
 # ── Phase 2: LLM semantic audit ───────────────────────────────────────────────
