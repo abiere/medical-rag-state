@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 09:39:54 UTC**
+> Last update: **2026-04-15 09:45:24 UTC**
 
 ## Services
 | Service | Status |
@@ -30,10 +30,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 14.67 GB / 32.86 GB (45%) |
-| CPU | 96.9% |
-| Disk used | 47.3 GB / 322.3 GB (15%) |
-| Uptime | up 23 hours, 57 minutes |
+| RAM used | 5.54 GB / 32.86 GB (17%) |
+| CPU | 100.0% |
+| Disk used | 39.7 GB / 322.3 GB (13%) |
+| Uptime | up 1 day, 2 minutes |
 
 ## Recent markers
 - `2026-04-15T09:30:04` **transcription_done** — Manual_Muscle_Testing_1.mp4 complete (6/15)
