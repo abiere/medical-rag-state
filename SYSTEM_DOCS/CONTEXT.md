@@ -143,6 +143,13 @@ Currently: 20 NRT + 15 QAT videos queued, PAUSED (CPU voor boeken)
 | PEMF | Pulsed Electromagnetic Field |
 | RLT | Red Light Therapy |
 
+## Test status
+
+**Laatste run:** 15-04-2026 20:23 (44.4s)  
+**Uitslag:** ✅ GESLAAGD — 33/33 geslaagd, 0 overgeslagen  
+
+---
+
 ## Git / state tracking
 
 - Repo: https://github.com/abiere/medical-rag-state (private)
