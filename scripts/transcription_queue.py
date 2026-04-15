@@ -27,6 +27,7 @@ LOG_FILE   = Path("/var/log/transcription_queue.log")
 QUEUE_FILE = Path("/tmp/transcription_queue.json")
 CURRENT    = Path("/tmp/transcription_current.json")
 
+NOTIFY     = BASE / "scripts" / "notify.sh"
 VIDEO_TYPES = ["nrt", "qat", "pemf", "rlt"]
 VIDEO_EXTS  = {".mp4", ".mov", ".mkv", ".m4v"}
 CONTENT_TYPE_MAP = {
@@ -98,6 +99,15 @@ def _merge_into_queue(new_items: list[dict]) -> int:
     if added:
         _write_queue(current)
     return added
+
+
+# ── notify helper ────────────────────────────────────────────────────────────
+
+def _notify(event: str, message: str) -> None:
+    try:
+        subprocess.run([str(NOTIFY), event, message], timeout=10, check=False)
+    except Exception as exc:
+        log.warning(f"notify failed: {exc}")
 
 
 # ── transcription ─────────────────────────────────────────────────────────────
@@ -176,11 +186,14 @@ def main() -> None:
         log.info("Startup scan: no untranscribed videos found on filesystem")
 
     processed = 0
+    initial_total = len(_read_queue())
 
     while True:
         queue = _read_queue()
         if not queue:
             log.info(f"Queue empty — {processed} video(s) processed. Exiting.")
+            if processed > 0:
+                _notify("queue_empty", f"All {processed} videos transcribed")
             break
 
         item     = queue[0]
@@ -193,8 +206,9 @@ def main() -> None:
             _write_queue(queue[1:])
             continue
 
+        ok = False
         try:
-            _transcribe_one(item)
+            ok = _transcribe_one(item)
         except Exception:
             log.exception(f"Unexpected error processing {vtype}/{filename}")
         finally:
@@ -210,6 +224,11 @@ def main() -> None:
             CURRENT.unlink(missing_ok=True)
 
         processed += 1
+        total_done = sum(1 for _ in TRANS_DIR.glob("*.json")) if TRANS_DIR.exists() else processed
+        _notify(
+            "transcription_done" if ok else "transcription_failed",
+            f"{filename} {'complete' if ok else 'FAILED'} ({total_done}/{initial_total})",
+        )
 
     log.info("Transcription queue manager done")
 

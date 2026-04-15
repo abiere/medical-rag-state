@@ -10,6 +10,14 @@ VIDEOS_DIR   = BASE / "videos"
 TRANS_DIR    = BASE / "data" / "transcripts"
 QUEUE_FILE   = Path("/tmp/transcription_queue.json")
 CURRENT_FILE = Path("/tmp/transcription_current.json")
+MARKERS_FILE = Path("/var/log/markers.json")
+
+_LOG_MAP = {
+    "transcription_queue": ("file",    "/var/log/transcription_queue.log"),
+    "system":              ("file",    "/var/log/syslog"),
+    "web":                 ("journal", "medical-rag-web"),
+    "tests":               ("file",    "/root/medical-rag/data/last_test_run.log"),
+}
 
 VIDEO_TYPES = {
     "nrt":  "NRT — Neural Reset Therapy",
@@ -142,6 +150,7 @@ NAV_ITEMS = [
     ("/protocols", "Protocollen"),
     ("/search",    "Zoeken"),
     ("/videos",    "Video's"),
+    ("/terminal",  "Terminal"),
 ]
 
 def _nav_html(active: str) -> str:
@@ -918,3 +927,252 @@ async def videos_transcript(video_type: str, stem: str):
 </div>"""
 
     return _page_shell(f"Transcript — {stem}", "/videos", body)
+
+
+# ── GET /logs/{logname} ───────────────────────────────────────────────────────
+
+@app.get("/logs/{logname}")
+async def get_log(logname: str):
+    if logname not in _LOG_MAP:
+        return JSONResponse({"error": f"Unknown log: {logname}. Valid: {list(_LOG_MAP)}"}, status_code=404)
+
+    kind, target = _LOG_MAP[logname]
+    lines: list[str] = []
+
+    try:
+        if kind == "journal":
+            r = subprocess.run(
+                ["journalctl", "-u", target, "-n", "200", "--no-pager", "--output=short"],
+                capture_output=True, text=True, timeout=10,
+            )
+            lines = r.stdout.splitlines()
+        else:
+            p = Path(target)
+            if p.exists():
+                lines = p.read_text(errors="replace").splitlines()
+            else:
+                lines = [f"[{target} bestaat nog niet]"]
+    except Exception as exc:
+        lines = [f"[Fout bij lezen log: {exc}]"]
+
+    lines = lines[-200:]
+    last_updated = None
+    try:
+        p = Path(target) if kind == "file" else None
+        if p and p.exists():
+            last_updated = datetime.fromtimestamp(p.stat().st_mtime).isoformat()
+        else:
+            last_updated = datetime.now().isoformat()
+    except Exception:
+        last_updated = datetime.now().isoformat()
+
+    return {
+        "log":          logname,
+        "lines":        lines,
+        "total_lines":  len(lines),
+        "last_updated": last_updated,
+    }
+
+
+# ── GET /status/snapshot ──────────────────────────────────────────────────────
+
+@app.get("/status/snapshot")
+async def status_snapshot():
+    # Services
+    def _svc_active(name: str) -> str:
+        try:
+            r = subprocess.run(["systemctl", "is-active", name],
+                               capture_output=True, text=True, timeout=5)
+            return r.stdout.strip()
+        except Exception:
+            return "unknown"
+
+    qdrant_status  = "healthy" if _qdrant_info().get("online") else "unreachable"
+    ollama_status  = "healthy" if _ollama_info().get("online") else "unreachable"
+
+    # Transcription state
+    current_file = ""
+    try:
+        if CURRENT_FILE.exists():
+            current_file = json.loads(CURRENT_FILE.read_text()).get("file", "")
+    except Exception:
+        pass
+
+    queued_count = 0
+    try:
+        if QUEUE_FILE.exists():
+            q = json.loads(QUEUE_FILE.read_text())
+            queued_count = len(q) if isinstance(q, list) else 0
+    except Exception:
+        pass
+
+    done_count = sum(1 for _ in TRANS_DIR.glob("*.json")) if TRANS_DIR.exists() else 0
+    total_qat  = sum(1 for f in (VIDEOS_DIR / "qat").iterdir()
+                     if f.suffix.lower() in {".mp4", ".mov", ".mkv", ".m4v"}
+                     ) if (VIDEOS_DIR / "qat").exists() else 0
+
+    # System
+    mem = psutil.virtual_memory()
+    dsk = psutil.disk_usage("/")
+    cpu = psutil.cpu_percent(interval=0.3)
+
+    # Last test run — parse TEST_REPORT.md
+    passed = failed = 0
+    test_ts = None
+    try:
+        report = BASE / "SYSTEM_DOCS" / "TEST_REPORT.md"
+        if report.exists():
+            txt = report.read_text()
+            import re as _re
+            m = _re.search(r"(\d+)/(\d+)\s+geslaagd", txt)
+            if m:
+                passed = int(m.group(1))
+            m2 = _re.search(r"(\d+)\s+mislukt", txt)
+            if m2:
+                failed = int(m2.group(1))
+            m3 = _re.search(r"\*\*Gegenereerd:\*\*\s+(.+)", txt)
+            if m3:
+                test_ts = m3.group(1).strip()
+    except Exception:
+        pass
+
+    return {
+        "timestamp": datetime.now().isoformat(),
+        "services": {
+            "web":                 _svc_active("medical-rag-web"),
+            "transcription_queue": _svc_active("transcription-queue"),
+            "qdrant":              qdrant_status,
+            "ollama":              ollama_status,
+        },
+        "transcription": {
+            "current": current_file,
+            "queued":  queued_count,
+            "done":    done_count,
+            "total":   total_qat,
+        },
+        "system": {
+            "ram_used_gb":  round(mem.used / 1e9, 2),
+            "ram_total_gb": round(mem.total / 1e9, 2),
+            "cpu_percent":  round(cpu, 1),
+            "disk_used_gb": round(dsk.used / 1e9, 1),
+        },
+        "last_test_run": {
+            "passed":    passed,
+            "failed":    failed,
+            "timestamp": test_ts,
+        },
+    }
+
+
+# ── GET /status/markers ───────────────────────────────────────────────────────
+
+@app.get("/status/markers")
+async def status_markers():
+    try:
+        if MARKERS_FILE.exists():
+            return json.loads(MARKERS_FILE.read_text())
+    except Exception:
+        pass
+    return []
+
+
+# ── GET /terminal ─────────────────────────────────────────────────────────────
+
+@app.get("/terminal", response_class=HTMLResponse)
+async def terminal_page():
+    body = r"""
+<div class="wrap">
+  <h1 style="font-size:22px;font-weight:700;margin-bottom:20px">Terminal &amp; Logs</h1>
+
+  <!-- ttyd iframe -->
+  <div class="section" style="margin-bottom:24px">
+    <div class="section-head">
+      <span class="section-title">Shell</span>
+      <span style="font-size:13px;color:#6b7280">Live terminal — volledig root-toegang</span>
+    </div>
+    <div style="padding:0">
+      <iframe id="ttyd-frame" src="" style="width:100%;height:600px;border:none;border-radius:0 0 12px 12px;display:block"></iframe>
+    </div>
+  </div>
+
+  <!-- Log viewer -->
+  <div class="section" style="margin-bottom:24px">
+    <div class="section-head">
+      <span class="section-title">Logbestanden</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button onclick="fetchLog('transcription_queue')" class="btn btn-purple">Transcriptie</button>
+        <button onclick="fetchLog('system')"              class="btn btn-secondary">Systeem</button>
+        <button onclick="fetchLog('web')"                 class="btn btn-primary">Web</button>
+        <button onclick="fetchLog('tests')"               class="btn btn-green">Tests</button>
+      </div>
+    </div>
+    <div id="log-meta" style="padding:10px 20px;font-size:13px;color:#6b7280;display:none"></div>
+    <pre id="log-output" style="margin:0;padding:16px 20px;background:#0f172a;color:#e2e8f0;
+         font-size:12px;line-height:1.6;overflow-x:auto;max-height:500px;overflow-y:auto;
+         border-radius:0 0 12px 12px;white-space:pre-wrap;word-break:break-word;display:none"></pre>
+  </div>
+
+  <!-- Status snapshot -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">Status Snapshot</span>
+      <div style="display:flex;gap:8px">
+        <button onclick="fetchSnapshot()" class="btn btn-primary">Snapshot ophalen</button>
+        <button onclick="fetchMarkers()"  class="btn btn-secondary">Markers</button>
+      </div>
+    </div>
+    <pre id="snapshot-output" style="margin:0;padding:16px 20px;background:#0f172a;color:#e2e8f0;
+         font-size:12px;line-height:1.6;overflow-x:auto;border-radius:0 0 12px 12px;
+         white-space:pre-wrap;word-break:break-word;display:none"></pre>
+  </div>
+</div>
+
+<script>
+// Point iframe at ttyd using the same hostname the browser used
+(function() {
+  const host = window.location.hostname;
+  document.getElementById('ttyd-frame').src = 'http://' + host + ':7682/terminal/shell';
+})();
+
+function fetchLog(name) {
+  const out  = document.getElementById('log-output');
+  const meta = document.getElementById('log-meta');
+  out.style.display = 'none';
+  meta.style.display = 'none';
+  out.textContent = 'Laden...';
+  fetch('/logs/' + name)
+    .then(r => r.json())
+    .then(d => {
+      if (d.error) { out.textContent = d.error; out.style.display = 'block'; return; }
+      const last50 = d.lines.slice(-50);
+      out.textContent = last50.join('\n');
+      meta.textContent = d.log + ' — ' + d.total_lines + ' regels  •  bijgewerkt: ' + (d.last_updated || '?');
+      out.style.display = 'block';
+      meta.style.display = 'block';
+      out.scrollTop = out.scrollHeight;
+    })
+    .catch(e => { out.textContent = 'Fout: ' + e; out.style.display = 'block'; });
+}
+
+function fetchSnapshot() {
+  const out = document.getElementById('snapshot-output');
+  out.textContent = 'Laden...';
+  out.style.display = 'block';
+  fetch('/status/snapshot')
+    .then(r => r.json())
+    .then(d => { out.textContent = JSON.stringify(d, null, 2); })
+    .catch(e => { out.textContent = 'Fout: ' + e; });
+}
+
+function fetchMarkers() {
+  const out = document.getElementById('snapshot-output');
+  out.textContent = 'Laden...';
+  out.style.display = 'block';
+  fetch('/status/markers')
+    .then(r => r.json())
+    .then(d => { out.textContent = JSON.stringify(d, null, 2); })
+    .catch(e => { out.textContent = 'Fout: ' + e; });
+}
+</script>"""
+
+    return _page_shell("Terminal", "/terminal", body)
