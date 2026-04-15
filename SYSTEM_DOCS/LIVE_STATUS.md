@@ -1,11 +1,11 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 07:18:32 UTC**
+> Last update: **2026-04-15 07:19:27 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ❌ inactive |
+| transcription-queue | ✅ active |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
 | ollama | ✅ healthy |
@@ -13,18 +13,18 @@
 ## Transcription
 | Metric | Value |
 |---|---|
-| Current job | `Connection_to_the_Brain.mp4` (since 2026-04-15T06:39:19) |
-| Queued | 14 |
-| Done | 1 |
+| Current job | `Connection_to_the_Brain.mp4` (since 2026-04-15T07:19:02) |
+| Queued | 15 |
+| Done | 0 |
 | Total videos | 15 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 1.4 GB / 32.86 GB (4%) |
-| CPU | 3.3% |
+| RAM used | 6.56 GB / 32.86 GB (20%) |
+| CPU | 99.5% |
 | Disk used | 39.6 GB / 322.3 GB (13%) |
-| Uptime | up 21 hours, 35 minutes |
+| Uptime | up 21 hours, 36 minutes |
 
 ## Recent markers
 - `2026-04-15T06:48:17` **test_marker** — notify.sh werkt correct
@@ -37,4 +37,8 @@
 2026-04-15 06:27:18,256  INFO      START  qat/Anti-Inflammatory_Procedure.mp4
 2026-04-15 06:39:19,806  INFO      DONE   qat/Anti-Inflammatory_Procedure.mp4  (722s)
 2026-04-15 06:39:19,813  INFO      START  qat/Connection_to_the_Brain.mp4
+2026-04-15 07:19:02,439  INFO      ────────────────────────────────────────────────────────────
+2026-04-15 07:19:02,439  INFO      Transcription queue manager started
+2026-04-15 07:19:02,441  INFO      Startup scan: 15 untranscribed video(s) found, 1 new entry/entries added to queue
+2026-04-15 07:19:02,442  INFO      START  qat/Connection_to_the_Brain.mp4
 ```
