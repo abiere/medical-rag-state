@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 10:44:00 UTC**
+> Last update: **2026-04-15 10:49:54 UTC**
 
 ## Services
 | Service | Status |
@@ -33,9 +33,9 @@
 | Metric | Value |
 |---|---|
 | RAM used | 5.61 GB / 32.86 GB (17%) |
-| CPU | 95.9% |
+| CPU | 94.0% |
 | Disk used | 39.7 GB / 322.3 GB (13%) |
-| Uptime | up 1 day, 1 hour, 1 minute |
+| Uptime | up 1 day, 1 hour, 7 minutes |
 
 ## Recent markers
 - `2026-04-15T10:40:45` **transcription_done** — Neuromuscular_ReEducation.mp4 complete (11/15)
