@@ -808,6 +808,55 @@ class IntegrationTests(unittest.TestCase):
         self.assertTrue(log.exists(), "Queue log /var/log/transcription_queue.log ontbreekt")
         self.assertGreater(log.stat().st_size, 0, "Queue log is leeg")
 
+    def test_sync_status_timer_active(self):
+        """sync-status.timer is active (GitHub live sync every 5 min)"""
+        import subprocess as _sp
+        r = _sp.run(["systemctl", "is-active", "sync-status.timer"],
+                    capture_output=True, text=True)
+        self.assertEqual(r.stdout.strip(), "active",
+                         f"sync-status.timer not active: {r.stdout.strip()!r}")
+
+    def test_status_snapshot_endpoint(self):
+        """/status/snapshot returns valid JSON with services.qdrant field"""
+        try:
+            conn = http.client.HTTPConnection("localhost", 8000, timeout=5)
+            conn.request("GET", "/status/snapshot")
+            resp = conn.getresponse()
+            body = resp.read().decode()
+        except ConnectionRefusedError:
+            self.fail("Verbinding geweigerd op poort 8000 — is medical-rag-web.service actief?")
+        self.assertEqual(resp.status, 200, f"Verwachtte 200, kreeg {resp.status}")
+        data = json.loads(body)
+        self.assertIn("services", data, "Geen 'services' veld in snapshot")
+        self.assertIn("qdrant", data["services"], "Geen 'qdrant' veld in services")
+
+    def test_logs_transcription_queue_endpoint(self):
+        """/logs/transcription_queue returns JSON with non-empty lines list"""
+        try:
+            conn = http.client.HTTPConnection("localhost", 8000, timeout=5)
+            conn.request("GET", "/logs/transcription_queue")
+            resp = conn.getresponse()
+            body = resp.read().decode()
+        except ConnectionRefusedError:
+            self.fail("Verbinding geweigerd op poort 8000 — is medical-rag-web.service actief?")
+        self.assertEqual(resp.status, 200, f"Verwachtte 200, kreeg {resp.status}")
+        data = json.loads(body)
+        self.assertIn("lines", data, "Geen 'lines' veld in log response")
+        self.assertIsInstance(data["lines"], list, "'lines' is geen lijst")
+
+    def test_ingest_transcript_executable(self):
+        """scripts/ingest_transcript.py bestaat en is uitvoerbaar"""
+        script = BASE / "scripts" / "ingest_transcript.py"
+        self.assertTrue(script.exists(), "scripts/ingest_transcript.py ontbreekt")
+        self.assertTrue(os.access(script, os.X_OK),
+                        "scripts/ingest_transcript.py is niet uitvoerbaar")
+
+    def test_anthropic_api_key_set(self):
+        """ANTHROPIC_API_KEY is set in the environment"""
+        key = os.environ.get("ANTHROPIC_API_KEY", "")
+        self.assertTrue(len(key) > 0,
+                        "ANTHROPIC_API_KEY is niet ingesteld in de omgeving")
+
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # RUNNER

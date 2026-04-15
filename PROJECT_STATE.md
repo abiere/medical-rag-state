@@ -118,13 +118,12 @@ exec 3<>/dev/tcp/localhost/PORT && echo -e 'GET /path HTTP/1.0\r\n\r\n' >&3 && g
 
 ### Qdrant Collections
 
-No collections yet. The collections are created automatically on the first run of `ingest_books.py`.
-
 | Collection | content_type(s) | Status |
 |---|---|---|
 | `medical_literature` | `medical_literature` | Not yet created (no books ingested) |
 | `training_materials` | `training_nrt`, `training_qat` | Not yet created |
 | `device_protocols` | `device_pemf`, `device_rlt` | Not yet created |
+| `video_transcripts` | `video_transcripts` | **Created — auto-ingest from transcription queue** |
 
 Collection config (applied at creation time):
 - Vector size: **1024** (matches `BAAI/bge-large-en-v1.5`)
@@ -139,6 +138,7 @@ Collection config (applied at creation time):
 |---|---|---|---|
 | `medical-rag-web` | `/etc/systemd/system/medical-rag-web.service` | 8000 | **Active (running)** |
 | `transcription-queue` | `/etc/systemd/system/transcription-queue.service` | — | **Active (running) — processing QAT** |
+| `ttyd` | `/etc/systemd/system/ttyd.service` | 7682 | **Active (running)** |
 | `medical-rag-state` | `/etc/systemd/system/medical-rag-state.service` | 8080 | **Disabled / stopped** |
 
 ### Systemd Timers
@@ -147,6 +147,7 @@ Collection config (applied at creation time):
 |---|---|---|---|
 | `medical-rag-tests.timer` | `medical-rag-tests.service` | Daily 00:00 UTC | Run test suite → TEST_REPORT.md |
 | `medical-rag-maintenance.timer` | `medical-rag-maintenance.service` | Daily 00:30 UTC | Snapshots, consistency, cleanup, git push |
+| `sync-status.timer` | `sync-status.service` | Every 5 min | Write LIVE_STATUS.md → git push |
 
 **`medical-rag-web.service`** (FastAPI):
 ```ini
@@ -175,6 +176,9 @@ Dashboard accessible at: `http://100.66.194.55:8000` (Tailscale only)
 | `POST /videos/transcribe` | Enqueue video in `/tmp/transcription_queue.json` (queue service picks up) | **Live** |
 | `GET /videos/status/{type}/{filename}` | Queue status: done/running/queued/waiting | **Live** |
 | `GET /videos/transcript/{type}/{stem}` | Timestamped segment viewer | **Live** |
+| `GET /logs/{logname}` | Tail log file (transcription_queue, web, maintenance) | **Live** |
+| `GET /status/snapshot` | JSON snapshot of services, transcription, system stats | **Live** |
+| `GET/POST /status/markers` | Status markers — read/write (notify.sh integration) | **Live** |
 | `GET /library` | Book management — upload, metadata, ingestion | Planned |
 | `GET /images` | Image browser with tissue/structure filter | Planned |
 | `GET /protocols` | Protocol builder + Word document generation | Planned |
@@ -393,3 +397,46 @@ Three-pass extraction with cross-reference map for anatomy atlases where images 
 ! ls /root/medical-rag/data/transcripts/ | wc -l  # hoeveel klaar
 ```
 Daarna: `/library` pagina bouwen.
+
+---
+
+## 14. Session 2026-04-15 (middag) — Terminal, auto-ingest, observability
+
+### Gebouwd
+
+| Feature | Status |
+|---|---|
+| Browser terminal via ttyd (port 7682) | ✅ |
+| GitHub live sync every 5 min (`sync-status.timer`) | ✅ |
+| Log observer endpoints (`/logs/{logname}`) | ✅ |
+| Status snapshot endpoint (`/status/snapshot`) | ✅ |
+| Marker system (`/status/markers`, `notify.sh`) | ✅ |
+| Auto-ingest transcripts into Qdrant `video_transcripts` | ✅ |
+| Whisper `--task translate` (all transcripts in English) | ✅ |
+| Claude Code permissions — never ask confirmations | ✅ |
+| `ANTHROPIC_API_KEY` permanent in `/root/.bashrc` | ✅ |
+| `ingest_transcript.py` — script + Qdrant push | ✅ |
+
+### Transcriptiestatus 08:05 UTC
+
+- **3 klaar:** Anti-Inflammatory_Procedure, Connection_to_the_Brain, Emotional_Transformation_Technique
+- **Running:** Green_Square_Applications.mp4 (gestart 07:59)
+- **Queued:** 11 overige QAT-videos
+- Auto-ingest naar Qdrant `video_transcripts` na elke voltooiing
+
+### Observability-stack
+
+| Endpoint / Tool | Beschrijving |
+|---|---|
+| `http://100.66.194.55:7682` | Browser terminal (ttyd, Tailscale only) |
+| `http://100.66.194.55:8000/status/snapshot` | JSON snapshot — services, transcription, system |
+| `http://100.66.194.55:8000/logs/transcription_queue` | Live queue log (JSON) |
+| `http://100.66.194.55:8000/status/markers` | Status markers / notify.sh events |
+| `SYSTEM_DOCS/LIVE_STATUS.md` (GitHub) | Live status — auto-pushed every 5 min |
+
+### Volgende sessie — prioriteiten
+
+1. Lees `LIVE_STATUS.md` — hoeveel transcripties klaar?
+2. Bouw `/library` pagina (PDF/EPUB upload + Qdrant ingestie)
+3. Bouw `/search` pagina (RAG query interface)
+4. Genereer eerste behandelprotocol
