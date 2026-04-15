@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 18:53:59 UTC**
+> Last update: **2026-04-15 18:59:05 UTC**
 
 ## Services
 | Service | Status |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Lower_Body_Techniques.mp4` (167 min) |
+| Current job | `1.Lower_Body_Techniques.mp4` (172 min) |
 | Queued | 20 |
 | Done | 15 / 35 |
 | Vectors in video_transcripts | 6 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 6.85 GB / 32.86 GB (21%) |
+| RAM used | 7.65 GB / 32.86 GB (23%) |
 | CPU | 100.0% |
 | Disk used | 54.1 GB / 322.3 GB (18%) |
-| Uptime | up 1 day, 9 hours, 11 minutes |
+| Uptime | up 1 day, 9 hours, 16 minutes |
 
 ## Recent markers
 - `2026-04-15T11:28:04` **queue_empty** — All 15 videos transcribed
