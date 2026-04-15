@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 20:19:31 UTC**
+> Last update: **2026-04-15 20:22:28 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `pdfcoffee.com_a-manual-of-acupuncture-peter-deadmanpdf-4-pdf-free.pdf` (74 min) |
+| Current job | `359609833-Travell-and-Simons-Myofascial-Pain-and-Dysfunction-Vol-1-2nd-Ed-D-Simons-Et-Al-Williams-and-Wilkins-1999-WW.pdf` |
 | Queued | 2 |
 | Total books | 3 |
 | Ingested | 1 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Lower_Body_Techniques.mp4` (253 min) |
+| Current job | `1.Lower_Body_Techniques.mp4` (256 min) |
 | Queued | 20 |
 | Done | 15 / 35 |
 | Vectors in video_transcripts | 6 |
@@ -33,17 +33,22 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 19.74 GB / 32.86 GB (60%) |
-| CPU | 99.7% |
+| RAM used | 15.08 GB / 32.86 GB (46%) |
+| CPU | 93.2% |
 | Disk used | 54.3 GB / 322.3 GB (18%) |
-| Uptime | up 1 day, 10 hours, 36 minutes |
+| Uptime | up 1 day, 10 hours, 39 minutes |
 
 ## Recent markers
+- `2026-04-15T20:21:38.292661+00:00` **watchdog_restart** — book-ingest-queue hung (77 min stale) — restarted successfully
 - `2026-04-15T11:28:04` **queue_empty** — All 15 videos transcribed
 - `2026-04-15T11:28:04` **transcription_done** — Anti-Inflammatory_Procedure.mp4 complete (15/15)
 - `2026-04-15T11:20:11` **transcription_done** — Provocative_Testing.mp4 complete (14/15)
 - `2026-04-15T11:11:43` **transcription_done** — Pair_Balancing.mp4 complete (13/15)
-- `2026-04-15T10:59:40` **transcription_done** — Organs_and_Glands_Review.mp4 complete (12/15)
+
+## Nightly Consistency
+```
+_log niet gevonden_
+```
 
 ## Queue log (last 10 lines)
 ```
