@@ -1,23 +1,25 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 10:17:01 UTC**
+> Last update: **2026-04-15 10:22:47 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
 | transcription-queue | ✅ active |
-| book-ingest-queue | ❌ inactive |
+| book-ingest-queue | ✅ active |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
 | ollama | ✅ healthy |
 
-## Books
+## Library
 | Metric | Value |
 |---|---|
 | Total books | 1 |
 | Ingested | 1 |
 | Queued | 0 |
-| Current job | idle |
+| Current job | `test_acupuncture.pdf` |
+| Images pending approval | 0 |
+| Images approved | 0 |
 
 ## Transcription
 | Metric | Value |
@@ -30,10 +32,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 5.77 GB / 32.86 GB (18%) |
-| CPU | 95.3% |
+| RAM used | 13.34 GB / 32.86 GB (41%) |
+| CPU | 97.4% |
 | Disk used | 39.7 GB / 322.3 GB (13%) |
-| Uptime | up 1 day, 34 minutes |
+| Uptime | up 1 day, 40 minutes |
 
 ## Recent markers
 - `2026-04-15T10:08:53.430330+00:00` **book_ingested** — test_acupuncture.pdf → acupuncture_points: 2 chunks, score 5.00
