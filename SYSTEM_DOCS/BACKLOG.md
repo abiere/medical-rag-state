@@ -3,10 +3,14 @@
 
 ## 🔴 Prioriteit — volgende sessie
 - [ ] Browser terminal (ttyd) — iframe laadt niet ondanks actieve service op poort 7682
-- [ ] Upload eerste echte boek en valideer kwaliteit (Deadman, Sobotta, etc.)
+- [ ] Upload NRT standaard behandelprotocol v3
+- [ ] Upload QAT cursusmateriaal
+- [ ] Upload eerste echte medische boek (Deadman of Sobotta)
 
 ## 🟡 Backlog — gepland
-- [ ] Nightly re-tagging job — heranalyseer chunks als usability_tags.json wijzigt
+- [ ] Nightly re-tagging job wanneer tagging_rules.md wijzigt
+- [ ] Feedback loop implementeren (implicit + explicit learning)
+- [ ] Interactieve afbeeldingsselectie bij protocol generatie
 - [ ] /search pagina — RAG query interface
 - [ ] Eerste behandelprotocol genereren via RAG
 - [ ] Multi-file upload in /videos (UI only)
@@ -17,6 +21,11 @@
 - [ ] Nightly kwaliteitsrapport
 
 ## ✅ Afgerond
+- [x] AI instructie bestanden als MD in Git — nrt_qat_bridge, protocol_structure, tagging_rules
+- [x] Vereenvoudigde library UI (3 secties) — Medische Literatuur / NRT+QAT / Apparatuur
+- [x] nrt_qat_curriculum Qdrant collectie aangemaakt (nrt + qat samengevoegd)
+- [x] sync_status.py synct AI_INSTRUCTIONS/ naar GitHub elke 5 min
+- [x] audit_book.py laadt tagging context uit AI instructie MD bestanden
 - [x] Refactor naar single collection + AI tagging — medical_library, usability_tags per chunk
 - [x] Image approval systeem gebouwd — prescreening via Ollama, /images pagina
 - [x] Literatuuroverzicht pagina — /library/overview met usability scores + tag definities

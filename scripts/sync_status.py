@@ -5,6 +5,7 @@ Intended to run every 5 minutes via sync-status.timer.
 """
 
 import json
+import shutil
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -26,7 +27,9 @@ BOOK_CURRENT_FILE  = Path("/tmp/book_ingest_current.json")
 QUALITY_DIR        = BASE / "data" / "book_quality"
 IMAGE_APPROVALS    = BASE / "data" / "image_approvals.json"
 BOOK_EXTS          = {".pdf", ".epub"}
-CATEGORY_DIRS      = ["medical", "anatomy", "acupuncture", "nrt", "qat", "device"]
+SECTION_DIRS       = ["medical_literature", "nrt_qat", "device"]
+AI_INSTRUCTIONS_SRC = BASE / "config" / "ai_instructions"
+AI_INSTRUCTIONS_DST = BASE / "AI_INSTRUCTIONS"
 
 
 # ── helpers ───────────────────────────────────────────────────────────────────
@@ -137,7 +140,7 @@ def _book_stats() -> tuple[int, int, int, str]:
     total = ingested = queued = 0
     current = ""
     try:
-        for sub in CATEGORY_DIRS:
+        for sub in SECTION_DIRS:
             d = BOOKS_DIR / sub
             if d.exists():
                 total += sum(1 for f in d.iterdir() if f.suffix.lower() in BOOK_EXTS)
@@ -255,10 +258,18 @@ def main() -> None:
     OUT_FILE.write_text(content)
     print(f"Written: {OUT_FILE}")
 
+    # Copy AI instructions to AI_INSTRUCTIONS/ for Lead Architect visibility
+    if AI_INSTRUCTIONS_SRC.exists():
+        AI_INSTRUCTIONS_DST.mkdir(exist_ok=True)
+        for f in AI_INSTRUCTIONS_SRC.glob("*.md"):
+            shutil.copy2(f, AI_INSTRUCTIONS_DST / f.name)
+
     files_to_add = ["SYSTEM_DOCS/LIVE_STATUS.md"]
     backlog = BASE / "SYSTEM_DOCS" / "BACKLOG.md"
     if backlog.exists():
         files_to_add.append("SYSTEM_DOCS/BACKLOG.md")
+    if AI_INSTRUCTIONS_DST.exists():
+        files_to_add.append("AI_INSTRUCTIONS/")
 
     result = subprocess.run(
         ["git", "add"] + files_to_add,

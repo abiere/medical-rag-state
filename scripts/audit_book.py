@@ -32,11 +32,20 @@ BASE             = Path(__file__).parent.parent
 QUALITY_DIR      = BASE / "data" / "book_quality"
 TAGS_FILE        = BASE / "config" / "usability_tags.json"
 IMAGE_APPROVALS  = BASE / "data" / "image_approvals.json"
+AI_INSTRUCTIONS  = BASE / "config" / "ai_instructions"
 OLLAMA_URL       = "http://localhost:11434"
 OLLAMA_MODEL     = "llama3.1:8b"
 AUDIT_SAMPLE     = 15
 TAG_BATCH        = 5
 MIN_QUALITY      = 3.5
+
+
+def _load_ai_instruction(filename: str) -> str:
+    """Load an AI instruction MD file, stripping frontmatter comments."""
+    try:
+        return (AI_INSTRUCTIONS / filename).read_text(encoding="utf-8")
+    except Exception:
+        return ""
 
 
 # ── Ollama helper ─────────────────────────────────────────────────────────────
@@ -223,6 +232,7 @@ def tag_chunks_with_ollama(chunks: list[dict]) -> list[dict]:
     """
     Add usability_tags, protocol_relevance, and primary_use to each chunk.
     Processes in batches of TAG_BATCH. Modifies chunks in-place, returns them.
+    Uses tagging_rules.md and nrt_qat_bridge.md as context.
     """
     usability_tags = _load_usability_tags()
     if not usability_tags:
@@ -233,6 +243,23 @@ def tag_chunks_with_ollama(chunks: list[dict]) -> list[dict]:
     tag_descriptions = {k: v["description"] for k, v in usability_tags.items()}
     tag_summary = json.dumps(tag_descriptions, indent=2)
 
+    # Load AI instruction context
+    nrt_qat_bridge  = _load_ai_instruction("nrt_qat_bridge.md")
+    tagging_rules   = _load_ai_instruction("tagging_rules.md")
+
+    system_context = (
+        "You are tagging medical textbook chunks for a QAT/NRT treatment protocol "
+        "generation system.\n\n"
+        "About the treatment method:\n"
+        f"{nrt_qat_bridge[:2000]}\n\n"
+        "Tagging rules:\n"
+        f"{tagging_rules[:2000]}\n\n"
+        "Tag each chunk according to these rules. Be precise about protocol_relevance."
+    ) if nrt_qat_bridge or tagging_rules else (
+        "You are tagging medical textbook chunks for a RAG system "
+        "that generates acupuncture treatment protocols."
+    )
+
     tagged = 0
     failed = 0
 
@@ -241,8 +268,7 @@ def tag_chunks_with_ollama(chunks: list[dict]) -> list[dict]:
         for chunk in batch:
             text = chunk.get("text", "")[:800]
             prompt = (
-                "You are tagging medical textbook chunks for a RAG system "
-                "that generates acupuncture treatment protocols.\n\n"
+                f"{system_context}\n\n"
                 f"Available tags and their meanings:\n{tag_summary}\n\n"
                 "Tag this chunk. Return JSON only:\n"
                 '{"usability_tags":["tag1","tag2"],'

@@ -17,32 +17,31 @@ BOOK_QUEUE_FILE    = Path("/tmp/book_ingest_queue.json")
 BOOK_CURRENT_FILE  = Path("/tmp/book_ingest_current.json")
 QUALITY_DIR        = BASE / "data" / "book_quality"
 
-COLLECTION_MAP = {
-    "medical":     "medical_library",
-    "anatomy":     "medical_library",
-    "acupuncture": "medical_library",
-    "nrt":         "medical_library",
-    "qat":         "medical_library",
-    "device":      "medical_library",
+SECTION_MAP = {
+    "medical_literature": {
+        "label":       "Medische Literatuur",
+        "color":       "#2563eb",
+        "collection":  "medical_library",
+        "category":    "medical_literature",
+        "description": "Upload PDF of EPUB — AI analyseert automatisch bruikbaarheid",
+    },
+    "nrt_qat": {
+        "label":       "NRT & QAT Curriculum",
+        "color":       "#7c3aed",
+        "collection":  "nrt_qat_curriculum",
+        "category":    "nrt_qat",
+        "description": "Eigen behandelmethode documentatie",
+    },
+    "device": {
+        "label":       "Apparatuur",
+        "color":       "#059669",
+        "collection":  "device_documentation",
+        "category":    "device",
+        "description": "PEMF en RLT apparatuur documentatie",
+    },
 }
 USABILITY_TAGS_FILE  = BASE / "config" / "usability_tags.json"
 IMAGE_APPROVALS_FILE = BASE / "data" / "image_approvals.json"
-COLLECTION_LABELS = {
-    "medical":     "Medische Literatuur",
-    "anatomy":     "Anatomie Atlas",
-    "acupuncture": "Acupunctuur",
-    "nrt":         "NRT Curriculum",
-    "qat":         "QAT Curriculum",
-    "device":      "Apparatuur",
-}
-COLLECTION_COLORS = {
-    "medical":     "#2563eb",
-    "anatomy":     "#7c3aed",
-    "acupuncture": "#059669",
-    "nrt":         "#b45309",
-    "qat":         "#0e7490",
-    "device":      "#9d174d",
-}
 BOOK_EXTS = {".pdf", ".epub"}
 
 _LOG_MAP = {
@@ -1074,7 +1073,7 @@ async def status_snapshot():
     total_books = ingested_books = queued_books = 0
     quality_scores: list[float] = []
     try:
-        for subdir in COLLECTION_MAP:
+        for subdir in SECTION_MAP:
             d = BOOKS_DIR / subdir
             if d.exists():
                 total_books += sum(1 for f in d.iterdir() if f.suffix.lower() in BOOK_EXTS)
@@ -1339,17 +1338,19 @@ def _usability_dots(scores: dict, tags: list[str]) -> str:
     return '<span style="display:flex;gap:8px;flex-wrap:wrap">' + "".join(icons) + "</span>"
 
 
-def _library_section_html(category: str) -> str:
-    label  = COLLECTION_LABELS[category]
-    color  = COLLECTION_COLORS[category]
-    books_dir = BOOKS_DIR / category
+def _library_section_html(section_key: str) -> str:
+    sec   = SECTION_MAP[section_key]
+    label = sec["label"]
+    color = sec["color"]
+    collection = sec["collection"]
+    description = sec["description"]
+    books_dir = BOOKS_DIR / section_key
 
     books = []
     if books_dir.exists():
         for f in sorted(books_dir.iterdir()):
             if f.suffix.lower() in BOOK_EXTS:
                 st = _book_status(f.name)
-                # Load usability profile if audit exists
                 usability_scores: dict = {}
                 audit_path = QUALITY_DIR / f"{f.stem}_audit.json"
                 if audit_path.exists():
@@ -1390,7 +1391,7 @@ def _library_section_html(category: str) -> str:
 <div class="section" style="border-top:3px solid {color}">
   <div class="section-head">
     <span class="section-title">{label}</span>
-    <span style="font-size:12px;color:#6b7280;font-family:monospace">→ medical_library</span>
+    <span style="font-size:12px;color:#6b7280;font-family:monospace">→ {collection}</span>
   </div>
   <table>
     <thead><tr>
@@ -1400,12 +1401,13 @@ def _library_section_html(category: str) -> str:
     <tbody>{rows}</tbody>
   </table>
   <div style="padding:16px 20px;border-top:1px solid #f3f4f6">
-    <form id="form-{category}" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-      <input type="file" name="file" accept=".pdf,.epub"
+    <p style="font-size:13px;color:#6b7280;margin-bottom:10px">{description}</p>
+    <form id="form-{section_key}" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <input type="file" name="file" accept=".pdf,.epub" multiple
              style="flex:1;min-width:200px" required>
-      <button type="button" onclick="uploadBook('{category}')"
+      <button type="button" onclick="uploadBook('{section_key}')"
               class="btn btn-primary">Uploaden + ingesteren</button>
-      <span id="upload-msg-{category}" style="font-size:13px;color:#059669"></span>
+      <span id="upload-msg-{section_key}" style="font-size:13px;color:#059669"></span>
     </form>
   </div>
 </div>"""
@@ -1415,7 +1417,7 @@ def _library_section_html(category: str) -> str:
 
 @app.get("/library", response_class=HTMLResponse)
 async def library_page():
-    sections = "".join(_library_section_html(cat) for cat in COLLECTION_MAP)
+    sections = "".join(_library_section_html(sec) for sec in SECTION_MAP)
 
     # Queue stats
     queued_count = 0
@@ -1491,27 +1493,31 @@ async def library_status(filename: str):
 @app.post("/library/upload")
 async def library_upload(
     file:       UploadFile = File(...),
-    collection: str        = Form(...),   # category key (acupuncture/anatomy/etc.)
+    collection: str        = Form(...),   # section key (medical_literature/nrt_qat/device)
 ):
-    category = collection  # the form field is used as the category/subdir selector
-    if category not in COLLECTION_MAP:
-        return JSONResponse({"error": f"Unknown category: {category}"}, status_code=400)
+    section_key = collection
+    if section_key not in SECTION_MAP:
+        return JSONResponse({"error": f"Unknown section: {section_key}"}, status_code=400)
+
+    sec  = SECTION_MAP[section_key]
+    qdrant_collection = sec["collection"]
+    source_category   = sec["category"]
 
     fname = file.filename or "upload"
     ext   = Path(fname).suffix.lower()
     if ext not in BOOK_EXTS:
         return JSONResponse({"error": "Only .pdf and .epub allowed"}, status_code=400)
 
-    dest_dir = BOOKS_DIR / category
+    dest_dir = BOOKS_DIR / section_key
     dest_dir.mkdir(parents=True, exist_ok=True)
     dest = dest_dir / fname
 
     content = await file.read()
     dest.write_bytes(content)
 
-    _enqueue_book(fname, str(dest), "medical_library", category, ext.lstrip("."))
+    _enqueue_book(fname, str(dest), qdrant_collection, source_category, ext.lstrip("."))
 
-    return {"status": "queued", "filename": fname, "collection": "medical_library", "category": category}
+    return {"status": "queued", "filename": fname, "collection": qdrant_collection, "section": section_key}
 
 
 # ── GET /library/audit/{filename} ─────────────────────────────────────────────
@@ -1540,16 +1546,17 @@ async def library_overview():
     # Build table rows from audit reports
     rows = ""
     all_books = []
-    for cat in COLLECTION_MAP:
-        d = BOOKS_DIR / cat
+    for sec_key, sec in SECTION_MAP.items():
+        d = BOOKS_DIR / sec_key
         if not d.exists():
             continue
         for f in sorted(d.iterdir()):
             if f.suffix.lower() not in BOOK_EXTS:
                 continue
-            all_books.append((cat, f))
+            all_books.append((sec_key, f))
 
-    for cat, f in all_books:
+    for sec_key, f in all_books:
+        sec_label = SECTION_MAP[sec_key]["label"]
         audit_path = QUALITY_DIR / f"{f.stem}_audit.json"
         chunks_n = imgs_approved = imgs_pending = imgs_total = 0
         qs = score_html = dots_html = ""
@@ -1578,7 +1585,7 @@ async def library_overview():
         rows += f"""
 <tr>
   <td><span style="font-weight:600">{f.name}</span><br>
-      <span style="font-size:12px;color:#6b7280">{COLLECTION_LABELS[cat]}</span></td>
+      <span style="font-size:12px;color:#6b7280">{sec_label}</span></td>
   <td style="text-align:right">{chunks_n or '—'}</td>
   <td style="text-align:right">{imgs_approved}/{imgs_total}</td>
   <td>{dots_html}</td>

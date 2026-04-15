@@ -161,14 +161,32 @@ cat /tmp/transcription_current.json
 
 ---
 
+## AI Instructions (Lead Architect quality control)
+
+Files at `config/ai_instructions/` — synced to `AI_INSTRUCTIONS/` on every 5-min push.
+
+| File | Purpose |
+|---|---|
+| `AI_INSTRUCTIONS/nrt_qat_bridge.md` | How NRT/QAT uses medical literature |
+| `AI_INSTRUCTIONS/protocol_structure.md` | What a good protocol looks like |
+| `AI_INSTRUCTIONS/tagging_rules.md` | How chunks are tagged (editable, affects next ingest) |
+| `AI_INSTRUCTIONS/learning_log.md` | What the AI has learned |
+| `AI_INSTRUCTIONS/feedback_history.md` | Approved/rejected content |
+
+Raw URLs (GitHub):
+- `AI_INSTRUCTIONS/tagging_rules.md`
+- `AI_INSTRUCTIONS/nrt_qat_bridge.md`
+
+---
+
 ## Qdrant collections
 
-| Collection | content_type(s) | What goes in | Status |
+| Collection | Source | What goes in | Status |
 |---|---|---|---|
-| `medical_literature` | `medical_literature` | Anatomy/clinical EPUBs + PDFs | Not yet created |
-| `training_materials` | `training_nrt`, `training_qat` | NRT/QAT PDFs, video transcripts, text | Not yet created |
-| `device_protocols` | `device_pemf`, `device_rlt` | Device manuals, settings, videos | Not yet created |
-| `video_transcripts` | `video_transcripts` | Auto-ingested QAT video transcripts | **Created, growing** |
+| `medical_library` | `medical_literature` subdir | All external medical books (Deadman, Sobotta, Guyton, etc.) | **Created** |
+| `nrt_qat_curriculum` | `nrt_qat` subdir | NRT + QAT curriculum, treatment guides | **Created** |
+| `device_documentation` | `device` subdir | PEMF mat manual, RLT FlexBeam docs | Not yet created |
+| `video_transcripts` | auto-ingest | QAT video transcripts | **Created, growing** |
 
 ## Ingestion pipeline
 
@@ -211,9 +229,12 @@ python scripts/ingest_books.py --books-dir ./books/pemf --content-type device_pe
 | `/logs/{logname}` | ✅ Live | Tail log file (transcription_queue, web, maintenance) |
 | `/status/snapshot` | ✅ Live | JSON snapshot — services, transcription, system stats |
 | `/status/markers` | ✅ Live | Read/write status markers (notify.sh integration) |
-| `/library` | ❌ Not built | Book upload + Qdrant ingestion |
+| `/library` | ✅ Live | 3-section book upload (Medische Literatuur / NRT+QAT / Apparatuur) |
+| `/library/overview` | ✅ Live | Literature overview — usability scores per book |
+| `/library/audit/{filename}` | ✅ Live | JSON audit report per book |
+| `/library/retag/{filename}` | ✅ Live | Re-tag chunks via Ollama without re-parsing |
+| `/images` | ✅ Live | Image approval gallery (pending/approve/reject) |
 | `/search` | ❌ Not built | RAG query interface |
-| `/images` | ❌ Not built | Image browser |
 | `/protocols` | ❌ Not built | Protocol builder |
 
 ---

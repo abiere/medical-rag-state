@@ -36,10 +36,15 @@ OLLAMA_URL   = "http://localhost:11434"
 OLLAMA_MODEL = "llama3.1:8b"
 
 VECTOR_SIZE       = 1024
-COLLECTION        = "medical_library"   # single collection for all books
-CATEGORY_DIRS     = ["medical", "anatomy", "acupuncture", "nrt", "qat", "device"]
 BOOK_EXTS         = {".pdf", ".epub"}
 MIN_QUALITY_SCORE = 3.5
+
+# Section → Qdrant collection mapping (mirrors web/app.py SECTION_MAP)
+SECTION_COLLECTION_MAP = {
+    "medical_literature": "medical_library",
+    "nrt_qat":            "nrt_qat_curriculum",
+    "device":             "device_documentation",
+}
 
 # ── logging ────────────────────────────────────────────────────────────────────
 
@@ -113,7 +118,7 @@ def _qdrant_request(method: str, path: str, body: dict | None = None) -> dict:
         return json.loads(resp.read())
 
 
-def _ensure_collection(name: str = COLLECTION) -> None:
+def _ensure_collection(name: str) -> None:
     """Create Qdrant collection if it doesn't exist."""
     try:
         _qdrant_request("GET", f"/collections/{name}")
@@ -209,7 +214,7 @@ def startup_scan() -> int:
     queue = _read_queue()
     queued_paths = {item["filepath"] for item in queue}
 
-    for subdir in CATEGORY_DIRS:
+    for subdir, collection in SECTION_COLLECTION_MAP.items():
         d = BOOKS_DIR / subdir
         if not d.exists():
             continue
@@ -230,13 +235,13 @@ def startup_scan() -> int:
             queue.append({
                 "filename":        f.name,
                 "filepath":        str(f),
-                "collection":      COLLECTION,
+                "collection":      collection,
                 "source_category": subdir,
                 "format":          f.suffix.lstrip(".").lower(),
                 "requested":       datetime.now(timezone.utc).isoformat(),
             })
             added += 1
-            logger.info("Startup scan: enqueued %s → %s", f.name, COLLECTION)
+            logger.info("Startup scan: enqueued %s → %s", f.name, collection)
 
     if added:
         _write_queue(queue)
@@ -252,7 +257,9 @@ def process_book(item: dict) -> bool:
     """
     filename   = item["filename"]
     filepath   = Path(item["filepath"])
-    collection = COLLECTION          # always medical_library
+    collection = item.get("collection") or SECTION_COLLECTION_MAP.get(
+        item.get("source_category", ""), "medical_library"
+    )
     category   = item["source_category"]
     fmt        = item.get("format", filepath.suffix.lstrip(".").lower())
 
@@ -308,7 +315,7 @@ def process_book(item: dict) -> bool:
                 orig = mod.TARGET_WORDS
                 mod.TARGET_WORDS = 600
                 chunks2 = (mod.parse_pdf if fmt == "pdf" else mod.parse_epub)(
-                    filepath, COLLECTION, category
+                    filepath, collection, category
                 )
                 mod.TARGET_WORDS = orig
                 llm2 = llm_audit(chunks2)
@@ -338,7 +345,7 @@ def process_book(item: dict) -> bool:
     status = "approved" if qs >= MIN_QUALITY_SCORE else "low_quality"
     report = {
         "book":               filename,
-        "collection":         COLLECTION,
+        "collection":         collection,
         "audited_at":         datetime.now(timezone.utc).isoformat(),
         "total_chunks":       len(chunks),
         "structural":         s,
@@ -359,7 +366,7 @@ def process_book(item: dict) -> bool:
         logger.warning("Ingesting anyway with low quality score %.2f", qs)
 
     try:
-        n_upserted = _upsert_chunks(COLLECTION, chunks)
+        n_upserted = _upsert_chunks(collection, chunks)
     except Exception as e:
         logger.error("Qdrant upsert failed: %s", e)
         return False
