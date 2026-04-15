@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 07:39:54 UTC**
+> Last update: **2026-04-15 07:44:54 UTC**
 
 ## Services
 | Service | Status |
@@ -22,9 +22,9 @@
 | Metric | Value |
 |---|---|
 | RAM used | 5.54 GB / 32.86 GB (17%) |
-| CPU | 84.7% |
+| CPU | 91.7% |
 | Disk used | 39.6 GB / 322.3 GB (13%) |
-| Uptime | up 21 hours, 57 minutes |
+| Uptime | up 22 hours, 2 minutes |
 
 ## Recent markers
 - `2026-04-15T07:34:21` **transcription_done** — Connection_to_the_Brain.mp4 complete (1/15)
