@@ -1,8 +1,11 @@
-from fastapi import FastAPI, BackgroundTasks, UploadFile, File, Form
-from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
-import httpx, psutil, subprocess, json, os, re, shutil, time
+from fastapi import FastAPI, BackgroundTasks, Request, UploadFile, File, Form
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse, StreamingResponse
+import asyncio, httpx, psutil, subprocess, json, os, re, shutil, sys, time
 from pathlib import Path
 from datetime import datetime
+
+# ── rag_query module (lazy, imported at first use) ────────────────────────────
+sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
 
 app = FastAPI()
 BASE         = Path("/root/medical-rag")
@@ -42,6 +45,7 @@ SECTION_MAP = {
 }
 USABILITY_TAGS_FILE  = BASE / "config" / "usability_tags.json"
 IMAGE_APPROVALS_FILE = BASE / "data" / "image_approvals.json"
+IMAGES_DIR           = BASE / "data" / "extracted_images"
 BOOK_EXTS = {".pdf", ".epub"}
 
 _LOG_MAP = {
@@ -496,8 +500,15 @@ async def dashboard():
   {_card("Opslagruimte", dir_body, "#14b8a6")}
 </div>
 
-<!-- quick actions -->
+<!-- quick search + actions -->
 <div style="max-width:1200px;margin:0 auto;padding:0 20px 24px">
+  <div style="background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:20px;margin-bottom:16px">
+    <div style="font-size:13px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">Snel zoeken</div>
+    <form onsubmit="event.preventDefault();window.location='/search?q='+encodeURIComponent(document.getElementById('dash-q').value)" style="display:flex;gap:8px">
+      <input id="dash-q" type="text" placeholder="Zoeken in medische literatuur, video's..." style="flex:1;padding:9px 14px;border:1px solid #d1d5db;border-radius:8px;font-size:14px">
+      <button type="submit" style="background:#2563eb;color:#fff;border:none;border-radius:8px;padding:9px 18px;font-size:14px;font-weight:600;cursor:pointer">Zoeken</button>
+    </form>
+  </div>
   <div style="background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:20px">
     <div style="font-size:13px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:14px">Snelle acties</div>
     <div style="display:flex;gap:10px;flex-wrap:wrap">
@@ -1885,3 +1896,518 @@ async def images_approve(request_data: dict):
 async def images_approved_list():
     data = _load_approvals()
     return [e.get("path") for e in data.get("approved", []) if isinstance(e, dict)]
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SEARCH — /search  /search/query  /search/images  /search/suggest
+# ═══════════════════════════════════════════════════════════════════════════════
+
+_QUICK_QUERIES = [
+    ("ST-36 Zusanli",              "ST-36 Zusanli indicaties"),
+    ("Blood stasis onderbeen",     "Blood stasis onderbeen behandeling"),
+    ("A. femoralis anatomie",      "A. femoralis anatomie"),
+    ("Etalagebenen protocol",      "Etalagebenen claudicatio intermittens behandeling"),
+    ("GTR Golgi Tendon Reflex",    "Golgi Tendon Reflex NRT mechanisme"),
+    ("QAT balancering",            "QAT meridiaan balancering techniek"),
+]
+
+_COLL_OPTIONS = [
+    ("medical_library",     "Medische Literatuur",   "#2563eb"),
+    ("nrt_qat_curriculum",  "NRT & QAT Curriculum",  "#7c3aed"),
+    ("video_transcripts",   "Video Transcripts",      "#059669"),
+]
+
+_TAG_COLORS = {
+    "acupuncture_point":     "#059669",
+    "acupuncture_point_location": "#059669",
+    "acupuncture_point_indication": "#059669",
+    "treatment_protocol":    "#2563eb",
+    "tissue_cause":          "#dc2626",
+    "tissue_consequence":    "#d97706",
+    "anatomy_visualization": "#7c3aed",
+    "tcm_diagnosis":         "#0891b2",
+    "clinical_perspective":  "#6b7280",
+    "nrt_relevant":          "#b45309",
+    "device_settings":       "#9d174d",
+}
+
+def _tag_badge(tag: str) -> str:
+    color = _TAG_COLORS.get(tag, "#6b7280")
+    short = tag.replace("_", " ")
+    return (
+        f'<span style="background:{color}22;color:{color};padding:2px 7px;'
+        f'border-radius:999px;font-size:11px;font-weight:600;white-space:nowrap">{short}</span>'
+    )
+
+def _score_bar(score: float) -> str:
+    pct   = min(int(score * 100), 100)
+    color = "#059669" if score > 0.75 else ("#d97706" if score > 0.55 else "#ef4444")
+    return (
+        f'<div style="display:inline-flex;align-items:center;gap:5px">'
+        f'<div style="width:60px;height:6px;background:#e5e7eb;border-radius:3px;overflow:hidden">'
+        f'<div style="width:{pct}%;height:6px;background:{color};border-radius:3px"></div>'
+        f'</div>'
+        f'<span style="font-size:11px;color:{color};font-weight:600">{score:.2f}</span>'
+        f'</div>'
+    )
+
+
+@app.get("/search", response_class=HTMLResponse)
+async def search_page(q: str = ""):
+    quick_btns = "".join(
+        f'<button onclick="doSearch({json.dumps(qv)})" class="btn btn-secondary" '
+        f'style="font-size:12px;padding:5px 12px">{ql}</button>'
+        for ql, qv in _QUICK_QUERIES
+    )
+    col_checks = "".join(
+        f'<label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer">'
+        f'<input type="checkbox" class="col-check" value="{cv}" checked '
+        f'style="accent-color:{cc};width:15px;height:15px"> '
+        f'<span style="color:{cc};font-weight:600">{cl}</span></label>'
+        for cv, cl, cc in _COLL_OPTIONS
+    )
+
+    body = f"""
+<div class="wrap" style="max-width:1200px">
+
+<!-- Tab bar -->
+<div style="display:flex;gap:2px;margin-bottom:20px;border-bottom:2px solid #e5e7eb">
+  <button id="tab-search-btn" onclick="switchTab('search')"
+    style="padding:10px 20px;font-size:14px;font-weight:600;border:none;cursor:pointer;
+           border-bottom:3px solid #2563eb;margin-bottom:-2px;color:#2563eb;background:#fff">
+    Zoeken
+  </button>
+  <button id="tab-images-btn" onclick="switchTab('images')"
+    style="padding:10px 20px;font-size:14px;font-weight:600;border:none;cursor:pointer;
+           border-bottom:3px solid transparent;margin-bottom:-2px;color:#6b7280;background:#fff">
+    Afbeeldingen zoeken
+  </button>
+</div>
+
+<!-- TAB 1: Zoeken -->
+<div id="tab-search">
+
+  <!-- Search bar -->
+  <div style="display:flex;gap:8px;margin-bottom:12px">
+    <input id="search-input" type="text" value="{q.replace('"', '&quot;')}"
+      placeholder="Zoek in medische literatuur, video transcripts..."
+      style="flex:1;padding:12px 16px;font-size:16px;border:2px solid #e5e7eb;border-radius:10px"
+      onkeydown="if(event.key==='Enter') doSearch()">
+    <button onclick="doSearch()" class="btn btn-primary" style="padding:12px 24px;font-size:15px">
+      Zoeken
+    </button>
+  </div>
+
+  <!-- Collection checkboxes -->
+  <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px;align-items:center">
+    {col_checks}
+  </div>
+
+  <!-- Quick search buttons -->
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:24px">
+    {quick_btns}
+  </div>
+
+  <!-- Results: two-column layout -->
+  <div style="display:grid;grid-template-columns:60% 40%;gap:20px">
+
+    <!-- LEFT: Answer + Sources -->
+    <div>
+      <!-- Answer box -->
+      <div id="answer-box" style="display:none;background:#eff6ff;border:2px solid #bfdbfe;
+           border-radius:10px;padding:16px;margin-bottom:16px">
+        <div style="font-size:11px;font-weight:700;color:#2563eb;text-transform:uppercase;
+             letter-spacing:.08em;margin-bottom:8px">Antwoord</div>
+        <div id="answer-text" style="font-size:14px;line-height:1.7;color:#1e293b;
+             white-space:pre-wrap"></div>
+        <div id="answer-meta" style="margin-top:10px;font-size:12px;color:#64748b"></div>
+      </div>
+
+      <!-- Sources -->
+      <div id="sources-list"></div>
+    </div>
+
+    <!-- RIGHT: Images panel -->
+    <div>
+      <div id="images-panel" style="display:none">
+        <div style="font-size:13px;font-weight:700;color:#374151;margin-bottom:10px">
+          Gevonden afbeeldingen (<span id="img-count">0</span>)
+        </div>
+        <div id="images-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px"></div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- end tab-search -->
+
+
+<!-- TAB 2: Afbeeldingen -->
+<div id="tab-images" style="display:none">
+  <div style="display:flex;gap:8px;margin-bottom:12px">
+    <input id="img-search-input" type="text"
+      placeholder="Zoek op punt (ST-36), figuur (4.155) of anatomie..."
+      style="flex:1;padding:12px 16px;font-size:15px;border:2px solid #e5e7eb;border-radius:10px"
+      onkeydown="if(event.key==='Enter') doImgSearch()">
+    <button onclick="doImgSearch()" class="btn btn-primary" style="padding:12px 20px">Zoeken</button>
+  </div>
+  <div style="display:flex;gap:10px;margin-bottom:16px;align-items:center">
+    <select id="img-filter" onchange="doImgSearch()" style="padding:7px 10px;border:1px solid #d1d5db;border-radius:7px;font-size:13px">
+      <option value="false">Alle afbeeldingen</option>
+      <option value="true" selected>Alleen goedgekeurd</option>
+    </select>
+  </div>
+  <div id="img-search-results" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px"></div>
+</div>
+
+</div><!-- wrap -->
+
+<!-- Lightbox -->
+<div id="lightbox" onclick="this.style.display='none'"
+  style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;
+         display:flex;align-items:center;justify-content:center;cursor:zoom-out">
+  <img id="lightbox-img" style="max-width:90vw;max-height:90vh;border-radius:8px;box-shadow:0 4px 40px rgba(0,0,0,.6)">
+</div>
+
+<style>
+@keyframes blink {{ 0%,100%{{opacity:1}} 50%{{opacity:0}} }}
+#answer-text .cursor {{ display:inline-block;width:2px;height:1.1em;background:#2563eb;
+  vertical-align:middle;animation:blink .8s step-end infinite;margin-left:1px }}
+.source-card {{ background:#fff;border-radius:8px;border:1px solid #e5e7eb;padding:12px;
+  margin-bottom:8px }}
+.source-card:hover {{ border-color:#bfdbfe }}
+.img-thumb {{ background:#f9fafb;border-radius:8px;border:1px solid #e5e7eb;overflow:hidden;cursor:zoom-in }}
+.img-thumb:hover {{ border-color:#93c5fd }}
+.img-thumb img {{ width:100%;aspect-ratio:1;object-fit:cover;background:#e5e7eb }}
+.tab-active {{ border-bottom-color:#2563eb!important;color:#2563eb!important }}
+.tab-inactive {{ border-bottom-color:transparent!important;color:#6b7280!important }}
+</style>
+
+<script>
+function switchTab(name) {{
+  document.getElementById('tab-search').style.display = name==='search' ? '' : 'none';
+  document.getElementById('tab-images').style.display = name==='images' ? '' : 'none';
+  document.getElementById('tab-search-btn').className = name==='search' ? 'tab-active' : 'tab-inactive';
+  document.getElementById('tab-images-btn').className = name==='images' ? 'tab-active' : 'tab-inactive';
+  // reset button styles inline since they're inline
+  const sb = document.getElementById('tab-search-btn');
+  const ib = document.getElementById('tab-images-btn');
+  if (name==='search') {{
+    sb.style.borderBottomColor='#2563eb'; sb.style.color='#2563eb';
+    ib.style.borderBottomColor='transparent'; ib.style.color='#6b7280';
+  }} else {{
+    ib.style.borderBottomColor='#2563eb'; ib.style.color='#2563eb';
+    sb.style.borderBottomColor='transparent'; sb.style.color='#6b7280';
+  }}
+}}
+
+async function doSearch(prefillQuery) {{
+  const q = prefillQuery || document.getElementById('search-input').value.trim();
+  if (!q) return;
+  document.getElementById('search-input').value = q;
+  history.replaceState({{}}, '', '/search?q=' + encodeURIComponent(q));
+
+  const cols = Array.from(document.querySelectorAll('.col-check:checked')).map(c => c.value);
+  if (!cols.length) {{ alert('Selecteer ten minste één collectie'); return; }}
+
+  const answerBox  = document.getElementById('answer-box');
+  const answerText = document.getElementById('answer-text');
+  const answerMeta = document.getElementById('answer-meta');
+  const sourcesList = document.getElementById('sources-list');
+  const imagesGrid  = document.getElementById('images-grid');
+  const imgPanel    = document.getElementById('images-panel');
+  const imgCount    = document.getElementById('img-count');
+
+  answerBox.style.display  = 'block';
+  answerText.innerHTML = '<span class="cursor"></span>';
+  answerMeta.textContent   = '';
+  sourcesList.innerHTML    = '<div style="color:#9ca3af;padding:12px;font-size:14px">Zoeken…</div>';
+  imagesGrid.innerHTML     = '';
+  imgPanel.style.display   = 'none';
+
+  let fullText = '';
+  const cursor = answerText.querySelector('.cursor');
+
+  try {{
+    const resp = await fetch('/search/query', {{
+      method: 'POST',
+      headers: {{'Content-Type': 'application/json'}},
+      body: JSON.stringify({{query: q, collections: cols}})
+    }});
+    const reader = resp.body.getReader();
+    const dec    = new TextDecoder();
+    let buf = '';
+
+    while (true) {{
+      const {{done, value}} = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, {{stream: true}});
+      const parts = buf.split('\\n\\n');
+      buf = parts.pop();
+      for (const part of parts) {{
+        if (!part.startsWith('data: ')) continue;
+        try {{
+          const d = JSON.parse(part.slice(6));
+          if (d.type === 'token') {{
+            fullText += d.text;
+            answerText.textContent = fullText;
+            answerText.appendChild(cursor);
+          }} else if (d.type === 'done') {{
+            cursor.remove();
+            answerMeta.textContent = 'Gebaseerd op ' + d.sources.length + ' bronnen — zoektijd: ' + d.query_time_ms + 'ms';
+            renderSources(d.sources, sourcesList);
+            renderImages(d.images, imagesGrid, imgPanel, imgCount);
+          }} else if (d.type === 'error') {{
+            answerText.textContent = 'Fout: ' + d.message;
+            cursor.remove();
+          }}
+        }} catch(e) {{}}
+      }}
+    }}
+  }} catch(e) {{
+    answerText.textContent = 'Fout: ' + e.message;
+    cursor.remove();
+  }}
+}}
+
+function renderSources(sources, container) {{
+  if (!sources.length) {{
+    container.innerHTML = '<div style="color:#9ca3af;padding:12px;font-size:14px">Geen bronnen gevonden</div>';
+    return;
+  }}
+  let html = '<div style="font-size:12px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Bronnen (' + sources.length + ')</div>';
+  sources.forEach((s, i) => {{
+    const isBook  = s.type === 'book';
+    const icon    = isBook ? '📖' : '🎥';
+    const title   = isBook
+      ? (s.source_file || '').replace(/\\.pdf$/i,'').replace(/\\.epub$/i,'').slice(0,40) + ' p.' + (s.page_number||'?')
+      : (s.source_file||'').replace(/\\.mp4$/i,'').replace(/_/g,' ').slice(0,35) + ' ' + (s.timestamp_display||'');
+    const badges  = (s.usability_tags||[]).map(t => '<span style="background:#2563eb22;color:#2563eb;padding:2px 7px;border-radius:999px;font-size:10px;font-weight:600">' + t.replace(/_/g,' ') + '</span>').join(' ');
+    const ptBadges = (s.point_codes||[]).map(p => '<span style="background:#05996922;color:#059669;padding:2px 6px;border-radius:4px;font-size:11px;font-weight:700">' + p + '</span>').join(' ');
+    const figBadge = (s.figure_refs||[]).map(f => '<span style="background:#7c3aed22;color:#7c3aed;padding:2px 6px;border-radius:4px;font-size:11px">Fig '+f+'</span>').join(' ');
+    const score   = s.score || 0;
+    const pct     = Math.min(Math.round(score*100),100);
+    const scolor  = score>0.75 ? '#059669' : (score>0.55 ? '#d97706' : '#ef4444');
+    const videoTag = !isBook ? '<span style="background:#7c3aed22;color:#7c3aed;padding:2px 6px;border-radius:4px;font-size:11px;font-weight:600">' + (s.video_type||'').toUpperCase() + '</span>' : '';
+    const truncText = (s.text||'').slice(0,200);
+    html += `
+<div class="source-card">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px">
+    <span style="font-weight:600;font-size:13px">${{icon}} ${{title}}</span>
+    <div style="display:inline-flex;align-items:center;gap:5px;flex-shrink:0">
+      <div style="width:50px;height:5px;background:#e5e7eb;border-radius:3px;overflow:hidden">
+        <div style="width:${{pct}}%;height:5px;background:${{scolor}};border-radius:3px"></div>
+      </div>
+      <span style="font-size:11px;color:${{scolor}};font-weight:600">${{score.toFixed(2)}}</span>
+    </div>
+  </div>
+  <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px">${{videoTag}}${{ptBadges}}${{figBadge}}${{badges}}</div>
+  <details>
+    <summary style="font-size:12px;color:#6b7280;cursor:pointer">${{truncText}}…</summary>
+    <div style="font-size:13px;line-height:1.6;color:#374151;margin-top:6px;padding-top:6px;border-top:1px solid #f3f4f6">${{s.text||''}}</div>
+  </details>
+  ${{!isBook ? '<div style="font-size:11px;color:#9ca3af;margin-top:4px;font-style:italic">Gesproken kennis van de instructeur</div>' : ''}}
+</div>`;
+  }});
+  container.innerHTML = html;
+}}
+
+function renderImages(images, grid, panel, count) {{
+  if (!images.length) {{ panel.style.display='none'; return; }}
+  panel.style.display = '';
+  count.textContent = images.length;
+  let html = '';
+  images.forEach(img => {{
+    const approved = img.approved ? '✅ Goedgekeurd' : '⏳ In behandeling';
+    const aColor   = img.approved ? '#059669' : '#d97706';
+    const approveBtn = !img.approved
+      ? `<button onclick="approveImg('${{img.path}}',true)" style="background:#059669;color:#fff;border:none;border-radius:4px;padding:3px 8px;font-size:11px;cursor:pointer;margin-top:4px">Goedkeuren</button>`
+      : '';
+    const aiHint = img.ai_suggestion ? `<div style="font-size:10px;color:#6b7280;margin-top:2px">${{img.ai_suggestion}}</div>` : '';
+    html += `
+<div class="img-thumb" onclick="openLightbox('${{img.url}}')">
+  <img src="${{img.url}}" alt="Afbeelding" loading="lazy" onerror="this.src=''">
+  <div style="padding:6px">
+    <div style="font-size:11px;font-weight:600;color:#374151;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${{(img.source_file||'').slice(0,25)}}</div>
+    <div style="font-size:10px;color:#9ca3af">p.${{img.page||'?'}}</div>
+    <div style="font-size:10px;color:${{aColor}};font-weight:600">${{approved}}</div>
+    ${{aiHint}}${{approveBtn}}
+  </div>
+</div>`;
+  }});
+  grid.innerHTML = html;
+}}
+
+function openLightbox(url) {{
+  event.stopPropagation();
+  const lb = document.getElementById('lightbox');
+  document.getElementById('lightbox-img').src = url;
+  lb.style.display = 'flex';
+}}
+document.getElementById('lightbox').onclick = function(e) {{
+  if (e.target === this) this.style.display = 'none';
+}};
+
+async function approveImg(path, approved) {{
+  event.stopPropagation();
+  await fetch('/images/approve', {{
+    method: 'POST',
+    headers: {{'Content-Type': 'application/json'}},
+    body: JSON.stringify({{path, approved}})
+  }});
+  event.target.textContent = '✓ Opgeslagen';
+  event.target.disabled = true;
+}}
+
+async function doImgSearch() {{
+  const q  = document.getElementById('img-search-input').value.trim();
+  const ao = document.getElementById('img-filter').value;
+  if (!q) return;
+  const res  = document.getElementById('img-search-results');
+  res.innerHTML = '<div style="color:#9ca3af;font-size:14px">Zoeken...</div>';
+  try {{
+    const r = await fetch('/search/images?q=' + encodeURIComponent(q) + '&approved_only=' + ao);
+    const d = await r.json();
+    if (!d.images.length) {{ res.innerHTML = '<div style="color:#9ca3af;font-size:14px">Geen afbeeldingen gevonden</div>'; return; }}
+    let html = '';
+    d.images.forEach(img => {{
+      const approved = img.approved ? '✅' : '⏳';
+      html += `<div class="img-thumb" onclick="openLightbox('${{img.url}}')">
+        <img src="${{img.url}}" alt="" loading="lazy" onerror="this.src=''">
+        <div style="padding:6px">
+          <div style="font-size:11px;font-weight:600">${{(img.source_file||'?').slice(0,20)}}</div>
+          <div style="font-size:10px;color:#9ca3af">p.${{img.page||'?'}} ${{approved}}</div>
+        </div>
+      </div>`;
+    }});
+    res.innerHTML = html;
+  }} catch(e) {{ res.innerHTML = 'Fout: ' + e.message; }}
+}}
+
+// Auto-run if query param present
+{f"document.addEventListener('DOMContentLoaded', () => doSearch({json.dumps(q)}));" if q else ""}
+</script>"""
+
+    return _page_shell("Zoeken", "/search", body)
+
+
+# ── POST /search/query (streaming SSE) ────────────────────────────────────────
+
+@app.post("/search/query")
+async def search_query(request: Request):
+    body = await request.json()
+    query       = (body.get("query") or "").strip()
+    collections = body.get("collections") or ["medical_library", "nrt_qat_curriculum", "video_transcripts"]
+    if not query:
+        return JSONResponse({"error": "query required"}, status_code=400)
+
+    async def generate():
+        t0 = time.time()
+        try:
+            import rag_query as rq
+            loop     = asyncio.get_running_loop()
+            prepared = await loop.run_in_executor(
+                None, lambda: rq.rag_search_only(query, collections)
+            )
+        except Exception as e:
+            yield f"data: {json.dumps({'type':'error','message':str(e)})}\n\n"
+            return
+
+        answer_text = ""
+        try:
+            async with httpx.AsyncClient(timeout=120) as client:
+                async with client.stream(
+                    "POST",
+                    "http://localhost:11434/api/generate",
+                    json={
+                        "model":  "llama3.1:8b",
+                        "prompt": prepared["prompt"],
+                        "system": prepared["system_context"],
+                        "stream": True,
+                    },
+                ) as resp:
+                    async for line in resp.aiter_lines():
+                        if not line:
+                            continue
+                        try:
+                            d     = json.loads(line)
+                            token = d.get("response", "")
+                            if token:
+                                answer_text += token
+                                yield f"data: {json.dumps({'type':'token','text':token})}\n\n"
+                            if d.get("done"):
+                                break
+                        except Exception:
+                            pass
+        except Exception as e:
+            yield f"data: {json.dumps({'type':'error','message':f'Ollama: {e}'})}\n\n"
+            return
+
+        elapsed_ms = int((time.time() - t0) * 1000)
+        done_payload = {
+            "type":                "done",
+            "answer":              answer_text,
+            "sources":             prepared["sources"],
+            "images":              prepared["images"],
+            "query_time_ms":       elapsed_ms,
+            "collections_searched": prepared["collections_searched"],
+        }
+        yield f"data: {json.dumps(done_payload, ensure_ascii=False)}\n\n"
+
+    return StreamingResponse(generate(), media_type="text/event-stream",
+                             headers={"X-Accel-Buffering": "no", "Cache-Control": "no-cache"})
+
+
+# ── GET /search/images ────────────────────────────────────────────────────────
+
+@app.get("/search/images")
+async def search_images(q: str = "", approved_only: bool = True, book: str = ""):
+    if not q:
+        return {"query": q, "images": [], "total": 0}
+    try:
+        import rag_query as rq
+        loop    = asyncio.get_running_loop()
+        results = await loop.run_in_executor(
+            None,
+            lambda: rq.image_search(q, approved_only=approved_only,
+                                    book_filter=book or None),
+        )
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+    return {"query": q, "images": results, "total": len(results)}
+
+
+# ── GET /search/suggest ────────────────────────────────────────────────────────
+
+_SUGGEST_POOL = [
+    "ST-36 Zusanli", "SP-6 Sanyinjiao", "BL-40 Weizhong", "SP-10 Xuehai",
+    "LR-3 Taichong", "GB-39 Xuanzhong", "KD-3 Taixi", "GV-4 Mingmen",
+    "ST-32 Futu", "BL-17 Geshu", "BL-23 Shenshu", "GB-37 Guangming",
+    "blood stasis", "qi stagnation", "cold bi obstruction", "kidney yang deficiency",
+    "dampness heat", "liver qi stagnation",
+    "Golgi Tendon Reflex", "muscle spindle", "reciprocal innervation",
+    "A. femoralis", "M. gastrocnemius", "M. tibialis anterior",
+    "atherosclerosis", "claudicatio intermittens", "etalagebenen",
+    "QAT blue pads", "QAT green pads", "PEMF settings", "RLT settings",
+]
+
+@app.get("/search/suggest")
+async def search_suggest(q: str = ""):
+    if not q or len(q) < 2:
+        return []
+    ql = q.lower()
+    return [s for s in _SUGGEST_POOL if ql in s.lower()][:8]
+
+
+# ── GET /images/file/{filename} ───────────────────────────────────────────────
+
+@app.get("/images/file/{filename}")
+async def serve_image(filename: str):
+    # Sanitise — strip path traversal
+    safe = Path(filename).name
+    path = IMAGES_DIR / safe
+    if not path.exists():
+        return JSONResponse({"error": "Not found"}, status_code=404)
+    suffix = safe.rsplit(".", 1)[-1].lower()
+    media  = {"png": "image/png", "jpg": "image/jpeg", "jpeg": "image/jpeg",
+               "gif": "image/gif", "webp": "image/webp"}.get(suffix, "image/png")
+    return FileResponse(str(path), media_type=media)

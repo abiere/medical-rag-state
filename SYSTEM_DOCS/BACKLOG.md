@@ -5,22 +5,30 @@
 - [ ] Browser terminal (ttyd) — iframe laadt niet ondanks actieve service op poort 7682
 - [ ] Upload NRT standaard behandelprotocol v3
 - [ ] Upload QAT cursusmateriaal
-- [ ] Upload eerste echte medische boek (Deadman of Sobotta)
+- [ ] Zoekresultaten valideren na ingesteren echte boeken (Deadman, Sobotta)
 
 ## 🟡 Backlog — gepland
+- [ ] Streaming antwoord testen met echte boeken (Ollama traag bij concurrente ingest)
+- [ ] Zoekresultaten verbeteren na eerste echte boeken ingested
 - [ ] Nightly re-tagging job wanneer tagging_rules.md wijzigt
 - [ ] Feedback loop implementeren (implicit + explicit learning)
 - [ ] Interactieve afbeeldingsselectie bij protocol generatie
-- [ ] /search pagina — RAG query interface
 - [ ] Eerste behandelprotocol genereren via RAG
 - [ ] Multi-file upload in /videos (UI only)
-- [ ] NRT video's uploaden en transcriberen
 
 ## 🟢 Ideeën — nog niet besloten
+- [ ] Visueel zoeken — upload afbeelding, vind vergelijkbare (vereist apart image embedding model)
 - [ ] Auto-classificatie override in /library UI
 - [ ] Nightly kwaliteitsrapport
 
 ## ✅ Afgerond
+- [x] /search pagina met RAG query interface — tabs Zoeken + Afbeeldingen
+- [x] Streaming Ollama antwoord token voor token via SSE
+- [x] Zoeken in video transcripts met timestamp display
+- [x] Afbeeldingen zoeken via tekst (ST-36, Fig 4.155, semantisch)
+- [x] /images/file/{filename} — afbeeldingen serveren vanuit Qdrant
+- [x] Dashboard "Snel zoeken" widget
+- [x] Qdrant vectors_count → points_count fix (al gedaan vorige sessie)
 - [x] AI instructie bestanden als MD in Git — nrt_qat_bridge, protocol_structure, tagging_rules
 - [x] Vereenvoudigde library UI (3 secties) — Medische Literatuur / NRT+QAT / Apparatuur
 - [x] nrt_qat_curriculum Qdrant collectie aangemaakt (nrt + qat samengevoegd)
