@@ -114,7 +114,8 @@ def _qdrant_info() -> dict:
             name = c["name"]
             try:
                 cr = httpx.get(f"http://localhost:6333/collections/{name}", timeout=4)
-                pts = cr.json()["result"]["vectors_count"]
+                res = cr.json()["result"]
+                pts = res.get("vectors_count") or res.get("points_count", 0)
                 info["collections"].append({"name": name, "vectors": pts})
             except Exception:
                 info["collections"].append({"name": name, "vectors": "?"})
