@@ -48,9 +48,11 @@ All outputs cite exact page numbers and source documents. No hallucinated refere
 | Ollama | Docker (`docker-compose`) | 11434 | Up, healthy |
 | FastAPI web interface | systemd `medical-rag-web.service` | **8000** | **Active** |
 | Transcription queue | systemd `transcription-queue.service` | — | **Active, processing QAT videos** |
+| ttyd browser terminal | systemd `ttyd.service` | **7682** | **Active** |
 
 **Ollama model loaded:** `llama3.1:8b` (4.92 GB, Q4_K_M)  
-**Dashboard:** `http://100.66.194.55:8000` (Tailscale only)
+**Dashboard:** `http://100.66.194.55:8000` (Tailscale only)  
+**Browser terminal:** `http://100.66.194.55:7682` (Tailscale only)
 
 ## Systemd timers
 
@@ -58,6 +60,7 @@ All outputs cite exact page numbers and source documents. No hallucinated refere
 |---|---|---|---|
 | `medical-rag-tests.timer` | `medical-rag-tests.service` | Daily 00:00 UTC | Run test suite → TEST_REPORT.md |
 | `medical-rag-maintenance.timer` | `medical-rag-maintenance.service` | Daily 00:30 UTC | Snapshots, consistency, cleanup, git push |
+| `sync-status.timer` | `sync-status.service` | Every 5 min | Write LIVE_STATUS.md → git push |
 
 ---
 
@@ -133,12 +136,20 @@ All outputs cite exact page numbers and source documents. No hallucinated refere
 
 - **Queue manager:** `transcription-queue.service` (systemd, enabled, auto-start, auto-resume)
 - **Sequential:** ONE Whisper process at a time — no OOM risk
+- **Whisper flag:** `--task translate` — all transcripts produced in English
 - **Queue file:** `/tmp/transcription_queue.json` — written by `POST /videos/transcribe`
 - **Current job:** `/tmp/transcription_current.json` — present while running, removed on completion
 - **Log:** `/var/log/transcription_queue.log`
+- **Auto-ingest:** on completion, `ingest_transcript.py` is called → vectors pushed to Qdrant `video_transcripts` collection
 - **Status endpoint:** `GET /videos/status/{video_type}/{filename}`
   → `done` / `running` / `queued` / `waiting`
 - **UI badges:** Klaar (groen) / Bezig… (blauw spinner) / In wachtrij (geel) / Wachten (grijs)
+
+**Transcription progress (2026-04-15 ~08:05):**
+- Done: 3 (Anti-Inflammatory_Procedure, Connection_to_the_Brain, Emotional_Transformation_Technique)
+- Running: Green_Square_Applications.mp4
+- Queued: 11 remaining QAT videos
+- Total: 15 QAT videos
 
 Check progress:
 ```bash
@@ -151,11 +162,12 @@ cat /tmp/transcription_current.json
 
 ## Qdrant collections
 
-| Collection | content_type(s) | What goes in |
-|---|---|---|
-| `medical_literature` | `medical_literature` | Anatomy/clinical EPUBs + PDFs |
-| `training_materials` | `training_nrt`, `training_qat` | NRT/QAT PDFs, video transcripts, text |
-| `device_protocols` | `device_pemf`, `device_rlt` | Device manuals, settings, videos |
+| Collection | content_type(s) | What goes in | Status |
+|---|---|---|---|
+| `medical_literature` | `medical_literature` | Anatomy/clinical EPUBs + PDFs | Not yet created |
+| `training_materials` | `training_nrt`, `training_qat` | NRT/QAT PDFs, video transcripts, text | Not yet created |
+| `device_protocols` | `device_pemf`, `device_rlt` | Device manuals, settings, videos | Not yet created |
+| `video_transcripts` | `video_transcripts` | Auto-ingested QAT video transcripts | **Created, growing** |
 
 ## Ingestion pipeline
 
@@ -195,6 +207,9 @@ python scripts/ingest_books.py --books-dir ./books/pemf --content-type device_pe
 | `/videos` | ✅ Live | Upload, transcription queue, status polling |
 | `/videos/status/{type}/{file}` | ✅ Live | done/running/queued/waiting |
 | `/videos/transcript/{type}/{stem}` | ✅ Live | Timestamped segment viewer |
+| `/logs/{logname}` | ✅ Live | Tail log file (transcription_queue, web, maintenance) |
+| `/status/snapshot` | ✅ Live | JSON snapshot — services, transcription, system stats |
+| `/status/markers` | ✅ Live | Read/write status markers (notify.sh integration) |
 | `/library` | ❌ Not built | Book upload + Qdrant ingestion |
 | `/search` | ❌ Not built | RAG query interface |
 | `/images` | ❌ Not built | Image browser |
@@ -216,12 +231,14 @@ python scripts/ingest_books.py --books-dir ./books/pemf --content-type device_pe
 
 ## Immediate next steps
 
-1. **Check QAT transcriptions** — `tail -20 /var/log/transcription_queue.log` (15 videos, sequentieel, ~40–90 min elk)
+1. **Check QAT transcription progress** — read LIVE_STATUS.md or `tail -20 /var/log/transcription_queue.log`
+   - Green_Square_Applications.mp4 running since 07:59; expect ~11 more videos after this
 2. **Build `/library` page** — PDF/EPUB upload, metadata cards, ingestion trigger, processing status
 3. **Build `/search` page** — multi-collection RAG search with citation display
 4. **Add books:** Drop `.pdf`/`.epub` into `./books/` → `fetch_book_metadata.py` → `ingest_books.py`
 5. **Build remaining web pages:** `/images`, `/protocols`
 6. **Word output:** `.docx` treatment protocols (§1 Klachtbeeld / §2 Behandeling / §3 Bijlagen)
+7. **Generate first treatment protocol** — once books + transcripts ingested, query RAG and produce Word output
 
 ---
 
@@ -234,8 +251,8 @@ python scripts/ingest_books.py --books-dir ./books/pemf --content-type device_pe
 
 ## Test status
 
-**Laatste run:** 15-04-2026 06:41 (60.9s)  
-**Uitslag:** ✅ GESLAAGD — 28/28 geslaagd, 0 overgeslagen
+**Laatste run:** 15-04-2026 08:08 (36.1s)  
+**Uitslag:** ✅ GESLAAGD — 33/33 geslaagd, 0 overgeslagen
 
 ---
 
