@@ -273,7 +273,7 @@ python scripts/ingest_books.py --books-dir ./books/pemf --content-type device_pe
 
 ## Test status
 
-**Laatste run:** 15-04-2026 08:08 (36.1s)  
+**Laatste run:** 15-04-2026 19:54 (47.3s)  
 **Uitslag:** ✅ GESLAAGD — 33/33 geslaagd, 0 overgeslagen
 
 ---
