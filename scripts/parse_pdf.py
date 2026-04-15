@@ -61,6 +61,65 @@ MIN_OCR_WORDS   = 10   # minimum words to accept an OCR result
 NATIVE_THRESHOLD = 15  # pdfplumber words/page below this → OCR the page
 
 
+# ── optional OCR optimization modules (lazy imports) ─────────────────────────
+
+def _preprocess_page(pil_image):
+    """Wrapper: apply OpenCV preprocessing if ocr_preprocess is available."""
+    try:
+        from scripts.ocr_preprocess import preprocess_page
+        return preprocess_page(pil_image)
+    except ImportError:
+        try:
+            import sys
+            sys.path.insert(0, str(BASE / "scripts"))
+            from ocr_preprocess import preprocess_page
+            return preprocess_page(pil_image)
+        except ImportError:
+            return pil_image
+
+
+def _is_mostly_image(pil_image) -> bool:
+    """Wrapper: return True if page is mostly diagram content (skip OCR)."""
+    try:
+        try:
+            from scripts.ocr_preprocess import is_mostly_image
+        except ImportError:
+            import sys
+            sys.path.insert(0, str(BASE / "scripts"))
+            from ocr_preprocess import is_mostly_image
+        return is_mostly_image(pil_image)
+    except ImportError:
+        return False
+
+
+def _calibrate_book(pdf_path, engines):
+    """Wrapper: run per-book calibration; return preferred engine name or None."""
+    try:
+        try:
+            from scripts.ocr_calibrate import calibrate_book
+        except ImportError:
+            import sys
+            sys.path.insert(0, str(BASE / "scripts"))
+            from ocr_calibrate import calibrate_book
+        return calibrate_book(pdf_path, engines)
+    except ImportError:
+        return None
+
+
+def _batch_correct(chunks):
+    """Wrapper: apply OCR post-correction to chunks in-place."""
+    try:
+        try:
+            from scripts.ocr_postcorrect import batch_correct
+        except ImportError:
+            import sys
+            sys.path.insert(0, str(BASE / "scripts"))
+            from ocr_postcorrect import batch_correct
+        return batch_correct(chunks)
+    except ImportError:
+        return chunks
+
+
 # ── language detection + translation ─────────────────────────────────────────
 
 def _detect_lang(text: str) -> str:
@@ -414,22 +473,18 @@ def _get_engines() -> list[tuple[str, Any]]:
 
 # ── cascade OCR function ──────────────────────────────────────────────────────
 
-def ocr_page_with_fallback(pil_image, page_num: int) -> dict:
+def _ocr_with_engines(pil_image, page_num: int, engines: list[tuple[str, Any]]) -> dict:
     """
-    Try OCR engines in order until one returns >= MIN_OCR_WORDS words.
-
-    Returns:
-        {text, word_count, engine_used, engines_tried, confidence, readable}
+    Try the given engines in order.  Same contract as ocr_page_with_fallback
+    but accepts an explicit engine list (for calibrated order).
     """
     engines_tried: list[str] = []
-
-    for name, ocr_fn in _get_engines():
+    for name, ocr_fn in engines:
         engines_tried.append(name)
         try:
             text, conf = ocr_fn(pil_image)
             wc = len(text.split())
             if wc >= MIN_OCR_WORDS:
-                logger.debug("Page %d: %s → %d words (conf=%.2f)", page_num, name, wc, conf)
                 return {
                     "text":          text,
                     "word_count":    wc,
@@ -445,7 +500,6 @@ def ocr_page_with_fallback(pil_image, page_num: int) -> dict:
         except Exception as e:
             logger.warning("Page %d: %s failed: %s — trying next", page_num, name, e)
 
-    logger.warning("Page %d: all OCR engines failed — saved as image only", page_num)
     return {
         "text":          "",
         "word_count":    0,
@@ -454,6 +508,16 @@ def ocr_page_with_fallback(pil_image, page_num: int) -> dict:
         "confidence":    0.0,
         "readable":      False,
     }
+
+
+def ocr_page_with_fallback(pil_image, page_num: int) -> dict:
+    """
+    Try OCR engines in default order until one returns >= MIN_OCR_WORDS words.
+
+    Returns:
+        {text, word_count, engine_used, engines_tried, confidence, readable}
+    """
+    return _ocr_with_engines(pil_image, page_num, _get_engines())
 
 
 # ── smart PDF type detection ──────────────────────────────────────────────────
@@ -557,13 +621,44 @@ def _parse_scanned(pdf_path: Path, book_stem: str) -> tuple[list[dict], dict]:
     ocr_stats["total_pages"] = n_pages
     logger.info("Scanned PDF — cascade OCR on %d pages", n_pages)
 
+    # Per-book calibration: find the best OCR engine for this specific PDF
+    engines = _get_engines()
+    preferred = _calibrate_book(pdf_path, engines)
+    if preferred:
+        # Move preferred engine to front of the list for this run
+        engines = sorted(engines, key=lambda e: 0 if e[0] == preferred else 1)
+        logger.info("Using calibrated engine order: %s", [e[0] for e in engines])
+
     pages: list[dict] = []
     confidences: list[float] = []
 
     for page_num in range(n_pages):
         try:
             pil_image = _render_page(doc, page_num)
-            result    = ocr_page_with_fallback(pil_image, page_num + 1)
+
+            # Skip OCR on pure diagram/image pages
+            if _is_mostly_image(pil_image):
+                logger.debug("Page %d appears image-only — saving render, skipping OCR",
+                             page_num + 1)
+                img_path = _save_page_render(pil_image, book_stem, page_num + 1)
+                ocr_stats["unreadable_pages"] += 1
+                pages.append({
+                    "page_number":    page_num + 1,
+                    "paragraphs":     [],
+                    "chapter":        "",
+                    "section":        "",
+                    "ocr_engine":     "none",
+                    "ocr_confidence": 0.0,
+                    "_image_only":    True,
+                    "_page_image":    img_path,
+                })
+                continue
+
+            # Preprocess image before OCR
+            processed = _preprocess_page(pil_image)
+
+            # Run cascade OCR with (possibly reordered) engines
+            result = _ocr_with_engines(processed, page_num + 1, engines)
 
             engine = result["engine_used"]
             ocr_stats["engine_usage"][engine] = \
@@ -667,10 +762,11 @@ def _parse_mixed(pdf_path: Path, book_stem: str) -> tuple[list[dict], dict]:
                     "ocr_confidence": 1.0,
                 })
             else:
-                # Render and cascade OCR
+                # Render and cascade OCR (with preprocessing)
                 ocr_stats["ocr_pages"] += 1
                 pil_image = _render_page(doc, page_num)
-                result    = ocr_page_with_fallback(pil_image, page_num + 1)
+                processed = _preprocess_page(pil_image)
+                result    = ocr_page_with_fallback(processed, page_num + 1)
 
                 engine = result["engine_used"]
                 ocr_stats["engine_usage"][engine] = \
@@ -840,6 +936,10 @@ def parse_pdf(
 
             chunks.append(chunk)
             chunk_idx += 1
+
+    # 4. Post-correction for OCR chunks (rule-based always; Ollama for low-confidence)
+    if pdf_type != "native" and chunks:
+        chunks = _batch_correct(chunks)
 
     logger.info(
         "Produced %d chunks from %s (type=%s)", len(chunks), pdf_path.name, pdf_type

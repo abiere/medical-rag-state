@@ -736,18 +736,38 @@ window.addEventListener('load', () => {
 
 
 _VIDEO_PROGRESS_SCRIPT = r"""<script>
+async function _toggleVideoPause() {
+  const btn = document.getElementById('video-pause-btn');
+  if (!btn) return;
+  const paused = btn.dataset.paused === 'true';
+  const url = paused ? '/videos/resume' : '/videos/pause';
+  try {
+    await fetch(url, {method: 'POST'});
+    btn.dataset.paused = paused ? 'false' : 'true';
+    btn.textContent = paused ? '⏸ Pauzeer' : '▶ Hervat';
+    btn.style.background = paused ? '#dc2626' : '#059669';
+  } catch(e) {}
+  _refreshVideoProgress();
+}
 async function _refreshVideoProgress() {
   try {
-    const r = await fetch('/videos/progress');
-    const d = await r.json();
+    const [pr, ps] = await Promise.all([
+      fetch('/videos/progress').then(r => r.json()),
+      fetch('/videos/paused').then(r => r.json()),
+    ]);
+    const d = pr;
     const el = document.getElementById('video-progress');
     if (!el) return;
-    if (!d.current && d.queue_count === 0) { el.innerHTML = ''; return; }
+    if (!d.current && d.queue_count === 0 && !ps.paused) { el.innerHTML = ''; return; }
+    const isPaused = ps.paused;
     let html = '<div style="background:#dbeafe;border:1px solid #93c5fd;border-radius:10px;padding:16px 20px">';
     html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
     html += '<span style="font-weight:700;font-size:15px;color:#1e40af">🎬 Transcriptie voortgang</span>';
+    html += '<div style="display:flex;gap:8px;align-items:center">';
+    if (isPaused) html += '<span style="background:#fef3c7;color:#92400e;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600">⏸ Gepauzeerd</span>';
+    html += `<button id="video-pause-btn" onclick="_toggleVideoPause()" data-paused="${isPaused}" style="font-size:12px;padding:4px 12px;border-radius:6px;border:none;cursor:pointer;color:#fff;background:${isPaused ? '#059669' : '#dc2626'}">${isPaused ? '▶ Hervat' : '⏸ Pauzeer'}</button>`;
     html += '<span style="font-size:12px;color:#6b7280">↻ 10s</span>';
-    html += '</div>';
+    html += '</div></div>';
     if (d.current) {
       html += `<div style="font-size:14px;margin-bottom:4px"><strong>Bezig:</strong> ${d.current.file} <span style="color:#6b7280">(${d.current.elapsed_minutes} min)</span></div>`;
       if (d.last_log) html += `<div style="font-size:11px;color:#6b7280;font-family:monospace;margin-bottom:8px;word-break:break-all;background:#eff6ff;border-radius:4px;padding:4px 8px">${d.last_log.slice(-140)}</div>`;
@@ -767,18 +787,38 @@ setInterval(_refreshVideoProgress, 10000);
 </script>"""
 
 _BOOK_PROGRESS_SCRIPT = r"""<script>
+async function _toggleBookPause() {
+  const btn = document.getElementById('book-pause-btn');
+  if (!btn) return;
+  const paused = btn.dataset.paused === 'true';
+  const url = paused ? '/library/resume' : '/library/pause';
+  try {
+    await fetch(url, {method: 'POST'});
+    btn.dataset.paused = paused ? 'false' : 'true';
+    btn.textContent = paused ? '▶ Hervat' : '⏸ Pauzeer';
+    btn.style.background = paused ? '#dc2626' : '#059669';
+  } catch(e) {}
+  _refreshBookProgress();
+}
 async function _refreshBookProgress() {
   try {
-    const r = await fetch('/library/progress');
-    const d = await r.json();
+    const [pr, ps] = await Promise.all([
+      fetch('/library/progress').then(r => r.json()),
+      fetch('/library/paused').then(r => r.json()),
+    ]);
+    const d = pr;
     const el = document.getElementById('book-progress');
     if (!el) return;
-    if (!d.current && d.queue_count === 0) { el.innerHTML = ''; return; }
+    if (!d.current && d.queue_count === 0 && !ps.paused) { el.innerHTML = ''; return; }
+    const isPaused = ps.paused;
     let html = '<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:16px 20px">';
     html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
     html += '<span style="font-weight:700;font-size:15px;color:#1e40af">📚 Boek ingest voortgang</span>';
+    html += '<div style="display:flex;gap:8px;align-items:center">';
+    if (isPaused) html += '<span style="background:#fef3c7;color:#92400e;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600">⏸ Gepauzeerd</span>';
+    html += `<button id="book-pause-btn" onclick="_toggleBookPause()" data-paused="${isPaused}" style="font-size:12px;padding:4px 12px;border-radius:6px;border:none;cursor:pointer;color:#fff;background:${isPaused ? '#059669' : '#dc2626'}">${isPaused ? '▶ Hervat' : '⏸ Pauzeer'}</button>`;
     html += '<span style="font-size:12px;color:#6b7280">↻ 10s</span>';
-    html += '</div>';
+    html += '</div></div>';
     if (d.current) {
       html += `<div style="font-size:14px;margin-bottom:4px"><strong>Bezig:</strong> ${d.current.filename} <span style="color:#6b7280">(${d.current.elapsed_minutes} min)</span></div>`;
       if (d.last_log) html += `<div style="font-size:11px;color:#6b7280;font-family:monospace;margin-bottom:8px;word-break:break-all;background:#f0f7ff;border-radius:4px;padding:4px 8px">${d.last_log.slice(-140)}</div>`;
@@ -1806,6 +1846,46 @@ async def videos_progress():
     except Exception:
         pass
     return result
+
+
+# ── Pause / resume endpoints ──────────────────────────────────────────────────
+
+_BOOK_PAUSE_FILE  = Path("/tmp/book_ingest_pause")
+_VIDEO_PAUSE_FILE = Path("/tmp/transcription_pause")
+
+
+@app.post("/library/pause")
+async def library_pause():
+    _BOOK_PAUSE_FILE.touch()
+    return {"paused": True}
+
+
+@app.post("/library/resume")
+async def library_resume():
+    _BOOK_PAUSE_FILE.unlink(missing_ok=True)
+    return {"paused": False}
+
+
+@app.get("/library/paused")
+async def library_paused():
+    return {"paused": _BOOK_PAUSE_FILE.exists()}
+
+
+@app.post("/videos/pause")
+async def videos_pause():
+    _VIDEO_PAUSE_FILE.touch()
+    return {"paused": True}
+
+
+@app.post("/videos/resume")
+async def videos_resume():
+    _VIDEO_PAUSE_FILE.unlink(missing_ok=True)
+    return {"paused": False}
+
+
+@app.get("/videos/paused")
+async def videos_paused():
+    return {"paused": _VIDEO_PAUSE_FILE.exists()}
 
 
 # ═══════════════════════════════════════════════════════════════════════════════

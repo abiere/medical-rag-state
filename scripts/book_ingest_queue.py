@@ -34,6 +34,7 @@ MARKERS_FILE = Path("/var/log/markers.json")
 QDRANT_URL   = "http://localhost:6333"
 OLLAMA_URL   = "http://localhost:11434"
 OLLAMA_MODEL = "llama3.1:8b"
+PAUSE_FILE   = Path("/tmp/book_ingest_pause")
 
 VECTOR_SIZE       = 1024
 BOOK_EXTS         = {".pdf", ".epub"}
@@ -390,6 +391,12 @@ def main() -> None:
         logger.info("Startup scan: %d file(s) added to queue", added)
 
     while True:
+        # Pause support: check flag before starting next book
+        if PAUSE_FILE.exists():
+            logger.info("Queue paused (pause flag set) — waiting 30s")
+            time.sleep(30)
+            continue
+
         queue = _read_queue()
         if not queue:
             logger.info("Queue empty — exiting")

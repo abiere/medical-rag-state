@@ -22,6 +22,14 @@
 - [ ] Nightly kwaliteitsrapport
 
 ## ✅ Afgerond
+- [x] OCR optimalisatie modules — ocr_preprocess.py (OpenCV deskew/denoise/CLAHE), ocr_calibrate.py (per-boek Ollama kalibratie), ocr_postcorrect.py (regel + Ollama correctie)
+- [x] OCR preprocessing geïntegreerd in parse_pdf.py scanned/mixed pad
+- [x] Pause/resume knoppen in /library en /videos — POST /library/pause, /library/resume, /videos/pause, /videos/resume + GET /library/paused, /videos/paused
+- [x] book_ingest_queue.py + transcription_queue.py — pause flag check vóór elke volgende job
+- [x] Cascade OCR: EasyOCR → Surya → Tesseract fallback met preprocessing + per-boek kalibratie
+- [x] sync_status.py — HOME=/root env var fix, elapsed-tijd in job display, Qdrant vector counts
+- [x] /library/progress + /videos/progress endpoints met 10s auto-refresh in UI
+- [x] SSE generator fix — done event altijd verzonden ook bij Ollama fout
 - [x] /search pagina met RAG query interface — tabs Zoeken + Afbeeldingen
 - [x] Streaming Ollama antwoord token voor token via SSE
 - [x] Zoeken in video transcripts met timestamp display

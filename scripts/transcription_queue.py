@@ -27,8 +27,9 @@ LOG_FILE   = Path("/var/log/transcription_queue.log")
 QUEUE_FILE = Path("/tmp/transcription_queue.json")
 CURRENT    = Path("/tmp/transcription_current.json")
 
-NOTIFY     = BASE / "scripts" / "notify.sh"
-INGEST     = BASE / "scripts" / "ingest_transcript.py"
+NOTIFY      = BASE / "scripts" / "notify.sh"
+INGEST      = BASE / "scripts" / "ingest_transcript.py"
+PAUSE_FILE  = Path("/tmp/transcription_pause")
 VIDEO_TYPES = ["nrt", "qat", "pemf", "rlt"]
 VIDEO_EXTS  = {".mp4", ".mov", ".mkv", ".m4v"}
 CONTENT_TYPE_MAP = {
@@ -215,6 +216,12 @@ def main() -> None:
     initial_total = len(_read_queue())
 
     while True:
+        # Pause support: check flag before starting next video
+        if PAUSE_FILE.exists():
+            log.info("Queue paused (pause flag set) — waiting 30s")
+            time.sleep(30)
+            continue
+
         queue = _read_queue()
         if not queue:
             log.info(f"Queue empty — {processed} video(s) processed. Exiting.")
