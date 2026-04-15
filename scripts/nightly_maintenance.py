@@ -446,7 +446,210 @@ class MaintenanceRunner:
         else:
             findings.append("Consistentie: geen problemen gevonden")
 
+        # ── Qdrant ↔ disk consistency: transcripts ───────────────────────────
+        trans_dir = BASE / "data" / "transcripts"
+        trans_findings, trans_incons = self._check_transcript_consistency(qdrant_cols)
+        findings.extend(trans_findings)
+        inconsistencies.extend(trans_incons)
+        if trans_incons:
+            if status == "OK": status = "WARNING"
+
+        # ── Qdrant ↔ disk consistency: books ─────────────────────────────────
+        book_findings, book_incons = self._check_book_consistency(qdrant_cols)
+        findings.extend(book_findings)
+        inconsistencies.extend(book_incons)
+        if book_incons:
+            if status == "OK": status = "WARNING"
+
+        # ── Write consistency log ─────────────────────────────────────────────
+        self._write_consistency_log(trans_incons + book_incons, status)
+
         return status, {"findings": findings, "inconsistencies": inconsistencies}
+
+    def _check_transcript_consistency(
+        self, qdrant_cols: list[str]
+    ) -> tuple[list[str], list[str]]:
+        """
+        For each JSON transcript in data/transcripts/, verify it has vectors
+        in video_transcripts.  Re-ingest if missing.
+        """
+        findings: list[str] = []
+        incons:   list[str] = []
+        trans_dir = BASE / "data" / "transcripts"
+
+        if not trans_dir.exists():
+            return ["Transcripts: map niet gevonden"], []
+
+        json_files = list(trans_dir.glob("*.json"))
+        if not json_files:
+            return ["Transcripts: geen JSON bestanden gevonden"], []
+
+        if "video_transcripts" not in qdrant_cols:
+            return [f"Transcripts: {len(json_files)} bestanden, collectie bestaat niet"], []
+
+        missing = []
+        for jf in json_files:
+            code, res = http_post(
+                f"{QDRANT_BASE}/collections/video_transcripts/points/scroll",
+                data={
+                    "filter": {"must": [{"key": "source_file", "match": {"value": jf.name}}]},
+                    "limit": 1,
+                    "with_payload": False,
+                },
+                timeout=10,
+            )
+            if code == 200:
+                pts = (res or {}).get("result", {}).get("points", [])
+                if not pts:
+                    missing.append(jf)
+            else:
+                findings.append(f"Transcripts: Qdrant query mislukt voor {jf.name} (HTTP {code})")
+
+        findings.append(
+            f"Transcripts: {len(json_files)} bestanden, "
+            f"{len(json_files) - len(missing)} in Qdrant, "
+            f"{len(missing)} ontbreken"
+        )
+
+        if not missing:
+            return findings, []
+
+        # Determine video_type from videos/ directory structure
+        video_dirs: dict[str, str] = {}
+        for vtype in ("qat", "nrt", "pemf", "rlt"):
+            vdir = BASE / "videos" / vtype
+            if vdir.exists():
+                for vf in vdir.glob("*"):
+                    video_dirs[vf.stem] = vtype
+
+        re_ingested = 0
+        for jf in missing:
+            stem   = jf.stem
+            vtype  = video_dirs.get(stem, "qat")  # default qat if unknown
+            incons.append(f"TRANSCRIPT ONTBREEKT IN QDRANT: {jf.name} (type: {vtype})")
+            # Re-ingest
+            r = subprocess.run(
+                [sys.executable, str(BASE / "scripts" / "ingest_transcript.py"),
+                 "--file", str(jf), "--video-type", vtype],
+                capture_output=True, text=True, timeout=120,
+            )
+            if r.returncode == 0:
+                findings.append(f"  → her-ingestered: {jf.name}")
+                re_ingested += 1
+            else:
+                findings.append(f"  → her-ingest mislukt: {jf.name}: {r.stderr.strip()[:80]}")
+
+        if re_ingested:
+            findings.append(f"Transcripts: {re_ingested} bestand(en) her-ingestered")
+
+        return findings, incons
+
+    def _check_book_consistency(
+        self, qdrant_cols: list[str]
+    ) -> tuple[list[str], list[str]]:
+        """
+        For each approved book audit in data/book_quality/, verify it has
+        vectors in the appropriate collection.  Re-queue if missing.
+        """
+        findings: list[str] = []
+        incons:   list[str] = []
+        quality_dir = BASE / "data" / "book_quality"
+        queue_file  = Path("/tmp/book_ingest_queue.json")
+
+        if not quality_dir.exists():
+            return ["Boeken: book_quality map niet gevonden"], []
+
+        audit_files = list(quality_dir.glob("*_audit.json"))
+        if not audit_files:
+            return ["Boeken: geen audit-bestanden gevonden"], []
+
+        re_queued = 0
+        checked   = 0
+
+        for af in audit_files:
+            try:
+                audit = json.loads(af.read_text())
+            except Exception:
+                continue
+            if audit.get("status") != "approved":
+                continue
+
+            book_file  = audit.get("book", "")
+            collection = audit.get("collection", "medical_library")
+            checked   += 1
+
+            if collection not in qdrant_cols:
+                continue
+
+            code, res = http_post(
+                f"{QDRANT_BASE}/collections/{collection}/points/scroll",
+                data={
+                    "filter": {"must": [{"key": "source_file", "match": {"value": book_file}}]},
+                    "limit": 1,
+                    "with_payload": False,
+                },
+                timeout=10,
+            )
+            if code != 200:
+                continue
+            pts = (res or {}).get("result", {}).get("points", [])
+            if pts:
+                continue
+
+            # No vectors — find book file and re-queue
+            incons.append(f"BOEK ONTBREEKT IN QDRANT: {book_file} (collectie: {collection})")
+
+            # Locate the physical file
+            book_path: Path | None = None
+            for sub in ("medical_literature", "nrt", "qat", "device", "acupuncture", "anatomy", "medical"):
+                candidate = BASE / "books" / sub / book_file
+                if candidate.exists():
+                    book_path = candidate
+                    break
+
+            if book_path is None:
+                findings.append(f"  → bestand niet gevonden op disk: {book_file}")
+                continue
+
+            # Add to queue
+            try:
+                q: list[dict] = []
+                if queue_file.exists():
+                    q = json.loads(queue_file.read_text())
+                # Only add if not already queued
+                already = any(item.get("filename") == book_file for item in q)
+                if not already:
+                    q.append({"filename": book_file, "collection": collection,
+                              "filepath": str(book_path)})
+                    queue_file.write_text(json.dumps(q, indent=2))
+                    findings.append(f"  → terug in wachtrij gezet: {book_file}")
+                    re_queued += 1
+                else:
+                    findings.append(f"  → al in wachtrij: {book_file}")
+            except Exception as exc:
+                findings.append(f"  → wachtrij-update mislukt: {exc}")
+
+        findings.insert(0,
+            f"Boeken: {checked} goedgekeurde audit(s) gecontroleerd, "
+            f"{len(incons)} ontbreken in Qdrant, {re_queued} her-in-wachtrij gezet"
+        )
+        return findings, incons
+
+    def _write_consistency_log(self, incons: list[str], status: str) -> None:
+        """Write a timestamped summary to /var/log/nightly_consistency.log."""
+        log_path = Path("/var/log/nightly_consistency.log")
+        ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        lines = [f"=== {ts} — {status} ==="]
+        if incons:
+            lines.extend(f"  {i}" for i in incons)
+        else:
+            lines.append("  Geen inconsistenties gevonden")
+        lines.append("")
+        try:
+            with open(log_path, "a") as f:
+                f.write("\n".join(lines) + "\n")
+        except Exception as e:
+            print(f"  ⚠ consistency log schrijven mislukt: {e}")
 
     # ─────────────────────────────────────────────────────────────────────────
     # PHASE 4 — SOFTWARE UPDATE CHECK (report only, never installs)

@@ -8,6 +8,7 @@ import json
 import shutil
 import subprocess
 import sys
+import time
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
@@ -20,8 +21,10 @@ TRANS_DIR = BASE / "data" / "transcripts"
 VIDEOS_DIR = BASE / "videos"
 QUEUE_FILE   = Path("/tmp/transcription_queue.json")
 CURRENT_FILE = Path("/tmp/transcription_current.json")
-MARKERS_FILE = Path("/var/log/markers.json")
-QUEUE_LOG    = Path("/var/log/transcription_queue.log")
+MARKERS_FILE  = Path("/var/log/markers.json")
+QUEUE_LOG     = Path("/var/log/transcription_queue.log")
+ERROR_LOG     = Path("/var/log/sync_status_errors.log")
+CONSISTENCY_LOG = Path("/var/log/nightly_consistency.log")
 BOOKS_DIR          = BASE / "books"
 BOOK_QUEUE_FILE    = Path("/tmp/book_ingest_queue.json")
 BOOK_CURRENT_FILE  = Path("/tmp/book_ingest_current.json")
@@ -220,6 +223,17 @@ def _queue_log_tail() -> str:
     return "_log niet gevonden_"
 
 
+def _consistency_summary() -> str:
+    """Return last nightly consistency check summary, or a placeholder."""
+    try:
+        if CONSISTENCY_LOG.exists():
+            lines = [l for l in CONSISTENCY_LOG.read_text(errors="replace").splitlines() if l.strip()]
+            return "\n".join(lines[-8:]) if lines else "_nog niet uitgevoerd_"
+    except Exception:
+        pass
+    return "_log niet gevonden_"
+
+
 # ── build document ────────────────────────────────────────────────────────────
 
 def build_md() -> str:
@@ -290,6 +304,11 @@ def build_md() -> str:
 ## Recent markers
 {_markers_section()}
 
+## Nightly Consistency
+```
+{_consistency_summary()}
+```
+
 ## Queue log (last 10 lines)
 ```
 {_queue_log_tail()}
@@ -343,15 +362,33 @@ def main() -> None:
         print(f"git commit failed: {commit.stderr}", file=sys.stderr)
         sys.exit(1)
 
-    push = subprocess.run(
-        ["git", "push"],
-        cwd=BASE, capture_output=True, text=True,
-    )
-    if push.returncode != 0:
-        print(f"git push failed: {push.stderr}", file=sys.stderr)
-        sys.exit(1)
+    # Retry push up to 3 times with 10-second delay
+    push_ok = False
+    last_push_err = ""
+    for attempt in range(1, 4):
+        push = subprocess.run(
+            ["git", "push"],
+            cwd=BASE, capture_output=True, text=True,
+        )
+        if push.returncode == 0:
+            push_ok = True
+            break
+        last_push_err = push.stderr.strip()
+        print(f"git push failed (attempt {attempt}/3): {last_push_err}", file=sys.stderr)
+        if attempt < 3:
+            time.sleep(10)
 
-    print(f"Pushed at {ts_short}")
+    if push_ok:
+        print(f"Pushed at {ts_short}")
+    else:
+        err_line = f"{datetime.now(timezone.utc).isoformat()} — push failed after 3 attempts: {last_push_err}\n"
+        try:
+            with open(ERROR_LOG, "a") as ef:
+                ef.write(err_line)
+        except Exception:
+            pass
+        print(f"All push attempts failed — LIVE_STATUS.md written locally, error logged to {ERROR_LOG}", file=sys.stderr)
+        # Do NOT sys.exit(1) — local write succeeded; no need to crash the timer
 
 
 if __name__ == "__main__":

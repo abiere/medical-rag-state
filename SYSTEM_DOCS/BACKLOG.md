@@ -38,6 +38,10 @@
 - [ ] EPUBs voor betere afbeeldingskwaliteit (Sobotta EPUB)
 
 ## ✅ Afgerond
+- [x] Queue watchdog (queue_watchdog.py + systemd timer elke 10 min — auto-restart bij vastgelopen queue)
+- [x] Sync retry logic (sync_status.py — 3 pogingen, 10s delay, error log, Restart=on-failure)
+- [x] Nightly consistency check (transcripts + boeken vs Qdrant — auto her-ingest + log)
+- [x] /var/log/nightly_consistency.log — nachtelijke resultaten in LIVE_STATUS.md
 - [x] FastAPI web interface (medical-rag-web.service)
 - [x] Dashboard — CPU/RAM/disk/services live
 - [x] Sequentiële transcriptie queue (systemd, auto-resume na reboot)
