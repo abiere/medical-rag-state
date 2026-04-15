@@ -183,8 +183,8 @@ python scripts/ingest_books.py --books-dir ./books/pemf --content-type device_pe
 
 ## Maintenance status
 
-**Laatste run:** 14-04-2026 19:05 (15.6s)  
-**Uitslag:** ⚠️ WARNING — 1 waarschuwing(en), 4 OK  
+**Laatste run:** 15-04-2026 00:30 (35.3s)  
+**Uitslag:** ⚠️ WARNING — 1 waarschuwing(en), 4 OK
 
 ---
 
