@@ -12,6 +12,37 @@ QUEUE_FILE   = Path("/tmp/transcription_queue.json")
 CURRENT_FILE = Path("/tmp/transcription_current.json")
 MARKERS_FILE = Path("/var/log/markers.json")
 
+BOOKS_DIR          = BASE / "books"
+BOOK_QUEUE_FILE    = Path("/tmp/book_ingest_queue.json")
+BOOK_CURRENT_FILE  = Path("/tmp/book_ingest_current.json")
+QUALITY_DIR        = BASE / "data" / "book_quality"
+
+COLLECTION_MAP = {
+    "medical":     "medical_literature",
+    "anatomy":     "anatomy_atlas",
+    "acupuncture": "acupuncture_points",
+    "nrt":         "nrt_curriculum",
+    "qat":         "qat_curriculum",
+    "device":      "device_documentation",
+}
+COLLECTION_LABELS = {
+    "medical":     "Medische Literatuur",
+    "anatomy":     "Anatomie Atlas",
+    "acupuncture": "Acupunctuur",
+    "nrt":         "NRT Curriculum",
+    "qat":         "QAT Curriculum",
+    "device":      "Apparatuur",
+}
+COLLECTION_COLORS = {
+    "medical":     "#2563eb",
+    "anatomy":     "#7c3aed",
+    "acupuncture": "#059669",
+    "nrt":         "#b45309",
+    "qat":         "#0e7490",
+    "device":      "#9d174d",
+}
+BOOK_EXTS = {".pdf", ".epub"}
+
 _LOG_MAP = {
     "transcription_queue": ("file",    "/var/log/transcription_queue.log"),
     "system":              ("file",    "/var/log/syslog"),
@@ -1037,13 +1068,51 @@ async def status_snapshot():
     except Exception:
         pass
 
+    # Books stats
+    total_books = ingested_books = queued_books = 0
+    quality_scores: list[float] = []
+    try:
+        for subdir in COLLECTION_MAP:
+            d = BOOKS_DIR / subdir
+            if d.exists():
+                total_books += sum(1 for f in d.iterdir() if f.suffix.lower() in BOOK_EXTS)
+        if BOOK_QUEUE_FILE.exists():
+            bq = json.loads(BOOK_QUEUE_FILE.read_text())
+            queued_books = len(bq) if isinstance(bq, list) else 0
+        if QUALITY_DIR.exists():
+            for af in QUALITY_DIR.glob("*_audit.json"):
+                try:
+                    a = json.loads(af.read_text())
+                    if a.get("status") == "approved":
+                        ingested_books += 1
+                    qs = a.get("llm_audit", {}) or {}
+                    s = qs.get("quality_score")
+                    if s is not None:
+                        quality_scores.append(float(s))
+                except Exception:
+                    pass
+    except Exception:
+        pass
+
     return {
         "timestamp": datetime.now().isoformat(),
         "services": {
             "web":                 _svc_active("medical-rag-web"),
             "transcription_queue": _svc_active("transcription-queue"),
+            "book_ingest_queue":   _svc_active("book-ingest-queue"),
             "qdrant":              qdrant_status,
             "ollama":              ollama_status,
+        },
+        "books": {
+            "total":            total_books,
+            "ingested":         ingested_books,
+            "queued":           queued_books,
+            "avg_quality_score": round(sum(quality_scores)/len(quality_scores), 2)
+                                  if quality_scores else None,
+        },
+        "qdrant_collections": {
+            col["name"]: col["vectors"]
+            for col in qdrant_info.get("collections", [])
         },
         "transcription": {
             "current": current_file,
@@ -1061,10 +1130,6 @@ async def status_snapshot():
             "passed":    passed,
             "failed":    failed,
             "timestamp": test_ts,
-        },
-        "qdrant": {
-            col["name"]: col["vectors"]
-            for col in qdrant_info.get("collections", [])
         },
     }
 
@@ -1181,3 +1246,238 @@ function fetchMarkers() {
 </script>"""
 
     return _page_shell("Terminal", "/terminal", body)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# LIBRARY — helpers
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def _book_status(filename: str) -> dict:
+    """Return status dict for one book file."""
+    stem = Path(filename).stem
+    # Running?
+    try:
+        if BOOK_CURRENT_FILE.exists():
+            cur = json.loads(BOOK_CURRENT_FILE.read_text())
+            if cur.get("filename") == filename:
+                return {"status": "running", "label": "Ingesteren…", "color": "#2563eb"}
+    except Exception:
+        pass
+    # Queued?
+    try:
+        if BOOK_QUEUE_FILE.exists():
+            q = json.loads(BOOK_QUEUE_FILE.read_text())
+            if any(item.get("filename") == filename for item in q):
+                return {"status": "queued", "label": "In wachtrij", "color": "#d97706"}
+    except Exception:
+        pass
+    # Done?
+    audit_path = QUALITY_DIR / f"{stem}_audit.json"
+    if audit_path.exists():
+        try:
+            a = json.loads(audit_path.read_text())
+            qs = (a.get("llm_audit") or {}).get("quality_score")
+            if a.get("status") == "approved":
+                score_str = f" (score {qs:.1f})" if qs else ""
+                return {"status": "done", "label": f"Klaar{score_str}", "color": "#059669",
+                        "quality_score": qs, "total_chunks": a.get("total_chunks", 0)}
+            else:
+                return {"status": "low_quality", "label": f"Lage kwaliteit ({qs:.1f})",
+                        "color": "#dc2626", "quality_score": qs}
+        except Exception:
+            pass
+    return {"status": "waiting", "label": "Wachten", "color": "#6b7280"}
+
+
+def _enqueue_book(filename: str, filepath: str, collection: str, category: str, fmt: str) -> None:
+    entry = {
+        "filename":        filename,
+        "filepath":        filepath,
+        "collection":      collection,
+        "source_category": category,
+        "format":          fmt,
+        "requested":       datetime.now().isoformat(),
+    }
+    try:
+        q = json.loads(BOOK_QUEUE_FILE.read_text()) if BOOK_QUEUE_FILE.exists() else []
+        if not isinstance(q, list):
+            q = []
+    except Exception:
+        q = []
+    existing = {i.get("filename") for i in q}
+    if filename not in existing:
+        q.append(entry)
+        BOOK_QUEUE_FILE.write_text(json.dumps(q, indent=2))
+
+
+def _library_section_html(category: str) -> str:
+    collection = COLLECTION_MAP[category]
+    label      = COLLECTION_LABELS[category]
+    color      = COLLECTION_COLORS[category]
+    books_dir  = BOOKS_DIR / category
+
+    # List books in this subdir
+    books = []
+    if books_dir.exists():
+        for f in sorted(books_dir.iterdir()):
+            if f.suffix.lower() in BOOK_EXTS:
+                st = _book_status(f.name)
+                books.append({"name": f.name, "size": _fmt_bytes(f.stat().st_size),
+                               **st})
+
+    rows = ""
+    if books:
+        for b in books:
+            badge_bg = b["color"] + "22"
+            rows += f"""
+<tr>
+  <td><span style="font-weight:600">{b['name']}</span></td>
+  <td class="hide-sm">{b.get('size','')}</td>
+  <td><span style="background:{badge_bg};color:{b['color']};padding:3px 10px;
+      border-radius:999px;font-size:12px;font-weight:600">{b['label']}</span></td>
+  <td>{b.get('total_chunks','') or ''}</td>
+  <td>
+    <a href="/library/audit/{b['name']}" class="btn btn-secondary" style="font-size:12px"
+       {'onclick="return false" style="opacity:.4;cursor:default"' if b['status'] == 'waiting' else ''}>
+       Rapport</a>
+  </td>
+</tr>"""
+    else:
+        rows = f'<tr><td colspan="5" style="color:#9ca3af;font-size:14px">Geen bestanden</td></tr>'
+
+    return f"""
+<div class="section" style="border-top:3px solid {color}">
+  <div class="section-head">
+    <span class="section-title">{label}</span>
+    <span style="font-size:12px;color:#6b7280;font-family:monospace">{collection}</span>
+  </div>
+  <table>
+    <thead><tr>
+      <th>Bestand</th><th class="hide-sm">Grootte</th>
+      <th>Status</th><th>Chunks</th><th></th>
+    </tr></thead>
+    <tbody>{rows}</tbody>
+  </table>
+  <div style="padding:16px 20px;border-top:1px solid #f3f4f6">
+    <form id="form-{category}" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <input type="file" name="file" accept=".pdf,.epub"
+             style="flex:1;min-width:200px" required>
+      <button type="button" onclick="uploadBook('{category}')"
+              class="btn btn-primary">Uploaden + ingesteren</button>
+      <span id="upload-msg-{category}" style="font-size:13px;color:#059669"></span>
+    </form>
+  </div>
+</div>"""
+
+
+# ── GET /library ───────────────────────────────────────────────────────────────
+
+@app.get("/library", response_class=HTMLResponse)
+async def library_page():
+    sections = "".join(_library_section_html(cat) for cat in COLLECTION_MAP)
+
+    # Queue stats
+    queued_count = 0
+    current_book = ""
+    try:
+        if BOOK_QUEUE_FILE.exists():
+            q = json.loads(BOOK_QUEUE_FILE.read_text())
+            queued_count = len(q) if isinstance(q, list) else 0
+    except Exception:
+        pass
+    try:
+        if BOOK_CURRENT_FILE.exists():
+            current_book = json.loads(BOOK_CURRENT_FILE.read_text()).get("filename", "")
+    except Exception:
+        pass
+
+    status_bar = ""
+    if current_book:
+        status_bar = f'<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:14px">🔄 <strong>Bezig:</strong> {current_book} — {queued_count} in wachtrij</div>'
+    elif queued_count:
+        status_bar = f'<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:14px">⏳ {queued_count} boek(en) in wachtrij — start <code>book-ingest-queue.service</code></div>'
+
+    body = f"""
+<div class="wrap">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+    <h1 style="font-size:22px;font-weight:700">Bibliotheek</h1>
+    <div style="font-size:13px;color:#6b7280">
+      Upload PDF of EPUB → automatisch parseren, auditeren en ingesteren in Qdrant
+    </div>
+  </div>
+  {status_bar}
+  {sections}
+</div>
+<script>
+function uploadBook(category) {{
+  const form    = document.getElementById('form-' + category);
+  const msg     = document.getElementById('upload-msg-' + category);
+  const fileInput = form.querySelector('input[type=file]');
+  if (!fileInput.files.length) {{ msg.textContent = 'Selecteer een bestand.'; return; }}
+  const fd = new FormData();
+  fd.append('file',       fileInput.files[0]);
+  fd.append('collection', category);
+  msg.style.color = '#6b7280';
+  msg.textContent = 'Uploaden…';
+  fetch('/library/upload', {{ method: 'POST', body: fd }})
+    .then(r => r.json())
+    .then(d => {{
+      if (d.status === 'queued') {{
+        msg.style.color = '#059669';
+        msg.textContent = '✓ ' + d.filename + ' in wachtrij';
+        setTimeout(() => location.reload(), 1500);
+      }} else {{
+        msg.style.color = '#dc2626';
+        msg.textContent = d.error || 'Fout';
+      }}
+    }})
+    .catch(e => {{ msg.style.color='#dc2626'; msg.textContent='Fout: '+e; }});
+}}
+</script>"""
+    return _page_shell("Bibliotheek", "/library", body)
+
+
+# ── GET /library/status/{filename} ────────────────────────────────────────────
+
+@app.get("/library/status/{filename}")
+async def library_status(filename: str):
+    return _book_status(filename)
+
+
+# ── POST /library/upload ───────────────────────────────────────────────────────
+
+@app.post("/library/upload")
+async def library_upload(
+    file:       UploadFile = File(...),
+    collection: str        = Form(...),
+):
+    if collection not in COLLECTION_MAP:
+        return JSONResponse({"error": f"Unknown collection: {collection}"}, status_code=400)
+
+    fname = file.filename or "upload"
+    ext   = Path(fname).suffix.lower()
+    if ext not in BOOK_EXTS:
+        return JSONResponse({"error": "Only .pdf and .epub allowed"}, status_code=400)
+
+    dest_dir = BOOKS_DIR / collection
+    dest_dir.mkdir(parents=True, exist_ok=True)
+    dest = dest_dir / fname
+
+    content = await file.read()
+    dest.write_bytes(content)
+
+    col_name = COLLECTION_MAP[collection]
+    _enqueue_book(fname, str(dest), col_name, collection, ext.lstrip("."))
+
+    return {"status": "queued", "filename": fname, "collection": col_name}
+
+
+# ── GET /library/audit/{filename} ─────────────────────────────────────────────
+
+@app.get("/library/audit/{filename}")
+async def library_audit(filename: str):
+    stem = Path(filename).stem
+    audit_path = QUALITY_DIR / f"{stem}_audit.json"
+    if not audit_path.exists():
+        return JSONResponse({"error": "No audit report found"}, status_code=404)
+    return json.loads(audit_path.read_text())

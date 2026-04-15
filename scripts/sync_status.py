@@ -16,10 +16,20 @@ BASE      = Path("/root/medical-rag")
 OUT_FILE  = BASE / "SYSTEM_DOCS" / "LIVE_STATUS.md"
 TRANS_DIR = BASE / "data" / "transcripts"
 VIDEOS_DIR = BASE / "videos"
-QUEUE_FILE  = Path("/tmp/transcription_queue.json")
+QUEUE_FILE   = Path("/tmp/transcription_queue.json")
 CURRENT_FILE = Path("/tmp/transcription_current.json")
 MARKERS_FILE = Path("/var/log/markers.json")
 QUEUE_LOG    = Path("/var/log/transcription_queue.log")
+BOOKS_DIR        = BASE / "books"
+BOOK_QUEUE_FILE  = Path("/tmp/book_ingest_queue.json")
+BOOK_CURRENT_FILE = Path("/tmp/book_ingest_current.json")
+QUALITY_DIR      = BASE / "data" / "book_quality"
+BOOK_EXTS = {".pdf", ".epub"}
+COLLECTION_MAP = {
+    "medical": "medical_literature", "anatomy": "anatomy_atlas",
+    "acupuncture": "acupuncture_points", "nrt": "nrt_curriculum",
+    "qat": "qat_curriculum", "device": "device_documentation",
+}
 
 
 # ── helpers ───────────────────────────────────────────────────────────────────
@@ -114,6 +124,39 @@ def _markers_section() -> str:
     return "_geen markers_"
 
 
+def _book_stats() -> tuple[int, int, int, str]:
+    """Returns (total, ingested, queued, current_book)."""
+    total = ingested = queued = 0
+    current = ""
+    try:
+        for sub in COLLECTION_MAP:
+            d = BOOKS_DIR / sub
+            if d.exists():
+                total += sum(1 for f in d.iterdir() if f.suffix.lower() in BOOK_EXTS)
+    except Exception:
+        pass
+    try:
+        if BOOK_QUEUE_FILE.exists():
+            q = json.loads(BOOK_QUEUE_FILE.read_text())
+            queued = len(q) if isinstance(q, list) else 0
+    except Exception:
+        pass
+    try:
+        if BOOK_CURRENT_FILE.exists():
+            current = json.loads(BOOK_CURRENT_FILE.read_text()).get("filename", "")
+    except Exception:
+        pass
+    try:
+        if QUALITY_DIR.exists():
+            ingested = sum(
+                1 for af in QUALITY_DIR.glob("*_audit.json")
+                if json.loads(af.read_text()).get("status") == "approved"
+            )
+    except Exception:
+        pass
+    return total, ingested, queued, current
+
+
 def _queue_log_tail() -> str:
     try:
         if QUEUE_LOG.exists():
@@ -144,6 +187,9 @@ def build_md() -> str:
     dsk_used  = round(dsk.used  / 1e9, 1)
     dsk_total = round(dsk.total / 1e9, 1)
 
+    book_total, book_ingested, book_queued, book_current = _book_stats()
+    book_ingest_s = _svc("book-ingest-queue")
+
     return f"""# LIVE STATUS — auto-updated every 5 minutes
 > Last update: **{ts} UTC**
 
@@ -152,9 +198,18 @@ def build_md() -> str:
 |---|---|
 | medical-rag-web | {_svc_icon(web_s)} {web_s} |
 | transcription-queue | {_svc_icon(queue_s)} {queue_s} |
+| book-ingest-queue | {_svc_icon(book_ingest_s)} {book_ingest_s} |
 | ttyd | {_svc_icon(ttyd_s)} {ttyd_s} |
 | qdrant | {_health_icon(qdr_s)} {qdr_s} |
 | ollama | {_health_icon(oll_s)} {oll_s} |
+
+## Books
+| Metric | Value |
+|---|---|
+| Total books | {book_total} |
+| Ingested | {book_ingested} |
+| Queued | {book_queued} |
+| Current job | {('`' + book_current + '`') if book_current else 'idle'} |
 
 ## Transcription
 | Metric | Value |
