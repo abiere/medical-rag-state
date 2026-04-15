@@ -20,16 +20,13 @@ QUEUE_FILE   = Path("/tmp/transcription_queue.json")
 CURRENT_FILE = Path("/tmp/transcription_current.json")
 MARKERS_FILE = Path("/var/log/markers.json")
 QUEUE_LOG    = Path("/var/log/transcription_queue.log")
-BOOKS_DIR        = BASE / "books"
-BOOK_QUEUE_FILE  = Path("/tmp/book_ingest_queue.json")
-BOOK_CURRENT_FILE = Path("/tmp/book_ingest_current.json")
-QUALITY_DIR      = BASE / "data" / "book_quality"
-BOOK_EXTS = {".pdf", ".epub"}
-COLLECTION_MAP = {
-    "medical": "medical_literature", "anatomy": "anatomy_atlas",
-    "acupuncture": "acupuncture_points", "nrt": "nrt_curriculum",
-    "qat": "qat_curriculum", "device": "device_documentation",
-}
+BOOKS_DIR          = BASE / "books"
+BOOK_QUEUE_FILE    = Path("/tmp/book_ingest_queue.json")
+BOOK_CURRENT_FILE  = Path("/tmp/book_ingest_current.json")
+QUALITY_DIR        = BASE / "data" / "book_quality"
+IMAGE_APPROVALS    = BASE / "data" / "image_approvals.json"
+BOOK_EXTS          = {".pdf", ".epub"}
+CATEGORY_DIRS      = ["medical", "anatomy", "acupuncture", "nrt", "qat", "device"]
 
 
 # ── helpers ───────────────────────────────────────────────────────────────────
@@ -124,12 +121,23 @@ def _markers_section() -> str:
     return "_geen markers_"
 
 
+def _image_stats() -> tuple[int, int]:
+    """Returns (pending, approved) image counts."""
+    try:
+        if IMAGE_APPROVALS.exists():
+            data = json.loads(IMAGE_APPROVALS.read_text())
+            return len(data.get("pending", [])), len(data.get("approved", []))
+    except Exception:
+        pass
+    return 0, 0
+
+
 def _book_stats() -> tuple[int, int, int, str]:
     """Returns (total, ingested, queued, current_book)."""
     total = ingested = queued = 0
     current = ""
     try:
-        for sub in COLLECTION_MAP:
+        for sub in CATEGORY_DIRS:
             d = BOOKS_DIR / sub
             if d.exists():
                 total += sum(1 for f in d.iterdir() if f.suffix.lower() in BOOK_EXTS)
@@ -188,6 +196,7 @@ def build_md() -> str:
     dsk_total = round(dsk.total / 1e9, 1)
 
     book_total, book_ingested, book_queued, book_current = _book_stats()
+    imgs_pending, imgs_approved = _image_stats()
     book_ingest_s = _svc("book-ingest-queue")
 
     return f"""# LIVE STATUS — auto-updated every 5 minutes
@@ -203,13 +212,15 @@ def build_md() -> str:
 | qdrant | {_health_icon(qdr_s)} {qdr_s} |
 | ollama | {_health_icon(oll_s)} {oll_s} |
 
-## Books
+## Library
 | Metric | Value |
 |---|---|
 | Total books | {book_total} |
 | Ingested | {book_ingested} |
 | Queued | {book_queued} |
 | Current job | {('`' + book_current + '`') if book_current else 'idle'} |
+| Images pending approval | {imgs_pending} |
+| Images approved | {imgs_approved} |
 
 ## Transcription
 | Metric | Value |

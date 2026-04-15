@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "last_updated": "2026-04-15",
+  "tags": {
+    "acupuncture_point_location": {
+      "description": "Contains location description of acupuncture point on body",
+      "protocol_use": "point location in treatment table",
+      "examples": ["located 3 cun below ST-35", "on the posterior midline"]
+    },
+    "acupuncture_point_indication": {
+      "description": "Contains clinical indications for acupuncture point",
+      "protocol_use": "rationale for point selection",
+      "examples": ["painful obstruction", "invigorates blood", "tonifies qi"]
+    },
+    "tcm_diagnosis": {
+      "description": "Contains TCM pattern diagnosis criteria",
+      "protocol_use": "diagnosis section of protocol",
+      "examples": ["blood stasis", "cold bi-obstruction", "kidney yang deficiency"]
+    },
+    "western_diagnosis": {
+      "description": "Contains western medical diagnosis, physiology or pathology",
+      "protocol_use": "clinical perspective section",
+      "examples": ["atherosclerosis", "peripheral arterial disease", "ischemia"]
+    },
+    "anatomy": {
+      "description": "Contains anatomical structures, landmarks or relationships",
+      "protocol_use": "anatomical reference section + figure selection",
+      "examples": ["gastrocnemius", "A. femoralis", "tibial nerve"]
+    },
+    "treatment_protocol": {
+      "description": "Contains structured treatment approach or protocol steps",
+      "protocol_use": "direct protocol content",
+      "examples": ["NRT standard protocol", "QAT balancing points", "sequence of treatment"]
+    },
+    "device_settings": {
+      "description": "Contains PEMF, RLT or other device settings and protocols",
+      "protocol_use": "device section of protocol",
+      "examples": ["Setting 1-4", "8 min", "2x/dag", "aderaandoeningen protocol"]
+    },
+    "sinew_channel": {
+      "description": "Contains sinew channel (jing jin) theory or treatment",
+      "protocol_use": "sinew channel treatment section",
+      "examples": ["bladder sinew channel", "jing well point", "confluent point"]
+    },
+    "literature_reference": {
+      "description": "Contains citable reference with page number",
+      "protocol_use": "literature citation in protocol",
+      "examples": ["Deadman p.342", "Guyton H21", "Cecil-Sterman p.166"]
+    }
+  }
+}

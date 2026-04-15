@@ -1,7 +1,7 @@
 {
   "book": "test_acupuncture.pdf",
-  "collection": "acupuncture_points",
-  "audited_at": "2026-04-15T10:08:47.218868+00:00",
+  "collection": "medical_library",
+  "audited_at": "2026-04-15T10:22:45.483033+00:00",
   "total_chunks": 2,
   "structural": {
     "total_chunks": 2,
@@ -16,13 +16,13 @@
   },
   "llm_audit": {
     "sample_size": 2,
-    "avg_coherence": 5.0,
-    "avg_completeness": 5.0,
+    "avg_coherence": 4.0,
+    "avg_completeness": 4.0,
     "avg_terminology": 5.0,
     "avg_translation": 5.0,
-    "quality_score": 5.0,
+    "quality_score": 4.5,
     "flagged_chunks": 0,
-    "suggestion": "none"
+    "suggestion": "Consider rephrasing the second sentence to provide a clearer explanation of what 'invigorates blood and dispels stasis' means in medical terms, e.g. 'stimulates hemopoiesis and promotes microcirculation'."
   },
   "auto_classification": {
     "primary_use": [
@@ -30,9 +30,22 @@
     ],
     "secondary_use": [],
     "image_quality": "none",
-    "image_type": "anatomical diagram or illustration of acupuncture points",
+    "image_type": "",
     "recommended_collection": "acupuncture_points",
-    "confidence": 1.0
+    "confidence": 0.5
+  },
+  "usability_profile": {
+    "scores": {
+      "acupuncture_point_location": 5.0,
+      "treatment_protocol": 5.0,
+      "literature_reference": 5.0
+    },
+    "counts": {
+      "acupuncture_point_location": 1,
+      "treatment_protocol": 1,
+      "literature_reference": 1
+    },
+    "total_tagged": 1
   },
   "remediation": {
     "issues": [

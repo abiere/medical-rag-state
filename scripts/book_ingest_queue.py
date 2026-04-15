@@ -35,16 +35,10 @@ QDRANT_URL   = "http://localhost:6333"
 OLLAMA_URL   = "http://localhost:11434"
 OLLAMA_MODEL = "llama3.1:8b"
 
-VECTOR_SIZE  = 1024
-COLLECTION_MAP = {
-    "medical":    "medical_literature",
-    "anatomy":    "anatomy_atlas",
-    "acupuncture":"acupuncture_points",
-    "nrt":        "nrt_curriculum",
-    "qat":        "qat_curriculum",
-    "device":     "device_documentation",
-}
-BOOK_EXTS = {".pdf", ".epub"}
+VECTOR_SIZE       = 1024
+COLLECTION        = "medical_library"   # single collection for all books
+CATEGORY_DIRS     = ["medical", "anatomy", "acupuncture", "nrt", "qat", "device"]
+BOOK_EXTS         = {".pdf", ".epub"}
 MIN_QUALITY_SCORE = 3.5
 
 # ── logging ────────────────────────────────────────────────────────────────────
@@ -119,7 +113,7 @@ def _qdrant_request(method: str, path: str, body: dict | None = None) -> dict:
         return json.loads(resp.read())
 
 
-def _ensure_collection(name: str) -> None:
+def _ensure_collection(name: str = COLLECTION) -> None:
     """Create Qdrant collection if it doesn't exist."""
     try:
         _qdrant_request("GET", f"/collections/{name}")
@@ -215,17 +209,15 @@ def startup_scan() -> int:
     queue = _read_queue()
     queued_paths = {item["filepath"] for item in queue}
 
-    for subdir, collection in COLLECTION_MAP.items():
+    for subdir in CATEGORY_DIRS:
         d = BOOKS_DIR / subdir
         if not d.exists():
             continue
         for f in d.iterdir():
             if f.suffix.lower() not in BOOK_EXTS:
                 continue
-            # Skip if already queued
             if str(f) in queued_paths:
                 continue
-            # Skip if already ingested (audit file exists with status=approved)
             audit_path = QUALITY_DIR / f"{f.stem}_audit.json"
             if audit_path.exists():
                 try:
@@ -235,17 +227,16 @@ def startup_scan() -> int:
                         continue
                 except Exception:
                     pass
-            # Enqueue
             queue.append({
                 "filename":        f.name,
                 "filepath":        str(f),
-                "collection":      collection,
+                "collection":      COLLECTION,
                 "source_category": subdir,
                 "format":          f.suffix.lstrip(".").lower(),
                 "requested":       datetime.now(timezone.utc).isoformat(),
             })
             added += 1
-            logger.info("Startup scan: enqueued %s → %s", f.name, collection)
+            logger.info("Startup scan: enqueued %s → %s", f.name, COLLECTION)
 
     if added:
         _write_queue(queue)
@@ -261,7 +252,7 @@ def process_book(item: dict) -> bool:
     """
     filename   = item["filename"]
     filepath   = Path(item["filepath"])
-    collection = item["collection"]
+    collection = COLLECTION          # always medical_library
     category   = item["source_category"]
     fmt        = item.get("format", filepath.suffix.lstrip(".").lower())
 
@@ -311,16 +302,14 @@ def process_book(item: dict) -> bool:
         logger.warning("Quality score %.2f < %.1f — retrying with 600-word target",
                        quality_score, MIN_QUALITY_SCORE)
         try:
-            import importlib
             mod_name = "parse_pdf" if fmt == "pdf" else "parse_epub"
             mod = sys.modules.get(mod_name)
             if mod:
                 orig = mod.TARGET_WORDS
                 mod.TARGET_WORDS = 600
-                if fmt == "pdf":
-                    chunks2 = mod.parse_pdf(filepath, collection, category)
-                else:
-                    chunks2 = mod.parse_epub(filepath, collection, category)
+                chunks2 = (mod.parse_pdf if fmt == "pdf" else mod.parse_epub)(
+                    filepath, COLLECTION, category
+                )
                 mod.TARGET_WORDS = orig
                 llm2 = llm_audit(chunks2)
                 if (llm2.get("quality_score") or 0) > (quality_score or 0):
@@ -335,18 +324,27 @@ def process_book(item: dict) -> bool:
     # 5. Auto-classify
     classification = auto_classify(chunks)
 
-    # 6. Build and save audit report
+    # 6. AI usability tagging
+    from audit_book import tag_chunks_with_ollama, build_usability_profile, prescreeen_images
+    logger.info("Tagging %d chunks with usability tags...", len(chunks))
+    tag_chunks_with_ollama(chunks)
+    usability_profile = build_usability_profile(chunks)
+    prescreeen_images(chunks, filename)
+
+    # 7. Build and save audit report
+    from audit_book import check_remediation
     remediation_check = check_remediation(s, llm)
     qs = quality_score or 0
     status = "approved" if qs >= MIN_QUALITY_SCORE else "low_quality"
     report = {
         "book":               filename,
-        "collection":         collection,
+        "collection":         COLLECTION,
         "audited_at":         datetime.now(timezone.utc).isoformat(),
         "total_chunks":       len(chunks),
         "structural":         s,
         "llm_audit":          llm,
         "auto_classification": classification,
+        "usability_profile":  usability_profile,
         "remediation":        remediation_check,
         "remediation_applied": remediation_applied,
         "status":             status,
@@ -356,12 +354,12 @@ def process_book(item: dict) -> bool:
         json.dumps(report, indent=2, ensure_ascii=False)
     )
 
-    # 7. Ingest to Qdrant (even if low quality — but log warning)
+    # 8. Ingest to Qdrant (even if low quality — but log warning)
     if qs < MIN_QUALITY_SCORE:
         logger.warning("Ingesting anyway with low quality score %.2f", qs)
 
     try:
-        n_upserted = _upsert_chunks(collection, chunks)
+        n_upserted = _upsert_chunks(COLLECTION, chunks)
     except Exception as e:
         logger.error("Qdrant upsert failed: %s", e)
         return False

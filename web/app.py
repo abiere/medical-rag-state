@@ -18,13 +18,15 @@ BOOK_CURRENT_FILE  = Path("/tmp/book_ingest_current.json")
 QUALITY_DIR        = BASE / "data" / "book_quality"
 
 COLLECTION_MAP = {
-    "medical":     "medical_literature",
-    "anatomy":     "anatomy_atlas",
-    "acupuncture": "acupuncture_points",
-    "nrt":         "nrt_curriculum",
-    "qat":         "qat_curriculum",
-    "device":      "device_documentation",
+    "medical":     "medical_library",
+    "anatomy":     "medical_library",
+    "acupuncture": "medical_library",
+    "nrt":         "medical_library",
+    "qat":         "medical_library",
+    "device":      "medical_library",
 }
+USABILITY_TAGS_FILE  = BASE / "config" / "usability_tags.json"
+IMAGE_APPROVALS_FILE = BASE / "data" / "image_approvals.json"
 COLLECTION_LABELS = {
     "medical":     "Medische Literatuur",
     "anatomy":     "Anatomie Atlas",
@@ -1111,8 +1113,9 @@ async def status_snapshot():
                                   if quality_scores else None,
         },
         "qdrant_collections": {
-            col["name"]: col["vectors"]
+            col["name"]: col.get("vectors", 0)
             for col in qdrant_info.get("collections", [])
+            if col["name"] in ("medical_library", "video_transcripts")
         },
         "transcription": {
             "current": current_file,
@@ -1310,46 +1313,84 @@ def _enqueue_book(filename: str, filepath: str, collection: str, category: str, 
         BOOK_QUEUE_FILE.write_text(json.dumps(q, indent=2))
 
 
-def _library_section_html(category: str) -> str:
-    collection = COLLECTION_MAP[category]
-    label      = COLLECTION_LABELS[category]
-    color      = COLLECTION_COLORS[category]
-    books_dir  = BOOKS_DIR / category
+def _usability_dots(scores: dict, tags: list[str]) -> str:
+    """Render ●●●●○ dot indicators for key usability dimensions."""
+    icons = []
+    key_map = [
+        ("acupuncture_point_indication", "Protocol"),
+        ("tcm_diagnosis", "Diagnose"),
+        ("anatomy", "Anatomie"),
+        ("treatment_protocol", "Protocol"),
+        ("literature_reference", "Literatuur"),
+    ]
+    shown = set()
+    for key, label in key_map:
+        if key in shown:
+            continue
+        score = scores.get(key, 0)
+        filled = round(score)
+        dots = "●" * filled + "○" * (5 - filled)
+        color = "#059669" if filled >= 4 else ("#d97706" if filled >= 2 else "#9ca3af")
+        icons.append(
+            f'<span style="font-size:11px;color:{color};white-space:nowrap">'
+            f'{label} {dots}</span>'
+        )
+        shown.add(key)
+    return '<span style="display:flex;gap:8px;flex-wrap:wrap">' + "".join(icons) + "</span>"
 
-    # List books in this subdir
+
+def _library_section_html(category: str) -> str:
+    label  = COLLECTION_LABELS[category]
+    color  = COLLECTION_COLORS[category]
+    books_dir = BOOKS_DIR / category
+
     books = []
     if books_dir.exists():
         for f in sorted(books_dir.iterdir()):
             if f.suffix.lower() in BOOK_EXTS:
                 st = _book_status(f.name)
+                # Load usability profile if audit exists
+                usability_scores: dict = {}
+                audit_path = QUALITY_DIR / f"{f.stem}_audit.json"
+                if audit_path.exists():
+                    try:
+                        a = json.loads(audit_path.read_text())
+                        up = a.get("usability_profile") or {}
+                        usability_scores = up.get("scores", {})
+                    except Exception:
+                        pass
                 books.append({"name": f.name, "size": _fmt_bytes(f.stat().st_size),
-                               **st})
+                               "usability_scores": usability_scores, **st})
 
     rows = ""
     if books:
         for b in books:
             badge_bg = b["color"] + "22"
+            dots_html = _usability_dots(b["usability_scores"], []) if b["status"] == "done" else ""
             rows += f"""
 <tr>
-  <td><span style="font-weight:600">{b['name']}</span></td>
+  <td>
+    <span style="font-weight:600">{b['name']}</span>
+    {f'<div style="margin-top:4px">{dots_html}</div>' if dots_html else ''}
+  </td>
   <td class="hide-sm">{b.get('size','')}</td>
   <td><span style="background:{badge_bg};color:{b['color']};padding:3px 10px;
       border-radius:999px;font-size:12px;font-weight:600">{b['label']}</span></td>
   <td>{b.get('total_chunks','') or ''}</td>
-  <td>
+  <td style="white-space:nowrap">
     <a href="/library/audit/{b['name']}" class="btn btn-secondary" style="font-size:12px"
-       {'onclick="return false" style="opacity:.4;cursor:default"' if b['status'] == 'waiting' else ''}>
-       Rapport</a>
+       {'onclick="return false;this.style.opacity=.4" ' if b['status'] == 'waiting' else ''}>Rapport</a>
+    <a href="/images?book={b['name']}" class="btn btn-secondary" style="font-size:12px;margin-left:4px">Afb.</a>
   </td>
 </tr>"""
     else:
-        rows = f'<tr><td colspan="5" style="color:#9ca3af;font-size:14px">Geen bestanden</td></tr>'
+        rows = '<tr><td colspan="5" style="color:#9ca3af;font-size:14px">Geen bestanden</td></tr>'
 
     return f"""
 <div class="section" style="border-top:3px solid {color}">
   <div class="section-head">
     <span class="section-title">{label}</span>
-    <span style="font-size:12px;color:#6b7280;font-family:monospace">{collection}</span>
+    <span style="font-size:12px;color:#6b7280;font-family:monospace">→ medical_library</span>
   </div>
   <table>
     <thead><tr>
@@ -1401,8 +1442,9 @@ async def library_page():
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px">
     <h1 style="font-size:22px;font-weight:700">Bibliotheek</h1>
-    <div style="font-size:13px;color:#6b7280">
-      Upload PDF of EPUB → automatisch parseren, auditeren en ingesteren in Qdrant
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <a href="/library/overview" class="btn btn-secondary">Literatuuroverzicht</a>
+      <span style="font-size:13px;color:#6b7280">→ alle boeken in <code>medical_library</code></span>
     </div>
   </div>
   {status_bar}
@@ -1449,27 +1491,27 @@ async def library_status(filename: str):
 @app.post("/library/upload")
 async def library_upload(
     file:       UploadFile = File(...),
-    collection: str        = Form(...),
+    collection: str        = Form(...),   # category key (acupuncture/anatomy/etc.)
 ):
-    if collection not in COLLECTION_MAP:
-        return JSONResponse({"error": f"Unknown collection: {collection}"}, status_code=400)
+    category = collection  # the form field is used as the category/subdir selector
+    if category not in COLLECTION_MAP:
+        return JSONResponse({"error": f"Unknown category: {category}"}, status_code=400)
 
     fname = file.filename or "upload"
     ext   = Path(fname).suffix.lower()
     if ext not in BOOK_EXTS:
         return JSONResponse({"error": "Only .pdf and .epub allowed"}, status_code=400)
 
-    dest_dir = BOOKS_DIR / collection
+    dest_dir = BOOKS_DIR / category
     dest_dir.mkdir(parents=True, exist_ok=True)
     dest = dest_dir / fname
 
     content = await file.read()
     dest.write_bytes(content)
 
-    col_name = COLLECTION_MAP[collection]
-    _enqueue_book(fname, str(dest), col_name, collection, ext.lstrip("."))
+    _enqueue_book(fname, str(dest), "medical_library", category, ext.lstrip("."))
 
-    return {"status": "queued", "filename": fname, "collection": col_name}
+    return {"status": "queued", "filename": fname, "collection": "medical_library", "category": category}
 
 
 # ── GET /library/audit/{filename} ─────────────────────────────────────────────
@@ -1481,3 +1523,349 @@ async def library_audit(filename: str):
     if not audit_path.exists():
         return JSONResponse({"error": "No audit report found"}, status_code=404)
     return json.loads(audit_path.read_text())
+
+
+# ── GET /library/overview ──────────────────────────────────────────────────────
+
+@app.get("/library/overview", response_class=HTMLResponse)
+async def library_overview():
+    # Load usability tag definitions
+    tag_defs: dict = {}
+    try:
+        if USABILITY_TAGS_FILE.exists():
+            tag_defs = json.loads(USABILITY_TAGS_FILE.read_text()).get("tags", {})
+    except Exception:
+        pass
+
+    # Build table rows from audit reports
+    rows = ""
+    all_books = []
+    for cat in COLLECTION_MAP:
+        d = BOOKS_DIR / cat
+        if not d.exists():
+            continue
+        for f in sorted(d.iterdir()):
+            if f.suffix.lower() not in BOOK_EXTS:
+                continue
+            all_books.append((cat, f))
+
+    for cat, f in all_books:
+        audit_path = QUALITY_DIR / f"{f.stem}_audit.json"
+        chunks_n = imgs_approved = imgs_pending = imgs_total = 0
+        qs = score_html = dots_html = ""
+        if audit_path.exists():
+            try:
+                a = json.loads(audit_path.read_text())
+                chunks_n = a.get("total_chunks", 0)
+                qs_val = (a.get("llm_audit") or {}).get("quality_score")
+                qs = f"{qs_val:.1f}" if qs_val else "—"
+                up = (a.get("usability_profile") or {}).get("scores", {})
+                dots_html = _usability_dots(up, []) if up else ""
+            except Exception:
+                pass
+        try:
+            if IMAGE_APPROVALS_FILE.exists():
+                appr = json.loads(IMAGE_APPROVALS_FILE.read_text())
+                for e in appr.get("approved", []):
+                    if isinstance(e, dict) and e.get("book") == f.name:
+                        imgs_approved += 1
+                for e in appr.get("pending", []):
+                    if isinstance(e, dict) and e.get("book") == f.name:
+                        imgs_pending += 1
+                imgs_total = imgs_approved + imgs_pending
+        except Exception:
+            pass
+        rows += f"""
+<tr>
+  <td><span style="font-weight:600">{f.name}</span><br>
+      <span style="font-size:12px;color:#6b7280">{COLLECTION_LABELS[cat]}</span></td>
+  <td style="text-align:right">{chunks_n or '—'}</td>
+  <td style="text-align:right">{imgs_approved}/{imgs_total}</td>
+  <td>{dots_html}</td>
+  <td style="text-align:center">{qs}</td>
+  <td style="white-space:nowrap">
+    <a href="/library/audit/{f.name}" class="btn btn-secondary" style="font-size:12px">Rapport</a>
+    <button onclick="retag('{f.name}')" class="btn btn-secondary" style="font-size:12px;margin-left:4px">Heranalyseer</button>
+  </td>
+</tr>"""
+
+    # Tag definitions editor
+    tag_rows = ""
+    for tag_name, tag_info in tag_defs.items():
+        tag_rows += f"""
+<tr>
+  <td><code style="font-size:13px">{tag_name}</code></td>
+  <td><span style="font-size:13px">{tag_info.get('description','')}</span></td>
+  <td><span style="font-size:12px;color:#6b7280">{tag_info.get('protocol_use','')}</span></td>
+</tr>"""
+
+    body = f"""
+<div class="wrap">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+    <h1 style="font-size:22px;font-weight:700">Literatuuroverzicht</h1>
+    <a href="/library" class="btn btn-secondary">← Bibliotheek</a>
+  </div>
+
+  <div class="section" style="margin-bottom:24px">
+    <div class="section-head"><span class="section-title">Ingested boeken</span></div>
+    <table>
+      <thead><tr>
+        <th>Bestand</th><th style="text-align:right">Chunks</th>
+        <th style="text-align:right">Afb. (goedgekeurd/totaal)</th>
+        <th>Bruikbaarheid</th>
+        <th style="text-align:center">Score</th><th></th>
+      </tr></thead>
+      <tbody>{''.join([rows]) if rows else '<tr><td colspan="6" style="color:#9ca3af">Geen boeken</td></tr>'}</tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">Bruikbaarheidsdefinities</span>
+      <span style="font-size:12px;color:#6b7280">{USABILITY_TAGS_FILE}</span>
+    </div>
+    <table>
+      <thead><tr><th>Tag</th><th>Beschrijving</th><th>Gebruik in protocol</th></tr></thead>
+      <tbody>{tag_rows or '<tr><td colspan="3" style="color:#9ca3af">Geen tags</td></tr>'}</tbody>
+    </table>
+  </div>
+</div>
+<script>
+function retag(filename) {{
+  if (!confirm('Heranalyseer AI-tags voor ' + filename + '?')) return;
+  fetch('/library/retag/' + encodeURIComponent(filename), {{method:'POST'}})
+    .then(r => r.json())
+    .then(d => alert(d.status || JSON.stringify(d)))
+    .catch(e => alert('Fout: ' + e));
+}}
+</script>"""
+    return _page_shell("Literatuuroverzicht", "/library", body)
+
+
+# ── POST /library/retag/{filename} ────────────────────────────────────────────
+
+@app.post("/library/retag/{filename}")
+async def library_retag(filename: str, background_tasks: BackgroundTasks):
+    """Re-runs AI usability tagging for all chunks of this book."""
+    stem = Path(filename).stem
+    audit_path = QUALITY_DIR / f"{stem}_audit.json"
+    if not audit_path.exists():
+        return JSONResponse({"error": "No audit report found — ingest first"}, status_code=404)
+
+    def _do_retag():
+        import sys as _sys
+        _sys.path.insert(0, str(BASE / "scripts"))
+        try:
+            from audit_book import tag_chunks_with_ollama, build_usability_profile
+            from qdrant_client import QdrantClient
+            from qdrant_client.models import Filter, FieldCondition, MatchValue
+
+            client = QdrantClient(host="localhost", port=6333, timeout=60)
+            # Scroll all chunks from this book
+            results, _ = client.scroll(
+                collection_name="medical_library",
+                scroll_filter=Filter(must=[
+                    FieldCondition(key="source_file", match=MatchValue(value=filename))
+                ]),
+                limit=5000, with_payload=True, with_vector=False,
+            )
+            chunks = [p.payload for p in results if p.payload]
+            if not chunks:
+                return
+            tag_chunks_with_ollama(chunks)
+            profile = build_usability_profile(chunks)
+            # Update audit report
+            a = json.loads(audit_path.read_text())
+            a["usability_profile"] = profile
+            a["retagged_at"] = datetime.now().isoformat()
+            audit_path.write_text(json.dumps(a, indent=2))
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).error("Retag failed: %s", e)
+
+    background_tasks.add_task(_do_retag)
+    return {"status": "started", "filename": filename}
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# IMAGES — approval system
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def _load_approvals() -> dict:
+    try:
+        if IMAGE_APPROVALS_FILE.exists():
+            d = json.loads(IMAGE_APPROVALS_FILE.read_text())
+            if isinstance(d, dict):
+                return d
+    except Exception:
+        pass
+    return {"approved": [], "rejected": [], "pending": []}
+
+
+def _save_approvals(data: dict) -> None:
+    IMAGE_APPROVALS_FILE.parent.mkdir(parents=True, exist_ok=True)
+    IMAGE_APPROVALS_FILE.write_text(json.dumps(data, indent=2))
+
+
+# ── GET /images ────────────────────────────────────────────────────────────────
+
+@app.get("/images", response_class=HTMLResponse)
+async def images_page(book: str = "", filter: str = "all"):
+    approvals = _load_approvals()
+    all_entries: list[dict] = []
+    for status_key in ("pending", "approved", "rejected"):
+        for e in approvals.get(status_key, []):
+            if isinstance(e, dict):
+                all_entries.append({**e, "_status": status_key})
+
+    # Filter
+    if filter != "all":
+        all_entries = [e for e in all_entries if e["_status"] == filter]
+    if book:
+        all_entries = [e for e in all_entries if e.get("book") == book]
+
+    # Group by book
+    by_book: dict[str, list[dict]] = {}
+    for e in all_entries:
+        by_book.setdefault(e.get("book", "unknown"), []).append(e)
+
+    def _status_badge(s: str) -> str:
+        cfg = {
+            "pending":  ("#fef3c7", "#b45309", "Wachten"),
+            "approved": ("#dcfce7", "#166534", "Goedgekeurd"),
+            "rejected": ("#fee2e2", "#991b1b", "Afgewezen"),
+        }.get(s, ("#f3f4f6", "#374151", s))
+        return (f'<span style="background:{cfg[0]};color:{cfg[1]};padding:2px 8px;'
+                f'border-radius:999px;font-size:11px;font-weight:600">{cfg[2]}</span>')
+
+    def _confidence_bar(c) -> str:
+        if c is None:
+            return ""
+        pct = int(float(c) * 100)
+        color = "#059669" if pct >= 70 else ("#d97706" if pct >= 40 else "#dc2626")
+        return (f'<div style="display:flex;align-items:center;gap:6px;font-size:11px">'
+                f'<div style="background:#e5e7eb;border-radius:4px;height:6px;width:60px;overflow:hidden">'
+                f'<div style="background:{color};height:6px;width:{pct}%"></div></div>'
+                f'{pct}%</div>')
+
+    sections = ""
+    for bname, entries in sorted(by_book.items()):
+        cards = ""
+        for e in entries:
+            path = e.get("path", "")
+            img_src = f"/{path}" if path else ""
+            ai_sug = e.get("ai_suggestion")
+            ai_label = ("✓ Nuttig" if ai_sug else "✗ Niet nuttig") if ai_sug is not None else "—"
+            ai_color = "#059669" if ai_sug else ("#dc2626" if ai_sug is False else "#6b7280")
+            s = e.get("_status", "pending")
+            cards += f"""
+<div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:12px;
+            width:200px;flex-shrink:0">
+  <div style="height:120px;background:#f9fafb;border-radius:4px;overflow:hidden;
+              display:flex;align-items:center;justify-content:center;margin-bottom:8px">
+    <img src="{img_src}" style="max-width:100%;max-height:100%;object-fit:contain"
+         onerror="this.style.display='none';this.nextSibling.style.display='block'">
+    <span style="display:none;color:#9ca3af;font-size:12px">Afbeelding niet gevonden</span>
+  </div>
+  <div style="font-size:11px;color:#6b7280;overflow:hidden;text-overflow:ellipsis;
+              white-space:nowrap;margin-bottom:4px" title="{path}">{Path(path).name}</div>
+  <div style="margin-bottom:4px">{_status_badge(s)}</div>
+  <div style="font-size:11px;color:{ai_color};margin-bottom:4px">AI: {ai_label}</div>
+  {_confidence_bar(e.get('ai_confidence'))}
+  <div style="font-size:11px;color:#6b7280;margin-top:4px;overflow:hidden;
+              display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">
+    {e.get('surrounding_text','')[:80]}</div>
+  <div style="display:flex;gap:4px;margin-top:8px">
+    <button onclick="approve('{path}',true)" class="btn btn-green"
+            style="font-size:11px;padding:3px 8px;flex:1"
+            {'disabled style="opacity:.4"' if s=='approved' else ''}>✓</button>
+    <button onclick="approve('{path}',false)" class="btn btn-secondary"
+            style="font-size:11px;padding:3px 8px;flex:1;background:#fee2e2;color:#991b1b"
+            {'disabled style="opacity:.4"' if s=='rejected' else ''}>✗</button>
+  </div>
+</div>"""
+
+        n = len(entries)
+        sections += f"""
+<div class="section" style="margin-bottom:20px">
+  <div class="section-head">
+    <span class="section-title">{bname}</span>
+    <span style="font-size:13px;color:#6b7280">{n} afbeelding(en)</span>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:12px;padding:16px 20px">{cards}</div>
+</div>"""
+
+    total_pending  = len([e for e in all_entries if e["_status"] == "pending"])
+    total_approved = len([e for e in all_entries if e["_status"] == "approved"])
+    total_rejected = len([e for e in all_entries if e["_status"] == "rejected"])
+
+    filter_links = ""
+    for fkey, flabel in [("all","Alle"),("pending","Wachten"),("approved","Goedgekeurd"),("rejected","Afgewezen")]:
+        active = "background:#2563eb;color:#fff;" if filter == fkey else ""
+        filter_links += f'<a href="/images?filter={fkey}" class="btn btn-secondary" style="font-size:13px;{active}">{flabel}</a>'
+
+    body = f"""
+<div class="wrap">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+    <h1 style="font-size:22px;font-weight:700">Afbeeldingen</h1>
+    <div style="font-size:13px;color:#6b7280">
+      Wachten: {total_pending} &nbsp;|&nbsp; Goedgekeurd: {total_approved} &nbsp;|&nbsp; Afgewezen: {total_rejected}
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">{filter_links}</div>
+  {sections if sections else '<div style="color:#9ca3af;padding:24px">Geen afbeeldingen gevonden.</div>'}
+</div>
+<script>
+function approve(path, approved) {{
+  fetch('/images/approve', {{
+    method: 'POST',
+    headers: {{'Content-Type': 'application/json'}},
+    body: JSON.stringify({{path: path, approved: approved}})
+  }})
+  .then(r => r.json())
+  .then(d => {{ if (d.status === 'ok') location.reload(); else alert(JSON.stringify(d)); }})
+  .catch(e => alert('Fout: ' + e));
+}}
+</script>"""
+    return _page_shell("Afbeeldingen", "/images", body)
+
+
+# ── POST /images/approve ───────────────────────────────────────────────────────
+
+@app.post("/images/approve")
+async def images_approve(request_data: dict):
+    path     = request_data.get("path", "")
+    approved = request_data.get("approved")
+    if not path:
+        return JSONResponse({"error": "path required"}, status_code=400)
+
+    data = _load_approvals()
+    target_status = "approved" if approved else "rejected"
+
+    # Find and move the entry
+    moved = False
+    for src_key in ("pending", "approved", "rejected"):
+        for i, e in enumerate(data.get(src_key, [])):
+            if isinstance(e, dict) and e.get("path") == path:
+                entry = data[src_key].pop(i)
+                entry["approved"]    = approved
+                entry["approved_at"] = datetime.now().isoformat()
+                data[target_status].append(entry)
+                moved = True
+                break
+        if moved:
+            break
+
+    if not moved:
+        return JSONResponse({"error": "Image not found"}, status_code=404)
+
+    _save_approvals(data)
+    return {"status": "ok", "path": path, "approved": approved}
+
+
+# ── GET /images/approve ────────────────────────────────────────────────────────
+
+@app.get("/images/approved")
+async def images_approved_list():
+    data = _load_approvals()
+    return [e.get("path") for e in data.get("approved", []) if isinstance(e, dict)]

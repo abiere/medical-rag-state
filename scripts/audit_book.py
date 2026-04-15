@@ -30,9 +30,12 @@ logging.basicConfig(
 
 BASE             = Path(__file__).parent.parent
 QUALITY_DIR      = BASE / "data" / "book_quality"
+TAGS_FILE        = BASE / "config" / "usability_tags.json"
+IMAGE_APPROVALS  = BASE / "data" / "image_approvals.json"
 OLLAMA_URL       = "http://localhost:11434"
 OLLAMA_MODEL     = "llama3.1:8b"
 AUDIT_SAMPLE     = 15
+TAG_BATCH        = 5
 MIN_QUALITY      = 3.5
 
 
@@ -207,6 +210,165 @@ def auto_classify(chunks: list[dict]) -> dict:
     }
 
 
+# ── Usability tagging ─────────────────────────────────────────────────────────
+
+def _load_usability_tags() -> dict:
+    try:
+        return json.loads(TAGS_FILE.read_text()).get("tags", {})
+    except Exception:
+        return {}
+
+
+def tag_chunks_with_ollama(chunks: list[dict]) -> list[dict]:
+    """
+    Add usability_tags, protocol_relevance, and primary_use to each chunk.
+    Processes in batches of TAG_BATCH. Modifies chunks in-place, returns them.
+    """
+    usability_tags = _load_usability_tags()
+    if not usability_tags:
+        logger.warning("No usability tags found in config — skipping tagging")
+        return chunks
+
+    tag_names = list(usability_tags.keys())
+    tag_descriptions = {k: v["description"] for k, v in usability_tags.items()}
+    tag_summary = json.dumps(tag_descriptions, indent=2)
+
+    tagged = 0
+    failed = 0
+
+    for i in range(0, len(chunks), TAG_BATCH):
+        batch = chunks[i: i + TAG_BATCH]
+        for chunk in batch:
+            text = chunk.get("text", "")[:800]
+            prompt = (
+                "You are tagging medical textbook chunks for a RAG system "
+                "that generates acupuncture treatment protocols.\n\n"
+                f"Available tags and their meanings:\n{tag_summary}\n\n"
+                "Tag this chunk. Return JSON only:\n"
+                '{"usability_tags":["tag1","tag2"],'
+                '"protocol_relevance":0.0,'
+                '"has_point_codes":false,'
+                '"has_figure_refs":false,'
+                '"primary_use":"one sentence"}\n\n'
+                f"Chunk:\n{text}"
+            )
+            result = _ollama(prompt, timeout=60)
+            if result:
+                valid_tags = [t for t in result.get("usability_tags", []) if t in tag_names]
+                chunk["usability_tags"]     = valid_tags
+                chunk["protocol_relevance"] = float(result.get("protocol_relevance", 0.0))
+                chunk["has_point_codes"]    = bool(result.get("has_point_codes", False))
+                chunk["has_figure_refs"]    = bool(result.get("has_figure_refs", False))
+                chunk["primary_use"]        = str(result.get("primary_use", ""))
+                tagged += 1
+            else:
+                chunk.setdefault("usability_tags", [])
+                chunk.setdefault("protocol_relevance", 0.0)
+                failed += 1
+
+    logger.info("Tagged %d/%d chunks (%d failed)", tagged, len(chunks), failed)
+    return chunks
+
+
+def build_usability_profile(chunks: list[dict]) -> dict:
+    """
+    Count tag frequencies and normalise to 0-5 scale.
+    Returns {tag_name: score_0_to_5} plus raw counts.
+    """
+    counts: dict[str, int] = {}
+    for chunk in chunks:
+        for tag in chunk.get("usability_tags", []):
+            counts[tag] = counts.get(tag, 0) + 1
+
+    if not counts:
+        return {"scores": {}, "counts": {}, "total_tagged": 0}
+
+    max_count = max(counts.values()) or 1
+    scores = {tag: round(count / max_count * 5, 1) for tag, count in counts.items()}
+    return {
+        "scores": scores,
+        "counts": counts,
+        "total_tagged": sum(1 for c in chunks if c.get("usability_tags")),
+    }
+
+
+# ── Image pre-screening ────────────────────────────────────────────────────────
+
+def prescreeen_images(chunks: list[dict], book_name: str) -> None:
+    """
+    For each image extracted from this book, add an entry to image_approvals.json
+    with an AI pre-screening suggestion (if not already present).
+    """
+    # Collect all image paths across chunks, with surrounding text
+    image_context: dict[str, str] = {}
+    for chunk in chunks:
+        for img_path in chunk.get("image_links", []):
+            if img_path not in image_context:
+                image_context[img_path] = chunk.get("text", "")[:100]
+
+    if not image_context:
+        return
+
+    # Load existing approvals
+    try:
+        approvals = json.loads(IMAGE_APPROVALS.read_text()) if IMAGE_APPROVALS.exists() else {}
+    except Exception:
+        approvals = {}
+    if not isinstance(approvals, dict):
+        approvals = {}
+    approvals.setdefault("approved", [])
+    approvals.setdefault("rejected", [])
+    approvals.setdefault("pending", [])
+
+    existing_paths = {
+        e["path"] for lst in approvals.values() for e in lst if isinstance(e, dict)
+    }
+
+    new_entries: list[dict] = []
+    for img_path, surrounding_text in image_context.items():
+        if img_path in existing_paths:
+            continue
+
+        # AI pre-screening
+        prompt = (
+            "Based on this image path and surrounding text, is this image "
+            "useful for acupuncture treatment protocols?\n"
+            f"image_path: {img_path}\n"
+            f"surrounding_text: {surrounding_text}\n"
+            'Respond JSON: {"useful":true,"reason":"...","confidence":0.0}'
+        )
+        result = _ollama(prompt, timeout=30)
+        ai_suggestion = None
+        ai_confidence = None
+        if result:
+            ai_suggestion = bool(result.get("useful"))
+            ai_confidence = float(result.get("confidence", 0.0))
+
+        try:
+            page = int(img_path.split("_")[1]) if "_" in img_path else 0
+        except Exception:
+            page = 0
+
+        entry = {
+            "path":             img_path,
+            "book":             book_name,
+            "page":             page,
+            "surrounding_text": surrounding_text,
+            "ai_suggestion":    ai_suggestion,
+            "ai_confidence":    ai_confidence,
+            "approved":         None,
+            "approved_by":      None,
+            "approved_at":      None,
+        }
+        new_entries.append(entry)
+
+    if new_entries:
+        approvals["pending"].extend(new_entries)
+        IMAGE_APPROVALS.parent.mkdir(parents=True, exist_ok=True)
+        IMAGE_APPROVALS.write_text(json.dumps(approvals, indent=2))
+        logger.info("Added %d images to pending approval list", len(new_entries))
+
+
 # ── Auto-remediation check ────────────────────────────────────────────────────
 
 def check_remediation(structural: dict, llm: dict) -> dict:
@@ -249,6 +411,7 @@ def audit_book(
     book_name: str = "",
     collection: str = "",
     run_llm: bool = True,
+    run_tagging: bool = True,
     save: bool = True,
 ) -> dict:
     """
@@ -265,6 +428,8 @@ def audit_book(
     llm = {}
     classification = {}
 
+    usability_profile: dict = {}
+
     if run_llm and chunks:
         logger.info("Running LLM audit on %d sample chunks...", min(AUDIT_SAMPLE, len(chunks)))
         llm = llm_audit(chunks)
@@ -276,6 +441,15 @@ def audit_book(
         logger.info("Recommended collection: %s (confidence=%.2f)",
                     classification.get("recommended_collection", "?"),
                     classification.get("confidence", 0))
+
+    if run_tagging and chunks:
+        logger.info("Tagging %d chunks with usability tags...", len(chunks))
+        tag_chunks_with_ollama(chunks)
+        usability_profile = build_usability_profile(chunks)
+        logger.info("Usability profile: %d tags applied", len(usability_profile.get("scores", {})))
+
+    if book_name and chunks:
+        prescreeen_images(chunks, book_name)
 
     remediation = check_remediation(s, llm)
 
@@ -292,6 +466,7 @@ def audit_book(
         "structural":       s,
         "llm_audit":        llm if llm else None,
         "auto_classification": classification if classification else None,
+        "usability_profile": usability_profile if usability_profile else None,
         "remediation":      remediation,
         "remediation_applied": False,
         "status":           status,
