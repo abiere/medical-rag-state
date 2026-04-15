@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 12:30:32 UTC**
+> Last update: **2026-04-15 12:35:54 UTC**
 
 ## Services
 | Service | Status |
@@ -32,10 +32,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 1.54 GB / 32.86 GB (5%) |
-| CPU | 0.2% |
+| RAM used | 1.62 GB / 32.86 GB (5%) |
+| CPU | 1.3% |
 | Disk used | 39.7 GB / 322.3 GB (13%) |
-| Uptime | up 1 day, 2 hours, 47 minutes |
+| Uptime | up 1 day, 2 hours, 53 minutes |
 
 ## Recent markers
 - `2026-04-15T11:28:04` **queue_empty** — All 15 videos transcribed
