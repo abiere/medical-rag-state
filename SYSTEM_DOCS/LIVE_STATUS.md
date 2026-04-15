@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 08:27:54 UTC**
+> Last update: **2026-04-15 08:33:33 UTC**
 
 ## Services
 | Service | Status |
@@ -22,9 +22,9 @@
 | Metric | Value |
 |---|---|
 | RAM used | 5.43 GB / 32.86 GB (16%) |
-| CPU | 92.6% |
+| CPU | 95.4% |
 | Disk used | 47.2 GB / 322.3 GB (15%) |
-| Uptime | up 22 hours, 45 minutes |
+| Uptime | up 22 hours, 50 minutes |
 
 ## Recent markers
 - `2026-04-15T08:15:42` **transcription_done** — Green_Square_Applications.mp4 complete (3/15)
