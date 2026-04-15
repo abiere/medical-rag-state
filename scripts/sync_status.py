@@ -8,6 +8,7 @@ import json
 import shutil
 import subprocess
 import sys
+import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -63,6 +64,30 @@ def _health_icon(s: str) -> str:
     return "✅" if s == "healthy" else ("⚠️" if s == "starting" else "❌")
 
 
+def _elapsed_min(started_str: str) -> int:
+    """Return elapsed minutes since started_str (ISO format), or 0 on error."""
+    try:
+        started = datetime.fromisoformat(started_str)
+        if started.tzinfo is None:
+            started = started.replace(tzinfo=timezone.utc)
+        return int((datetime.now(timezone.utc) - started).total_seconds() / 60)
+    except Exception:
+        return 0
+
+
+def _qdrant_vector_count(collection: str) -> str:
+    """Return vector count for a Qdrant collection as string, or '?' on error."""
+    try:
+        req = urllib.request.Request(f"http://localhost:6333/collections/{collection}")
+        with urllib.request.urlopen(req, timeout=4) as resp:
+            d = json.loads(resp.read())
+            res = d.get("result", {})
+            n = res.get("vectors_count") or res.get("points_count", 0)
+            return str(n)
+    except Exception:
+        return "?"
+
+
 def _current_job() -> str:
     try:
         if CURRENT_FILE.exists():
@@ -70,7 +95,24 @@ def _current_job() -> str:
             f = d.get("file", "")
             ts = d.get("started", "")
             if f:
-                return f"`{f}`" + (f" (since {ts[:19]})" if ts else "")
+                mins = _elapsed_min(ts) if ts else 0
+                suffix = f" ({mins} min)" if mins else ""
+                return f"`{f}`{suffix}"
+    except Exception:
+        pass
+    return "idle"
+
+
+def _book_current_display() -> str:
+    try:
+        if BOOK_CURRENT_FILE.exists():
+            d = json.loads(BOOK_CURRENT_FILE.read_text())
+            f = d.get("filename", "")
+            ts = d.get("started", "")
+            if f:
+                mins = _elapsed_min(ts) if ts else 0
+                suffix = f" ({mins} min)" if mins else ""
+                return f"`{f}`{suffix}"
     except Exception:
         pass
     return "idle"
@@ -198,9 +240,12 @@ def build_md() -> str:
     dsk_used  = round(dsk.used  / 1e9, 1)
     dsk_total = round(dsk.total / 1e9, 1)
 
-    book_total, book_ingested, book_queued, book_current = _book_stats()
+    book_total, book_ingested, book_queued, _unused = _book_stats()
+    book_current_disp = _book_current_display()
     imgs_pending, imgs_approved = _image_stats()
     book_ingest_s = _svc("book-ingest-queue")
+    ml_vectors = _qdrant_vector_count("medical_library")
+    vt_vectors  = _qdrant_vector_count("video_transcripts")
 
     return f"""# LIVE STATUS — auto-updated every 5 minutes
 > Last update: **{ts} UTC**
@@ -215,23 +260,24 @@ def build_md() -> str:
 | qdrant | {_health_icon(qdr_s)} {qdr_s} |
 | ollama | {_health_icon(oll_s)} {oll_s} |
 
-## Library
+## Book Ingest
 | Metric | Value |
 |---|---|
+| Current job | {book_current_disp} |
+| Queued | {book_queued} |
 | Total books | {book_total} |
 | Ingested | {book_ingested} |
-| Queued | {book_queued} |
-| Current job | {('`' + book_current + '`') if book_current else 'idle'} |
+| Vectors in medical_library | {ml_vectors} |
 | Images pending approval | {imgs_pending} |
 | Images approved | {imgs_approved} |
 
-## Transcription
+## Video Transcription
 | Metric | Value |
 |---|---|
 | Current job | {_current_job()} |
 | Queued | {_queue_count()} |
-| Done | {_done_count()} |
-| Total videos | {_total_videos()} |
+| Done | {_done_count()} / {_total_videos()} |
+| Vectors in video_transcripts | {vt_vectors} |
 
 ## System
 | Metric | Value |

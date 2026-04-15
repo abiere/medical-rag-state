@@ -2,7 +2,7 @@ from fastapi import FastAPI, BackgroundTasks, Request, UploadFile, File, Form
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse, StreamingResponse
 import asyncio, httpx, psutil, subprocess, json, os, re, shutil, sys, time
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 
 # ── rag_query module (lazy, imported at first use) ────────────────────────────
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
@@ -735,6 +735,69 @@ window.addEventListener('load', () => {
 </script>"""
 
 
+_VIDEO_PROGRESS_SCRIPT = r"""<script>
+async function _refreshVideoProgress() {
+  try {
+    const r = await fetch('/videos/progress');
+    const d = await r.json();
+    const el = document.getElementById('video-progress');
+    if (!el) return;
+    if (!d.current && d.queue_count === 0) { el.innerHTML = ''; return; }
+    let html = '<div style="background:#dbeafe;border:1px solid #93c5fd;border-radius:10px;padding:16px 20px">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+    html += '<span style="font-weight:700;font-size:15px;color:#1e40af">🎬 Transcriptie voortgang</span>';
+    html += '<span style="font-size:12px;color:#6b7280">↻ 10s</span>';
+    html += '</div>';
+    if (d.current) {
+      html += `<div style="font-size:14px;margin-bottom:4px"><strong>Bezig:</strong> ${d.current.file} <span style="color:#6b7280">(${d.current.elapsed_minutes} min)</span></div>`;
+      if (d.last_log) html += `<div style="font-size:11px;color:#6b7280;font-family:monospace;margin-bottom:8px;word-break:break-all;background:#eff6ff;border-radius:4px;padding:4px 8px">${d.last_log.slice(-140)}</div>`;
+    }
+    if (d.queue_count > 0) {
+      html += `<div style="font-size:13px;color:#374151;margin-top:4px"><strong>${d.queue_count}</strong> video's in wachtrij:</div>`;
+      html += '<ul style="margin:4px 0 0 20px;font-size:12px;color:#6b7280">';
+      d.queue.forEach(f => { html += `<li>${f}</li>`; });
+      html += '</ul>';
+    }
+    html += '</div>';
+    el.innerHTML = html;
+  } catch(e) {}
+}
+_refreshVideoProgress();
+setInterval(_refreshVideoProgress, 10000);
+</script>"""
+
+_BOOK_PROGRESS_SCRIPT = r"""<script>
+async function _refreshBookProgress() {
+  try {
+    const r = await fetch('/library/progress');
+    const d = await r.json();
+    const el = document.getElementById('book-progress');
+    if (!el) return;
+    if (!d.current && d.queue_count === 0) { el.innerHTML = ''; return; }
+    let html = '<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:16px 20px">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+    html += '<span style="font-weight:700;font-size:15px;color:#1e40af">📚 Boek ingest voortgang</span>';
+    html += '<span style="font-size:12px;color:#6b7280">↻ 10s</span>';
+    html += '</div>';
+    if (d.current) {
+      html += `<div style="font-size:14px;margin-bottom:4px"><strong>Bezig:</strong> ${d.current.filename} <span style="color:#6b7280">(${d.current.elapsed_minutes} min)</span></div>`;
+      if (d.last_log) html += `<div style="font-size:11px;color:#6b7280;font-family:monospace;margin-bottom:8px;word-break:break-all;background:#f0f7ff;border-radius:4px;padding:4px 8px">${d.last_log.slice(-140)}</div>`;
+    }
+    if (d.queue_count > 0) {
+      html += `<div style="font-size:13px;color:#374151;margin-top:4px"><strong>${d.queue_count}</strong> boek(en) in wachtrij:</div>`;
+      html += '<ul style="margin:4px 0 0 20px;font-size:12px;color:#6b7280">';
+      d.queue.forEach(f => { html += `<li>${f}</li>`; });
+      html += '</ul>';
+    }
+    html += '</div>';
+    el.innerHTML = html;
+  } catch(e) {}
+}
+_refreshBookProgress();
+setInterval(_refreshBookProgress, 10000);
+</script>"""
+
+
 @app.get("/videos", response_class=HTMLResponse)
 async def videos_page():
     sections_html = ""
@@ -822,45 +885,14 @@ async def videos_page():
             f'</div>'
         )
 
-    # Show queue status banner if queue manager is active
-    warn_html = ""
-    try:
-        n_queued   = 0
-        is_running = CURRENT_FILE.exists()
-        if QUEUE_FILE.exists():
-            with open(QUEUE_FILE) as _qf:
-                _q = json.load(_qf)
-            n_queued = len(_q) if isinstance(_q, list) else 0
-        if is_running or n_queued:
-            _cur_name = ""
-            if is_running:
-                try:
-                    with open(CURRENT_FILE) as _cf:
-                        _cur = json.load(_cf)
-                    _cur_name = _cur.get("file", "")
-                except Exception:
-                    pass
-            _msg = (
-                f'<b>Transcriptie actief</b>: {_cur_name}'
-                if _cur_name else "<b>Transcriptie actief</b>"
-            )
-            if n_queued:
-                _msg += f' — {n_queued} video{"\'s" if n_queued != 1 else ""} in wachtrij'
-            warn_html = (
-                f'<div style="background:#dbeafe;border:1px solid #93c5fd;border-radius:8px;'
-                f'padding:12px 16px;margin-bottom:16px;font-size:14px;color:#1e40af">'
-                f'⏳ {_msg}</div>'
-            )
-    except Exception:
-        pass
-
     body = (
         f'<div class="wrap">'
         f'<h1 style="font-size:22px;font-weight:700;margin-bottom:20px">Video\'s</h1>'
-        f'{warn_html}'
+        f'<div id="video-progress" style="margin-bottom:16px"></div>'
         f'{sections_html}'
         f'</div>'
         + _VIDEO_SCRIPT
+        + _VIDEO_PROGRESS_SCRIPT
     )
     return _page_shell("Video's", "/videos", body)
 
@@ -1431,27 +1463,6 @@ def _library_section_html(section_key: str) -> str:
 async def library_page():
     sections = "".join(_library_section_html(sec) for sec in SECTION_MAP)
 
-    # Queue stats
-    queued_count = 0
-    current_book = ""
-    try:
-        if BOOK_QUEUE_FILE.exists():
-            q = json.loads(BOOK_QUEUE_FILE.read_text())
-            queued_count = len(q) if isinstance(q, list) else 0
-    except Exception:
-        pass
-    try:
-        if BOOK_CURRENT_FILE.exists():
-            current_book = json.loads(BOOK_CURRENT_FILE.read_text()).get("filename", "")
-    except Exception:
-        pass
-
-    status_bar = ""
-    if current_book:
-        status_bar = f'<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:14px">🔄 <strong>Bezig:</strong> {current_book} — {queued_count} in wachtrij</div>'
-    elif queued_count:
-        status_bar = f'<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:14px">⏳ {queued_count} boek(en) in wachtrij — start <code>book-ingest-queue.service</code></div>'
-
     body = f"""
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px">
@@ -1461,7 +1472,7 @@ async def library_page():
       <span style="font-size:13px;color:#6b7280">→ alle boeken in <code>medical_library</code></span>
     </div>
   </div>
-  {status_bar}
+  <div id="book-progress" style="margin-bottom:16px"></div>
   {sections}
 </div>
 <script>
@@ -1497,7 +1508,7 @@ async function uploadBook(category) {{
     setTimeout(() => location.reload(), 1500);
   }}
 }}
-</script>"""
+</script>""" + _BOOK_PROGRESS_SCRIPT
     return _page_shell("Bibliotheek", "/library", body)
 
 
@@ -1712,6 +1723,89 @@ async def library_retag(filename: str, background_tasks: BackgroundTasks):
 
     background_tasks.add_task(_do_retag)
     return {"status": "started", "filename": filename}
+
+
+# ── GET /library/progress ─────────────────────────────────────────────────────
+
+@app.get("/library/progress")
+async def library_progress():
+    result: dict = {"current": None, "queue": [], "queue_count": 0, "last_log": ""}
+    try:
+        if BOOK_CURRENT_FILE.exists():
+            cur = json.loads(BOOK_CURRENT_FILE.read_text())
+            started_str = cur.get("started", "")
+            elapsed_min = 0
+            if started_str:
+                started = datetime.fromisoformat(started_str)
+                if started.tzinfo is None:
+                    started = started.replace(tzinfo=timezone.utc)
+                elapsed_min = int((datetime.now(timezone.utc) - started).total_seconds() / 60)
+            result["current"] = {
+                "filename":        cur.get("filename", ""),
+                "started":         started_str,
+                "elapsed_minutes": elapsed_min,
+                "collection":      cur.get("collection", ""),
+            }
+    except Exception:
+        pass
+    try:
+        log = Path("/var/log/book_ingest_queue.log")
+        if log.exists():
+            lines = [l for l in log.read_text(errors="replace").splitlines() if l.strip()]
+            if lines:
+                result["last_log"] = lines[-1]
+    except Exception:
+        pass
+    try:
+        if BOOK_QUEUE_FILE.exists():
+            q = json.loads(BOOK_QUEUE_FILE.read_text())
+            if isinstance(q, list):
+                result["queue"]       = [item.get("filename", "") for item in q]
+                result["queue_count"] = len(q)
+    except Exception:
+        pass
+    return result
+
+
+# ── GET /videos/progress ──────────────────────────────────────────────────────
+
+@app.get("/videos/progress")
+async def videos_progress():
+    result: dict = {"current": None, "queue": [], "queue_count": 0, "last_log": ""}
+    try:
+        if CURRENT_FILE.exists():
+            cur = json.loads(CURRENT_FILE.read_text())
+            started_str = cur.get("started", "")
+            elapsed_min = 0
+            if started_str:
+                started = datetime.fromisoformat(started_str)
+                if started.tzinfo is None:
+                    started = started.replace(tzinfo=timezone.utc)
+                elapsed_min = int((datetime.now(timezone.utc) - started).total_seconds() / 60)
+            result["current"] = {
+                "file":            cur.get("file", ""),
+                "started":         started_str,
+                "elapsed_minutes": elapsed_min,
+            }
+    except Exception:
+        pass
+    try:
+        log = Path("/var/log/transcription_queue.log")
+        if log.exists():
+            lines = [l for l in log.read_text(errors="replace").splitlines() if l.strip()]
+            if lines:
+                result["last_log"] = lines[-1]
+    except Exception:
+        pass
+    try:
+        if QUEUE_FILE.exists():
+            q = json.loads(QUEUE_FILE.read_text())
+            if isinstance(q, list):
+                result["queue"]       = [item.get("filename", item.get("file", "")) for item in q]
+                result["queue_count"] = len(q)
+    except Exception:
+        pass
+    return result
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
