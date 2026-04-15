@@ -1453,29 +1453,37 @@ async def library_page():
   {sections}
 </div>
 <script>
-function uploadBook(category) {{
-  const form    = document.getElementById('form-' + category);
-  const msg     = document.getElementById('upload-msg-' + category);
+async function uploadBook(category) {{
+  const form      = document.getElementById('form-' + category);
+  const msg       = document.getElementById('upload-msg-' + category);
   const fileInput = form.querySelector('input[type=file]');
   if (!fileInput.files.length) {{ msg.textContent = 'Selecteer een bestand.'; return; }}
-  const fd = new FormData();
-  fd.append('file',       fileInput.files[0]);
-  fd.append('collection', category);
+  const files = Array.from(fileInput.files);
+  const queued = [];
+  const failed = [];
   msg.style.color = '#6b7280';
-  msg.textContent = 'Uploaden…';
-  fetch('/library/upload', {{ method: 'POST', body: fd }})
-    .then(r => r.json())
-    .then(d => {{
-      if (d.status === 'queued') {{
-        msg.style.color = '#059669';
-        msg.textContent = '✓ ' + d.filename + ' in wachtrij';
-        setTimeout(() => location.reload(), 1500);
-      }} else {{
-        msg.style.color = '#dc2626';
-        msg.textContent = d.error || 'Fout';
-      }}
-    }})
-    .catch(e => {{ msg.style.color='#dc2626'; msg.textContent='Fout: '+e; }});
+  for (let i = 0; i < files.length; i++) {{
+    msg.textContent = `Uploaden ${{i + 1}}/${{files.length}}: ${{files[i].name}}…`;
+    const fd = new FormData();
+    fd.append('file',       files[i]);
+    fd.append('collection', category);
+    try {{
+      const r = await fetch('/library/upload', {{ method: 'POST', body: fd }});
+      const d = await r.json();
+      if (d.status === 'queued') queued.push(d.filename);
+      else failed.push(files[i].name + ': ' + (d.error || 'fout'));
+    }} catch(e) {{
+      failed.push(files[i].name + ': ' + e);
+    }}
+  }}
+  if (failed.length) {{
+    msg.style.color = '#dc2626';
+    msg.textContent = 'Fouten: ' + failed.join(', ');
+  }} else {{
+    msg.style.color = '#059669';
+    msg.textContent = `✓ ${{queued.length}} bestand(en) in wachtrij`;
+    setTimeout(() => location.reload(), 1500);
+  }}
 }}
 </script>"""
     return _page_shell("Bibliotheek", "/library", body)
