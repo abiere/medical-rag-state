@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 11:06:14 UTC**
+> Last update: **2026-04-15 11:11:16 UTC**
 
 ## Services
 | Service | Status |
@@ -32,10 +32,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 5.59 GB / 32.86 GB (17%) |
-| CPU | 90.1% |
+| RAM used | 5.6 GB / 32.86 GB (17%) |
+| CPU | 92.9% |
 | Disk used | 39.7 GB / 322.3 GB (13%) |
-| Uptime | up 1 day, 1 hour, 23 minutes |
+| Uptime | up 1 day, 1 hour, 28 minutes |
 
 ## Recent markers
 - `2026-04-15T10:59:40` **transcription_done** — Organs_and_Glands_Review.mp4 complete (12/15)
