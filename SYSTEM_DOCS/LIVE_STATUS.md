@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 09:45:24 UTC**
+> Last update: **2026-04-15 09:50:54 UTC**
 
 ## Services
 | Service | Status |
@@ -22,30 +22,28 @@
 ## Transcription
 | Metric | Value |
 |---|---|
-| Current job | `Manual_Muscle_Testing_2.mp4` (since 2026-04-15T09:30:04) |
-| Queued | 9 |
-| Done | 6 |
+| Current job | `Manual_Muscle_Testing_3.mp4` (since 2026-04-15T09:50:30) |
+| Queued | 8 |
+| Done | 7 |
 | Total videos | 15 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 5.54 GB / 32.86 GB (17%) |
-| CPU | 100.0% |
+| RAM used | 5.1 GB / 32.86 GB (16%) |
+| CPU | 98.4% |
 | Disk used | 39.7 GB / 322.3 GB (13%) |
-| Uptime | up 1 day, 2 minutes |
+| Uptime | up 1 day, 8 minutes |
 
 ## Recent markers
+- `2026-04-15T09:50:30` **transcription_done** — Manual_Muscle_Testing_2.mp4 complete (7/15)
 - `2026-04-15T09:30:04` **transcription_done** — Manual_Muscle_Testing_1.mp4 complete (6/15)
 - `2026-04-15T09:14:45` **transcription_done** — Locating_Acupuncture_Points.mp4 complete (5/15)
 - `2026-04-15T08:36:43` **transcription_done** — Indicator_Muscle.mp4 complete (4/15)
 - `2026-04-15T08:15:42` **transcription_done** — Green_Square_Applications.mp4 complete (3/15)
-- `2026-04-15T07:59:06` **transcription_done** — Emotional_Transformation_Technique.mp4 complete (2/15)
 
 ## Queue log (last 10 lines)
 ```
-2026-04-15 07:59:06,987  INFO      DONE   qat/Emotional_Transformation_Technique.mp4  (1486s)
-2026-04-15 07:59:07,054  INFO      START  qat/Green_Square_Applications.mp4
 2026-04-15 08:15:42,851  INFO      DONE   qat/Green_Square_Applications.mp4  (996s)
 2026-04-15 08:15:42,917  INFO      START  qat/Indicator_Muscle.mp4
 2026-04-15 08:36:43,049  INFO      DONE   qat/Indicator_Muscle.mp4  (1260s)
@@ -54,4 +52,6 @@
 2026-04-15 09:14:45,648  INFO      START  qat/Manual_Muscle_Testing_1.mp4
 2026-04-15 09:30:04,393  INFO      DONE   qat/Manual_Muscle_Testing_1.mp4  (919s)
 2026-04-15 09:30:04,462  INFO      START  qat/Manual_Muscle_Testing_2.mp4
+2026-04-15 09:50:30,177  INFO      DONE   qat/Manual_Muscle_Testing_2.mp4  (1226s)
+2026-04-15 09:50:30,295  INFO      START  qat/Manual_Muscle_Testing_3.mp4
 ```
