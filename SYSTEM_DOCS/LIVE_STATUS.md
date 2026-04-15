@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 11:11:16 UTC**
+> Last update: **2026-04-15 11:16:22 UTC**
 
 ## Services
 | Service | Status |
@@ -24,30 +24,28 @@
 ## Transcription
 | Metric | Value |
 |---|---|
-| Current job | `Pair_Balancing.mp4` (since 2026-04-15T10:59:40) |
-| Queued | 3 |
-| Done | 12 |
+| Current job | `Provocative_Testing.mp4` (since 2026-04-15T11:11:44) |
+| Queued | 2 |
+| Done | 13 |
 | Total videos | 15 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 5.6 GB / 32.86 GB (17%) |
-| CPU | 92.9% |
+| RAM used | 5.67 GB / 32.86 GB (17%) |
+| CPU | 95.4% |
 | Disk used | 39.7 GB / 322.3 GB (13%) |
-| Uptime | up 1 day, 1 hour, 28 minutes |
+| Uptime | up 1 day, 1 hour, 33 minutes |
 
 ## Recent markers
+- `2026-04-15T11:11:43` **transcription_done** — Pair_Balancing.mp4 complete (13/15)
 - `2026-04-15T10:59:40` **transcription_done** — Organs_and_Glands_Review.mp4 complete (12/15)
 - `2026-04-15T10:40:45` **transcription_done** — Neuromuscular_ReEducation.mp4 complete (11/15)
 - `2026-04-15T10:32:36` **transcription_done** — Neurological_Disorganization.mp4 complete (10/15)
 - `2026-04-15T10:22:51.501917+00:00` **book_ingested** — test_acupuncture.pdf → medical_library: 2 chunks, score 4.50
-- `2026-04-15T10:08:53.430330+00:00` **book_ingested** — test_acupuncture.pdf → acupuncture_points: 2 chunks, score 5.00
 
 ## Queue log (last 10 lines)
 ```
-2026-04-15 09:58:31,807  INFO      DONE   qat/Manual_Muscle_Testing_3.mp4  (482s)
-2026-04-15 09:58:31,925  INFO      START  qat/Meridian_Testing_and_Treatment.mp4
 2026-04-15 10:06:21,409  INFO      DONE   qat/Meridian_Testing_and_Treatment.mp4  (469s)
 2026-04-15 10:06:21,476  INFO      START  qat/Neurological_Disorganization.mp4
 2026-04-15 10:32:35,993  INFO      DONE   qat/Neurological_Disorganization.mp4  (1575s)
@@ -56,4 +54,6 @@
 2026-04-15 10:40:45,721  INFO      START  qat/Organs_and_Glands_Review.mp4
 2026-04-15 10:59:40,181  INFO      DONE   qat/Organs_and_Glands_Review.mp4  (1134s)
 2026-04-15 10:59:40,298  INFO      START  qat/Pair_Balancing.mp4
+2026-04-15 11:11:43,880  INFO      DONE   qat/Pair_Balancing.mp4  (724s)
+2026-04-15 11:11:44,008  INFO      START  qat/Provocative_Testing.mp4
 ```
