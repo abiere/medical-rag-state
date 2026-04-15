@@ -500,7 +500,7 @@ async def videos_status(video_type: str, filename: str):
         try:
             with open(CURRENT_FILE) as f:
                 current = json.load(f)
-            if current.get("file") == safe:
+            if current.get("file", "").strip() == safe.strip():
                 return {"status": "running"}
         except Exception:
             pass
@@ -511,7 +511,7 @@ async def videos_status(video_type: str, filename: str):
             with open(QUEUE_FILE) as f:
                 queue = json.load(f)
             for item in queue:
-                if item.get("filename") == safe and item.get("video_type") == video_type:
+                if item.get("filename", "").strip() == safe.strip() and item.get("video_type") == video_type:
                     return {"status": "queued"}
         except Exception:
             pass
