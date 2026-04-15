@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 23:48:32 UTC**
+> Last update: **2026-04-15 23:53:54 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `359609833-Travell-and-Simons-Myofascial-Pain-and-Dysfunction-Vol-1-2nd-Ed-D-Simons-Et-Al-Williams-and-Wilkins-1999-WW.pdf` (19 min) |
+| Current job | `359609833-Travell-and-Simons-Myofascial-Pain-and-Dysfunction-Vol-1-2nd-Ed-D-Simons-Et-Al-Williams-and-Wilkins-1999-WW.pdf` (24 min) |
 | Queued | 2 |
 | Total books | 3 |
 | Ingested | 1 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` (13 min) |
+| Current job | `1.Upper_Body_Techniques.mp4` (18 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 41 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 15.81 GB / 32.86 GB (48%) |
-| CPU | 99.7% |
+| RAM used | 15.72 GB / 32.86 GB (48%) |
+| CPU | 99.6% |
 | Disk used | 54.3 GB / 322.3 GB (18%) |
-| Uptime | up 1 day, 14 hours, 5 minutes |
+| Uptime | up 1 day, 14 hours, 11 minutes |
 
 ## Recent markers
 - `2026-04-15T23:35:25` **transcription_done** — 1.Lower_Body_Techniques.mp4 complete (16/20)
