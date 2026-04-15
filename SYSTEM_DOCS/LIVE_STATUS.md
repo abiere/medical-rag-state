@@ -1,12 +1,12 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 10:22:47 UTC**
+> Last update: **2026-04-15 10:27:54 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
 | transcription-queue | ✅ active |
-| book-ingest-queue | ✅ active |
+| book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
 | ollama | ✅ healthy |
@@ -17,7 +17,7 @@
 | Total books | 1 |
 | Ingested | 1 |
 | Queued | 0 |
-| Current job | `test_acupuncture.pdf` |
+| Current job | idle |
 | Images pending approval | 0 |
 | Images approved | 0 |
 
@@ -32,17 +32,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 13.34 GB / 32.86 GB (41%) |
-| CPU | 97.4% |
+| RAM used | 5.7 GB / 32.86 GB (17%) |
+| CPU | 96.0% |
 | Disk used | 39.7 GB / 322.3 GB (13%) |
-| Uptime | up 1 day, 40 minutes |
+| Uptime | up 1 day, 45 minutes |
 
 ## Recent markers
+- `2026-04-15T10:22:51.501917+00:00` **book_ingested** — test_acupuncture.pdf → medical_library: 2 chunks, score 4.50
 - `2026-04-15T10:08:53.430330+00:00` **book_ingested** — test_acupuncture.pdf → acupuncture_points: 2 chunks, score 5.00
 - `2026-04-15T10:06:21` **transcription_done** — Meridian_Testing_and_Treatment.mp4 complete (9/15)
 - `2026-04-15T09:58:31` **transcription_done** — Manual_Muscle_Testing_3.mp4 complete (8/15)
 - `2026-04-15T09:50:30` **transcription_done** — Manual_Muscle_Testing_2.mp4 complete (7/15)
-- `2026-04-15T09:30:04` **transcription_done** — Manual_Muscle_Testing_1.mp4 complete (6/15)
 
 ## Queue log (last 10 lines)
 ```
