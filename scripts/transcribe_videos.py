@@ -329,6 +329,7 @@ def transcribe_video(
     content_type:  str,
     whisper_model: str = DEFAULT_WHISPER_MODEL,
     language:      str = "nl",
+    task:          str = "translate",
     dry_run:       bool = False,
     do_ingest:     bool = False,
 ) -> dict:
@@ -353,8 +354,8 @@ def transcribe_video(
         payload = json.loads(json_path.read_text())
         segments = payload.get("segments", [])
     else:
-        logger.info("Transcribing: %s  [model=%s, lang=%s]",
-                    video_path.name, whisper_model, language)
+        logger.info("Transcribing: %s  [model=%s, lang=%s, task=%s]",
+                    video_path.name, whisper_model, language, task)
 
         if dry_run:
             logger.info("  DRY RUN — skipping audio extraction and transcription")
@@ -382,6 +383,7 @@ def transcribe_video(
             result = model.transcribe(
                 str(audio_path),
                 language=language,
+                task=task,
                 verbose=False,
             )
             segments = [
@@ -459,6 +461,12 @@ def parse_args() -> argparse.Namespace:
         help="Transcription language hint for Whisper (default: nl)",
     )
     parser.add_argument(
+        "--task",
+        default="translate",
+        choices=["transcribe", "translate"],
+        help="Whisper task: 'translate' outputs English, 'transcribe' keeps source language (default: translate)",
+    )
+    parser.add_argument(
         "--ingest",
         action="store_true",
         help="After transcription, ingest segments into Qdrant",
@@ -509,6 +517,7 @@ def main() -> None:
                 content_type  = content_type,
                 whisper_model = args.model,
                 language      = args.language,
+                task          = args.task,
                 dry_run       = args.dry_run,
                 do_ingest     = args.ingest and not args.dry_run,
             )
