@@ -987,7 +987,8 @@ async def status_snapshot():
         except Exception:
             return "unknown"
 
-    qdrant_status  = "healthy" if _qdrant_info().get("online") else "unreachable"
+    qdrant_info    = _qdrant_info()
+    qdrant_status  = "healthy" if qdrant_info.get("online") else "unreachable"
     ollama_status  = "healthy" if _ollama_info().get("online") else "unreachable"
 
     # Transcription state
@@ -1060,6 +1061,10 @@ async def status_snapshot():
             "passed":    passed,
             "failed":    failed,
             "timestamp": test_ts,
+        },
+        "qdrant": {
+            col["name"]: col["vectors"]
+            for col in qdrant_info.get("collections", [])
         },
     }
 

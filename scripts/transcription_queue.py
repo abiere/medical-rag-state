@@ -28,6 +28,7 @@ QUEUE_FILE = Path("/tmp/transcription_queue.json")
 CURRENT    = Path("/tmp/transcription_current.json")
 
 NOTIFY     = BASE / "scripts" / "notify.sh"
+INGEST     = BASE / "scripts" / "ingest_transcript.py"
 VIDEO_TYPES = ["nrt", "qat", "pemf", "rlt"]
 VIDEO_EXTS  = {".mp4", ".mov", ".mkv", ".m4v"}
 CONTENT_TYPE_MAP = {
@@ -108,6 +109,31 @@ def _notify(event: str, message: str) -> None:
         subprocess.run([str(NOTIFY), event, message], timeout=10, check=False)
     except Exception as exc:
         log.warning(f"notify failed: {exc}")
+
+
+# ── ingestion helper ─────────────────────────────────────────────────────────
+
+def _ingest_transcript(filename: str, vtype: str) -> bool:
+    """Run ingest_transcript.py for the completed transcript. Returns True on success."""
+    stem = Path(filename).stem
+    json_path = TRANS_DIR / f"{stem}.json"
+    if not json_path.exists():
+        log.warning(f"Transcript not found for ingestion: {json_path}")
+        return False
+    log.info(f"INGEST {vtype}/{filename}")
+    result = subprocess.run(
+        ["python3", str(INGEST), "--file", str(json_path), "--video-type", vtype],
+        cwd=BASE,
+        capture_output=True,
+        text=True,
+    )
+    if result.stdout:
+        for line in result.stdout.strip().splitlines():
+            log.info(f"  [ingest] {line}")
+    if result.returncode != 0:
+        log.error(f"  [ingest] FAIL\n{result.stderr[-500:]}")
+        return False
+    return True
 
 
 # ── transcription ─────────────────────────────────────────────────────────────
@@ -224,6 +250,14 @@ def main() -> None:
             CURRENT.unlink(missing_ok=True)
 
         processed += 1
+
+        if ok:
+            ingested = _ingest_transcript(filename, vtype)
+            _notify(
+                "transcript_ingested" if ingested else "ingest_failed",
+                f"{filename} ingested into Qdrant" if ingested else f"{filename} ingest FAILED",
+            )
+
         total_done = sum(1 for _ in TRANS_DIR.glob("*.json")) if TRANS_DIR.exists() else processed
         _notify(
             "transcription_done" if ok else "transcription_failed",
