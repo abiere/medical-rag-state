@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 09:16:58 UTC**
+> Last update: **2026-04-15 09:22:54 UTC**
 
 ## Services
 | Service | Status |
@@ -30,10 +30,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 5.51 GB / 32.86 GB (17%) |
-| CPU | 92.0% |
+| RAM used | 5.52 GB / 32.86 GB (17%) |
+| CPU | 94.3% |
 | Disk used | 47.3 GB / 322.3 GB (15%) |
-| Uptime | up 23 hours, 34 minutes |
+| Uptime | up 23 hours, 40 minutes |
 
 ## Recent markers
 - `2026-04-15T09:14:45` **transcription_done** — Locating_Acupuncture_Points.mp4 complete (5/15)
