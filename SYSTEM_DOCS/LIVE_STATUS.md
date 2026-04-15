@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 06:52:03 UTC**
+> Last update: **2026-04-15 06:52:14 UTC**
 
 ## Services
 | Service | Status |
@@ -21,8 +21,8 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 5.58 GB / 32.86 GB (17%) |
-| CPU | 97.4% |
+| RAM used | 5.62 GB / 32.86 GB (17%) |
+| CPU | 91.1% |
 | Disk used | 39.6 GB / 322.3 GB (13%) |
 | Uptime | up 21 hours, 9 minutes |
 
