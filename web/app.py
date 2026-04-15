@@ -2063,7 +2063,7 @@ async def search_page(q: str = ""):
 <!-- Lightbox -->
 <div id="lightbox" onclick="this.style.display='none'"
   style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;
-         display:flex;align-items:center;justify-content:center;cursor:zoom-out">
+         align-items:center;justify-content:center;cursor:zoom-out">
   <img id="lightbox-img" style="max-width:90vw;max-height:90vh;border-radius:8px;box-shadow:0 4px 40px rgba(0,0,0,.6)">
 </div>
 
@@ -2338,8 +2338,9 @@ async def search_query(request: Request):
                         except Exception:
                             pass
         except Exception as e:
-            yield f"data: {json.dumps({'type':'error','message':f'Ollama: {e}'})}\n\n"
-            return
+            err_msg = f"[Ollama fout: {e}]"
+            answer_text = err_msg
+            yield f"data: {json.dumps({'type':'token','text':err_msg})}\n\n"
 
         elapsed_ms = int((time.time() - t0) * 1000)
         done_payload = {
