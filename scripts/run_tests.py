@@ -778,6 +778,36 @@ class IntegrationTests(unittest.TestCase):
         self.assertIn("FastAPI", content)
         self.assertIn("/health", content)
 
+    def test_transcription_queue_service(self):
+        """transcription-queue.service is active"""
+        import subprocess as _sp
+        r = _sp.run(["systemctl", "is-active", "transcription-queue"],
+                    capture_output=True, text=True)
+        assert r.stdout.strip() == "active", f"Service not active: {r.stdout.strip()!r}"
+
+    def test_queue_file_valid(self):
+        """Queue file exists and is valid JSON list"""
+        q = Path("/tmp/transcription_queue.json")
+        if not q.exists():
+            self.skipTest("Queue file absent — queue may be empty/finished")
+        data = json.loads(q.read_text())
+        self.assertIsInstance(data, list, "Queue file is not a JSON list")
+
+    def test_status_endpoint_valid(self):
+        """Status endpoint returns a valid status value for a QAT video"""
+        import urllib.request as _ur
+        url = "http://localhost:8000/videos/status/qat/Anti-Inflammatory_Procedure.mp4"
+        resp = _ur.urlopen(url, timeout=5)
+        data = json.loads(resp.read())
+        self.assertIn(data.get("status"), ["running", "queued", "done", "waiting"],
+                      f"Onverwachte status: {data}")
+
+    def test_transcription_log_exists(self):
+        """Transcription queue log bestaat en is niet leeg"""
+        log = Path("/var/log/transcription_queue.log")
+        self.assertTrue(log.exists(), "Queue log /var/log/transcription_queue.log ontbreekt")
+        self.assertGreater(log.stat().st_size, 0, "Queue log is leeg")
+
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # RUNNER

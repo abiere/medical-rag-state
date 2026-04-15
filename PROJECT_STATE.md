@@ -74,7 +74,8 @@ All access to the server must go through Tailscale (`100.66.194.55`).
 ```
 
 **Disk usage (2026-04-14):** `/dev/sda1` — 301 GB total, 17 GB used (6%), 272 GB free.
-**books/ and videos/:** All empty — no content ingested yet.
+**Disk usage (2026-04-15):** `/dev/sda1` — 301 GB total, ~24 GB used (QAT videos +7.5 GB), ~265 GB free.  
+**videos/qat/:** 15 × MP4 bestanden — transcriptie bezig via `transcription-queue.service`.
 
 ---
 
@@ -137,6 +138,7 @@ Collection config (applied at creation time):
 | Service | Unit file | Port | Status |
 |---|---|---|---|
 | `medical-rag-web` | `/etc/systemd/system/medical-rag-web.service` | 8000 | **Active (running)** |
+| `transcription-queue` | `/etc/systemd/system/transcription-queue.service` | — | **Active (running) — processing QAT** |
 | `medical-rag-state` | `/etc/systemd/system/medical-rag-state.service` | 8080 | **Disabled / stopped** |
 
 ### Systemd Timers
@@ -170,7 +172,8 @@ Dashboard accessible at: `http://100.66.194.55:8000` (Tailscale only)
 | `GET /health` | JSON health check | **Live** |
 | `GET /videos` | Video overview by type; per-video metadata + transcription status | **Live** |
 | `POST /videos/upload` | Upload video file to correct type directory | **Live** |
-| `POST /videos/transcribe` | Start Whisper transcription as background task | **Live** |
+| `POST /videos/transcribe` | Enqueue video in `/tmp/transcription_queue.json` (queue service picks up) | **Live** |
+| `GET /videos/status/{type}/{filename}` | Queue status: done/running/queued/waiting | **Live** |
 | `GET /videos/transcript/{type}/{stem}` | Timestamped segment viewer | **Live** |
 | `GET /library` | Book management — upload, metadata, ingestion | Planned |
 | `GET /images` | Image browser with tissue/structure filter | Planned |
@@ -292,7 +295,7 @@ Three-pass extraction with cross-reference map for anatomy atlases where images 
 ## 10. Pending Tasks
 
 - [ ] **Add books** — Drop `.pdf`/`.epub` into `./books/`, run `fetch_book_metadata.py` then `ingest_books.py --content-type medical_literature`
-- [~] **QAT-videos transcriberen** — 15 videos gestart 2026-04-14 22:30 UTC; Whisper draait op achtergrond; controleer `ls data/transcripts/*.json | wc -l`
+- [~] **QAT-videos transcriberen** — 15 videos in sequentiële queue via `transcription-queue.service`; controleer `tail -20 /var/log/transcription_queue.log`
 - [ ] **NRT-videos transcriberen** — Drop `.mp4` into `./videos/nrt/`, start via `/videos` pagina of `transcribe_videos.py --type nrt`
 - [ ] **Add device docs** — Drop PEMF/RLT PDFs or `.md` settings files, run ingestion with `--content-type device_pemf` / `device_rlt`
 - [ ] **Build `/library` page** — Book upload, metadata cards, ingestion trigger, processing status
@@ -314,7 +317,7 @@ Three-pass extraction with cross-reference map for anatomy atlases where images 
 | No swap configured | Medium | If both Qdrant and Ollama are under peak load simultaneously and exceed their memory limits, the kernel OOM killer may intervene. Monitor with `docker stats` during heavy ingestion. |
 | Jinja2 version conflict | Low | System jinja2 conflicts with pip-installed starlette's LRU cache (`unhashable type: 'dict'`). Resolved by generating all HTML as inline strings — no templates used. |
 | `docker-compose` v1 bug with new images | Resolved | v1.29.2 throws `KeyError: 'ContainerConfig'` on recreate. Workaround: always `docker-compose down` before `docker-compose up -d`. |
-| Some QAT videos show "Wachten" despite process started | Low | Status detection uses log file mtime (300 s window). If Whisper takes > 5 min to write its first log line the status briefly shows "Wachten". Resolves automatically once the log is touched. |
+| Queue file `/tmp/transcription_queue.json` lost on reboot | Low | systemd `Restart=on-failure` restarts the service but the queue file lives in `/tmp` which is cleared on reboot. The startup scan repopulates from the filesystem automatically — any untranscribed video is re-queued. |
 
 ---
 
@@ -355,3 +358,38 @@ Three-pass extraction with cross-reference map for anatomy atlases where images 
 2. Bouw `/library` pagina — PDF/EPUB upload, metadata cards, ingestie trigger
 3. Bouw `/search` pagina — multi-collectie RAG zoekopdracht met citaten
 4. Start NRT-video transcripties als RAM beschikbaar is
+
+---
+
+## 13. Session 2026-04-15 — Sequentiële transcriptie queue
+
+### Probleem opgelost
+- 13+ parallelle Whisper processen → OOM-killed door Linux kernel
+- Oplossing: sequentiële queue via systemd service (één video tegelijk)
+
+### Gebouwd
+- `scripts/transcription_queue.py` — queue manager; startup scan + loop; EXIT wanneer leeg
+- `/etc/systemd/system/transcription-queue.service` — enabled, auto-start na `medical-rag-web`
+- `web/app.py` — `_run_transcription` schrijft naar `/tmp/transcription_queue.json` (geen subprocess meer)
+- `web/app.py` — `/videos/status` endpoint: 4-state check via `current.json` + `queue.json`
+- UI badges: Klaar (groen) / Bezig… (blauw spinner) / In wachtrij (geel) / Wachten (grijs)
+- `run_tests.py` — 4 nieuwe tests voor queue systeem
+
+### Commits
+| Hash | Beschrijving |
+|---|---|
+| `014d5a7` | feat: sequential transcription queue, systemd service, queued status |
+| `ae5f7e3` | fix: strip whitespace in status filename comparison |
+
+### Status transcripties 06:30 UTC
+- `Anti-Inflammatory_Procedure.mp4` → **DONE** (eerste klaar)
+- `Connection_to_the_Brain.mp4` → **RUNNING** (tweede in progress)
+- 13 overige QAT-videos → **QUEUED**
+- Verwacht klaar: morgenochtend vroeg
+
+### Volgende sessie
+```bash
+! tail -20 /var/log/transcription_queue.log   # voortgang
+! ls /root/medical-rag/data/transcripts/ | wc -l  # hoeveel klaar
+```
+Daarna: `/library` pagina bouwen.
