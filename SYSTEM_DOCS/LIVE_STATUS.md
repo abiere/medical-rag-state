@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 17:03:24 UTC**
+> Last update: **2026-04-15 17:08:54 UTC**
 
 ## Services
 | Service | Status |
@@ -14,9 +14,9 @@
 ## Library
 | Metric | Value |
 |---|---|
-| Total books | 2 |
+| Total books | 3 |
 | Ingested | 1 |
-| Queued | 1 |
+| Queued | 2 |
 | Current job | `pdfcoffee.com_a-manual-of-acupuncture-peter-deadmanpdf-4-pdf-free.pdf` |
 | Images pending approval | 0 |
 | Images approved | 0 |
@@ -32,10 +32,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 11.61 GB / 32.86 GB (35%) |
-| CPU | 94.7% |
-| Disk used | 53.3 GB / 322.3 GB (17%) |
-| Uptime | up 1 day, 7 hours, 20 minutes |
+| RAM used | 10.71 GB / 32.86 GB (33%) |
+| CPU | 99.9% |
+| Disk used | 53.4 GB / 322.3 GB (17%) |
+| Uptime | up 1 day, 7 hours, 26 minutes |
 
 ## Recent markers
 - `2026-04-15T11:28:04` **queue_empty** — All 15 videos transcribed
