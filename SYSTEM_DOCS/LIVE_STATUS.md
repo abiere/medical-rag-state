@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 19:30:54 UTC**
+> Last update: **2026-04-15 19:36:14 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `pdfcoffee.com_a-manual-of-acupuncture-peter-deadmanpdf-4-pdf-free.pdf` (26 min) |
+| Current job | `pdfcoffee.com_a-manual-of-acupuncture-peter-deadmanpdf-4-pdf-free.pdf` (31 min) |
 | Queued | 2 |
 | Total books | 3 |
 | Ingested | 1 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Lower_Body_Techniques.mp4` (204 min) |
+| Current job | `1.Lower_Body_Techniques.mp4` (209 min) |
 | Queued | 20 |
 | Done | 15 / 35 |
 | Vectors in video_transcripts | 6 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 16.82 GB / 32.86 GB (51%) |
-| CPU | 100.0% |
+| RAM used | 15.75 GB / 32.86 GB (48%) |
+| CPU | 99.9% |
 | Disk used | 54.1 GB / 322.3 GB (18%) |
-| Uptime | up 1 day, 9 hours, 48 minutes |
+| Uptime | up 1 day, 9 hours, 53 minutes |
 
 ## Recent markers
 - `2026-04-15T11:28:04` **queue_empty** — All 15 videos transcribed
