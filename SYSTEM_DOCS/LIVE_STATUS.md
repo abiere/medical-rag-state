@@ -1,14 +1,23 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 08:44:08 UTC**
+> Last update: **2026-04-15 08:49:54 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
 | transcription-queue | ✅ active |
+| book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
 | ollama | ✅ healthy |
+
+## Books
+| Metric | Value |
+|---|---|
+| Total books | 1 |
+| Ingested | 0 |
+| Queued | 0 |
+| Current job | idle |
 
 ## Transcription
 | Metric | Value |
@@ -21,10 +30,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 5.85 GB / 32.86 GB (18%) |
-| CPU | 96.1% |
+| RAM used | 12.14 GB / 32.86 GB (37%) |
+| CPU | 99.1% |
 | Disk used | 47.3 GB / 322.3 GB (15%) |
-| Uptime | up 23 hours, 1 minute |
+| Uptime | up 23 hours, 7 minutes |
 
 ## Recent markers
 - `2026-04-15T08:36:43` **transcription_done** — Indicator_Muscle.mp4 complete (4/15)
