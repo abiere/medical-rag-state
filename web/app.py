@@ -8,6 +8,8 @@ app = FastAPI()
 BASE         = Path("/root/medical-rag")
 VIDEOS_DIR   = BASE / "videos"
 TRANS_DIR    = BASE / "data" / "transcripts"
+QUEUE_FILE   = Path("/tmp/transcription_queue.json")
+CURRENT_FILE = Path("/tmp/transcription_current.json")
 
 VIDEO_TYPES = {
     "nrt":  "NRT — Neural Reset Therapy",
@@ -251,21 +253,30 @@ _CONTENT_TYPE_MAP = {
 }
 
 def _run_transcription(video_path: str, video_type: str) -> None:
-    """Background task: transcribes one file via --file (mutually exclusive with --type).
-    Correct content-type is passed explicitly. Output logged to /tmp/transcribe_{name}.log.
-    """
-    content_type = _CONTENT_TYPE_MAP.get(video_type, "training_nrt")
-    log_path     = Path(f"/tmp/transcribe_{Path(video_path).name}.log")
-    result = subprocess.run(
-        ["python3", str(BASE / "scripts" / "transcribe_videos.py"),
-         "--file", video_path,
-         "--content-type", content_type],
-        cwd=BASE,
-        capture_output=True,
-        text=True,
-    )
-    with open(log_path, "w") as lf:
-        lf.write(f"=== stdout ===\n{result.stdout}\n=== stderr ===\n{result.stderr}\n")
+    """Enqueue a video for transcription (picked up by transcription-queue service)."""
+    filename = Path(video_path).name
+    entry = {
+        "video_type": video_type,
+        "filename":   filename,
+        "requested":  datetime.now().isoformat(),
+    }
+    try:
+        if QUEUE_FILE.exists():
+            with open(QUEUE_FILE) as f:
+                queue = json.load(f)
+            if not isinstance(queue, list):
+                queue = []
+        else:
+            queue = []
+    except Exception:
+        queue = []
+
+    # Add only if not already queued
+    existing = {(i.get("video_type"), i.get("filename")) for i in queue}
+    if (video_type, filename) not in existing:
+        queue.append(entry)
+        with open(QUEUE_FILE, "w") as f:
+            json.dump(queue, f, indent=2)
 
 # ── routes ───────────────────────────────────────────────────────────────────
 
@@ -479,11 +490,33 @@ async def videos_status(video_type: str, filename: str):
         return {"status": "error"}
     safe = Path(filename).name          # strip any path traversal
     stem = Path(safe).stem
+
+    # 1. Transcript exists → done
     if (TRANS_DIR / f"{stem}.json").exists():
         return {"status": "done"}
-    log = Path(f"/tmp/transcribe_{safe}.log")
-    if log.exists() and os.path.getmtime(log) > time.time() - 300:
-        return {"status": "running"}
+
+    # 2. Currently being processed by queue manager → running
+    if CURRENT_FILE.exists():
+        try:
+            with open(CURRENT_FILE) as f:
+                current = json.load(f)
+            if current.get("file") == safe:
+                return {"status": "running"}
+        except Exception:
+            pass
+
+    # 3. Waiting in queue → queued
+    if QUEUE_FILE.exists():
+        try:
+            with open(QUEUE_FILE) as f:
+                queue = json.load(f)
+            for item in queue:
+                if item.get("filename") == safe and item.get("video_type") == video_type:
+                    return {"status": "queued"}
+        except Exception:
+            pass
+
+    # 4. Not queued, not running, no transcript
     return {"status": "waiting"}
 
 
@@ -524,13 +557,30 @@ function setDone(vtype, safeId, filename) {
     '<a href="/videos/transcript/' + vtype + '/' + stem + '" class="btn btn-secondary">Transcript bekijken</a>';
 }
 
+function setQueued(vtype, safeId) {
+  _clearTimer(vtype + '-' + safeId);
+  document.getElementById('status-' + vtype + '-' + safeId).innerHTML =
+    '<span style="background:#fef3c7;color:#92400e;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:600">In wachtrij</span>';
+  const actEl = document.getElementById('actions-' + vtype + '-' + safeId);
+  if (actEl) actEl.innerHTML = '<span style="color:#6b7280;font-size:13px;font-style:italic">Wacht op verwerking...</span>';
+}
+
 function startPoll(vtype, filename, safeId) {
+  let _state = null;
   const iv = setInterval(() => {
     fetch('/videos/status/' + vtype + '/' + encodeURIComponent(filename))
       .then(r => r.json())
       .then(d => {
-        if (d.status === 'done') { clearInterval(iv); setDone(vtype, safeId, filename); }
-        else if (d.status === 'error') {
+        if (d.status === 'done') {
+          clearInterval(iv);
+          setDone(vtype, safeId, filename);
+        } else if (d.status === 'running' && _state !== 'running') {
+          _state = 'running';
+          setRunning(vtype, safeId);
+        } else if (d.status === 'queued' && _state !== 'queued') {
+          _state = 'queued';
+          setQueued(vtype, safeId);
+        } else if (d.status === 'error') {
           clearInterval(iv); _clearTimer(vtype + '-' + safeId);
           document.getElementById('actions-' + vtype + '-' + safeId).innerHTML =
             '<span style="color:#ef4444;font-size:13px">Fout bij transcriptie</span>';
@@ -549,7 +599,7 @@ function manualTranscribe(vtype, filename, safeId) {
     .then(d => {
       if (d.status === 'started') {
         if (document.getElementById('status-' + vtype + '-' + safeId)) {
-          setRunning(vtype, safeId);
+          setQueued(vtype, safeId);
           startPoll(vtype, filename, safeId);
         } else {
           location.reload();
@@ -624,6 +674,7 @@ window.addEventListener('load', () => {
       .then(r => r.json())
       .then(d => {
         if (d.status === 'running') { setRunning(vtype, safeId); startPoll(vtype, filename, safeId); }
+        else if (d.status === 'queued') { setQueued(vtype, safeId); startPoll(vtype, filename, safeId); }
         else if (d.status === 'done') { setDone(vtype, safeId, filename); }
       });
   });
@@ -658,7 +709,7 @@ async def videos_page():
                     )
                 else:
                     badge = (
-                        '<span style="background:#fef3c7;color:#92400e;border-radius:999px;'
+                        '<span style="background:#f3f4f6;color:#6b7280;border-radius:999px;'
                         'padding:2px 9px;font-size:12px;font-weight:600">Wachten</span>'
                     )
                     actions = (
@@ -718,21 +769,37 @@ async def videos_page():
             f'</div>'
         )
 
-    # Count transcriptions currently running (log modified in last 300 s, no JSON yet)
-    n_running = 0
-    for vt in VIDEO_TYPES:
-        for v in _list_videos(vt):
-            if not v["transcribed"]:
-                lp = Path(f"/tmp/transcribe_{v['name']}.log")
-                if lp.exists() and os.path.getmtime(lp) > time.time() - 300:
-                    n_running += 1
-
-    warn_html = (
-        f'<div style="background:#fef3c7;border:1px solid #f59e0b;border-radius:8px;'
-        f'padding:12px 16px;margin-bottom:16px;font-size:14px;color:#92400e">'
-        f'⚠️ {n_running} transcriptie{"s" if n_running != 1 else ""} actief tegelijk — '
-        f'dit kan lang duren en veel RAM gebruiken.</div>'
-    ) if n_running > 3 else ""
+    # Show queue status banner if queue manager is active
+    warn_html = ""
+    try:
+        n_queued   = 0
+        is_running = CURRENT_FILE.exists()
+        if QUEUE_FILE.exists():
+            with open(QUEUE_FILE) as _qf:
+                _q = json.load(_qf)
+            n_queued = len(_q) if isinstance(_q, list) else 0
+        if is_running or n_queued:
+            _cur_name = ""
+            if is_running:
+                try:
+                    with open(CURRENT_FILE) as _cf:
+                        _cur = json.load(_cf)
+                    _cur_name = _cur.get("file", "")
+                except Exception:
+                    pass
+            _msg = (
+                f'<b>Transcriptie actief</b>: {_cur_name}'
+                if _cur_name else "<b>Transcriptie actief</b>"
+            )
+            if n_queued:
+                _msg += f' — {n_queued} video{"\'s" if n_queued != 1 else ""} in wachtrij'
+            warn_html = (
+                f'<div style="background:#dbeafe;border:1px solid #93c5fd;border-radius:8px;'
+                f'padding:12px 16px;margin-bottom:16px;font-size:14px;color:#1e40af">'
+                f'⏳ {_msg}</div>'
+            )
+    except Exception:
+        pass
 
     body = (
         f'<div class="wrap">'
