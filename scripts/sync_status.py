@@ -189,8 +189,13 @@ def main() -> None:
     OUT_FILE.write_text(content)
     print(f"Written: {OUT_FILE}")
 
+    files_to_add = ["SYSTEM_DOCS/LIVE_STATUS.md"]
+    backlog = BASE / "SYSTEM_DOCS" / "BACKLOG.md"
+    if backlog.exists():
+        files_to_add.append("SYSTEM_DOCS/BACKLOG.md")
+
     result = subprocess.run(
-        ["git", "add", "SYSTEM_DOCS/LIVE_STATUS.md"],
+        ["git", "add"] + files_to_add,
         cwd=BASE, capture_output=True, text=True,
     )
     if result.returncode != 0:

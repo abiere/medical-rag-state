@@ -2,7 +2,8 @@
 
 > Read this file at the start of every session.
 > Full detail lives in PROJECT_STATE.md and SYSTEM_DOCS/*.
-> Live status: https://raw.githubusercontent.com/abiere/medical-rag-state/main/SYSTEM_DOCS/LIVE_STATUS.md
+> Live status: https://raw.githubusercontent.com/abiere/medical-rag-state/main/SYSTEM_DOCS/LIVE_STATUS.md  
+> Backlog: https://raw.githubusercontent.com/abiere/medical-rag-state/main/SYSTEM_DOCS/BACKLOG.md
 
 ---
 
