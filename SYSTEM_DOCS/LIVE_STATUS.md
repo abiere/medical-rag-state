@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 22:33:29 UTC**
+> Last update: **2026-04-15 22:38:34 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `969553977-Trail-Guide-to-the-Body-6th-Edition-Andrew-Biel.pdf` (6 min) |
+| Current job | `969553977-Trail-Guide-to-the-Body-6th-Edition-Andrew-Biel.pdf` (11 min) |
 | Queued | 2 |
 | Total books | 3 |
 | Ingested | 1 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Lower_Body_Techniques.mp4` (387 min) |
+| Current job | `1.Lower_Body_Techniques.mp4` (392 min) |
 | Queued | 20 |
 | Done | 15 / 35 |
 | Vectors in video_transcripts | 6 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 7.14 GB / 32.86 GB (22%) |
-| CPU | 99.9% |
+| RAM used | 7.15 GB / 32.86 GB (22%) |
+| CPU | 100.0% |
 | Disk used | 54.3 GB / 322.3 GB (18%) |
-| Uptime | up 1 day, 12 hours, 50 minutes |
+| Uptime | up 1 day, 12 hours, 55 minutes |
 
 ## Recent markers
 - `2026-04-15T22:26:35.976757+00:00` **watchdog_restart** — book-ingest-queue hung (31 min stale) — restarted successfully
