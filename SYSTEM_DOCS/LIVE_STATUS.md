@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 07:02:54 UTC**
+> Last update: **2026-04-15 07:08:00 UTC**
 
 ## Services
 | Service | Status |
@@ -21,10 +21,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 5.38 GB / 32.86 GB (16%) |
-| CPU | 93.9% |
+| RAM used | 5.39 GB / 32.86 GB (16%) |
+| CPU | 94.8% |
 | Disk used | 39.6 GB / 322.3 GB (13%) |
-| Uptime | up 21 hours, 20 minutes |
+| Uptime | up 21 hours, 25 minutes |
 
 ## Recent markers
 - `2026-04-15T06:48:17` **test_marker** — notify.sh werkt correct
