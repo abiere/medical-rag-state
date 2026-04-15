@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 08:04:56 UTC**
+> Last update: **2026-04-15 08:05:54 UTC**
 
 ## Services
 | Service | Status |
@@ -21,10 +21,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 5.31 GB / 32.86 GB (16%) |
-| CPU | 93.4% |
+| RAM used | 5.38 GB / 32.86 GB (16%) |
+| CPU | 93.6% |
 | Disk used | 39.6 GB / 322.3 GB (13%) |
-| Uptime | up 22 hours, 22 minutes |
+| Uptime | up 22 hours, 23 minutes |
 
 ## Recent markers
 - `2026-04-15T07:59:06` **transcription_done** — Emotional_Transformation_Technique.mp4 complete (2/15)
