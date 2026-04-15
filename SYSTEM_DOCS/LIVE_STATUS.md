@@ -32,8 +32,8 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 5.47 GB / 32.86 GB (17%) |
-| CPU | 97.4% |
+| RAM used | 5.48 GB / 32.86 GB (17%) |
+| CPU | 91.7% |
 | Disk used | 39.7 GB / 322.3 GB (13%) |
 | Uptime | up 1 day, 50 minutes |
 
