@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 15:39:04 UTC**
+> Last update: **2026-04-15 15:44:13 UTC**
 
 ## Services
 | Service | Status |
@@ -16,7 +16,7 @@
 |---|---|
 | Total books | 0 |
 | Ingested | 1 |
-| Queued | 0 |
+| Queued | 1 |
 | Current job | idle |
 | Images pending approval | 0 |
 | Images approved | 0 |
@@ -25,17 +25,17 @@
 | Metric | Value |
 |---|---|
 | Current job | idle |
-| Queued | 5 |
+| Queued | 20 |
 | Done | 15 |
-| Total videos | 31 |
+| Total videos | 35 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 1.76 GB / 32.86 GB (5%) |
-| CPU | 21.3% |
-| Disk used | 48.9 GB / 322.3 GB (16%) |
-| Uptime | up 1 day, 5 hours, 56 minutes |
+| RAM used | 1.78 GB / 32.86 GB (5%) |
+| CPU | 0.5% |
+| Disk used | 53.1 GB / 322.3 GB (17%) |
+| Uptime | up 1 day, 6 hours, 1 minute |
 
 ## Recent markers
 - `2026-04-15T11:28:04` **queue_empty** — All 15 videos transcribed
