@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 10:33:15 UTC**
+> Last update: **2026-04-15 10:38:54 UTC**
 
 ## Services
 | Service | Status |
@@ -32,10 +32,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 5.48 GB / 32.86 GB (17%) |
-| CPU | 91.7% |
+| RAM used | 5.6 GB / 32.86 GB (17%) |
+| CPU | 96.5% |
 | Disk used | 39.7 GB / 322.3 GB (13%) |
-| Uptime | up 1 day, 50 minutes |
+| Uptime | up 1 day, 56 minutes |
 
 ## Recent markers
 - `2026-04-15T10:32:36` **transcription_done** — Neurological_Disorganization.mp4 complete (10/15)
