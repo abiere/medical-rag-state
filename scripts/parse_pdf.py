@@ -227,7 +227,10 @@ def _parse_docling(pdf_path: Path) -> list[dict] | None:
         return None
 
     try:
-        opts = PdfPipelineOptions(generate_picture_images=False)
+        # do_ocr=False: disable Docling's internal OCR pipeline (RapidOCR etc.)
+        # We handle scanned pages ourselves via cascade OCR in _parse_scanned/_parse_mixed.
+        # Docling is only used here for native PDFs with extractable text.
+        opts = PdfPipelineOptions(generate_picture_images=False, do_ocr=False)
         converter = DocumentConverter(
             format_options={InputFormat.PDF: PdfFormatOption(pipeline_options=opts)}
         )
