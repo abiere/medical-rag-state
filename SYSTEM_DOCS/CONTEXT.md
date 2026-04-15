@@ -1,11 +1,7 @@
 # CONTEXT — Session Loader
-
-> Read this file at the start of every session.
-> Full detail lives in PROJECT_STATE.md and SYSTEM_DOCS/*.
-> Live status: https://raw.githubusercontent.com/abiere/medical-rag-state/main/SYSTEM_DOCS/LIVE_STATUS.md  
+> Read this file at the start of every session. Max 150 lines.
+> Live status: https://raw.githubusercontent.com/abiere/medical-rag-state/main/SYSTEM_DOCS/LIVE_STATUS.md
 > Backlog: https://raw.githubusercontent.com/abiere/medical-rag-state/main/SYSTEM_DOCS/BACKLOG.md
-
----
 
 ## What this system is
 
@@ -19,11 +15,9 @@ Access via **Tailscale only**. All inference runs on a single Hetzner server.
 **Treatment modalities (always combined):** NRT · QAT · GTR · Tit Tar · PEMF · RLT
 
 **Primary outputs:**
-1. **Word documents** — treatment protocols: §1 Klachtbeeld · §2 Behandeling (with anatomical + acupuncture images) · §3 Bijlagen/Rationale (page-cited)
-2. **Blog articles** for nrt-amsterdam.nl — accessible prose, grounded in retrieved literature, Dutch writing rules apply
-3. **Ad hoc Q&A** — free-form questions answered against the book database, with citations
-
-All outputs cite exact page numbers and source documents. No hallucinated references.
+1. **Word documents** — treatment protocols: §1 Klachtbeeld · §2 Behandeling (anatomical + acupuncture images) · §3 Bijlagen/Rationale (page-cited)
+2. **Blog articles** for nrt-amsterdam.nl — accessible Dutch prose, grounded in retrieved literature
+3. **Ad hoc Q&A** — free-form questions against the book database with page citations
 
 ---
 
@@ -32,12 +26,11 @@ All outputs cite exact page numbers and source documents. No hallucinated refere
 | Property | Value |
 |---|---|
 | Host | Hetzner CX53 — **100.66.194.55 (Tailscale only)** — public IP blocked by UFW |
-| vCPUs / RAM / Disk | 16 / 30 GiB / 301 GB |
+| vCPUs / RAM / Disk | 16 / 32 GiB / 322 GB |
 | OS | Ubuntu, kernel 6.8.0-79-generic |
 | Docker | 29.1.3 — use `docker-compose` (v1), NOT `docker compose` |
 | Python | 3.12 system — `pip install --break-system-packages` |
 | Git identity | Axel Biere `<axelbiere@gmail.com>` |
-| UFW | **Active** — deny all except tailscale0 and loopback |
 
 ---
 
@@ -45,23 +38,52 @@ All outputs cite exact page numbers and source documents. No hallucinated refere
 
 | Service | How | Port | State |
 |---|---|---|---|
-| Qdrant | Docker (`docker-compose`) | 6333 REST, 6334 gRPC | Up, healthy |
-| Ollama | Docker (`docker-compose`) | 11434 | Up, healthy |
-| FastAPI web interface | systemd `medical-rag-web.service` | **8000** | **Active** |
-| Transcription queue | systemd `transcription-queue.service` | — | **Active, processing QAT videos** |
-| ttyd browser terminal | systemd `ttyd.service` | **7682** | **Active** |
+| Qdrant | Docker | 6333 REST, 6334 gRPC | Up, healthy |
+| Ollama | Docker | 11434 | Up, healthy — llama3.1:8b loaded |
+| FastAPI web interface | systemd `medical-rag-web.service` | 8000 | Active |
+| Book ingest queue | systemd `book-ingest-queue.service` | — | **Active — Deadman processing (60+ min)** |
+| Transcription queue | systemd `transcription-queue.service` | — | Active — 21 NRT videos queued |
+| ttyd browser terminal | systemd `ttyd.service` | 7682 | Active (iframe bug open) |
+| sync-status timer | systemd `sync-status.timer` | — | Active — every 5 min |
 
-**Ollama model loaded:** `llama3.1:8b` (4.92 GB, Q4_K_M)  
-**Dashboard:** `http://100.66.194.55:8000` (Tailscale only)  
-**Browser terminal:** `http://100.66.194.55:7682` (Tailscale only)
+**Dashboard:** `http://100.66.194.55:8000` (Tailscale only)
 
-## Systemd timers
+---
 
-| Timer | Service | Schedule | Purpose |
+## Qdrant collections
+
+| Collection | Points | Source |
+|---|---|---|
+| `medical_library` | 2 (test data) + Deadman incoming | `books/medical_literature/` |
+| `nrt_qat_curriculum` | 0 (empty) | `books/nrt/` + `books/qat/` |
+| `device_documentation` | — (not created) | `books/device/` |
+| `video_transcripts` | 6 | QAT videos (all 15 transcribed + ingested) |
+
+---
+
+## Book ingest — current state (2026-04-15)
+
+**Processing now:** `pdfcoffee.com_a-manual-of-acupuncture-peter-deadmanpdf-4-pdf-free.pdf`
+→ via Docling (native PDF path), ~60 min elapsed, → `medical_library`
+
+**Queue (2 books waiting):**
+1. `359609833-Travell-and-Simons-Myofascial-Pain-and-Dysfunction-Vol-1-2nd-Ed-D-Simons-Et-Al-Williams-and-Wilkins-1999-WW.pdf`
+2. `969553977-Trail-Guide-to-the-Body-6th-Edition-Andrew-Biel.pdf`
+
+All three → `medical_library` collection. Monitor: `tail -f /var/log/book_ingest_queue.log`
+
+---
+
+## Video transcription — current state (2026-04-15)
+
+| Type | Total | Done | Queue |
 |---|---|---|---|
-| `medical-rag-tests.timer` | `medical-rag-tests.service` | Daily 00:00 UTC | Run test suite → TEST_REPORT.md |
-| `medical-rag-maintenance.timer` | `medical-rag-maintenance.service` | Daily 00:30 UTC | Snapshots, consistency, cleanup, git push |
-| `sync-status.timer` | `sync-status.service` | Every 5 min | Write LIVE_STATUS.md → git push |
+| QAT | 15 | **15 ✅** | 0 |
+| NRT | 21 | 0 | **21 pending** |
+
+QAT: all 15 transcripts in `data/transcripts/`, ingested → `video_transcripts`.
+NRT: 21 videos in `videos/nrt/`, processed sequentially by transcription-queue.
+Monitor: `tail -f /var/log/transcription_queue.log`
 
 ---
 
@@ -69,47 +91,38 @@ All outputs cite exact page numbers and source documents. No hallucinated refere
 
 ```
 /root/medical-rag/
-├── books/                        ← drop PDFs/EPUBs here (empty — no books ingested yet)
+├── books/
+│   ├── medical_literature/   ← 3 PDFs: Deadman, Travell+Simons, Trail Guide
+│   ├── nrt/                  ← NRT cursusmateriaal (empty — awaiting upload)
+│   ├── qat/                  ← QAT cursusmateriaal (empty — awaiting upload)
+│   └── device/               ← PEMF/RLT documentation (empty)
 ├── videos/
-│   ├── nrt/                      ← NRT videos (0 files)
-│   ├── qat/                      ← QAT videos (15 files, transcription in progress)
-│   ├── pemf/                     ← PEMF videos (0 files)
-│   └── rlt/                      ← RLT videos (0 files)
+│   ├── nrt/                  ← 21 NRT videos (transcription pending)
+│   └── qat/                  ← 15 QAT videos (all transcribed ✅)
 ├── data/
-│   ├── books_metadata.json       ← bibliographic metadata + citations
-│   ├── video_document_links.json ← video ↔ PDF cross-references
-│   ├── image_memory.json         ← Axel's preferred images per tissue
-│   ├── extracted_images/         ← saved figures: {slug}_p{page}_fig{n}.png
-│   ├── transcripts/              ← Whisper JSON + TXT (in progress, qat/)
-│   ├── device_settings/          ← curated PEMF/RLT settings files
-│   ├── processing_logs/          ← per-book ingestion stats
-│   ├── ollama/                   ← model weights (Docker volume)
-│   └── qdrant/                   ← vector storage (Docker volume)
+│   ├── transcripts/          ← 15 QAT transcripts (JSON + TXT), NRT incoming
+│   ├── extracted_images/     ← figures from books (PNG)
+│   ├── book_quality/         ← audit reports + calibration_cache.json
+│   └── image_approvals.json  ← pending/approved/rejected images
 ├── web/
-│   └── app.py                    ← FastAPI app (all routes, port 8000)
+│   └── app.py                ← FastAPI, all routes, port 8000
 ├── scripts/
-│   ├── ingest_books.py           ← PDF + EPUB ingestion (all content types)
-│   ├── ingest_text.py            ← plain text / Markdown ingestion
-│   ├── transcribe_videos.py      ← Whisper transcription + ingest (called by queue)
-│   ├── transcription_queue.py    ← sequential queue manager (systemd)
-│   ├── fetch_book_metadata.py    ← OpenLibrary + Google Books metadata
-│   ├── run_tests.py              ← test suite → SYSTEM_DOCS/TEST_REPORT.md
-│   └── nightly_maintenance.py   ← snapshots, consistency, cleanup, git push
-├── backups/
-│   ├── qdrant/                   ← Qdrant snapshots (kept 7 per collection)
-│   └── metadata/                 ← daily JSON backups (kept 30)
-├── docker-compose.yml
-├── CLAUDE.md                     ← standing instructions (read before every task)
-├── PROJECT_STATE.md              ← live server state (update & commit after each task)
+│   ├── parse_pdf.py          ← PDF parser: native (Docling) / scanned / mixed + OCR cascade
+│   ├── parse_epub.py         ← EPUB parser (3 strategies)
+│   ├── audit_book.py         ← structural + LLM quality audit
+│   ├── book_ingest_queue.py  ← sequential book queue (systemd, pause-flag aware)
+│   ├── transcription_queue.py← sequential video queue (systemd, pause-flag aware)
+│   ├── ocr_preprocess.py     ← OpenCV deskew/denoise/CLAHE per page
+│   ├── ocr_calibrate.py      ← per-book engine calibration via Ollama
+│   ├── ocr_postcorrect.py    ← rule + Ollama OCR error correction
+│   ├── ingest_transcript.py  ← transcript → Qdrant video_transcripts
+│   ├── sync_status.py        ← LIVE_STATUS.md + git push every 5 min
+│   └── run_tests.py          ← test suite → TEST_REPORT.md
 └── SYSTEM_DOCS/
-    ├── CONTEXT.md                ← this file
-    ├── PRACTICE_CONTEXT.md       ← practitioner, modalities, protocol, image rules
-    ├── REQUIREMENTS.md           ← FR + NFR
-    ├── ARCHITECTURE.md           ← full stack description
-    ├── TECHNICAL_DESIGN.md       ← ingestion, metadata, Qdrant payload, citations
-    ├── CHANGELOG.md              ← dated history
-    ├── TEST_REPORT.md            ← auto-updated by run_tests.py
-    └── MAINTENANCE_REPORT.md     ← auto-updated by nightly_maintenance.py
+    ├── CONTEXT.md            ← this file
+    ├── PRACTICE_CONTEXT.md   ← practitioner, modalities, protocol, image rules
+    ├── BACKLOG.md            ← prioritised task list
+    └── LIVE_STATUS.md        ← auto-generated every 5 min
 ```
 
 ---
@@ -118,184 +131,71 @@ All outputs cite exact page numbers and source documents. No hallucinated refere
 
 | Component | Role | Status |
 |---|---|---|
-| FastAPI + Uvicorn | Web layer — dashboard, upload, Q&A, generation | **Running** (port 8000) |
-| Tailscale | Access control — VPN-only access | **Active** (100.66.194.55) |
+| FastAPI + Uvicorn | Web layer — all routes | Running (port 8000) |
 | Qdrant | Vector store | Running |
 | Ollama / llama3.1:8b | Local LLM inference | Running |
-| ebooklib + BS4 | EPUB parsing (Docling doesn't support EPUB) | Installed |
-| Docling | PDF parsing — text, images, page numbers | **Installed** |
-| EasyOCR | OCR for scanned PDFs + figure labels | **Installed** |
-| BAAI/bge-large-en-v1.5 | Local embeddings, 1024-dim | **Installed** (cached) |
-| OpenAI Whisper (local) | Video transcription | **Running** (via queue) |
-| ffmpeg | Audio extraction for Whisper | **Installed** |
-| LLaVA (vision) | Figure descriptions from images | Not yet pulled |
-| python-docx | Word document output | Not yet installed |
+| Docling | PDF parsing (native PDFs with text) | Installed |
+| EasyOCR + Surya + Tesseract | Cascade OCR (scanned/mixed PDFs) | Installed |
+| OpenCV 4.11.0 | Image preprocessing for OCR | Installed |
+| BAAI/bge-large-en-v1.5 | Local embeddings, 1024-dim | Installed (cached) |
+| Whisper (local) | Video transcription | Running via queue |
+| pdfplumber + PyMuPDF | PDF type detection + fallback text extraction | Installed |
+| python-docx | Word document output | **Not yet installed** |
 
 ---
 
-## Transcription system
+## OCR cascade (parse_pdf.py)
 
-- **Queue manager:** `transcription-queue.service` (systemd, enabled, auto-start, auto-resume)
-- **Sequential:** ONE Whisper process at a time — no OOM risk
-- **Whisper flag:** `--task translate` — all transcripts produced in English
-- **Queue file:** `/tmp/transcription_queue.json` — written by `POST /videos/transcribe`
-- **Current job:** `/tmp/transcription_current.json` — present while running, removed on completion
-- **Log:** `/var/log/transcription_queue.log`
-- **Auto-ingest:** on completion, `ingest_transcript.py` is called → vectors pushed to Qdrant `video_transcripts` collection
-- **Status endpoint:** `GET /videos/status/{video_type}/{filename}`
-  → `done` / `running` / `queued` / `waiting`
-- **UI badges:** Klaar (groen) / Bezig… (blauw spinner) / In wachtrij (geel) / Wachten (grijs)
+PDF routing: `detect_pdf_type()` samples 5 pages → `native` / `mixed` / `scanned`
 
-**Transcription progress (2026-04-15 ~08:05):**
-- Done: 3 (Anti-Inflammatory_Procedure, Connection_to_the_Brain, Emotional_Transformation_Technique)
-- Running: Green_Square_Applications.mp4
-- Queued: 11 remaining QAT videos
-- Total: 15 QAT videos
-
-Check progress:
-```bash
-tail -20 /var/log/transcription_queue.log
-ls /root/medical-rag/data/transcripts/ | wc -l
-cat /tmp/transcription_current.json
-```
+For non-native pages:
+1. `ocr_preprocess.py` — deskew → denoise → CLAHE → Otsu binarization
+2. `ocr_calibrate.py` — sample 5 pages, Ollama picks best engine, cached per book
+3. Cascade: EasyOCR → Surya → Tesseract (first to return ≥10 words wins)
+4. `ocr_postcorrect.py` — point code normalisation (ST36→ST-36) + Ollama correction for low-confidence chunks
 
 ---
 
-## AI Instructions (Lead Architect quality control)
+## Web routes
 
-Files at `config/ai_instructions/` — synced to `AI_INSTRUCTIONS/` on every 5-min push.
-
-| File | Purpose |
+| Route | Status |
 |---|---|
-| `AI_INSTRUCTIONS/nrt_qat_bridge.md` | How NRT/QAT uses medical literature |
-| `AI_INSTRUCTIONS/protocol_structure.md` | What a good protocol looks like |
-| `AI_INSTRUCTIONS/tagging_rules.md` | How chunks are tagged (editable, affects next ingest) |
-| `AI_INSTRUCTIONS/learning_log.md` | What the AI has learned |
-| `AI_INSTRUCTIONS/feedback_history.md` | Approved/rejected content |
+| `/`, `/health`, `/status/snapshot`, `/status/markers` | ✅ Live |
+| `/library`, `/library/overview`, `/library/audit/{f}`, `/library/retag/{f}` | ✅ Live |
+| `/library/progress`, `/library/pause`, `/library/resume`, `/library/paused` | ✅ Live |
+| `/videos`, `/videos/transcript/{type}/{stem}`, `/videos/status/{type}/{f}` | ✅ Live |
+| `/videos/progress`, `/videos/pause`, `/videos/resume`, `/videos/paused` | ✅ Live |
+| `/images`, `/images/approve`, `/images/approved`, `/images/file/{f}` | ✅ Live |
+| `/search` (RAG query, SSE streaming, citations, image search) | ✅ Live |
+| `/logs/{logname}`, `/terminal` | ✅ Live |
+| `/protocols` | ❌ Not built |
 
-Raw URLs (GitHub):
-- `AI_INSTRUCTIONS/tagging_rules.md`
-- `AI_INSTRUCTIONS/nrt_qat_bridge.md`
-
----
-
-## Qdrant collections
-
-| Collection | Source | What goes in | Status |
-|---|---|---|---|
-| `medical_library` | `medical_literature` subdir | All external medical books (Deadman, Sobotta, Guyton, etc.) | **Created** |
-| `nrt_qat_curriculum` | `nrt_qat` subdir | NRT + QAT curriculum, treatment guides | **Created** |
-| `device_documentation` | `device` subdir | PEMF mat manual, RLT FlexBeam docs | Not yet created |
-| `video_transcripts` | auto-ingest | QAT video transcripts | **Created, growing** |
-
-## Ingestion pipeline
-
-```bash
-# Step 1 — fetch metadata (once per new book)
-python scripts/fetch_book_metadata.py --books-dir ./books
-
-# Step 2a — medical books
-python scripts/ingest_books.py --books-dir ./books --content-type medical_literature
-
-# Step 2b — NRT/QAT plain text
-python scripts/ingest_text.py --file books/QAT_Manual.txt \
-  --content-type training_qat --title "QAT Manual"
-
-# Step 2c — training videos (queue handles this automatically now)
-# Videos → /videos/{type}/ → click Transcribeer in UI → queue picks up
-
-# Step 2d — device PDFs
-python scripts/ingest_books.py --books-dir ./books/pemf --content-type device_pemf
-```
-
-- Chunking: 512 tokens / 64 overlap / SentenceSplitter
-- Qdrant collection auto-created on first run (Cosine / 1024-dim)
-- Idempotent — `chunk_hash` prevents duplicate vectors
-- Figures: `{slug}_p{page}_fig{n}.png` — deterministic, traceable
-- Scanned PDFs: auto-detected (< 50 chars/page) → EasyOCR
-- **Pre/post-check RAM and disk** before large runs
-
----
-
-## Web interface — live pages
-
-| Route | Status | Description |
-|---|---|---|
-| `/` | ✅ Live | Dashboard — CPU/RAM/disk/services/stats |
-| `/health` | ✅ Live | JSON health check |
-| `/videos` | ✅ Live | Upload, transcription queue, status polling |
-| `/videos/status/{type}/{file}` | ✅ Live | done/running/queued/waiting |
-| `/videos/transcript/{type}/{stem}` | ✅ Live | Timestamped segment viewer |
-| `/logs/{logname}` | ✅ Live | Tail log file (transcription_queue, web, maintenance) |
-| `/status/snapshot` | ✅ Live | JSON snapshot — services, transcription, system stats |
-| `/status/markers` | ✅ Live | Read/write status markers (notify.sh integration) |
-| `/library` | ✅ Live | 3-section book upload (Medische Literatuur / NRT+QAT / Apparatuur) |
-| `/library/overview` | ✅ Live | Literature overview — usability scores per book |
-| `/library/audit/{filename}` | ✅ Live | JSON audit report per book |
-| `/library/retag/{filename}` | ✅ Live | Re-tag chunks via Ollama without re-parsing |
-| `/images` | ✅ Live | Image approval gallery (pending/approve/reject) |
-| `/search` | ❌ Not built | RAG query interface |
-| `/protocols` | ❌ Not built | Protocol builder |
-
----
-
-## Standing rules (from CLAUDE.md)
-
-| Rule | When |
-|---|---|
-| `git add PROJECT_STATE.md SYSTEM_DOCS/CONTEXT.md && git commit -m "state: ..." && git push` | After every significant task |
-| `python3 scripts/run_tests.py` — all tests pass before deploy | Before every deploy |
-| `git tag -a v<date>-<desc>` | Before every significant change |
-| Docker volume snapshot of `data/qdrant/` | Before any ingestion that modifies an existing collection |
-| Update `CHANGELOG.md` with a dated entry | End of every session |
+Pause/resume: both queues check `/tmp/book_ingest_pause` and `/tmp/transcription_pause`
+before starting the next job (does not interrupt the currently running job).
 
 ---
 
 ## Immediate next steps
 
-1. **Check QAT transcription progress** — read LIVE_STATUS.md or `tail -20 /var/log/transcription_queue.log`
-   - Green_Square_Applications.mp4 running since 07:59; expect ~11 more videos after this
-2. **Build `/library` page** — PDF/EPUB upload, metadata cards, ingestion trigger, processing status
-3. **Build `/search` page** — multi-collection RAG search with citation display
-4. **Add books:** Drop `.pdf`/`.epub` into `./books/` → `fetch_book_metadata.py` → `ingest_books.py`
-5. **Build remaining web pages:** `/images`, `/protocols`
-6. **Word output:** `.docx` treatment protocols (§1 Klachtbeeld / §2 Behandeling / §3 Bijlagen)
-7. **Generate first treatment protocol** — once books + transcripts ingested, query RAG and produce Word output
+1. **Deadman finishes** → verify chunk count; Travell+Simons + Trail Guide process automatically
+2. **NRT videos** → 21 pending; transcription-queue processing sequentially
+3. **Upload NRT + QAT curriculum books** → drop in `books/nrt/` and `books/qat/`
+4. **Validate search quality** — test RAG once Deadman chunks are in medical_library
+5. **Build `/protocols`** — Word (.docx) treatment protocol output
+6. **Fix ttyd iframe bug** — browser terminal loads but iframe blocked
 
 ---
 
-## Maintenance status
+## Tests & git
 
-**Laatste run:** 15-04-2026 00:30 (35.3s)  
-**Uitslag:** ⚠️ WARNING — 1 waarschuwing(en), 4 OK
-
----
-
-## Test status
-
-**Laatste run:** 15-04-2026 19:54 (47.3s)  
-**Uitslag:** ✅ GESLAAGD — 33/33 geslaagd, 0 overgeslagen
+```bash
+python3 scripts/run_tests.py          # 33/33 passing (2026-04-15)
+git add SYSTEM_DOCS/ && git commit -m "state: ..." && git push
+```
 
 ---
 
-## Correct terminology — always use
+## Correct terminology
 
-| Term | Correct |
-|---|---|
-| Bedrijfsnaam | NRT-Amsterdam.nl |
-| NRT | Neural Reset Therapy |
-| QAT | Quantum Alignment Technique |
-| GTR | Golgi Tendon Reflex |
-| PEMF | Pulsed Electromagnetic Field |
-| RLT | Red Light Therapy |
-
----
-
-## Git / state tracking
-
-- Repo: https://github.com/abiere/medical-rag-state (private)
-- After every significant task:
-  ```bash
-  git add PROJECT_STATE.md SYSTEM_DOCS/CONTEXT.md && git commit -m "state: [description]" && git push
-  ```
-- Dashboard + live state: `http://100.66.194.55:8000` (Tailscale only)
+NRT = Neural Reset Therapy · QAT = Quantum Alignment Technique · GTR = Golgi Tendon Reflex
+PEMF = Pulsed Electromagnetic Field · RLT = Red Light Therapy · Bedrijfsnaam = NRT-Amsterdam.nl

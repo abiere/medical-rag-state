@@ -2,10 +2,11 @@
 > Auto-updated by Claude Code after each session.
 
 ## 🔴 Prioriteit — volgende sessie
+- [ ] Zoekresultaten valideren zodra Deadman klaar is — test op ST-36, trigger points, meridian balancing
+- [ ] Upload NRT + QAT cursusmateriaal boeken → `books/nrt/` en `books/qat/`
+- [ ] /protocols pagina bouwen — Word (.docx) behandelprotocol output (§1 Klachtbeeld / §2 Behandeling / §3 Bijlagen)
 - [ ] Browser terminal (ttyd) — iframe laadt niet ondanks actieve service op poort 7682
-- [ ] Upload NRT standaard behandelprotocol v3
-- [ ] Upload QAT cursusmateriaal
-- [ ] Zoekresultaten valideren na ingesteren echte boeken (Deadman, Sobotta)
+- [ ] NRT video transcriptie — 21 videos in wachtrij; voortgang controleren en valideren
 
 ## 🟡 Backlog — gepland
 - [ ] Streaming antwoord testen met echte boeken (Ollama traag bij concurrente ingest)
@@ -13,8 +14,9 @@
 - [ ] Nightly re-tagging job wanneer tagging_rules.md wijzigt
 - [ ] Feedback loop implementeren (implicit + explicit learning)
 - [ ] Interactieve afbeeldingsselectie bij protocol generatie
-- [ ] Eerste behandelprotocol genereren via RAG
+- [ ] Word output: python-docx installeren, protocol template maken
 - [ ] Multi-file upload in /videos (UI only)
+- [ ] Calibratie cache valideren na eerste scanned PDF (ocr_calibrate.py)
 
 ## 🟢 Ideeën — nog niet besloten
 - [ ] Visueel zoeken — upload afbeelding, vind vergelijkbare (vereist apart image embedding model)
