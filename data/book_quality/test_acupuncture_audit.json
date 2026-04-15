@@ -1,0 +1,50 @@
+{
+  "book": "test_acupuncture.pdf",
+  "collection": "acupuncture_points",
+  "audited_at": "2026-04-15T10:08:47.218868+00:00",
+  "total_chunks": 2,
+  "structural": {
+    "total_chunks": 2,
+    "avg_chunk_words": 24.5,
+    "short_chunks": 2,
+    "long_chunks": 0,
+    "point_codes_found": 5,
+    "figure_refs_found": 1,
+    "images_extracted": 0,
+    "translation_applied": false,
+    "epub_strategy": null
+  },
+  "llm_audit": {
+    "sample_size": 2,
+    "avg_coherence": 5.0,
+    "avg_completeness": 5.0,
+    "avg_terminology": 5.0,
+    "avg_translation": 5.0,
+    "quality_score": 5.0,
+    "flagged_chunks": 0,
+    "suggestion": "none"
+  },
+  "auto_classification": {
+    "primary_use": [
+      "acupuncture_points"
+    ],
+    "secondary_use": [],
+    "image_quality": "none",
+    "image_type": "anatomical diagram or illustration of acupuncture points",
+    "recommended_collection": "acupuncture_points",
+    "confidence": 1.0
+  },
+  "remediation": {
+    "issues": [
+      "avg_chunk_words < 100",
+      "short_chunks > 20% (100%)"
+    ],
+    "suggestions": [
+      "retry with larger chunk target (600 words)",
+      "parsing strategy problem — check parser output"
+    ],
+    "remediation_needed": true
+  },
+  "remediation_applied": false,
+  "status": "approved"
+}

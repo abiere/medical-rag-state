@@ -6,7 +6,7 @@
 - [ ] Upload eerste echte boek en valideer kwaliteit (Deadman, Sobotta, etc.)
 
 ## 🟡 Backlog — gepland
-- [ ] book-ingest-queue.service starten zodra eerste echte boek geüpload is
+- [ ] book-ingest-queue.service starten voor eerste echte boek (service is klaar + getest)
 - [ ] /search pagina — RAG query interface
 - [ ] Eerste behandelprotocol genereren via RAG
 - [ ] Multi-file upload in /videos (UI only)
@@ -24,7 +24,8 @@
 - [x] parse_epub.py — 3 strategieën (ebooklib, raw ZIP, text fallback)
 - [x] audit_book.py — structureel + LLM kwaliteitsaudit + auto-classificatie
 - [x] book_ingest_queue.py — sequentiële queue, startup scan, Qdrant upsert
-- [x] book-ingest-queue.service — systemd (enabled, NOT started)
+- [x] book-ingest-queue.service — systemd, enabled, getest met test_acupuncture.pdf ✅
+- [x] test_acupuncture.pdf — 2 chunks ingestered, quality_score 5.0, acupuncture_points collection ✅
 - [x] /status/snapshot uitgebreid met books + qdrant_collections
 - [x] sync_status.py uitgebreid met Books sectie in LIVE_STATUS.md
 - [x] Sequentiële transcriptie queue via systemd

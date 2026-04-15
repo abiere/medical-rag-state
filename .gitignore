@@ -10,9 +10,6 @@ videos/
 *.mkv
 *.m4v
 
-# Generated audit reports
-data/book_quality/
-
 # Environment / secrets
 .env
 .env.*
