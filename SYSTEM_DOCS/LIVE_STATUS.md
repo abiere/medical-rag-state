@@ -1,12 +1,12 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 16:05:34 UTC**
+> Last update: **2026-04-15 16:06:50 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ❌ inactive |
-| book-ingest-queue | ❌ inactive |
+| transcription-queue | ✅ active |
+| book-ingest-queue | ✅ active |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
 | ollama | ✅ healthy |
@@ -14,17 +14,17 @@
 ## Library
 | Metric | Value |
 |---|---|
-| Total books | 0 |
+| Total books | 2 |
 | Ingested | 1 |
-| Queued | 2 |
-| Current job | idle |
+| Queued | 1 |
+| Current job | `pdfcoffee.com_a-manual-of-acupuncture-peter-deadmanpdf-4-pdf-free.pdf` |
 | Images pending approval | 0 |
 | Images approved | 0 |
 
 ## Transcription
 | Metric | Value |
 |---|---|
-| Current job | idle |
+| Current job | `1.Lower_Body_Techniques.mp4` (since 2026-04-15T16:06:26) |
 | Queued | 20 |
 | Done | 15 |
 | Total videos | 35 |
@@ -32,10 +32,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 1.7 GB / 32.86 GB (5%) |
-| CPU | 6.4% |
-| Disk used | 53.2 GB / 322.3 GB (17%) |
-| Uptime | up 1 day, 6 hours, 22 minutes |
+| RAM used | 3.27 GB / 32.86 GB (10%) |
+| CPU | 29.8% |
+| Disk used | 53.3 GB / 322.3 GB (17%) |
+| Uptime | up 1 day, 6 hours, 24 minutes |
 
 ## Recent markers
 - `2026-04-15T11:28:04` **queue_empty** — All 15 videos transcribed
@@ -46,14 +46,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-15 10:40:45,721  INFO      START  qat/Organs_and_Glands_Review.mp4
-2026-04-15 10:59:40,181  INFO      DONE   qat/Organs_and_Glands_Review.mp4  (1134s)
-2026-04-15 10:59:40,298  INFO      START  qat/Pair_Balancing.mp4
-2026-04-15 11:11:43,880  INFO      DONE   qat/Pair_Balancing.mp4  (724s)
 2026-04-15 11:11:44,008  INFO      START  qat/Provocative_Testing.mp4
 2026-04-15 11:20:11,143  INFO      DONE   qat/Provocative_Testing.mp4  (507s)
 2026-04-15 11:20:11,261  INFO      START  qat/Anti-Inflammatory_Procedure.mp4
 2026-04-15 11:28:04,345  INFO      DONE   qat/Anti-Inflammatory_Procedure.mp4  (473s)
 2026-04-15 11:28:04,513  INFO      Queue empty — 15 video(s) processed. Exiting.
 2026-04-15 11:28:04,629  INFO      Transcription queue manager done
+2026-04-15 16:06:26,061  INFO      ────────────────────────────────────────────────────────────
+2026-04-15 16:06:26,061  INFO      Transcription queue manager started
+2026-04-15 16:06:26,063  INFO      Startup scan: 20 untranscribed video(s) found, 0 new entry/entries added to queue
+2026-04-15 16:06:26,063  INFO      START  nrt/1.Lower_Body_Techniques.mp4
 ```
