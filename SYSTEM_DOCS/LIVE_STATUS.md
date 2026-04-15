@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 11:16:22 UTC**
+> Last update: **2026-04-15 11:21:51 UTC**
 
 ## Services
 | Service | Status |
@@ -24,30 +24,28 @@
 ## Transcription
 | Metric | Value |
 |---|---|
-| Current job | `Provocative_Testing.mp4` (since 2026-04-15T11:11:44) |
-| Queued | 2 |
-| Done | 13 |
+| Current job | `Anti-Inflammatory_Procedure.mp4` (since 2026-04-15T11:20:11) |
+| Queued | 1 |
+| Done | 14 |
 | Total videos | 15 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 5.67 GB / 32.86 GB (17%) |
-| CPU | 95.4% |
+| RAM used | 5.48 GB / 32.86 GB (17%) |
+| CPU | 92.9% |
 | Disk used | 39.7 GB / 322.3 GB (13%) |
-| Uptime | up 1 day, 1 hour, 33 minutes |
+| Uptime | up 1 day, 1 hour, 39 minutes |
 
 ## Recent markers
+- `2026-04-15T11:20:11` **transcription_done** — Provocative_Testing.mp4 complete (14/15)
 - `2026-04-15T11:11:43` **transcription_done** — Pair_Balancing.mp4 complete (13/15)
 - `2026-04-15T10:59:40` **transcription_done** — Organs_and_Glands_Review.mp4 complete (12/15)
 - `2026-04-15T10:40:45` **transcription_done** — Neuromuscular_ReEducation.mp4 complete (11/15)
 - `2026-04-15T10:32:36` **transcription_done** — Neurological_Disorganization.mp4 complete (10/15)
-- `2026-04-15T10:22:51.501917+00:00` **book_ingested** — test_acupuncture.pdf → medical_library: 2 chunks, score 4.50
 
 ## Queue log (last 10 lines)
 ```
-2026-04-15 10:06:21,409  INFO      DONE   qat/Meridian_Testing_and_Treatment.mp4  (469s)
-2026-04-15 10:06:21,476  INFO      START  qat/Neurological_Disorganization.mp4
 2026-04-15 10:32:35,993  INFO      DONE   qat/Neurological_Disorganization.mp4  (1575s)
 2026-04-15 10:32:36,113  INFO      START  qat/Neuromuscular_ReEducation.mp4
 2026-04-15 10:40:45,601  INFO      DONE   qat/Neuromuscular_ReEducation.mp4  (489s)
@@ -56,4 +54,6 @@
 2026-04-15 10:59:40,298  INFO      START  qat/Pair_Balancing.mp4
 2026-04-15 11:11:43,880  INFO      DONE   qat/Pair_Balancing.mp4  (724s)
 2026-04-15 11:11:44,008  INFO      START  qat/Provocative_Testing.mp4
+2026-04-15 11:20:11,143  INFO      DONE   qat/Provocative_Testing.mp4  (507s)
+2026-04-15 11:20:11,261  INFO      START  qat/Anti-Inflammatory_Procedure.mp4
 ```
