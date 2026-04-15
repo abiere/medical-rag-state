@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-15 08:49:54 UTC**
+> Last update: **2026-04-15 08:55:39 UTC**
 
 ## Services
 | Service | Status |
@@ -30,10 +30,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 12.14 GB / 32.86 GB (37%) |
-| CPU | 99.1% |
+| RAM used | 5.57 GB / 32.86 GB (17%) |
+| CPU | 94.9% |
 | Disk used | 47.3 GB / 322.3 GB (15%) |
-| Uptime | up 23 hours, 7 minutes |
+| Uptime | up 23 hours, 12 minutes |
 
 ## Recent markers
 - `2026-04-15T08:36:43` **transcription_done** — Indicator_Muscle.mp4 complete (4/15)
