@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-16 20:27:31 UTC**
+> Last update: **2026-04-16 20:28:53 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `How to Use FlexBeam on Elbows - Recharge Health.pdf` (1 min) |
+| Current job | `How to Use FlexBeam on Elbows - Recharge Health.pdf` (2 min) |
 | Queued | 18 |
 | Total books | 43 |
 | Ingested | 19 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` (1252 min) |
+| Current job | `1.Upper_Body_Techniques.mp4` (1253 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 11.47 GB / 32.86 GB (35%) |
-| CPU | 52.1% |
+| RAM used | 11.43 GB / 32.86 GB (35%) |
+| CPU | 50.9% |
 | Disk used | 59.2 GB / 322.3 GB (19%) |
-| Uptime | up 2 days, 10 hours, 44 minutes |
+| Uptime | up 2 days, 10 hours, 46 minutes |
 
 ## Recent markers
 - `2026-04-16T20:26:05.262116+00:00` **book_ingested** — How to Use FlexBeam on Hips - Recharge Health.pdf → device_documentation: 3 chunks
@@ -59,9 +59,6 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-16 20:22:47,745  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 20:23:17,745  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 20:23:47,746  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 20:24:17,747  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 20:24:47,747  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 20:25:17,748  INFO      Queue paused (pause flag set) — waiting 30s
@@ -69,4 +66,7 @@
 2026-04-16 20:26:17,748  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 20:26:47,749  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 20:27:17,749  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 20:27:47,750  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 20:28:17,750  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 20:28:47,751  INFO      Queue paused (pause flag set) — waiting 30s
 ```
