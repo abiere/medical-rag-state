@@ -2324,16 +2324,20 @@ function buildPhaseTable(d, meta) {
 
   html += '</tbody></table>';
 
-  // Delete button at drawer bottom
-  const delItemId    = meta.itemId     || '';
-  const delTitle     = meta.itemTitle  || '';
-  const delColl      = meta.itemColl   || '';
-  const delChunks    = meta.chunkCount || 0;
+  // Delete button at drawer bottom — use data attributes to avoid quote escaping issues
+  const delItemId = meta.itemId     || '';
+  const delTitle  = meta.itemTitle  || '';
+  const delColl   = meta.itemColl   || '';
+  const delChunks = meta.chunkCount || 0;
   if (delItemId && delChunks > 0) {
     html += '<div style="display:flex;justify-content:flex-end;margin-top:14px;'
       + 'padding-top:10px;border-top:0.5px solid #e2e8f0">'
-      + '<button onclick="event.stopPropagation();openDelModal(\''
-        + escJs(delItemId) + '\',\'' + escJs(delTitle) + '\',' + delChunks + ',\'' + escJs(delColl) + '\')"'
+      + '<button onclick="event.stopPropagation();'
+        + 'openDelModal(this.dataset.id,this.dataset.title,+this.dataset.chunks,this.dataset.coll)"'
+      + ' data-id="' + escHtml(delItemId) + '"'
+      + ' data-title="' + escHtml(delTitle) + '"'
+      + ' data-chunks="' + String(delChunks) + '"'
+      + ' data-coll="' + escHtml(delColl) + '"'
       + ' style="font-size:12px;padding:5px 14px;border-radius:6px;'
       + 'border:0.5px solid #dc2626;color:#dc2626;background:transparent;cursor:pointer">'
       + 'Verwijder uit Qdrant'
