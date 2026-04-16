@@ -120,6 +120,46 @@ def _batch_correct(chunks):
         return chunks
 
 
+# ── K/A/I book classification ─────────────────────────────────────────────────
+
+_KAI_CACHE: dict | None = None
+_KAI_DEFAULT = {"kai_k": 2, "kai_a": 2, "kai_i": 2, "kai_role": "unclassified"}
+
+
+def get_kai_scores(filename: str) -> dict:
+    """
+    Look up K/A/I scores for a book by matching its filename against
+    config/book_classifications.json filename_patterns.
+
+    Returns dict with keys: kai_k, kai_a, kai_i, kai_role.
+    Falls back to {2,2,2,"unclassified"} and logs a warning if no match.
+    """
+    global _KAI_CACHE
+    if _KAI_CACHE is None:
+        cfg_path = BASE / "config" / "book_classifications.json"
+        try:
+            _KAI_CACHE = json.loads(cfg_path.read_text())
+        except Exception as e:
+            logger.warning("Could not load book_classifications.json: %s", e)
+            _KAI_CACHE = {}
+
+    classifications = _KAI_CACHE.get("classifications", {})
+    fname_lower = filename.lower()
+
+    for key, entry in classifications.items():
+        patterns = entry.get("filename_patterns", [])
+        if any(p.lower() in fname_lower for p in patterns):
+            return {
+                "kai_k":    entry["k"],
+                "kai_a":    entry["a"],
+                "kai_i":    entry["i"],
+                "kai_role": entry.get("role", key),
+            }
+
+    logger.warning("KAI: no classification match for '%s' — using defaults", filename)
+    return _KAI_DEFAULT.copy()
+
+
 # ── progress reporting ────────────────────────────────────────────────────────
 
 def _report_progress(
@@ -893,6 +933,7 @@ def parse_pdf(
     current_chapter = current_section = ""
     ingested_at = datetime.now(timezone.utc).isoformat()
     first_chunk = True  # flag to attach ocr_stats to first chunk
+    kai = get_kai_scores(pdf_path.name)
     _n_pages = len(pages)
     _report_progress(progress_fn, "chunking", 0, _n_pages, 0)
 
@@ -967,6 +1008,10 @@ def parse_pdf(
                 "language_detected":  lang,
                 "ocr_engine":         ocr_engine,
                 "ocr_confidence":     ocr_conf,
+                "kai_k":              kai["kai_k"],
+                "kai_a":              kai["kai_a"],
+                "kai_i":              kai["kai_i"],
+                "kai_role":           kai["kai_role"],
             }
             if text_original:
                 chunk["text_original"] = text_original

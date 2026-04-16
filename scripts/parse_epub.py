@@ -35,6 +35,7 @@ from parse_pdf import (
     _detect_lang, _translate_via_ollama,
     _chunk_text, _extract_points, _extract_fig_refs,
     _detect_chapter_section, _split_sentences,
+    get_kai_scores,
     IMAGES_DIR, BASE, MIN_WORDS, TARGET_WORDS, MAX_WORDS,
 )
 
@@ -278,6 +279,7 @@ def parse_epub(
     chunk_idx = 0
     current_chapter = current_section = ""
     ingested_at = datetime.now(timezone.utc).isoformat()
+    kai = get_kai_scores(epub_path.name)
 
     for page in pages:
         page_no    = page["page_number"]
@@ -337,6 +339,10 @@ def parse_epub(
                 "chunk_hash":         h,
                 "ingested_at":        ingested_at,
                 "language_detected":  lang,
+                "kai_k":              kai["kai_k"],
+                "kai_a":              kai["kai_a"],
+                "kai_i":              kai["kai_i"],
+                "kai_role":           kai["kai_role"],
             }
             if text_original:
                 chunk["text_original"] = text_original

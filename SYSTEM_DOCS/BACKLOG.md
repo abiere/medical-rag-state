@@ -3,13 +3,16 @@
 
 ## 🔴 Prioriteit — volgende sessie
 - [ ] Deadman ingest valideren — chunk count + audit score controleren
-- [ ] Meer boeken uploaden voor nachtverwerking
-      (Travell+Simons staat al in queue)
+- [ ] Travell+Simons opnieuw in queue zetten (crashte bij ingest)
+- [ ] Trail Guide OCR fix — is_mostly_image drempel te agressief voor anatomie-atlassen
+- [ ] K/A/I tags retroactief toepassen op al ingested chunks (Deadman als eerste)
 - [ ] Video transcriptie hervatten na boek verwerking
 - [ ] Whisper taaldetectie verbeteren — detecteer audiotaal eerst,
       dan transcribe (EN) of translate (NL), sla detected_language op
 
 ## 🟡 Backlog — gepland
+- [ ] generate_protocol.py bouwen — protocol generator
+      (RAG query → K/A/I gefilterd → Ollama → Word document output)
 - [ ] /protocols pagina — behandelprotocol generator
       (RAG query → Ollama → Word document output)
 - [ ] Eerste behandelprotocol genereren via RAG
@@ -37,6 +40,10 @@
 - [ ] EPUBs voor betere afbeeldingskwaliteit (Sobotta EPUB)
 
 ## ✅ Afgerond
+- [x] K/A/I classificatiesysteem — config/book_classifications.json (29 boeken), get_kai_scores() in parse_pdf + parse_epub
+- [x] normalize_points.py — canonieke puntnormalisatie, 21/21 tests geslaagd, QAT_BALANCE_2026 map
+- [x] 476 Deadman acupunctuurpunt-afbeeldingen + point_index.json
+- [x] Bladder Channel mappen samengevoegd (BL-01..BL-67)
 - [x] Browser terminal (ttyd) — iframe fix: --base-path /terminal/shell + trailing slash + bash shell
 - [x] LIVE_STATUS sync betrouwbaar — PATH env toegevoegd, sync loopt elke 5 min
 - [x] Queue watchdog (queue_watchdog.py + systemd timer elke 10 min — auto-restart bij vastgelopen queue)

@@ -75,3 +75,32 @@ Score 0.0-1.0 based on:
 > Added automatically by the system when feedback is received.
 > Format: "DATE — OBSERVATION — SOURCE"
 [learning notes will be appended here automatically]
+
+---
+
+## K/A/I Classification System
+
+Every chunk in medical_library inherits K/A/I scores from its source book
+(loaded from config/book_classifications.json at ingest time).
+
+### Score Meaning
+- K (Klinisch/Clinical): 1=primary tissue/anatomy, 2=supporting, 3=background
+- A (Acupunctuur): 1=primary point information, 2=supporting, 3=background
+- I (Image quality): 1=high quality images present, 2=diagrams, 3=text only
+
+### Chunk-Level Override Rules
+The AI may override book-level scores at chunk level when:
+- K override to 1: chunk contains specific tissue anatomy with location
+  even if book is k=2 (e.g. anatomical chunk in Deadman)
+- A override to 1: chunk contains specific point indications + combinations
+  even if book is a=2 (e.g. point entry in Campbell)
+- I override to 1: chunk references extractable figure with figure number
+
+### Protocol Generator Query Map
+| Protocol Section | K/A/I Filter | Primary Sources |
+|---|---|---|
+| §2 Oorzaken (tissue table) | k=1 | Sobotta, AnatomyTrains, Travell, Trail Guide |
+| §3 Acupunctuur basis | a=1 | Deadman (primary), Cecil-Sterman, Maciocia |
+| §3 TCM perspectief | a=1, k=1 | Maciocia, Deadman |
+| §2 Afbeeldingen | i=1 | Sobotta, AnatomyTrains, Travell |
+| Weefsel→Meridiaan | k=1, a=2 | Campbell, Sobotta Tables, AnatomyTrains |

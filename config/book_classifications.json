@@ -1,0 +1,303 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-04-16",
+  "description": "K/A/I classification for all books. K=Clinical/Tissue, A=Acupuncture, I=Images. 1=Primary, 2=Supporting, 3=Background.",
+  "classifications": {
+
+    "sobotta_vol1": {
+      "k": 1, "a": 3, "i": 1,
+      "role": "primary_anatomy_images",
+      "full_title": "Sobotta Atlas of Anatomy Vol 1 17th edition",
+      "authors": "Paulsen, Waschke",
+      "format": "epub",
+      "filename_patterns": ["Sobotta Atlas of Anatomy Vol 1"],
+      "notes": "Primary source for upper body anatomy + high quality images"
+    },
+    "sobotta_vol2": {
+      "k": 1, "a": 3, "i": 1,
+      "role": "primary_anatomy_images",
+      "full_title": "Sobotta Atlas of Anatomy Vol 2 17th edition",
+      "authors": "Paulsen, Waschke",
+      "format": "epub",
+      "filename_patterns": ["Sobotta Atlas of Anatomy Vol 2"],
+      "notes": "Primary source for lower body anatomy + high quality images"
+    },
+    "sobotta_vol3": {
+      "k": 1, "a": 3, "i": 1,
+      "role": "primary_anatomy_images",
+      "full_title": "Sobotta Atlas of Anatomy Vol 3 17th edition",
+      "authors": "Paulsen, Waschke",
+      "format": "epub",
+      "filename_patterns": ["Sobotta Atlas of Anatomy Vol 3"],
+      "notes": "Primary source for head/neck/neuroanatomy + images"
+    },
+    "sobotta_textbook": {
+      "k": 1, "a": 3, "i": 2,
+      "role": "anatomy_text",
+      "full_title": "Sobotta Anatomy Textbook",
+      "authors": "Paulsen, Böckers, Waschke",
+      "format": "epub",
+      "filename_patterns": ["Sobotta Anatomy Textbook"],
+      "notes": "Textbook companion to atlas — more explanatory text"
+    },
+    "sobotta_tables": {
+      "k": 1, "a": 2, "i": 2,
+      "role": "anatomy_reference",
+      "full_title": "Sobotta Tables of Muscles Joints and Nerves",
+      "authors": "Paulsen, Waschke",
+      "format": "epub",
+      "filename_patterns": ["Sobotta Tables"],
+      "notes": "Origin/insertion/innervation tables — excellent for QAT channel mapping"
+    },
+    "sobotta_classic": {
+      "k": 3, "a": 3, "i": 2,
+      "role": "historical_fallback",
+      "full_title": "Sobotta Atlas of Anatomy Classic",
+      "authors": "Sobotta, McMurrich",
+      "format": "epub",
+      "filename_patterns": ["Sobotta Atlas of Anatomy Classic"],
+      "notes": "Historical plates — fallback when modern volumes insufficient"
+    },
+    "deadman": {
+      "k": 2, "a": 1, "i": 3,
+      "role": "primary_acupuncture",
+      "full_title": "A Manual of Acupuncture",
+      "authors": "Deadman, Al-Khafaji, Baker",
+      "format": "pdf",
+      "filename_patterns": ["deadman", "Manual of Acupuncture"],
+      "notes": "THE authority for acupuncture points — all protocols start here"
+    },
+    "deadman_combinations": {
+      "k": 2, "a": 1, "i": 3,
+      "role": "acupuncture_combinations",
+      "full_title": "Acupuncture Point Combinations",
+      "authors": "Deadman",
+      "format": "pdf",
+      "filename_patterns": ["Acupuncture Point Combinations"],
+      "notes": "Classical point combinations — supplement to main Deadman"
+    },
+    "cecil_sterman": {
+      "k": 2, "a": 1, "i": 3,
+      "role": "clinical_acupuncture",
+      "full_title": "Advanced Acupuncture",
+      "authors": "Cecil-Sterman",
+      "format": "pdf",
+      "filename_patterns": ["Advanced Acupuncture", "Cecil-Sterman"],
+      "notes": "Sinew channels, clinical applications — complements Deadman"
+    },
+    "campbell": {
+      "k": 1, "a": 2, "i": 3,
+      "role": "anatomy_acupuncture_bridge",
+      "full_title": "Acupuncture in Practice",
+      "authors": "Campbell",
+      "format": "pdf",
+      "filename_patterns": ["Acupuncture in Practice", "Campbell"],
+      "notes": "Bridges anatomy and acupuncture — maps tissue to points"
+    },
+    "acupoint_book": {
+      "k": 2, "a": 1, "i": 3,
+      "role": "acupuncture_reference",
+      "full_title": "The Acupuncture Point Book",
+      "authors": "DeLaney, Leonard",
+      "format": "pdf",
+      "filename_patterns": ["Acupuncture Point Book"],
+      "notes": "Additional point reference — use when Deadman insufficient"
+    },
+    "atlas_acupuncture": {
+      "k": 2, "a": 1, "i": 2,
+      "role": "acupuncture_atlas",
+      "full_title": "Atlas of Acupuncture",
+      "authors": "Unknown",
+      "format": "pdf",
+      "filename_patterns": ["atlas-of-acupuncture"],
+      "notes": "Visual acupuncture atlas — images of point locations"
+    },
+    "maciocia_foundations": {
+      "k": 1, "a": 1, "i": 3,
+      "role": "tcm_complete",
+      "full_title": "The Foundations of Chinese Medicine 3rd edition",
+      "authors": "Maciocia",
+      "format": "pdf",
+      "filename_patterns": ["Foundations of Chinese Medicine"],
+      "notes": "TCM theory + points + pathology — most complete TCM source"
+    },
+    "maciocia_practice": {
+      "k": 1, "a": 1, "i": 3,
+      "role": "tcm_clinical",
+      "full_title": "The Practice of Chinese Medicine",
+      "authors": "Maciocia",
+      "format": "pdf",
+      "filename_patterns": ["practice-of-chinese-medicine"],
+      "notes": "TCM disease treatment — maps patterns to point prescriptions"
+    },
+    "maciocia_diagnosis": {
+      "k": 1, "a": 1, "i": 3,
+      "role": "tcm_diagnosis",
+      "full_title": "Diagnosis in Chinese Medicine",
+      "authors": "Maciocia",
+      "format": "pdf",
+      "filename_patterns": ["Diagnosis in Chinese Medicine", "maciocia-diagnosis"],
+      "notes": "TCM diagnostic criteria — pattern identification"
+    },
+    "anatomy_trains": {
+      "k": 1, "a": 2, "i": 1,
+      "role": "fascia_images",
+      "full_title": "Anatomy Trains 3rd edition",
+      "authors": "Myers",
+      "format": "epub",
+      "filename_patterns": ["Anatomy Trains"],
+      "notes": "Myofascial chains — essential for QAT tissue mapping"
+    },
+    "guyton": {
+      "k": 1, "a": 3, "i": 3,
+      "role": "physiology",
+      "full_title": "Medical Physiology",
+      "authors": "Guyton, Hall",
+      "format": "pdf",
+      "filename_patterns": ["Medical Physiology", "Guyton"],
+      "notes": "Physiology foundation — explains WHY tissues are involved"
+    },
+    "magee": {
+      "k": 1, "a": 3, "i": 2,
+      "role": "orthopedic_assessment",
+      "full_title": "Orthopedic Physical Assessment 7th edition",
+      "authors": "Magee, Manske",
+      "format": "epub",
+      "filename_patterns": ["Orthopedic Physical Assessment"],
+      "notes": "Clinical tests, diagnostics, joint assessment"
+    },
+    "travell_simons": {
+      "k": 1, "a": 3, "i": 1,
+      "role": "trigger_points",
+      "full_title": "Myofascial Pain and Dysfunction Vol 1",
+      "authors": "Travell, Simons",
+      "format": "pdf",
+      "filename_patterns": ["Travell", "Myofascial Pain"],
+      "notes": "Trigger point maps — excellent tissue + image source"
+    },
+    "trail_guide": {
+      "k": 1, "a": 3, "i": 1,
+      "role": "anatomy_palpation",
+      "full_title": "Trail Guide to the Body 6th edition",
+      "authors": "Biel",
+      "format": "pdf",
+      "filename_patterns": ["Trail Guide", "Trail-Guide"],
+      "notes": "Palpation anatomy — practical tissue location"
+    },
+    "thieme_atlas": {
+      "k": 1, "a": 3, "i": 1,
+      "role": "anatomy_atlas",
+      "full_title": "Thieme Atlas of Anatomy",
+      "authors": "Schünke",
+      "format": "pdf",
+      "filename_patterns": ["Thieme Atlas of Anatomy Deel"],
+      "notes": "Alternative anatomy atlas — supplement to Sobotta"
+    },
+    "thieme_internal": {
+      "k": 1, "a": 3, "i": 1,
+      "role": "internal_anatomy",
+      "full_title": "Thieme Atlas of Anatomy Internal Organs",
+      "authors": "Schünke",
+      "format": "pdf",
+      "filename_patterns": ["Thieme Atlas of Anatomy Internal"],
+      "notes": "Internal organ anatomy — useful for visceral conditions"
+    },
+    "patten": {
+      "k": 1, "a": 3, "i": 3,
+      "role": "neuroanatomy",
+      "full_title": "Neurological Differential Diagnosis",
+      "authors": "Patten",
+      "format": "pdf",
+      "filename_patterns": ["Neurological Differential"],
+      "notes": "Neuroanatomy + differential diagnosis"
+    },
+    "pocket_atlas_1": {
+      "k": 1, "a": 3, "i": 1,
+      "role": "sectional_anatomy",
+      "full_title": "Pocket Atlas of Sectional Anatomy Vol I",
+      "authors": "Moeller, Reif",
+      "format": "pdf",
+      "filename_patterns": ["Pocket Atlas of Sectional Anatomy Vol I"],
+      "notes": "Cross-sectional anatomy — head and neck"
+    },
+    "pocket_atlas_2": {
+      "k": 1, "a": 3, "i": 1,
+      "role": "sectional_anatomy",
+      "full_title": "Pocket Atlas of Sectional Anatomy Vol II",
+      "authors": "Moeller, Reif",
+      "format": "pdf",
+      "filename_patterns": ["Pocket Atlas of Sectional Anatomy Vol II"],
+      "notes": "Cross-sectional anatomy — thorax and abdomen"
+    },
+    "pocket_atlas_3": {
+      "k": 1, "a": 3, "i": 1,
+      "role": "sectional_anatomy",
+      "full_title": "Pocket Atlas of Sectional Anatomy Vol III",
+      "authors": "Moeller, Reif",
+      "format": "pdf",
+      "filename_patterns": ["Pocket Atlas of Sectional Anatomy Vol III"],
+      "notes": "Cross-sectional anatomy — spine and extremities"
+    },
+    "keown": {
+      "k": 2, "a": 2, "i": 3,
+      "role": "acupuncture_science",
+      "full_title": "The Spark in the Machine",
+      "authors": "Keown",
+      "format": "pdf",
+      "filename_patterns": ["Spark in the Machine", "keown"],
+      "notes": "Scientific basis of acupuncture — bridges Western and TCM"
+    },
+    "bates": {
+      "k": 1, "a": 3, "i": 2,
+      "role": "clinical_assessment",
+      "full_title": "Bates Guide to Physical Examination 14th edition",
+      "authors": "Bickley",
+      "format": "epub",
+      "filename_patterns": ["Bates Guide"],
+      "notes": "Physical examination — clinical assessment"
+    },
+    "flexbeam": {
+      "k": 3, "a": 3, "i": 3,
+      "role": "device_documentation",
+      "full_title": "FlexBeam RLT Documentation",
+      "authors": "Recharge Health",
+      "format": "pdf",
+      "filename_patterns": ["FlexBeam"],
+      "notes": "RLT device protocols and settings"
+    }
+  },
+
+  "query_profiles": {
+    "tissue_identification": {
+      "description": "Section 2 — which tissues are involved",
+      "filter": {"kai_k": 1},
+      "primary_sources": ["sobotta_vol1", "sobotta_vol2", "sobotta_vol3",
+                          "anatomy_trains", "travell_simons", "trail_guide",
+                          "guyton", "magee", "thieme_atlas"]
+    },
+    "acupuncture_points": {
+      "description": "Section 3 — which points to use",
+      "filter": {"kai_a": 1},
+      "primary_sources": ["deadman", "deadman_combinations",
+                          "cecil_sterman", "maciocia_foundations",
+                          "maciocia_practice", "acupoint_book"]
+    },
+    "tcm_diagnosis": {
+      "description": "TCM pattern identification",
+      "filter": {"kai_a": 1, "kai_k": 1},
+      "primary_sources": ["maciocia_foundations", "maciocia_diagnosis",
+                          "maciocia_practice", "deadman"]
+    },
+    "images": {
+      "description": "Tissue visualization for QAT",
+      "filter": {"kai_i": 1},
+      "primary_sources": ["sobotta_vol1", "sobotta_vol2", "sobotta_vol3",
+                          "anatomy_trains", "travell_simons", "trail_guide"]
+    },
+    "anatomy_acupuncture_bridge": {
+      "description": "Which meridian channel for which tissue",
+      "filter": {"kai_k": 1, "kai_a": 2},
+      "primary_sources": ["campbell", "sobotta_tables", "anatomy_trains"]
+    }
+  }
+}
