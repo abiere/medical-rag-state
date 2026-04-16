@@ -3187,12 +3187,12 @@ async def settings_page():
 
   <!-- Tab bar -->
   <div style="display:flex;gap:0;border-bottom:1px solid #e5e7eb;margin-bottom:24px;max-width:880px">
-    <button id="tab-params" onclick="switchTab('params')"
+    <button type="button" id="tab-params" onclick="switchSettingsTab('params')"
       style="padding:10px 22px;border:none;background:none;cursor:pointer;font-size:14px;
              font-weight:600;color:#1A6B72;border-bottom:2px solid #1A6B72;margin-bottom:-1px">
       Parameters
     </button>
-    <button id="tab-schemas" onclick="switchTab('schemas')"
+    <button type="button" id="tab-schemas" onclick="switchSettingsTab('schemas')"
       style="padding:10px 22px;border:none;background:none;cursor:pointer;font-size:14px;
              font-weight:400;color:#6b7280;border-bottom:2px solid transparent;margin-bottom:-1px">
       Schema's
@@ -3331,7 +3331,7 @@ async def settings_page():
 // ═══════════════════════════════════════════════════════════
 // TAB SWITCHING
 // ═══════════════════════════════════════════════════════════
-function switchTab(tab) {
+function switchSettingsTab(tab) {
   ['params','schemas'].forEach(t => {
     document.getElementById('pane-' + t).style.display = t === tab ? 'block' : 'none';
     const btn = document.getElementById('tab-' + t);
@@ -3463,14 +3463,23 @@ const COLORS = {
 let _nuTimer = null;
 
 async function loadDiagrams() {
+  const cont = document.getElementById('diagrams-container');
   try {
     const r = await fetch('/api/pipeline-diagrams');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
     const d = await r.json();
-    renderPipelineDiagrams(d);
+    try {
+      renderPipelineDiagrams(d);
+    } catch(re) {
+      console.error('renderPipelineDiagrams error:', re);
+      cont.innerHTML = '<div style="color:#92400e;background:#fef3c7;padding:12px 16px;'
+        + 'border-radius:8px;font-size:13px">Diagram render fout: ' + re.message + '</div>';
+    }
     window._diagramsLoaded = true;
   } catch(e) {
-    document.getElementById('diagrams-container').innerHTML =
-      '<p style="color:#dc2626;font-size:13px">Fout bij laden: ' + e + '</p>';
+    console.error('loadDiagrams error:', e);
+    if (cont) cont.innerHTML = '<div style="color:#92400e;background:#fef3c7;padding:12px 16px;'
+      + 'border-radius:8px;font-size:13px">Diagrammen tijdelijk niet beschikbaar: ' + e.message + '</div>';
   }
 }
 
@@ -3685,19 +3694,19 @@ function renderImportFlow(d) {
     return outer;
   }
 
-  flow.appendChild(stepBox('Upload', 'PDF/EPUB\n/ingest', 'teal'));
+  flow.appendChild(stepBox('Upload', 'PDF/EPUB\\n/ingest', 'teal'));
   flow.appendChild(arrowEl());
-  flow.appendChild(stepBox('Detectie', 'steekproef\n5 pagina\'s', 'gray'));
+  flow.appendChild(stepBox('Detectie', 'steekproef\\n5 pagina\\'s', 'gray'));
   flow.appendChild(arrowEl());
   flow.appendChild(parseBox());
   flow.appendChild(arrowEl());
-  flow.appendChild(stepBox('Chunking', '~450 w\nper chunk', 'teal'));
+  flow.appendChild(stepBox('Chunking', '~450 w\\nper chunk', 'teal'));
   flow.appendChild(arrowEl());
-  flow.appendChild(stepBox('Audit', 'Claude/Ollama\nK/A/I+tags', 'purple'));
+  flow.appendChild(stepBox('Audit', 'Claude/Ollama\\nK/A/I+tags', 'purple'));
   flow.appendChild(arrowEl());
-  flow.appendChild(stepBox('Embedding', 'BGE-large\n1024 dims', 'teal'));
+  flow.appendChild(stepBox('Embedding', 'BGE-large\\n1024 dims', 'teal'));
   flow.appendChild(arrowEl());
-  flow.appendChild(stepBox('Qdrant', 'medical_\nlibrary', 'green'));
+  flow.appendChild(stepBox('Qdrant', 'medical_\\nlibrary', 'green'));
 
   wrap.appendChild(flow);
   return wrap;
