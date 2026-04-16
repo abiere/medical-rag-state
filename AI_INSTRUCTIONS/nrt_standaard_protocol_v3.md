@@ -1,5 +1,5 @@
-# NRT-Amsterdam.nl — Standaard Behandelprotocol v3.0
-> Versie 3.0 — Maart 2026 — Axel Biere
+# NRT-Amsterdam.nl — Standaard Behandelprotocol v3.1
+> Versie 3.1 — Maart 2026 — Axel Biere
 > Dit protocol is de basis voor ALLE behandelprotocollen.
 > Wijzigingen hier worden automatisch gesyncet naar GitHub.
 
