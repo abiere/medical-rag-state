@@ -2,7 +2,6 @@
 > Auto-updated by Claude Code after each session.
 
 ## 🔴 Prioriteit — volgende sessie
-- [ ] generate_protocol.py — roept save_protocol_metadata() aan na generatie
 - [ ] Deadman ingest valideren — chunk count + audit score controleren
 - [ ] Travell+Simons opnieuw in queue zetten (crashte bij ingest)
 - [ ] Trail Guide OCR fix — is_mostly_image drempel te agressief voor anatomie-atlassen
@@ -12,12 +11,12 @@
       dan transcribe (EN) of translate (NL), sla detected_language op
 
 ## 🟡 Backlog — gepland
-- [ ] generate_protocol.py bouwen — protocol generator
-      (RAG query → K/A/I gefilterd → Ollama → Word document output → save_protocol_metadata())
-- [ ] /protocols uitbreiden — behandelprotocol generator tab
-      (naast standaard protocol: RAG query → Ollama → Word document output)
-- [ ] Eerste behandelprotocol genereren via RAG
-      (etalagebenen als testcase — gold standard beschikbaar)
+- [ ] Protocol testen met Deadman data zodra ingested — etalagebenen als testcase
+- [ ] Interactieve afbeelding selectie UI voor weefsel sectie
+- [ ] Embedding fix — nomic-embed-text installeren in Ollama voor RAG queries
+- [ ] Protocol regeneratie per sectie (herbouw alleen gewijzigde secties)
+- [ ] Taal optie Amerikaans Engels in protocol generator
+- [ ] Protocol versie management (v1, v2, diff weergave)
 - [ ] Streaming antwoord testen met echte boeken in Qdrant
 - [ ] LLM kwaliteitsaudit voor video transcripts
       (steekproef chunks → Ollama → rapport in /data/transcript_quality/)
