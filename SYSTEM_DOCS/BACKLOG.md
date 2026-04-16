@@ -13,8 +13,8 @@
 ## 🟡 Backlog — gepland
 - [ ] generate_protocol.py bouwen — protocol generator
       (RAG query → K/A/I gefilterd → Ollama → Word document output)
-- [ ] /protocols pagina — behandelprotocol generator
-      (RAG query → Ollama → Word document output)
+- [ ] /protocols uitbreiden — behandelprotocol generator tab
+      (naast standaard protocol: RAG query → Ollama → Word document output)
 - [ ] Eerste behandelprotocol genereren via RAG
       (etalagebenen als testcase — gold standard beschikbaar)
 - [ ] Streaming antwoord testen met echte boeken in Qdrant
@@ -40,6 +40,7 @@
 - [ ] EPUBs voor betere afbeeldingskwaliteit (Sobotta EPUB)
 
 ## ✅ Afgerond
+- [x] /protocols pagina — NRT standaard protocol v3 bekijken + bewerken + git commit (GET/POST/raw endpoints)
 - [x] K/A/I classificatiesysteem — config/book_classifications.json (29 boeken), get_kai_scores() in parse_pdf + parse_epub
 - [x] normalize_points.py — canonieke puntnormalisatie, 21/21 tests geslaagd, QAT_BALANCE_2026 map
 - [x] 476 Deadman acupunctuurpunt-afbeeldingen + point_index.json

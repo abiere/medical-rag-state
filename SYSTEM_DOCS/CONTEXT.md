@@ -86,7 +86,7 @@ Primary outputs:
 | /images | ✅ Live | Afbeeldingen browser met goedkeuring |
 | /videos | ✅ Live | Video upload + transcriptie queue + pause/resume |
 | /terminal | ✅ Live | Browser terminal (ttyd iframe — bug open) |
-| /protocols | ❌ Not built | Protocol generator |
+| /protocols | ✅ Live | NRT standaard protocol v3 — bekijken + bewerken + git commit |
 
 ## Qdrant collections
 

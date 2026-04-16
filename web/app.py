@@ -2608,6 +2608,292 @@ async def search_suggest(q: str = ""):
     return [s for s in _SUGGEST_POOL if ql in s.lower()][:8]
 
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# PROTOCOLS — NRT standaard behandelprotocol
+# ═══════════════════════════════════════════════════════════════════════════════
+
+_PROTOCOL_FILE = BASE / "config" / "ai_instructions" / "nrt_standaard_protocol_v3.md"
+
+
+def _render_md_to_html(md: str) -> str:
+    """Minimal Markdown → HTML: headers, bold, tables, code, hr, lists."""
+    import html as _html
+    lines = md.split("\n")
+    out = []
+    in_table = False
+    in_code = False
+    in_list = False
+    skip_next_separator = False
+
+    def close_list():
+        nonlocal in_list
+        if in_list:
+            out.append("</ul>")
+            in_list = False
+
+    def close_table():
+        nonlocal in_table, skip_next_separator
+        if in_table:
+            out.append("</tbody></table>")
+            in_table = False
+        skip_next_separator = False
+
+    for raw in lines:
+        line = raw.rstrip()
+
+        # fenced code block
+        if line.startswith("```"):
+            if in_code:
+                out.append("</code></pre>")
+                in_code = False
+            else:
+                close_list()
+                close_table()
+                out.append('<pre style="background:#f8f9fa;border:1px solid #e5e7eb;border-radius:6px;padding:12px;overflow-x:auto;font-size:13px"><code>')
+                in_code = True
+            continue
+        if in_code:
+            out.append(_html.escape(line))
+            continue
+
+        # table row
+        if line.startswith("|"):
+            cells = [c.strip() for c in line.strip("|").split("|")]
+            # separator row (---|---|---)
+            if all(re.match(r"^[-:]+$", c) for c in cells if c):
+                if not in_table:
+                    # this is header separator — close thead, open tbody
+                    # find the last appended header row and wrap in thead
+                    if out and "<tr>" in out[-1]:
+                        out[-1] = "<thead>" + out[-1] + "</thead><tbody>"
+                    in_table = True
+                skip_next_separator = True
+                continue
+            row_html = "".join(f"<td>{_inline_md(_html.escape(c))}</td>" for c in cells)
+            if not in_table:
+                close_list()
+                out.append(
+                    '<table style="width:100%;border-collapse:collapse;margin:12px 0;font-size:14px">'
+                    f'<tr style="background:#f3f4f6">{row_html}</tr>'
+                )
+            else:
+                out.append(f'<tr>{row_html}</tr>')
+            continue
+
+        # non-table line — close table if open
+        close_table()
+
+        # horizontal rule
+        if re.match(r"^---+$", line):
+            close_list()
+            out.append('<hr style="border:none;border-top:1px solid #e5e7eb;margin:20px 0">')
+            continue
+
+        # headings
+        m = re.match(r"^(#{1,6})\s+(.*)", line)
+        if m:
+            close_list()
+            level = len(m.group(1))
+            text  = _inline_md(_html.escape(m.group(2)))
+            sizes = {1:"22px",2:"19px",3:"16px",4:"15px",5:"14px",6:"14px"}
+            weights = {1:"800",2:"700",3:"700",4:"600",5:"600",6:"600"}
+            mt = "28px" if level <= 2 else "20px"
+            out.append(
+                f'<h{level} style="font-size:{sizes[level]};font-weight:{weights[level]};'
+                f'margin-top:{mt};margin-bottom:8px;color:#111827">{text}</h{level}>'
+            )
+            continue
+
+        # blockquote
+        if line.startswith("> "):
+            close_list()
+            text = _inline_md(_html.escape(line[2:]))
+            out.append(
+                f'<blockquote style="border-left:3px solid #2563eb;margin:10px 0;'
+                f'padding:8px 14px;background:#eff6ff;color:#1e40af;font-size:14px">{text}</blockquote>'
+            )
+            continue
+
+        # list item
+        if re.match(r"^[-*]\s+", line):
+            if not in_list:
+                out.append('<ul style="margin:8px 0 8px 24px;font-size:14px">')
+                in_list = True
+            text = _inline_md(_html.escape(line.lstrip("-* ").lstrip()))
+            out.append(f"<li style='margin:3px 0'>{text}</li>")
+            continue
+
+        close_list()
+
+        # blank line
+        if not line.strip():
+            out.append("")
+            continue
+
+        # paragraph
+        out.append(f'<p style="font-size:14px;line-height:1.7;margin:6px 0">{_inline_md(_html.escape(line))}</p>')
+
+    close_list()
+    close_table()
+    return "\n".join(out)
+
+
+def _inline_md(text: str) -> str:
+    """Process inline markdown: **bold**, `code`, _italic_."""
+    text = re.sub(r"\*\*(.+?)\*\*", r'<strong>\1</strong>', text)
+    text = re.sub(r"`(.+?)`", r'<code style="background:#f3f4f6;padding:1px 5px;border-radius:4px;font-size:92%">\1</code>', text)
+    text = re.sub(r"_(.+?)_", r'<em>\1</em>', text)
+    return text
+
+
+@app.get("/protocols", response_class=HTMLResponse)
+async def protocols_page():
+    try:
+        raw_md = _PROTOCOL_FILE.read_text(encoding="utf-8")
+    except Exception as e:
+        raw_md = f"# Fout\n\nKon protocol niet laden: {e}"
+
+    rendered = _render_md_to_html(raw_md)
+    import html as _html
+    raw_escaped = _html.escape(raw_md)
+
+    body = f"""
+<div class="wrap" style="max-width:900px">
+
+  <!-- Header -->
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+    <div>
+      <h1 style="font-size:22px;font-weight:700">Behandelprotocollen</h1>
+      <div style="font-size:13px;color:#6b7280;margin-top:4px">NRT-Amsterdam.nl — config/ai_instructions/</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <a href="/protocols/raw" target="_blank" class="btn btn-secondary">↓ Raw MD</a>
+      <button id="edit-btn" onclick="toggleEdit()" class="btn btn-primary">✏ Bewerken</button>
+    </div>
+  </div>
+
+  <!-- Read view -->
+  <div id="read-view" class="section" style="padding:24px 28px">
+    {rendered}
+  </div>
+
+  <!-- Edit view (hidden by default) -->
+  <div id="edit-view" style="display:none">
+    <textarea id="md-editor"
+      style="width:100%;height:65vh;font-family:monospace;font-size:13px;
+             padding:16px;border:2px solid #2563eb;border-radius:10px;
+             resize:vertical;background:#1e293b;color:#e2e8f0;line-height:1.6"
+    >{raw_escaped}</textarea>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;flex-wrap:wrap;gap:8px">
+      <span id="save-msg" style="font-size:13px;color:#6b7280"></span>
+      <div style="display:flex;gap:8px">
+        <button onclick="cancelEdit()" class="btn btn-secondary">Annuleren</button>
+        <button onclick="saveProtocol()" class="btn btn-green">💾 Opslaan &amp; committen</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function toggleEdit() {{
+  document.getElementById('read-view').style.display = 'none';
+  document.getElementById('edit-view').style.display = 'block';
+  document.getElementById('edit-btn').style.display  = 'none';
+}}
+
+function cancelEdit() {{
+  document.getElementById('read-view').style.display = 'block';
+  document.getElementById('edit-view').style.display = 'none';
+  document.getElementById('edit-btn').style.display  = 'inline-block';
+  document.getElementById('save-msg').textContent = '';
+}}
+
+async function saveProtocol() {{
+  const content = document.getElementById('md-editor').value;
+  const msg     = document.getElementById('save-msg');
+  msg.style.color = '#6b7280';
+  msg.textContent = 'Opslaan…';
+  try {{
+    const r = await fetch('/protocols/save', {{
+      method:  'POST',
+      headers: {{'Content-Type': 'application/json'}},
+      body:    JSON.stringify({{content}})
+    }});
+    const d = await r.json();
+    if (d.ok) {{
+      msg.style.color = '#059669';
+      msg.textContent = '✓ Opgeslagen + gecommit (' + (d.commit || '') + ')';
+      setTimeout(() => location.reload(), 1500);
+    }} else {{
+      msg.style.color = '#dc2626';
+      msg.textContent = 'Fout: ' + (d.error || 'onbekend');
+    }}
+  }} catch(e) {{
+    msg.style.color = '#dc2626';
+    msg.textContent = 'Netwerk fout: ' + e;
+  }}
+}}
+</script>
+"""
+    return _page_shell("Protocollen", "/protocols", body)
+
+
+@app.post("/protocols/save")
+async def protocols_save(request: Request):
+    try:
+        body = await request.json()
+        content = body.get("content", "")
+        if not content.strip():
+            return JSONResponse({"ok": False, "error": "Lege inhoud — niet opgeslagen"})
+        if len(content) > 500_000:
+            return JSONResponse({"ok": False, "error": "Bestand te groot (max 500KB)"})
+
+        _PROTOCOL_FILE.write_text(content, encoding="utf-8")
+
+        # git commit
+        result = subprocess.run(
+            ["git", "add", str(_PROTOCOL_FILE)],
+            cwd=str(BASE), capture_output=True, text=True, timeout=15
+        )
+        if result.returncode != 0:
+            return JSONResponse({"ok": False, "error": f"git add mislukt: {result.stderr.strip()}"})
+
+        now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
+        commit = subprocess.run(
+            ["git", "commit", "-m", f"protocol: NRT standaard protocol bijgewerkt {now_str}"],
+            cwd=str(BASE), capture_output=True, text=True, timeout=15
+        )
+        if commit.returncode not in (0, 1):
+            return JSONResponse({"ok": False, "error": f"git commit mislukt: {commit.stderr.strip()}"})
+
+        short_hash = ""
+        try:
+            h = subprocess.run(
+                ["git", "rev-parse", "--short", "HEAD"],
+                cwd=str(BASE), capture_output=True, text=True, timeout=5
+            )
+            short_hash = h.stdout.strip()
+        except Exception:
+            pass
+
+        return JSONResponse({"ok": True, "commit": short_hash})
+    except Exception as e:
+        return JSONResponse({"ok": False, "error": str(e)})
+
+
+@app.get("/protocols/raw")
+async def protocols_raw():
+    try:
+        content = _PROTOCOL_FILE.read_text(encoding="utf-8")
+        return HTMLResponse(
+            content=f"<pre style='font-family:monospace;font-size:13px;white-space:pre-wrap;padding:20px'>{content}</pre>",
+            media_type="text/html"
+        )
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
 # ── GET /images/file/{filename} ───────────────────────────────────────────────
 
 @app.get("/images/file/{filename}")
