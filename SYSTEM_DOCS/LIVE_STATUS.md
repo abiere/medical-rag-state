@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-16 17:07:26 UTC**
+> Last update: **2026-04-16 17:07:58 UTC**
 
 ## Services
 | Service | Status |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 4.31 GB / 32.86 GB (13%) |
-| CPU | 78.8% |
+| RAM used | 4.51 GB / 32.86 GB (14%) |
+| CPU | 75.3% |
 | Disk used | 58.3 GB / 322.3 GB (19%) |
-| Uptime | up 2 days, 7 hours, 24 minutes |
+| Uptime | up 2 days, 7 hours, 25 minutes |
 
 ## Recent markers
 - `2026-04-16T05:20:54.750223+00:00` **watchdog_restart** — book-ingest-queue hung (41 min stale) — restarted successfully
@@ -59,7 +59,6 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-16 17:02:47,333  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 17:03:17,334  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 17:03:47,335  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 17:04:17,336  INFO      Queue paused (pause flag set) — waiting 30s
@@ -69,4 +68,5 @@
 2026-04-16 17:06:17,343  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 17:06:47,344  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 17:07:17,345  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 17:07:47,346  INFO      Queue paused (pause flag set) — waiting 30s
 ```
