@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-16 00:31:09 UTC**
+> Last update: **2026-04-16 00:36:09 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `pdfcoffee.com_a-manual-of-acupuncture-peter-deadmanpdf-4-pdf-free.pdf` |
+| Current job | `pdfcoffee.com_a-manual-of-acupuncture-peter-deadmanpdf-4-pdf-free.pdf` (5 min) |
 | Queued | 2 |
 | Total books | 3 |
 | Ingested | 1 |
@@ -25,18 +25,18 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` (55 min) |
+| Current job | `1.Upper_Body_Techniques.mp4` (60 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
-| Vectors in video_transcripts | 41 |
+| Vectors in video_transcripts | 77 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 6.86 GB / 32.86 GB (21%) |
-| CPU | 88.8% |
+| RAM used | 13.62 GB / 32.86 GB (41%) |
+| CPU | 99.7% |
 | Disk used | 54.3 GB / 322.3 GB (18%) |
-| Uptime | up 1 day, 14 hours, 48 minutes |
+| Uptime | up 1 day, 14 hours, 53 minutes |
 
 ## Recent markers
 - `2026-04-16T00:30:40.058773+00:00` **watchdog_restart** — book-ingest-queue hung (31 min stale) — restarted successfully
