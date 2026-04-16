@@ -210,6 +210,6 @@ GTR alleen in zeldzame gevallen.
 | PEMF sequentie | PEMF eerst (15 min) → reset → RLT (nooit gelijktijdig) |
 | Tanden | Altijd als gewricht via QAT, elke client |
 | Fascia keten | Altijd check voeten tot atlas |
-| Sprongbeen | Altijd meenemen (talus) |
+| Sprongbeen | Altijd meenemen (talus) — check flexibiliteit |
 | Ellepijp | Altijd meenemen (ulna) — check flexibiliteit |
 | Spaakbeen | Altijd meenemen (radius) — check flexibiliteit |
