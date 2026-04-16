@@ -7,6 +7,9 @@
     "playwright": {
       "command": "/root/.npm-global/bin/playwright-mcp",
       "args": ["--headless"]
+    },
+    "github": {
+      "command": "/root/.npm-global/bin/mcp-server-github"
     }
   }
 }

@@ -20,8 +20,8 @@ Outputs: Word behandelprotocollen | NRT-Amsterdam.nl blog | Ad hoc Q&A
 | FastAPI (medical-rag-web) | 8000 | ✅ Active |
 | Qdrant | 6333 | ✅ Healthy |
 | Ollama (llama3.1:8b) | 11434 | ✅ Active |
-| book-ingest-queue | — | ✅ Active |
-| transcription-queue | — | ⏸ Paused (20 NRT + 15 QAT waiting) |
+| book-ingest-queue | — | ✅ Active (systemd) |
+| transcription-queue | — | ✅ Active (35 videos in queue) |
 | ttyd terminal | 7682 | ✅ Active |
 | sync-status.timer | — | ✅ Every 5 min |
 | queue-watchdog.timer | — | ✅ Every 10 min (BOOK=120min, TRANS=30min) |
@@ -40,14 +40,14 @@ Fix applied: audit non-blocking. Deadman re-queued for clean reprocessing.
 | Collection | Vectors | Notes |
 |---|---|---|
 | medical_library | 2 (test only) | Filling as books complete |
-| video_transcripts | 6 | Connection_to_the_Brain |
-| nrt_qat_curriculum | 0 | Awaiting QAT upload |
+| video_transcripts | 158 | NRT + QAT transcripts |
+| nrt_qat_curriculum | 0 | Awaiting QAT curriculum upload |
 | device_documentation | 0 | Awaiting PEMF/RLT docs |
 
 ## Key paths
 /root/medical-rag/
 ├── books/medical_literature/     ← PDFs being ingested
-├── videos/nrt/ + qat/            ← 35 videos (paused)
+├── videos/nrt/ + qat/            ← 35 videos (transcription active)
 ├── data/
 │   ├── transcripts/              ← Whisper JSON
 │   ├── acupuncture_points/       ← 476 Deadman PNGs + point_index.json
@@ -56,7 +56,7 @@ Fix applied: audit non-blocking. Deadman re-queued for clean reprocessing.
 │   ├── protocols/                ← Generated protocols + metadata JSON
 │   └── image_approvals.json
 ├── config/
-│   ├── book_classifications.json ← K/A/I per book (30+ books)
+│   ├── book_classifications.json ← K/A/I per book (35 books, v1.1)
 │   └── ai_instructions/
 │       ├── nrt_standaard_protocol_v3.md ← Full NRT treatment protocol
 │       ├── meridian_mapping.md   ← Deadman standard + QAT conversion
@@ -80,19 +80,37 @@ Fix applied: audit non-blocking. Deadman re-queued for clean reprocessing.
 │   ├── queue_watchdog.py
 │   ├── nightly_maintenance.py    ← Consistency check + retroactive audit
 │   └── sync_status.py            ← GitHub sync (3 retries)
-└── web/app.py                    ← FastAPI all routes
+├── web/app.py                    ← FastAPI all routes
+└── .claude/
+    ├── settings.json             ← Hooks (PreToolUse, PostToolUse, Stop)
+    ├── skills/nrt-ui-standards/  ← Design system skill
+    └── hooks/
+        ├── security_check.sh     ← PreToolUse: secrets scan (non-blocking)
+        ├── py_syntax_check.sh    ← PostToolUse: python3 -m py_compile
+        └── mempalace_save.sh     ← Stop: mine SYSTEM_DOCS into MemPalace
 
 ## Web Interface Routes
 | Route | Status | Description |
 |---|---|---|
 | / | ✅ | Dashboard — CPU/RAM/services/vectors |
-| /library | ✅ | Upload + ingest + pause/resume + progress |
+| /library | ✅ | Catalog — 6 tabs, K/A/I badges, chunk counts, delete |
+| /library/ingest | ✅ | Upload + ingest queue + progress |
 | /library/overview | ✅ | Literature overview with K/A/I scores |
 | /search | ✅ | RAG search + image search + streaming |
 | /images | ✅ | Image browser + approval |
-| /videos | ✅ | Upload + transcription + pause/resume |
+| /videos | ✅ | Multi-file upload + transcription queue |
 | /protocols | ✅ | NRT protocol v3 + behandelprotocollen + generator |
 | /terminal | ✅ | ttyd browser terminal (port 7682) |
+
+## Active Claude Code tooling
+| Type | Name | Purpose |
+|---|---|---|
+| Skill | nrt-ui-standards | Design tokens — read before every UI task |
+| Hook PreToolUse | security_check.sh | Secrets/injection scan on Write/Edit |
+| Hook PostToolUse | py_syntax_check.sh | Syntax check every .py file |
+| Hook Stop | mempalace_save.sh | Auto-mine SYSTEM_DOCS into MemPalace |
+| MCP | mempalace | Persistent memory (116 drawers) |
+| MCP | playwright | Headless UI testing (Chromium) |
 
 ## PDF/OCR Pipeline
 Native (≥50 words/page): pdfplumber detect → Docling (do_ocr=False)
@@ -105,7 +123,7 @@ Audit: Ollama sampling. Non-blocking: 3× timeout →
   Retroactive audit: nightly_maintenance.py (max 200 chunks/night)
 
 ## K/A/I Classification (Hybrid)
-Book-level static: config/book_classifications.json
+Book-level static: config/book_classifications.json (35 books, v1.1)
 Chunk-level dynamic: Ollama override during audit
 
 Protocol query profiles:
@@ -157,10 +175,3 @@ After every task:
   cd /root/medical-rag && git add -A && \
   git commit -m "state: [description]" && git push
   python3 /root/medical-rag/scripts/sync_status.py
-
----
-
-## Test status
-
-**Laatste run:** 16-04-2026 12:21 (57.7s)  
-**Uitslag:** ✅ GESLAAGD — 33/33 geslaagd, 0 overgeslagen

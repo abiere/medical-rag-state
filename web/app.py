@@ -598,6 +598,32 @@ _VIDEO_SCRIPT = r"""
 const _timers = {};
 function _clearTimer(k) { if (_timers[k]) { clearInterval(_timers[k]); delete _timers[k]; } }
 
+function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+function showFileList(vtype) {
+  const inp = document.getElementById('file-' + vtype);
+  const listDiv = document.getElementById('filelist-' + vtype);
+  if (!listDiv) return;
+  if (!inp.files.length) { listDiv.innerHTML = ''; return; }
+  const files = Array.from(inp.files);
+  let html = '<div style="font-size:13px;color:#4a5568;margin-bottom:6px;font-weight:500">'
+    + files.length + (files.length === 1 ? ' bestand' : ' bestanden') + ' geselecteerd:</div>'
+    + '<div style="display:flex;flex-direction:column;gap:4px">';
+  files.forEach((f, i) => {
+    const size = f.size >= 1e6 ? (f.size/1e6).toFixed(1)+'\u00a0MB' : (f.size/1e3).toFixed(0)+'\u00a0KB';
+    html += '<div id="filelist-item-' + vtype + '-' + i + '" '
+      + 'style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#f8fafc;'
+      + 'border-radius:6px;border:1px solid #e2e8f0">'
+      + '<span style="flex:1;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'
+      + escHtml(f.name) + '</span>'
+      + '<span style="font-size:12px;color:#6b7280;white-space:nowrap">' + size + '</span>'
+      + '<span id="filelist-status-' + vtype + '-' + i + '" style="font-size:13px;white-space:nowrap;min-width:20px;text-align:right"></span>'
+      + '</div>';
+  });
+  html += '</div>';
+  listDiv.innerHTML = html;
+}
+
 function setRunning(vtype, safeId) {
   document.getElementById('status-' + vtype + '-' + safeId).innerHTML =
     '<span style="background:#e8f4f5;color:#1A6B72;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:600">' +
@@ -710,15 +736,24 @@ async function doUpload(vtype) {
   document.getElementById('progress-' + vtype).style.display = 'block';
   const uploaded = [];
   for (let i = 0; i < files.length; i++) {
+    const statusEl = document.getElementById('filelist-status-' + vtype + '-' + i);
+    if (statusEl) statusEl.innerHTML = '<span style="color:#1A6B72">&#9203;</span>';
     const d = await _uploadFile(vtype, files[i], i + 1, files.length);
-    if (d) uploaded.push(d.filename);
-    else {
+    if (d) {
+      uploaded.push(d.filename);
+      if (statusEl) statusEl.innerHTML = '<span style="color:#16a34a;font-weight:700">&#10003;</span>';
+    } else {
+      if (statusEl) statusEl.innerHTML = '<span style="color:#dc2626;font-weight:700">&#10007;</span>';
       document.getElementById('msg-' + vtype).textContent = 'Upload mislukt: ' + files[i].name;
       document.getElementById('msg-' + vtype).style.display = 'block';
     }
+    if (files.length > 1) {
+      const mbEl = document.getElementById('mb-' + vtype);
+      if (mbEl) mbEl.textContent = (i + 1) + ' / ' + files.length + ' bestanden ge\u00fcpload';
+    }
   }
   if (!uploaded.length) { document.getElementById('progress-' + vtype).style.display = 'none'; return; }
-  document.getElementById('pct-' + vtype).textContent = '&#10003;';
+  document.getElementById('pct-' + vtype).textContent = '\u2713';
   document.getElementById('mb-' + vtype).textContent =
     uploaded.length + (uploaded.length === 1 ? ' bestand' : ' bestanden') + ' ge\u00fcpload. Transcriptie wordt gestart...';
   for (const filename of uploaded) {
@@ -941,10 +976,11 @@ async def videos_page():
             f'<div id="mb-{vtype}" style="font-size:12px;color:#9ca3af;margin-top:4px"></div>'
             f'</div>'
             f'<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">'
-            f'<input type="file" id="file-{vtype}" multiple accept=".mp4,.mov,.mkv,.m4v" style="flex:1;min-width:200px">'
+            f'<input type="file" id="file-{vtype}" multiple accept=".mp4,.mov,.mkv,.m4v" onchange="showFileList(\'{vtype}\')" style="flex:1;min-width:200px">'
             f'<button onclick="doUpload(\'{vtype}\')" class="btn" style="background:{color};color:#fff">'
             f'Uploaden naar {vtype.upper()}</button>'
             f'</div>'
+            f'<div id="filelist-{vtype}" style="margin-top:10px"></div>'
             f'<div id="msg-{vtype}" style="margin-top:8px;font-size:13px;color:#dc2626;display:none"></div>'
             f'</div>'
         )

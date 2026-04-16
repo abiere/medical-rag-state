@@ -1,6 +1,6 @@
 # BACKLOG — Medical RAG
 > Auto-updated by Claude Code after each session.
-> Last updated: 2026-04-16 — /library catalogus pagina gebouwd
+> Last updated: 2026-04-16 — multi-file video upload + GitHub MCP + CLAUDE.md + CONTEXT.md
 
 ## 🔴 Prioriteit — volgende sessie
 
@@ -140,8 +140,14 @@
 - [x] Stop hook — mempalace_save.sh (auto-mine SYSTEM_DOCS in MemPalace na sessie)
 - [x] MemPalace MCP server — .mcp.json, palace /root/.mempalace/medical-rag (116 drawers)
 - [x] Playwright MCP server — headless Chromium, alle 8 nav items geverifieerd
+- [x] GitHub MCP server — @modelcontextprotocol/server-github v0.6.2, gh auth token
 - [x] nrt-ui-standards Claude Code skill — design tokens + schrijfregels
 - [x] Design audit — #2563eb vervangen door #1A6B72 teal in alle pagina's
+- [x] CLAUDE.md herschreven — accurate server info, services, MCPs, hooks, skills, routes
+- [x] CONTEXT.md bijgewerkt — 158 video vectors, transcriptie active, .claude/ paden
+
+### Video Upload
+- [x] Multi-file upload /videos — bestandslijst met naam+grootte, per-file status, X/Y teller
 
 ### Bibliotheek Catalogus
 - [x] /library cataloguspagina — 6 categorie-tabs, zoekbalk, sortering
