@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-16 08:59:35 UTC**
+> Last update: **2026-04-16 09:00:29 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `pdfcoffee.com_a-manual-of-acupuncture-peter-deadmanpdf-4-pdf-free.pdf` (121 min) |
+| Current job | `pdfcoffee.com_a-manual-of-acupuncture-peter-deadmanpdf-4-pdf-free.pdf` (122 min) |
 | Queued | 0 |
 | Total books | 3 |
 | Ingested | 1 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` (564 min) |
+| Current job | `1.Upper_Body_Techniques.mp4` (565 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 16.45 GB / 32.86 GB (50%) |
-| CPU | 40.2% |
+| RAM used | 16.44 GB / 32.86 GB (50%) |
+| CPU | 43.1% |
 | Disk used | 56.5 GB / 322.3 GB (18%) |
-| Uptime | up 1 day, 23 hours, 16 minutes |
+| Uptime | up 1 day, 23 hours, 17 minutes |
 
 ## Recent markers
 - `2026-04-16T05:20:54.750223+00:00` **watchdog_restart** — book-ingest-queue hung (41 min stale) — restarted successfully
@@ -59,8 +59,6 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-16 08:54:41,893  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 08:55:11,908  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 08:55:41,909  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 08:56:11,914  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 08:56:41,915  INFO      Queue paused (pause flag set) — waiting 30s
@@ -69,4 +67,6 @@
 2026-04-16 08:58:11,920  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 08:58:41,921  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 08:59:11,923  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 08:59:41,924  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 09:00:11,926  INFO      Queue paused (pause flag set) — waiting 30s
 ```
