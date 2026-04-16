@@ -861,11 +861,30 @@ async function _refreshBookProgress() {
     if (!d.current && d.queue_count === 0 && !ps.paused) { el.innerHTML = ''; return; }
     const isPaused = ps.paused;
 
-    // Dutch thousands separator: 1247 → "1.247"
+    // ── Helpers ───────────────────────────────────────────────────────────
     const fmt = n => (n == null || n === '' ? '?' : Number(n).toLocaleString('nl-NL'));
+    const parseTs = s => s ? new Date(s) : null;
+    const fmtTime = d => d
+      ? d.toLocaleTimeString('nl-NL', {hour:'2-digit', minute:'2-digit'})
+      : '\u2014';
+    const fmtDateTime = d => d
+      ? d.toLocaleDateString('nl-NL', {day:'2-digit', month:'2-digit'})
+          .replace('/', '-') + ' ' + fmtTime(d)
+      : '\u2014';
+    const elapsed = (start, end) => {
+      if (!start) return '\u2014';
+      const ms  = (end || new Date()) - start;
+      const tot = Math.floor(ms / 60000);
+      const h   = Math.floor(tot / 60);
+      const m   = String(tot % 60).padStart(2, '0');
+      return `${h}:${m}`;
+    };
 
+    // ── Outer card ────────────────────────────────────────────────────────
     let html = '<div style="background:#e8f4f5;border:1px solid #1A6B72;border-radius:10px;padding:16px 20px">';
-    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+
+    // Header row: title + pause button
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">';
     html += '<span style="font-weight:700;font-size:15px;color:#1A6B72">\uD83D\uDCDA Boek ingest voortgang</span>';
     html += '<div style="display:flex;gap:8px;align-items:center">';
     if (isPaused) html += '<span style="background:#fef3c7;color:#92400e;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600">\u23F8 Gepauzeerd</span>';
@@ -874,40 +893,45 @@ async function _refreshBookProgress() {
     html += '</div></div>';
 
     if (d.current) {
-      html += `<div style="font-size:14px;margin-bottom:10px"><strong>Bezig:</strong> ${d.current.filename} <span style="color:#6b7280">(${d.current.elapsed_minutes} min)</span></div>`;
+      // Book filename line
+      html += `<div style="font-size:14px;margin-bottom:10px"><strong>Bezig:</strong> ${d.current.filename}</div>`;
 
       if (active && active.phases) {
-        const phaseOrder = ['parse','audit','embed','qdrant'];
-        const phaseNames = {parse:'Parsing', audit:'Audit & Tagging', embed:'Embedding', qdrant:'Qdrant upload'};
+        // ── Phase table ───────────────────────────────────────────────────
+        const phaseOrder  = ['parse','audit','embed','qdrant'];
+        const phaseNames  = {parse:'Parsing', audit:'Audit & Tagging', embed:'Embedding', qdrant:'Qdrant upload'};
         const circleColor = {done:'#059669', running:'#1A6B72', failed:'#dc2626', pending:'#d1d5db'};
         const circleIcon  = {done:'\u2713', running:'\u25B6', failed:'\u2717', pending:'\u2022'};
 
-        html += '<div style="display:flex;flex-direction:column;gap:5px;margin-bottom:6px">';
+        html += '<div style="overflow-x:auto;margin-bottom:8px">';
+        html += '<table style="width:100%;border-collapse:collapse;table-layout:fixed;font-size:13px">';
+        html += '<colgroup><col style="width:32%"><col style="width:14%"><col style="width:18%"><col style="width:18%"><col style="width:18%"></colgroup>';
+        // Header
+        const thS = 'style="text-align:left;padding:4px 6px 6px;color:#1A6B72;font-weight:600;font-size:12px;border-bottom:1px solid #1A6B72;white-space:nowrap"';
+        const thSF = 'style="text-align:left;padding:4px 0 6px;color:#1A6B72;font-weight:600;font-size:12px;border-bottom:1px solid #1A6B72"';
+        html += `<thead><tr><th ${thSF}>Fase</th><th ${thS}>Status</th><th ${thS}>Start</th><th ${thS}>Eind</th><th ${thS}>Totaal</th></tr></thead>`;
+        html += '<tbody>';
 
         for (let pi = 0; pi < phaseOrder.length; pi++) {
-          const ph   = phaseOrder[pi];
-          const info = active.phases[ph] || {};
-          const st   = info.status || 'pending';
-          const ccol = circleColor[st] || '#d1d5db';
-          const icon = circleIcon[st]  || '\u2022';
+          const ph      = phaseOrder[pi];
+          const info    = active.phases[ph] || {};
+          const st      = info.status || 'pending';
+          const ccol    = circleColor[st] || '#d1d5db';
+          const icon    = circleIcon[st]  || '\u2022';
           const isRunning = st === 'running';
           const isDone    = st === 'done';
 
-          // ── Per-phase detail string ───────────────────────────────────────
+          // ── Detail text (Fase cell) ─────────────────────────────────────
           let detail = '';
-
           if (ph === 'parse') {
             if (isRunning && info.pages_total) {
-              if (info.pages_done > 0) {
-                detail = `pagina ${fmt(info.pages_done)} / ${fmt(info.pages_total)}`;
-              } else {
-                detail = `opstarten\u2026 / ${fmt(info.pages_total)} pagina\u2019s`;
-              }
+              detail = info.pages_done > 0
+                ? `pagina ${fmt(info.pages_done)} / ${fmt(info.pages_total)}`
+                : `opstarten\u2026 / ${fmt(info.pages_total)} pagina\u2019s`;
             } else if (isDone) {
               detail = `${fmt(info.pages_total)} pagina\u2019s`;
               if (info.chunks_extracted) detail += ` \u00b7 ${fmt(info.chunks_extracted)} chunks`;
             }
-
           } else if (ph === 'audit') {
             const processed = (info.chunks_tagged || 0) + (info.chunks_skipped || 0);
             if (isRunning && info.chunks_total) {
@@ -917,13 +941,11 @@ async function _refreshBookProgress() {
               if (info.chunks_tagged)  detail += ` \u00b7 ${fmt(info.chunks_tagged)} getagd`;
               if (info.chunks_skipped) detail += ` \u00b7 ${fmt(info.chunks_skipped)} overgeslagen`;
             }
-            // Ollama availability indicator — shown whenever known
             if (info.ollama_available === false || info.consecutive_failures_hit) {
               detail += (detail ? ' \u2014 ' : '') + '<span style="color:#b45309;font-size:11px">Ollama timeout</span>';
             } else if ((isDone || isRunning) && info.ollama_available === true) {
               detail += (detail ? ' \u2014 ' : '') + '<span style="color:#059669;font-size:11px">Ollama \u2713</span>';
             }
-
           } else if (ph === 'embed') {
             const done_e  = info.chunks_done  || 0;
             const total_e = info.chunks_total;
@@ -935,11 +957,9 @@ async function _refreshBookProgress() {
               const v = info.chunks_done || info.chunks_total;
               if (v) detail = `${fmt(v)} vectors`;
             }
-
           } else if (ph === 'qdrant') {
-            const ins    = info.chunks_inserted || 0;
-            const coll   = info.collection || active.collection || '';
-            // total vectors = embed.chunks_total or parse.chunks_extracted
+            const ins     = info.chunks_inserted || 0;
+            const coll    = info.collection || active.collection || '';
             const total_q = (active.phases.embed || {}).chunks_total
                           || (active.phases.parse || {}).chunks_extracted;
             if (isRunning) {
@@ -950,51 +970,86 @@ async function _refreshBookProgress() {
             }
           }
 
-          // ── Row HTML ──────────────────────────────────────────────────────
-          html += '<div>';
-          html += '<div style="display:flex;align-items:center;gap:7px">';
-          html += `<span style="width:18px;height:18px;border-radius:50%;background:${ccol};color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${icon}</span>`;
-          html += `<span style="font-size:13px;color:${isRunning?'#1A6B72':'#374151'};font-weight:${isRunning?600:400}">${pi+1}. ${phaseNames[ph]}</span>`;
-          if (detail) html += `<span style="font-size:12px;color:#6b7280">${detail}</span>`;
-          html += '</div>';
-
-          // ── Progress bar (parse pages + embed chunks only) ─────────────────
+          // ── Progress bar (parse + embed only, while running) ────────────
+          let bar = '';
           if (ph === 'parse' && isRunning && info.pages_total) {
             const pct = Math.min(Math.round((info.pages_done||0) / info.pages_total * 100), 100);
-            html += `<div style="margin:3px 0 0 25px;background:#c7e8eb;border-radius:999px;height:4px">`;
-            html += `<div style="background:#1A6B72;border-radius:999px;height:4px;width:${pct}%;transition:width 0.5s"></div>`;
-            html += '</div>';
-          }
-          if (ph === 'embed' && isRunning && info.chunks_total) {
+            bar = `<div style="margin-top:4px;background:#c7e8eb;border-radius:999px;height:4px"><div style="background:#1A6B72;border-radius:999px;height:4px;width:${pct}%;transition:width 0.5s"></div></div>`;
+          } else if (ph === 'embed' && isRunning && info.chunks_total) {
             const pct = Math.min(Math.round((info.chunks_done||0) / info.chunks_total * 100), 100);
-            html += `<div style="margin:3px 0 0 25px;background:#c7e8eb;border-radius:999px;height:4px">`;
-            html += `<div style="background:#1A6B72;border-radius:999px;height:4px;width:${pct}%;transition:width 0.8s"></div>`;
-            html += '</div>';
+            bar = `<div style="margin-top:4px;background:#c7e8eb;border-radius:999px;height:4px"><div style="background:#1A6B72;border-radius:999px;height:4px;width:${pct}%;transition:width 0.8s"></div></div>`;
           }
 
-          html += '</div>';
+          // ── Status pill ─────────────────────────────────────────────────
+          const pillStyles = {
+            done:    'background:#dcfce7;color:#16a34a',
+            running: 'background:#e8f4f5;color:#1A6B72',
+            failed:  'background:#fee2e2;color:#dc2626',
+            pending: 'background:#f3f4f6;color:#6b7280',
+          };
+          const pillLabels = {done:'Klaar', running:'Bezig', failed:'Fout', pending:'Wacht'};
+          const pStyle = pillStyles[st] || pillStyles.pending;
+          const pLabel = pillLabels[st] || 'Wacht';
+          const pill = `<span style="${pStyle};border-radius:999px;padding:2px 8px;font-size:11px;font-weight:600;white-space:nowrap">${pLabel}</span>`;
+
+          // ── Time cells ──────────────────────────────────────────────────
+          const phStart  = parseTs(info.started_at);
+          const phEnd    = parseTs(info.completed_at);
+          const startTxt = fmtTime(phStart);
+          const eindTxt  = isDone ? fmtTime(phEnd) : (isRunning ? 'bezig' : '\u2014');
+          const totalTxt = (isDone || isRunning) ? elapsed(phStart, phEnd) : '\u2014';
+
+          // ── Row ─────────────────────────────────────────────────────────
+          const tdS  = 'style="padding:7px 6px;vertical-align:top;border-bottom:1px solid #e2e8f0"';
+          const tdSF = 'style="padding:7px 0;vertical-align:top;border-bottom:1px solid #e2e8f0"';
+          const rowBg = isRunning ? ' style="background:#f0faf8"' : '';
+          html += `<tr${rowBg}>`;
+
+          // Fase cell
+          html += `<td ${tdSF}>`;
+          html += '<div style="display:flex;align-items:flex-start;gap:6px">';
+          html += `<span style="margin-top:2px;width:16px;height:16px;border-radius:50%;background:${ccol};color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${icon}</span>`;
+          html += '<div>';
+          html += `<span style="font-size:13px;color:${isRunning?'#1A6B72':'#374151'};font-weight:${isRunning?600:400}">${pi+1}. ${phaseNames[ph]}</span>`;
+          if (detail) html += `<div style="font-size:12px;color:#6b7280;margin-top:1px">${detail}</div>`;
+          if (bar)    html += bar;
+          html += '</div></div></td>';
+
+          // Status, Start, Eind, Totaal cells
+          html += `<td ${tdS}>${pill}</td>`;
+          html += `<td ${tdS} style="padding:7px 6px;vertical-align:top;border-bottom:1px solid #e2e8f0;font-size:12px;color:#4a5568">${startTxt}</td>`;
+          html += `<td ${tdS} style="padding:7px 6px;vertical-align:top;border-bottom:1px solid #e2e8f0;font-size:12px;color:${isRunning?'#1A6B72':'#4a5568'}">${eindTxt}</td>`;
+          html += `<td ${tdS} style="padding:7px 6px;vertical-align:top;border-bottom:1px solid #e2e8f0;font-size:12px;color:#4a5568;font-variant-numeric:tabular-nums">${totalTxt}</td>`;
+          html += '</tr>';
         }
-        html += '</div>';
+
+        html += '</tbody></table></div>';
+
+        // ── Book-level summary bar ────────────────────────────────────────
+        const bookStart = parseTs(active.started_at);
+        const bookEnd   = parseTs(active.completed_at);
+        const sumParts  = [
+          `Start ${fmtDateTime(bookStart)}`,
+          `Eind ${bookEnd ? fmtDateTime(bookEnd) : '\u2014'}`,
+          `Verstreken ${elapsed(bookStart, bookEnd)}`,
+        ];
+        html += `<div style="background:#ddf2f3;border-radius:6px;padding:3px 10px;font-size:12px;font-family:monospace;color:#085041;margin-top:4px">${sumParts.join('  \u00b7  ')}</div>`;
 
       } else {
         // Fallback: pre-state-machine legacy progress object
         const prog = d.current.progress;
         if (prog && prog.phase) {
           const legacyCol = {parsing:'#7c3aed',auditing:'#b45309',embedding:'#065f46'}[prog.phase] || '#374151';
-          html += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">`;
+          html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">';
           html += `<span style="background:${legacyCol};color:#fff;border-radius:999px;padding:2px 10px;font-size:11px;font-weight:600">${prog.phase}</span>`;
           if (prog.total_pages > 0) html += `<span style="font-size:12px;color:#6b7280">Pagina ${prog.current_page}/${prog.total_pages}</span>`;
           html += '</div>';
         }
       }
-
-      if (d.last_log) {
-        html += `<div style="font-size:11px;color:#6b7280;font-family:monospace;word-break:break-all;background:#ddf2f3;border-radius:4px;padding:3px 8px;margin-top:4px">${d.last_log.slice(-140)}</div>`;
-      }
     }
 
     if (d.queue_count > 0) {
-      html += `<div style="font-size:13px;color:#374151;margin-top:8px"><strong>${d.queue_count}</strong> boek(en) in wachtrij:</div>`;
+      html += `<div style="font-size:13px;color:#374151;margin-top:10px"><strong>${d.queue_count}</strong> boek(en) in wachtrij:</div>`;
       html += '<ul style="margin:3px 0 0 20px;font-size:12px;color:#6b7280">';
       d.queue.forEach(f => { html += `<li>${f}</li>`; });
       html += '</ul>';
