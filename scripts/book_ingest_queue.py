@@ -496,14 +496,25 @@ def _phase_audit(state: dict) -> bool:
     # Auto-classify
     classification = auto_classify(chunks)
 
-    # AI usability tagging — updates chunks in-place
+    # AI usability tagging — Claude API primary, Ollama fallback
     # NOTE: prescreeen_images is NOT called here — it runs in background/nightly
-    tag_chunks_with_ollama(chunks)
+    try:
+        from claude_audit import is_enabled as _claude_enabled, audit_chunks_parallel as _claude_tag
+    except ImportError:
+        _claude_enabled = lambda: False  # noqa: E731
+
+    if _claude_enabled():
+        logger.info("Phase 2 — Using Claude API for tagging (%d chunks)", len(chunks))
+        chunks = _claude_tag(chunks)
+    else:
+        tag_chunks_with_ollama(chunks)
     usability_profile = build_usability_profile(chunks)
 
     # Update audit progress in state
-    tagged  = sum(1 for c in chunks if c.get("usability_tags"))
-    skipped = sum(1 for c in chunks if c.get("audit_status") == "skipped_ollama_timeout")
+    tagged  = sum(1 for c in chunks
+                  if c.get("usability_tags") or c.get("audit_status") == "tagged_claude")
+    skipped = sum(1 for c in chunks
+                  if (c.get("audit_status") or "").startswith("skipped"))
     state["phases"]["audit"]["chunks_tagged"]  = tagged
     state["phases"]["audit"]["chunks_skipped"] = skipped
     state["phases"]["audit"]["ollama_available"] = (tagged > 0)

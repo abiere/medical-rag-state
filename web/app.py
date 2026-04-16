@@ -191,6 +191,7 @@ NAV_ITEMS = [
     ("/search",          "Zoeken"),
     ("/videos",          "Video's"),
     ("/terminal",        "Terminal"),
+    ("/settings",        "Instellingen"),
 ]
 
 def _nav_html(active: str) -> str:
@@ -2767,6 +2768,353 @@ async def library_audit(filename: str):
     if not audit_path.exists():
         return JSONResponse({"error": "No audit report found"}, status_code=404)
     return json.loads(audit_path.read_text())
+
+
+# ── GET /api/settings ─────────────────────────────────────────────────────────
+
+SETTINGS_PATH = BASE / "config" / "settings.json"
+
+def _load_settings_cfg() -> dict:
+    try:
+        return json.loads(SETTINGS_PATH.read_text())
+    except Exception:
+        return {}
+
+def _save_settings_cfg(data: dict) -> None:
+    tmp = SETTINGS_PATH.with_suffix(".tmp")
+    tmp.write_text(json.dumps(data, indent=2, ensure_ascii=False))
+    tmp.replace(SETTINGS_PATH)
+
+@app.get("/api/settings")
+async def api_settings_get():
+    cfg = _load_settings_cfg()
+    # Mask API key — show only last 6 chars in UI
+    api_key = (cfg.get("claude_api") or {}).get("api_key", "")
+    masked  = ("●" * (len(api_key) - 6) + api_key[-6:]) if len(api_key) > 6 else ("●" * len(api_key))
+    if cfg.get("claude_api"):
+        cfg["claude_api"]["api_key_masked"] = masked
+        cfg["claude_api"]["api_key_set"]    = bool(api_key or os.environ.get("ANTHROPIC_API_KEY"))
+    return cfg
+
+@app.post("/api/settings")
+async def api_settings_post(request: Request):
+    try:
+        body = await request.json()
+    except Exception:
+        return JSONResponse({"error": "Invalid JSON"}, status_code=400)
+
+    current = _load_settings_cfg()
+
+    # Deep merge — only update known top-level sections
+    for section in ("claude_api", "nightly"):
+        if section in body and isinstance(body[section], dict):
+            if section not in current:
+                current[section] = {}
+            for k, v in body[section].items():
+                if k not in ("api_key_masked", "api_key_set"):  # never write derived fields
+                    current[section][k] = v
+
+    _save_settings_cfg(current)
+    return {"ok": True}
+
+@app.post("/api/settings/test-claude")
+async def api_settings_test_claude():
+    try:
+        import sys as _sys
+        _sys.path.insert(0, str(BASE / "scripts"))
+        from claude_audit import get_client, load_settings
+        import time
+
+        s   = load_settings()
+        cfg = s.get("claude_api", {})
+
+        # Resolve key — settings first, env fallback
+        key = cfg.get("api_key", "").strip() or os.environ.get("ANTHROPIC_API_KEY", "").strip()
+        if not key:
+            return JSONResponse({"ok": False, "error": "Geen API key geconfigureerd"})
+
+        import anthropic
+        client = anthropic.Anthropic(api_key=key)
+        model  = cfg.get("model", "claude-haiku-4-5-20251001")
+
+        t0 = time.time()
+        resp = client.messages.create(
+            model=model,
+            max_tokens=10,
+            messages=[{"role": "user", "content": "Reply with the single word: OK"}],
+        )
+        latency_ms = round((time.time() - t0) * 1000)
+        return {
+            "ok":         True,
+            "model":      model,
+            "latency_ms": latency_ms,
+            "response":   resp.content[0].text.strip(),
+        }
+    except Exception as e:
+        return JSONResponse({"ok": False, "error": str(e)[:200]})
+
+
+# ── GET /settings ──────────────────────────────────────────────────────────────
+
+@app.get("/settings", response_class=HTMLResponse)
+async def settings_page():
+    body = """
+<div class="wrap">
+  <h1 style="font-size:22px;font-weight:700;margin-bottom:24px;color:#111">Instellingen</h1>
+
+  <!-- Claude API card -->
+  <div class="section" style="max-width:680px;margin-bottom:24px">
+    <div class="section-head">
+      <span class="section-title">Claude API audit</span>
+      <span id="claude-status-badge" style="font-size:12px;color:#6b7280"></span>
+    </div>
+    <div style="padding:20px 24px;display:flex;flex-direction:column;gap:18px">
+
+      <!-- API key row -->
+      <div>
+        <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">API key</label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input id="api-key-input" type="password" placeholder="sk-ant-api03-…"
+            style="flex:1;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;
+                   font-size:13px;font-family:monospace;color:#111">
+          <button onclick="testClaude()"
+            style="padding:9px 16px;background:#1A6B72;color:#fff;border:none;
+                   border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;
+                   white-space:nowrap">
+            Testen
+          </button>
+        </div>
+        <div id="test-result" style="margin-top:6px;font-size:12px;color:#6b7280"></div>
+      </div>
+
+      <!-- Enabled toggle -->
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-size:13px;font-weight:600;color:#374151">Ingeschakeld</div>
+          <div style="font-size:12px;color:#6b7280;margin-top:2px">
+            Vervangt Ollama voor chunk-tagging. Geen nachtlimiet bij retroaudit.
+          </div>
+        </div>
+        <label style="position:relative;display:inline-block;width:44px;height:24px">
+          <input id="enabled-toggle" type="checkbox" style="opacity:0;width:0;height:0"
+            onchange="toggleChanged()">
+          <span id="toggle-slider"
+            style="position:absolute;cursor:pointer;inset:0;border-radius:12px;
+                   background:#d1d5db;transition:.2s">
+            <span id="toggle-thumb"
+              style="position:absolute;width:18px;height:18px;border-radius:50%;
+                     background:#fff;top:3px;left:3px;transition:.2s;
+                     box-shadow:0 1px 3px rgba(0,0,0,.3)"></span>
+          </span>
+        </label>
+      </div>
+
+      <!-- Model + Workers -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">Model</label>
+          <select id="model-select"
+            style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;
+                   font-size:13px;color:#111;background:#fff">
+            <option value="claude-haiku-4-5-20251001">claude-haiku-4-5 (snel)</option>
+            <option value="claude-sonnet-4-6">claude-sonnet-4-6 (beter)</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">Parallelle workers</label>
+          <input id="workers-input" type="number" min="1" max="50" value="10"
+            style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;
+                   font-size:13px;color:#111">
+        </div>
+      </div>
+
+      <!-- Save button -->
+      <div style="display:flex;justify-content:flex-end;padding-top:4px">
+        <button onclick="saveSettings()"
+          style="padding:10px 24px;background:#1A6B72;color:#fff;border:none;
+                 border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">
+          Opslaan
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nightly limits card -->
+  <div class="section" style="max-width:680px">
+    <div class="section-head">
+      <span class="section-title">Nachtelijke onderhoud</span>
+    </div>
+    <div style="padding:20px 24px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div>
+        <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">
+          Retroaudit limiet/nacht <span style="font-weight:400;color:#6b7280">(Ollama)</span>
+        </label>
+        <input id="retro-limit" type="number" min="50" max="2000" value="200"
+          style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px">
+      </div>
+      <div>
+        <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">
+          Afbeelding screening/nacht
+        </label>
+        <input id="image-limit" type="number" min="50" max="2000" value="200"
+          style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px">
+      </div>
+      <div style="grid-column:1/-1;display:flex;justify-content:flex-end">
+        <button onclick="saveNightly()"
+          style="padding:10px 24px;background:#1A6B72;color:#fff;border:none;
+                 border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">
+          Opslaan
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let _settings = {};
+
+async function loadSettings() {
+  try {
+    const r = await fetch('/api/settings');
+    _settings = await r.json();
+    const ca = _settings.claude_api || {};
+    const n  = _settings.nightly    || {};
+
+    // API key placeholder — show masked if set
+    if (ca.api_key_set) {
+      document.getElementById('api-key-input').placeholder =
+        ca.api_key_masked || '●●●● (opgeslagen)';
+      updateStatus('\u2713 API key aanwezig', '#059669');
+    } else {
+      updateStatus('Geen API key', '#6b7280');
+    }
+
+    // Toggle
+    const tog = document.getElementById('enabled-toggle');
+    tog.checked = ca.enabled || false;
+    refreshToggleUI(tog.checked);
+
+    // Model
+    const sel = document.getElementById('model-select');
+    if (ca.model) {
+      sel.value = ca.model;
+      if (!sel.value) sel.value = 'claude-haiku-4-5-20251001';
+    }
+
+    // Workers
+    if (ca.max_workers) document.getElementById('workers-input').value = ca.max_workers;
+
+    // Nightly
+    if (n.retroaudit_limit) document.getElementById('retro-limit').value = n.retroaudit_limit;
+    if (n.image_screen_limit) document.getElementById('image-limit').value = n.image_screen_limit;
+  } catch(e) {
+    console.error('loadSettings failed:', e);
+  }
+}
+
+function updateStatus(msg, color) {
+  const el = document.getElementById('claude-status-badge');
+  el.textContent = msg;
+  el.style.color = color;
+}
+
+function toggleChanged() {
+  const tog = document.getElementById('enabled-toggle');
+  refreshToggleUI(tog.checked);
+}
+
+function refreshToggleUI(on) {
+  const slider = document.getElementById('toggle-slider');
+  const thumb  = document.getElementById('toggle-thumb');
+  slider.style.background = on ? '#1A6B72' : '#d1d5db';
+  thumb.style.left = on ? '23px' : '3px';
+}
+
+async function testClaude() {
+  const btn = document.querySelector('button[onclick="testClaude()"]');
+  const res = document.getElementById('test-result');
+  btn.disabled = true;
+  btn.textContent = 'Testen\u2026';
+  res.textContent = '';
+
+  // Save key first if new value entered
+  const keyVal = document.getElementById('api-key-input').value.trim();
+  if (keyVal && keyVal !== '●●●● (opgeslagen)') {
+    await fetch('/api/settings', {method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({claude_api: {api_key: keyVal}})});
+  }
+
+  try {
+    const r = await fetch('/api/settings/test-claude', {method:'POST'});
+    const d = await r.json();
+    if (d.ok) {
+      res.textContent = '\u2713 Verbonden \u00b7 ' + d.model + ' \u00b7 ' + d.latency_ms + 'ms';
+      res.style.color = '#059669';
+      updateStatus('\u2713 Verbonden \u00b7 ' + d.model, '#059669');
+    } else {
+      res.textContent = '\u2717 ' + (d.error || 'Onbekende fout');
+      res.style.color = '#dc2626';
+      updateStatus('Verbindingsfout', '#dc2626');
+    }
+  } catch(e) {
+    res.textContent = 'Netwerkfout: ' + e;
+    res.style.color = '#dc2626';
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Testen';
+}
+
+async function saveSettings() {
+  const keyVal = document.getElementById('api-key-input').value.trim();
+  const payload = {
+    claude_api: {
+      enabled:     document.getElementById('enabled-toggle').checked,
+      model:       document.getElementById('model-select').value,
+      max_workers: parseInt(document.getElementById('workers-input').value) || 10,
+    }
+  };
+  if (keyVal && !keyVal.startsWith('\u25cf')) {
+    payload.claude_api.api_key = keyVal;
+  }
+  const r = await fetch('/api/settings', {method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(payload)});
+  const d = await r.json();
+  if (d.ok) {
+    showToast('Opgeslagen');
+    await loadSettings();
+  } else {
+    showToast('Fout: ' + JSON.stringify(d), true);
+  }
+}
+
+async function saveNightly() {
+  const payload = {
+    nightly: {
+      retroaudit_limit:   parseInt(document.getElementById('retro-limit').value)  || 200,
+      image_screen_limit: parseInt(document.getElementById('image-limit').value) || 200,
+    }
+  };
+  const r = await fetch('/api/settings', {method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(payload)});
+  const d = await r.json();
+  showToast(d.ok ? 'Opgeslagen' : 'Fout');
+}
+
+function showToast(msg, isError) {
+  const t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed;bottom:24px;right:24px;padding:10px 18px;'
+    + 'border-radius:8px;font-size:13px;font-weight:600;color:#fff;z-index:9999;'
+    + 'background:' + (isError ? '#dc2626' : '#059669');
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2800);
+}
+
+loadSettings();
+</script>
+"""
+    return _page("Instellingen", body, "/settings")
 
 
 # ── GET /library/overview ──────────────────────────────────────────────────────

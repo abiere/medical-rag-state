@@ -723,11 +723,33 @@ class MaintenanceRunner:
     # ─────────────────────────────────────────────────────────────────────────
 
     def _phase_retro_audit(self) -> tuple[str, dict]:
-        """Retry Ollama tagging for up to 200 chunks that were skipped earlier."""
+        """Retry tagging for chunks skipped by Ollama. Claude API primary, Ollama fallback."""
         findings   = []
         status     = "OK"
         COLLECTION = "medical_library"
-        MAX_CHUNKS = 200
+
+        import sys as _sys
+        _sys.path.insert(0, str(BASE / "scripts"))
+
+        # Determine engine and chunk limit
+        try:
+            from claude_audit import is_enabled as _claude_enabled, audit_chunks_parallel
+            use_claude = _claude_enabled()
+        except ImportError:
+            use_claude = False
+
+        if use_claude:
+            # Claude: no per-night limit — process everything
+            MAX_CHUNKS = 10_000
+            findings.append("Engine: Claude API (geen nachtlimiet)")
+        else:
+            try:
+                from claude_audit import load_settings as _ls_ca
+                _cfg_nm = _ls_ca().get("nightly", {})
+            except Exception:
+                _cfg_nm = {}
+            MAX_CHUNKS = _cfg_nm.get("retroaudit_limit", 200)
+            findings.append(f"Engine: Ollama (limiet: {MAX_CHUNKS}/nacht)")
 
         # 1. Check Qdrant availability first
         code, _ = http_get(f"{QDRANT_BASE}/healthz", timeout=5)
@@ -735,15 +757,15 @@ class MaintenanceRunner:
             findings.append("Qdrant offline — retroaudit overgeslagen")
             return "WARNING", {"findings": findings}
 
-        # 2. Scroll for chunks with audit_status=skipped_ollama_timeout
+        # 2. Scroll for all skipped chunks
         code, data = http_post(
             f"{QDRANT_BASE}/collections/{COLLECTION}/points/scroll",
             data={
                 "filter": {
-                    "must": [{
-                        "key":   "audit_status",
-                        "match": {"value": "skipped_ollama_timeout"},
-                    }]
+                    "should": [
+                        {"key": "audit_status", "match": {"value": "skipped_ollama_timeout"}},
+                        {"key": "audit_status", "match": {"value": "skipped_claude_error"}},
+                    ]
                 },
                 "limit":        MAX_CHUNKS,
                 "with_payload": True,
@@ -758,19 +780,10 @@ class MaintenanceRunner:
 
         points_raw = (data.get("result") or {}).get("points", [])
         if not points_raw:
-            findings.append("Geen chunks met audit_status=skipped_ollama_timeout — niets te doen")
+            findings.append("Geen overgeslagen chunks gevonden — niets te doen")
             return "OK", {"findings": findings}
 
         findings.append(f"{len(points_raw)} overgeslagen chunk(s) gevonden voor retroaudit")
-
-        # 3. Import tagging function
-        import sys as _sys
-        _sys.path.insert(0, str(BASE / "scripts"))
-        try:
-            from audit_book import tag_chunks_with_ollama
-        except ImportError as exc:
-            findings.append(f"Import audit_book mislukt: {exc} — retroaudit overgeslagen")
-            return "WARNING", {"findings": findings}
 
         # Build (point_id, chunk_dict) pairs
         id_chunk_pairs: list[tuple] = []
@@ -780,36 +793,71 @@ class MaintenanceRunner:
             if pid is not None:
                 id_chunk_pairs.append((pid, payload))
 
-        # Clear audit_status so success vs. failure can be detected after tagging
-        for _, chunk in id_chunk_pairs:
-            chunk.pop("audit_status", None)
-
         chunks_only = [pair[1] for pair in id_chunk_pairs]
-        tag_chunks_with_ollama(chunks_only)
 
-        # 4. Push successful tags back to Qdrant
-        scored        = 0
-        still_pending = 0
+        # 3a. Claude path
+        if use_claude:
+            # Clear audit_status before sending to Claude
+            for c in chunks_only:
+                c.pop("audit_status", None)
 
-        for pid, chunk in id_chunk_pairs:
-            if chunk.get("audit_status") == "skipped_ollama_timeout":
-                still_pending += 1
-                continue
+            tagged_list = audit_chunks_parallel(chunks_only)
+            scored        = 0
+            still_pending = 0
 
-            update_payload = {
-                "usability_tags":     chunk.get("usability_tags", []),
-                "protocol_relevance": chunk.get("protocol_relevance", 0.0),
-                "has_point_codes":    chunk.get("has_point_codes", False),
-                "has_figure_refs":    chunk.get("has_figure_refs", False),
-                "primary_use":        chunk.get("primary_use", ""),
-                "audit_status":       "tagged",
-            }
-            http_put(
-                f"{QDRANT_BASE}/collections/{COLLECTION}/points/payload",
-                data={"payload": update_payload, "points": [pid]},
-                timeout=10,
-            )
-            scored += 1
+            for (pid, _), chunk in zip(id_chunk_pairs, tagged_list):
+                if (chunk.get("audit_status") or "").startswith("skipped"):
+                    still_pending += 1
+                    continue
+                update_payload = {
+                    "kai_k":          chunk.get("kai_k", 3),
+                    "kai_a":          chunk.get("kai_a", 3),
+                    "kai_i":          chunk.get("kai_i", 3),
+                    "tags":           chunk.get("tags", []),
+                    "summary":        chunk.get("summary", ""),
+                    "audit_status":   "tagged_claude",
+                    "audit_engine":   "claude_api",
+                }
+                http_put(
+                    f"{QDRANT_BASE}/collections/{COLLECTION}/points/payload",
+                    data={"payload": update_payload, "points": [pid]},
+                    timeout=10,
+                )
+                scored += 1
+
+        # 3b. Ollama path
+        else:
+            try:
+                from audit_book import tag_chunks_with_ollama
+            except ImportError as exc:
+                findings.append(f"Import audit_book mislukt: {exc} — retroaudit overgeslagen")
+                return "WARNING", {"findings": findings}
+
+            for _, chunk in id_chunk_pairs:
+                chunk.pop("audit_status", None)
+
+            tag_chunks_with_ollama(chunks_only)
+            scored        = 0
+            still_pending = 0
+
+            for pid, chunk in id_chunk_pairs:
+                if chunk.get("audit_status") == "skipped_ollama_timeout":
+                    still_pending += 1
+                    continue
+                update_payload = {
+                    "usability_tags":     chunk.get("usability_tags", []),
+                    "protocol_relevance": chunk.get("protocol_relevance", 0.0),
+                    "has_point_codes":    chunk.get("has_point_codes", False),
+                    "has_figure_refs":    chunk.get("has_figure_refs", False),
+                    "primary_use":        chunk.get("primary_use", ""),
+                    "audit_status":       "tagged",
+                }
+                http_put(
+                    f"{QDRANT_BASE}/collections/{COLLECTION}/points/payload",
+                    data={"payload": update_payload, "points": [pid]},
+                    timeout=10,
+                )
+                scored += 1
 
         findings.append(
             f"Retroaudit: {len(id_chunk_pairs)} geprobeerd, "

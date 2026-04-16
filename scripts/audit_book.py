@@ -628,8 +628,17 @@ def audit_book(
                     classification.get("confidence", 0))
 
     if run_tagging and chunks:
-        logger.info("Tagging %d chunks with usability tags...", len(chunks))
-        tag_chunks_with_ollama(chunks)
+        try:
+            from claude_audit import is_enabled as claude_enabled, audit_chunks_parallel
+        except ImportError:
+            claude_enabled = lambda: False  # noqa: E731
+
+        if claude_enabled():
+            logger.info("Using Claude API for audit (%d chunks)", len(chunks))
+            chunks = audit_chunks_parallel(chunks)
+        else:
+            logger.info("Tagging %d chunks with usability tags...", len(chunks))
+            tag_chunks_with_ollama(chunks)
         usability_profile = build_usability_profile(chunks)
         logger.info("Usability profile: %d tags applied", len(usability_profile.get("scores", {})))
 

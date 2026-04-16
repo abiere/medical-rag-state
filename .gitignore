@@ -14,6 +14,7 @@ videos/
 .env
 .env.*
 *.env
+config/settings.json
 
 # Data directories — ignore large/generated content, track metadata files
 data/extracted_images/
