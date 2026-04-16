@@ -1057,13 +1057,23 @@ async function _refreshBookProgress() {
           // ── Detail text (Fase cell) ─────────────────────────────────────
           let detail = '';
           if (ph === 'parse') {
-            if (isRunning && info.pages_total) {
-              detail = info.pages_done > 0
-                ? `pagina ${fmt(info.pages_done)} / ${fmt(info.pages_total)}`
-                : `opstarten\u2026 / ${fmt(info.pages_total)} pagina\u2019s`;
+            const engineBadge = info.ocr_engine === 'google_vision'
+              ? ' \u00b7 <span style="color:#92400e;font-size:11px">Google Vision API</span>'
+              : (info.ocr_engine && info.ocr_engine !== 'native'
+                  ? ` \u00b7 <span style="color:#6b7280;font-size:11px">${info.ocr_engine}</span>`
+                  : '');
+            if (isRunning) {
+              if (!info.pages_total) {
+                detail = 'Voorbereiden\u2026 OCR model laden';
+              } else if (info.pages_done > 0) {
+                detail = `pagina ${fmt(info.pages_done)} / ${fmt(info.pages_total)}` + engineBadge;
+              } else {
+                detail = `opstarten\u2026 / ${fmt(info.pages_total)} pagina\u2019s`;
+              }
             } else if (isDone) {
               detail = `${fmt(info.pages_total)} pagina\u2019s`;
               if (info.chunks_extracted) detail += ` \u00b7 ${fmt(info.chunks_extracted)} chunks`;
+              detail += engineBadge;
             }
           } else if (ph === 'audit') {
             const processed = (info.chunks_tagged || 0) + (info.chunks_skipped || 0);
@@ -2072,6 +2082,13 @@ function statusPill(status) {
                 padding:2px 10px;font-size:12px;font-weight:600">${cfg.label}</span>`;
 }
 
+function ocrBadge(engine) {
+  if (!engine || engine === 'native') return '';
+  if (engine === 'google_vision')
+    return '<span style="font-size:10px;background:#fef3c7;color:#92400e;border-radius:4px;padding:1px 6px;margin-left:4px">Google Vision</span>';
+  return `<span style="font-size:10px;background:#f3f4f6;color:#6b7280;border-radius:4px;padding:1px 6px;margin-left:4px">${engine}</span>`;
+}
+
 function renderCard(item) {
   const canDelete = item.chunk_count > 0;
   const delBtn = canDelete
@@ -2092,7 +2109,7 @@ function renderCard(item) {
       ${kaiPill('K', item.k)} ${kaiPill('A', item.a)} ${kaiPill('I', item.i)}
     </div>
     <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-      ${statusPill(item.status)}
+      ${statusPill(item.status)}${ocrBadge(item.ocr_engine)}
       <span style="font-size:12px;color:#6b7280">${item.chunk_count !== null ? item.chunk_count.toLocaleString() + ' chunks' : '…'}</span>
     </div>
     ${delBtn}
@@ -2204,6 +2221,21 @@ async def api_library_items():
     # Run all Qdrant count queries in parallel
     counts = await asyncio.gather(*count_coros, return_exceptions=True)
 
+    # Build map of filename → ocr_engine from state.json cache
+    ocr_engine_map: dict[str, str] = {}
+    try:
+        for sf in CACHE_DIR.glob("*/state.json"):
+            try:
+                s = json.loads(sf.read_text())
+                fn     = (s.get("filename") or "").lower()
+                engine = (s.get("phases") or {}).get("parse", {}).get("ocr_engine") or ""
+                if fn and engine:
+                    ocr_engine_map[fn] = engine
+            except Exception:
+                pass
+    except Exception:
+        pass
+
     items_out = []
     for meta, count in zip(items_meta, counts):
         chunk_count = count if isinstance(count, int) else 0
@@ -2226,7 +2258,19 @@ async def api_library_items():
         else:
             status = "not_ingested"
 
-        items_out.append({**meta, "chunk_count": chunk_count, "status": status})
+        # Find OCR engine by matching patterns against state.json filenames
+        ocr_engine = ""
+        for p in (patterns or [meta["id"]]):
+            pl = p.lower()
+            for fn_key, eng in ocr_engine_map.items():
+                if pl in fn_key or fn_key in pl:
+                    ocr_engine = eng
+                    break
+            if ocr_engine:
+                break
+
+        items_out.append({**meta, "chunk_count": chunk_count, "status": status,
+                          "ocr_engine": ocr_engine})
 
     return {"items": items_out}
 

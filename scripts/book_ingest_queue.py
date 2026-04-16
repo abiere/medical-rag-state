@@ -438,6 +438,11 @@ def _phase_parse(state: dict, filepath: Path, fmt: str, collection: str, categor
     # Count images across all chunks
     images_total = sum(len(c.get("image_links", [])) for c in chunks)
 
+    # Derive dominant OCR engine from chunk metadata
+    from collections import Counter
+    engine_counts    = Counter(c.get("ocr_engine", "native") for c in chunks)
+    dominant_engine  = engine_counts.most_common(1)[0][0] if engine_counts else "native"
+
     # Save output
     out_file.write_text(json.dumps(chunks, ensure_ascii=False))
 
@@ -447,6 +452,7 @@ def _phase_parse(state: dict, filepath: Path, fmt: str, collection: str, categor
     _set_phase_done(state, "parse",
                     chunks_extracted=len(chunks),
                     images_extracted=images_total,
+                    ocr_engine=dominant_engine,
                     pages_total=state["phases"]["parse"].get("pages_total") or len(chunks),
                     pages_done=state["phases"]["parse"].get("pages_total") or len(chunks))
 

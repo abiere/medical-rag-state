@@ -433,6 +433,7 @@ def _parse_pymupdf(pdf_path: Path, progress_fn=None) -> list[dict]:
 
 _easyocr_reader  = None
 _rapidocr_engine = None
+_vision_client   = None
 _surya_det       = None
 _surya_rec       = None
 _engines: list[tuple[str, Any]] | None = None
@@ -454,6 +455,15 @@ def _lazy_rapidocr():
         logger.info("Loading RapidOCR engine (first use)...")
         _rapidocr_engine = RapidOCR()
     return _rapidocr_engine
+
+
+def _lazy_vision_client():
+    global _vision_client
+    if _vision_client is None:
+        from google.cloud import vision as gv
+        logger.info("Loading Google Vision client (first use)...")
+        _vision_client = gv.ImageAnnotatorClient()
+    return _vision_client
 
 
 def _lazy_surya():
@@ -512,6 +522,29 @@ def _ocr_tesseract(pil_image) -> tuple[str, float]:
     return text.strip(), 0.7   # tesseract doesn't give per-image confidence easily
 
 
+def _ocr_google_vision(pil_image) -> tuple[str, float]:
+    import io
+    from google.cloud import vision as gv
+    client   = _lazy_vision_client()
+    buf      = io.BytesIO()
+    pil_image.save(buf, format="PNG")
+    image    = gv.Image(content=buf.getvalue())
+    response = client.document_text_detection(image=image)
+    if response.error.message:
+        raise RuntimeError(f"Vision API error: {response.error.message}")
+    full_text = response.full_text_annotation
+    if not full_text or not full_text.text:
+        return "", 0.0
+    confs = [
+        block.confidence
+        for page in full_text.pages
+        for block in page.blocks
+        if block.confidence
+    ]
+    conf = sum(confs) / len(confs) if confs else 0.9
+    return full_text.text, round(conf, 3)
+
+
 # ── engine registry ───────────────────────────────────────────────────────────
 
 def _build_engines() -> list[tuple[str, Any]]:
@@ -551,6 +584,21 @@ def _build_engines() -> list[tuple[str, Any]]:
         logger.info("OCR available: Tesseract")
     except Exception:
         logger.warning("Tesseract not available")
+
+    try:
+        import google.cloud.vision  # noqa: F401
+        import os
+        _cred = (
+            os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+            or os.path.expanduser("~/.config/gcloud/application_default_credentials.json")
+        )
+        if os.path.exists(_cred):
+            result.append(("google_vision", _ocr_google_vision))
+            logger.info("OCR available: Google Vision")
+        else:
+            logger.debug("Google Vision: library present but no credentials found")
+    except ImportError:
+        pass
 
     if not result:
         logger.error("No OCR engines available — scanned PDFs will not be readable")
@@ -687,6 +735,89 @@ def _save_page_render(pil_image, book_stem: str, page_num: int) -> str:
     return str(out_path.relative_to(BASE))
 
 
+# ── Google Vision parallel parser ────────────────────────────────────────────
+
+def _parse_scanned_parallel_vision(
+    pdf_path: Path, progress_fn=None, max_workers: int = 8
+) -> tuple[list[dict], dict]:
+    """
+    Google Vision variant: renders all pages at 150 DPI, sends API calls in
+    parallel via ThreadPoolExecutor. Network I/O-bound — 8 workers ≈ 8× faster
+    than sequential. Used automatically when calibration picks google_vision.
+    """
+    import fitz
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    from PIL import Image as PilImage
+
+    try:
+        doc = fitz.open(str(pdf_path))
+    except Exception as e:
+        logger.error("Cannot open PDF with fitz: %s", e)
+        return [], {"total_pages": 0, "readable_pages": 0, "unreadable_pages": 0,
+                    "engine_usage": {}, "avg_confidence": 0.0}
+
+    n_pages = len(doc)
+    _report_progress(progress_fn, "parsing", 0, n_pages, 0)
+
+    # Render all pages to PIL images first (local, fast, 150 DPI for smaller payload)
+    pil_images: list = []
+    for i in range(n_pages):
+        mat = fitz.Matrix(150 / 72, 150 / 72)
+        pix = doc[i].get_pixmap(matrix=mat, colorspace=fitz.csRGB)
+        pil_images.append(PilImage.frombytes("RGB", [pix.width, pix.height], pix.samples))
+    doc.close()
+
+    # Submit all pages to Vision API in parallel
+    results: list = [None] * n_pages
+    completed = 0
+
+    def _process_page(page_num: int):
+        text, conf = _ocr_google_vision(pil_images[page_num])
+        return page_num, text, conf
+
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = {executor.submit(_process_page, i): i for i in range(n_pages)}
+        for future in as_completed(futures):
+            try:
+                page_num, text, conf = future.result()
+                results[page_num] = (text, conf)
+            except Exception as e:
+                logger.warning("Vision API page %d failed: %s", futures[future], e)
+            completed += 1
+            _report_progress(progress_fn, "parsing", completed, n_pages, completed)
+
+    # Build pages list in page-number order
+    pages: list[dict] = []
+    for page_num, result in enumerate(results):
+        if result is None:
+            continue
+        text, conf = result
+        if not text or len(text.split()) < 3:
+            continue
+        paras  = [p.strip() for p in text.split("\n\n") if p.strip()]
+        ch, sec = _detect_chapter_section(paras)
+        pages.append({
+            "page_number":    page_num + 1,
+            "paragraphs":     paras,
+            "chapter":        ch,
+            "section":        sec,
+            "ocr_engine":     "google_vision",
+            "ocr_confidence": conf,
+        })
+
+    good = [r for r in results if r and r[0] and len(r[0].split()) >= 3]
+    avg_conf = round(sum(c for _, c in good) / len(good), 3) if good else 0.9
+    ocr_stats = {
+        "total_pages":      n_pages,
+        "readable_pages":   len(pages),
+        "unreadable_pages": n_pages - len(pages),
+        "engine_usage":     {"google_vision": len(pages)},
+        "avg_confidence":   avg_conf,
+    }
+    logger.info("Google Vision parallel parse: %d/%d pages readable", len(pages), n_pages)
+    return pages, ocr_stats
+
+
 # ── scanned PDF parser ────────────────────────────────────────────────────────
 
 def _parse_scanned(pdf_path: Path, book_stem: str, progress_fn=None) -> tuple[list[dict], dict]:
@@ -721,6 +852,10 @@ def _parse_scanned(pdf_path: Path, book_stem: str, progress_fn=None) -> tuple[li
         # Move preferred engine to front of the list for this run
         engines = sorted(engines, key=lambda e: 0 if e[0] == preferred else 1)
         logger.info("Using calibrated engine order: %s", [e[0] for e in engines])
+
+    # Google Vision parallel shortcut — skip sequential page loop entirely
+    if engines and engines[0][0] == "google_vision":
+        return _parse_scanned_parallel_vision(pdf_path, progress_fn=progress_fn)
 
     pages: list[dict] = []
     confidences: list[float] = []
