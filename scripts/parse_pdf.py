@@ -120,6 +120,24 @@ def _batch_correct(chunks):
         return chunks
 
 
+# ── progress reporting ────────────────────────────────────────────────────────
+
+def _report_progress(
+    fn,
+    phase: str,
+    current_page: int,
+    total_pages: int,
+    chunks_so_far: int = 0,
+) -> None:
+    """Safely call the optional progress callback from book_ingest_queue.py."""
+    if fn is None:
+        return
+    try:
+        fn(phase, current_page, total_pages, chunks_so_far)
+    except Exception:
+        pass
+
+
 # ── language detection + translation ─────────────────────────────────────────
 
 def _detect_lang(text: str) -> str:
@@ -596,7 +614,7 @@ def _save_page_render(pil_image, book_stem: str, page_num: int) -> str:
 
 # ── scanned PDF parser ────────────────────────────────────────────────────────
 
-def _parse_scanned(pdf_path: Path, book_stem: str) -> tuple[list[dict], dict]:
+def _parse_scanned(pdf_path: Path, book_stem: str, progress_fn=None) -> tuple[list[dict], dict]:
     """
     Parse fully scanned PDF using cascade OCR on every page.
     Returns (pages, ocr_stats).
@@ -632,7 +650,11 @@ def _parse_scanned(pdf_path: Path, book_stem: str) -> tuple[list[dict], dict]:
     pages: list[dict] = []
     confidences: list[float] = []
 
+    _report_progress(progress_fn, "parsing", 0, n_pages, 0)
+
     for page_num in range(n_pages):
+        if page_num % 10 == 0:
+            _report_progress(progress_fn, "parsing", page_num, n_pages, len(pages))
         try:
             pil_image = _render_page(doc, page_num)
 
@@ -703,7 +725,7 @@ def _parse_scanned(pdf_path: Path, book_stem: str) -> tuple[list[dict], dict]:
 
 # ── mixed PDF parser ──────────────────────────────────────────────────────────
 
-def _parse_mixed(pdf_path: Path, book_stem: str) -> tuple[list[dict], dict]:
+def _parse_mixed(pdf_path: Path, book_stem: str, progress_fn=None) -> tuple[list[dict], dict]:
     """
     Mixed PDF: pdfplumber extracts text per page; pages with < NATIVE_THRESHOLD
     words are re-processed with cascade OCR.
@@ -726,7 +748,7 @@ def _parse_mixed(pdf_path: Path, book_stem: str) -> tuple[list[dict], dict]:
         plumber = pdfplumber.open(str(pdf_path))
     except Exception as e:
         logger.warning("pdfplumber unavailable (%s) — full cascade OCR", e)
-        return _parse_scanned(pdf_path, book_stem)
+        return _parse_scanned(pdf_path, book_stem, progress_fn=progress_fn)
 
     try:
         doc = fitz.open(str(pdf_path))
@@ -742,7 +764,11 @@ def _parse_mixed(pdf_path: Path, book_stem: str) -> tuple[list[dict], dict]:
     pages: list[dict] = []
     confidences: list[float] = []
 
+    _report_progress(progress_fn, "parsing", 0, n_pages, 0)
+
     for page_num in range(n_pages):
+        if page_num % 10 == 0:
+            _report_progress(progress_fn, "parsing", page_num, n_pages, len(pages))
         try:
             # Try pdfplumber first
             native_text  = plumber.pages[page_num].extract_text() or ""
@@ -815,6 +841,7 @@ def parse_pdf(
     pdf_path: Path,
     collection_type: str,
     source_category: str,
+    progress_fn=None,
 ) -> list[dict[str, Any]]:
     """
     Parse a PDF and return a list of Qdrant-ready chunk dicts.
@@ -833,14 +860,25 @@ def parse_pdf(
 
     ocr_stats: dict | None = None
 
+    # Get page count up-front so we can report progress during Docling's black-box run
+    _total_pages = 0
+    try:
+        import fitz as _fitz_tmp
+        _doc_tmp = _fitz_tmp.open(str(pdf_path))
+        _total_pages = len(_doc_tmp)
+        _doc_tmp.close()
+    except Exception:
+        pass
+
     if pdf_type == "native":
+        _report_progress(progress_fn, "parsing", 0, _total_pages, 0)
         pages = _parse_docling(pdf_path)
         if pages is None:
             pages = _parse_pymupdf(pdf_path)
     elif pdf_type == "scanned":
-        pages, ocr_stats = _parse_scanned(pdf_path, book_stem)
+        pages, ocr_stats = _parse_scanned(pdf_path, book_stem, progress_fn=progress_fn)
     else:
-        pages, ocr_stats = _parse_mixed(pdf_path, book_stem)
+        pages, ocr_stats = _parse_mixed(pdf_path, book_stem, progress_fn=progress_fn)
 
     if not pages:
         logger.error("No pages extracted from %s", pdf_path.name)
@@ -855,8 +893,12 @@ def parse_pdf(
     current_chapter = current_section = ""
     ingested_at = datetime.now(timezone.utc).isoformat()
     first_chunk = True  # flag to attach ocr_stats to first chunk
+    _n_pages = len(pages)
+    _report_progress(progress_fn, "chunking", 0, _n_pages, 0)
 
-    for page in pages:
+    for _page_idx, page in enumerate(pages):
+        if _page_idx % 10 == 0 and _page_idx > 0:
+            _report_progress(progress_fn, "chunking", _page_idx, _n_pages, chunk_idx)
         page_no    = page["page_number"]
         paragraphs = page["paragraphs"]
 

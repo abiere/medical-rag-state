@@ -309,6 +309,23 @@ def process_book(item: dict) -> bool:
         _hb_stop.set()
 
 
+def _write_progress(phase: str, current_page: int, total_pages: int, chunks_so_far: int) -> None:
+    """Merge progress fields into CURRENT_FILE so the API can expose them."""
+    try:
+        data = json.loads(CURRENT_FILE.read_text()) if CURRENT_FILE.exists() else {}
+        pct = int(current_page / total_pages * 100) if total_pages else 0
+        data["progress"] = {
+            "phase":         phase,
+            "current_page":  current_page,
+            "total_pages":   total_pages,
+            "percent":       pct,
+            "chunks_so_far": chunks_so_far,
+        }
+        CURRENT_FILE.write_text(json.dumps(data, indent=2))
+    except Exception:
+        pass
+
+
 def _process_book_inner(
     filename: str,
     filepath: Path,
@@ -323,12 +340,12 @@ def _process_book_inner(
         logger.error("File not found: %s", filepath)
         return False
 
-    # 1. Parse
+    # 1. Parse (with progress callback so CURRENT_FILE gets live updates)
     try:
         sys.path.insert(0, str(BASE / "scripts"))
         if fmt == "pdf":
             from parse_pdf import parse_pdf
-            chunks = parse_pdf(filepath, collection, category)
+            chunks = parse_pdf(filepath, collection, category, progress_fn=_write_progress)
         elif fmt == "epub":
             from parse_epub import parse_epub
             chunks = parse_epub(filepath, collection, category)
@@ -344,6 +361,7 @@ def _process_book_inner(
         return False
 
     # 2. Structural audit (fast, always)
+    _write_progress("auditing", 0, len(chunks), len(chunks))
     from audit_book import structural_audit, llm_audit, auto_classify, check_remediation, audit_book
     s = structural_audit(chunks)
     logger.info("Structural: avg_words=%.0f short=%d long=%d",
@@ -417,6 +435,7 @@ def _process_book_inner(
     if qs < MIN_QUALITY_SCORE:
         logger.warning("Ingesting anyway with low quality score %.2f", qs)
 
+    _write_progress("embedding", 0, len(chunks), 0)
     try:
         n_upserted = _upsert_chunks(collection, chunks)
     except Exception as e:

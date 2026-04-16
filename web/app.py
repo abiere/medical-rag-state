@@ -820,7 +820,29 @@ async function _refreshBookProgress() {
     html += '<span style="font-size:12px;color:#6b7280">↻ 10s</span>';
     html += '</div></div>';
     if (d.current) {
-      html += `<div style="font-size:14px;margin-bottom:4px"><strong>Bezig:</strong> ${d.current.filename} <span style="color:#6b7280">(${d.current.elapsed_minutes} min)</span></div>`;
+      html += `<div style="font-size:14px;margin-bottom:6px"><strong>Bezig:</strong> ${d.current.filename} <span style="color:#6b7280">(${d.current.elapsed_minutes} min)</span></div>`;
+      const prog = d.current.progress;
+      if (prog) {
+        const phaseColors = {parsing:'#7c3aed',chunking:'#0369a1',auditing:'#b45309',embedding:'#065f46'};
+        const phaseLabels = {parsing:'Parsing',chunking:'Chunking',auditing:'Auditing',embedding:'Embedding'};
+        const col = phaseColors[prog.phase] || '#374151';
+        const lbl = phaseLabels[prog.phase] || prog.phase;
+        html += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">`;
+        html += `<span style="background:${col};color:#fff;border-radius:999px;padding:2px 10px;font-size:11px;font-weight:600">${lbl}</span>`;
+        if (prog.total_pages > 0) {
+          html += `<span style="font-size:13px;color:#374151">Pagina ${prog.current_page}/${prog.total_pages}</span>`;
+        }
+        if (prog.chunks_so_far > 0) {
+          html += `<span style="font-size:12px;color:#6b7280">${prog.chunks_so_far} chunks</span>`;
+        }
+        html += `</div>`;
+        if (prog.total_pages > 0) {
+          const pct = Math.min(prog.percent, 100);
+          html += `<div style="background:#e5e7eb;border-radius:999px;height:8px;margin-bottom:6px">`;
+          html += `<div style="background:${col};border-radius:999px;height:8px;width:${pct}%;transition:width 0.5s"></div>`;
+          html += `</div>`;
+        }
+      }
       if (d.last_log) html += `<div style="font-size:11px;color:#6b7280;font-family:monospace;margin-bottom:8px;word-break:break-all;background:#f0f7ff;border-radius:4px;padding:4px 8px">${d.last_log.slice(-140)}</div>`;
     }
     if (d.queue_count > 0) {
@@ -1785,6 +1807,7 @@ async def library_progress():
                 "started":         started_str,
                 "elapsed_minutes": elapsed_min,
                 "collection":      cur.get("collection", ""),
+                "progress":        cur.get("progress"),
             }
     except Exception:
         pass
