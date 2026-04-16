@@ -1,6 +1,6 @@
 # BACKLOG — Medical RAG
 > Auto-updated by Claude Code after each session.
-> Last updated: 2026-04-16 — complete pipeline rebuild (state machine + watchdog + nightly phases)
+> Last updated: 2026-04-16 — parse speed fix: PyMuPDF for native PDFs (377× faster), RapidOCR first in cascade
 
 ## 🔴 Prioriteit — volgende sessie
 
@@ -76,6 +76,18 @@
 - [ ] Visueel zoeken — upload afbeelding, vind vergelijkbare
 
 - [ ] Scraper recharge.health blog (publieke content)
+
+## ✅ Afgerond sessie 2026-04-16 (parse speed fix)
+
+### Parse Speed Optimalisatie
+- [x] FIX A — Native PDFs: PyMuPDF als primaire parser i.p.v. Docling
+      Deadman: 2753s (45.9 min) → 7.3s (< 10 sec) — 377× sneller, 92 pagina's/sec
+      Getest: 673 pagina's, tekst correct (eerste alinea: "A Manual of ACUPUNCTURE")
+- [x] FIX B — Scanned PDFs: RapidOCR als eerste engine in cascade
+      rapidocr-onnxruntime geïnstalleerd, _ocr_rapidocr() + _lazy_rapidocr() toegevoegd
+      Cascade nu: RapidOCR → EasyOCR → Surya → Tesseract (bevestigd in Trail Guide logs)
+- [x] Reset Deadman + Travell parse fase (beide stonden op "running" met Docling)
+      Queue herstart — Trail Guide (scanned) eerst met RapidOCR, daarna Deadman + Travell
 
 ## ✅ Afgerond sessie 2026-04-16 (pipeline rebuild)
 

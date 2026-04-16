@@ -391,9 +391,10 @@ def _parse_docling(pdf_path: Path) -> list[dict] | None:
 
 # ── PyMuPDF text parser ───────────────────────────────────────────────────────
 
-def _parse_pymupdf(pdf_path: Path) -> list[dict]:
+def _parse_pymupdf(pdf_path: Path, progress_fn=None) -> list[dict]:
     """
     Returns list of {page_number, paragraphs, chapter, section} dicts.
+    Reads the native text layer directly — no ML model, very fast.
     """
     try:
         import fitz
@@ -403,7 +404,10 @@ def _parse_pymupdf(pdf_path: Path) -> list[dict]:
 
     pages = []
     doc = fitz.open(str(pdf_path))
-    for page_num in range(len(doc)):
+    n_pages = len(doc)
+    _report_progress(progress_fn, "parsing", 0, n_pages, 0)
+    for page_num in range(n_pages):
+        _report_progress(progress_fn, "parsing", page_num, n_pages, len(pages))
         page = doc[page_num]
         blocks = page.get_text("blocks")  # list of (x0, y0, x1, y1, text, ...)
         paras = [b[4].strip() for b in sorted(blocks, key=lambda b: (b[1], b[0])) if b[4].strip()]
@@ -417,6 +421,7 @@ def _parse_pymupdf(pdf_path: Path) -> list[dict]:
             "ocr_confidence": 1.0,
         })
     doc.close()
+    _report_progress(progress_fn, "parsing", n_pages, n_pages, len(pages))
     return pages
 
 
@@ -426,9 +431,10 @@ def _parse_pymupdf(pdf_path: Path) -> list[dict]:
 
 # ── OCR engine singletons (lazy-loaded) ───────────────────────────────────────
 
-_easyocr_reader = None
-_surya_det      = None
-_surya_rec      = None
+_easyocr_reader  = None
+_rapidocr_engine = None
+_surya_det       = None
+_surya_rec       = None
 _engines: list[tuple[str, Any]] | None = None
 
 
@@ -439,6 +445,15 @@ def _lazy_easyocr():
         logger.info("Loading EasyOCR model (first use)...")
         _easyocr_reader = easyocr.Reader(["en"], gpu=False, verbose=False)
     return _easyocr_reader
+
+
+def _lazy_rapidocr():
+    global _rapidocr_engine
+    if _rapidocr_engine is None:
+        from rapidocr_onnxruntime import RapidOCR
+        logger.info("Loading RapidOCR engine (first use)...")
+        _rapidocr_engine = RapidOCR()
+    return _rapidocr_engine
 
 
 def _lazy_surya():
@@ -453,6 +468,18 @@ def _lazy_surya():
 
 
 # ── per-engine OCR functions ───────────────────────────────────────────────────
+
+def _ocr_rapidocr(pil_image) -> tuple[str, float]:
+    import numpy as np
+    engine  = _lazy_rapidocr()
+    result, _ = engine(np.array(pil_image))
+    if not result:
+        return "", 0.0
+    text  = "\n".join(line[1] for line in result)
+    confs = [line[2] for line in result if len(line) > 2]
+    conf  = sum(confs) / len(confs) if confs else 0.7
+    return text, round(conf, 3)
+
 
 def _ocr_easyocr(pil_image) -> tuple[str, float]:
     import numpy as np
@@ -491,8 +518,16 @@ def _build_engines() -> list[tuple[str, Any]]:
     """
     Test which OCR engines are importable (without loading models).
     Returns ordered list of (name, ocr_fn) pairs.
+    Order: RapidOCR (fastest, ONNX) → EasyOCR → Surya → Tesseract
     """
     result = []
+
+    try:
+        from rapidocr_onnxruntime import RapidOCR  # noqa: F401 — just check import
+        result.append(("rapidocr", _ocr_rapidocr))
+        logger.info("OCR available: RapidOCR")
+    except ImportError:
+        logger.warning("RapidOCR not available")
 
     try:
         import easyocr  # noqa: F401 — just check import
@@ -885,8 +920,8 @@ def parse_pdf(
     Parse a PDF and return a list of Qdrant-ready chunk dicts.
 
     Routing:
-        native  → Docling (or PyMuPDF fallback) — fast, no OCR
-        scanned → cascade OCR on every page
+        native  → PyMuPDF (direct text layer) — fast, no ML model
+        scanned → cascade OCR on every page (RapidOCR → EasyOCR → Surya → Tesseract)
         mixed   → pdfplumber per page; cascade OCR when native text is sparse
     """
     book_stem = pdf_path.stem
@@ -898,7 +933,7 @@ def parse_pdf(
 
     ocr_stats: dict | None = None
 
-    # Get page count up-front so we can report progress during Docling's black-box run
+    # Get total page count up-front (used by scanned/mixed paths for progress reporting)
     _total_pages = 0
     try:
         import fitz as _fitz_tmp
@@ -909,10 +944,9 @@ def parse_pdf(
         pass
 
     if pdf_type == "native":
-        _report_progress(progress_fn, "parsing", 0, _total_pages, 0)
-        pages = _parse_docling(pdf_path)
-        if pages is None:
-            pages = _parse_pymupdf(pdf_path)
+        # PyMuPDF reads the text layer directly — no ML model, ~100× faster than Docling.
+        # Docling kept as opt-in fallback for complex layouts (tables, multi-column) if needed.
+        pages = _parse_pymupdf(pdf_path, progress_fn=progress_fn)
     elif pdf_type == "scanned":
         pages, ocr_stats = _parse_scanned(pdf_path, book_stem, progress_fn=progress_fn)
     else:
