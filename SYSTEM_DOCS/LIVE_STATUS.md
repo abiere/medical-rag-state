@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-16 20:32:31 UTC**
+> Last update: **2026-04-16 20:37:32 UTC**
 
 ## Services
 | Service | Status |
@@ -14,10 +14,10 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `How to Use FlexBeam on Shoulders - Recharge Health.pdf` (2 min) |
-| Queued | 17 |
+| Current job | `How to Use FlexBeam to Boost Your Immunity - Recharge Health.pdf` (1 min) |
+| Queued | 14 |
 | Total books | 43 |
-| Ingested | 19 |
+| Ingested | 21 |
 | Vectors in medical_library | 2773 |
 | Images pending approval | 0 |
 | Images approved | 0 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` (1257 min) |
+| Current job | `1.Upper_Body_Techniques.mp4` (1262 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -34,16 +34,16 @@
 | Metric | Value |
 |---|---|
 | RAM used | 11.4 GB / 32.86 GB (35%) |
-| CPU | 50.1% |
+| CPU | 37.7% |
 | Disk used | 59.2 GB / 322.3 GB (19%) |
-| Uptime | up 2 days, 10 hours, 49 minutes |
+| Uptime | up 2 days, 10 hours, 54 minutes |
 
 ## Recent markers
+- `2026-04-16T20:36:17.167114+00:00` **book_ingested** — How to Use FlexBeam on Lower Back - Recharge Health.pdf → device_documentation: 3 chunks
+- `2026-04-16T20:33:52.303979+00:00` **book_ingested** — How to Use FlexBeam on Shoulders - Recharge Health.pdf → device_documentation: 5 chunks
 - `2026-04-16T20:30:20.867026+00:00` **book_ingested** — How to Use FlexBeam on Elbows - Recharge Health.pdf → device_documentation: 3 chunks
 - `2026-04-16T20:26:05.262116+00:00` **book_ingested** — How to Use FlexBeam on Hips - Recharge Health.pdf → device_documentation: 3 chunks
 - `2026-04-16T20:23:19.672366+00:00` **book_ingested** — How to Use FlexBeam on Feet and Ankles - Recharge Health.pdf → device_documentation: 4 chunks
-- `2026-04-16T20:20:35.315692+00:00` **book_ingested** — How to Use FlexBeam on Skin and Scars - Recharge Health.pdf → device_documentation: 3 chunks
-- `2026-04-16T20:17:41.183791+00:00` **book_ingested** — How to Use FlexBeam for Menstrual Cramps - Recharge Health.pdf → device_documentation: 2 chunks
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-16 20:27:47,750  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 20:28:17,750  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 20:28:47,751  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 20:29:17,751  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 20:29:47,751  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 20:30:17,752  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 20:30:47,753  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 20:31:17,753  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 20:31:47,753  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 20:32:17,754  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 20:32:47,754  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 20:33:17,755  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 20:33:47,755  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 20:34:17,756  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 20:34:47,757  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 20:35:17,758  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 20:35:47,758  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 20:36:17,759  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 20:36:47,759  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 20:37:17,760  INFO      Queue paused (pause flag set) — waiting 30s
 ```
