@@ -2,6 +2,7 @@
 > Auto-updated by Claude Code after each session.
 
 ## 🔴 Prioriteit — volgende sessie
+- [ ] generate_protocol.py — roept save_protocol_metadata() aan na generatie
 - [ ] Deadman ingest valideren — chunk count + audit score controleren
 - [ ] Travell+Simons opnieuw in queue zetten (crashte bij ingest)
 - [ ] Trail Guide OCR fix — is_mostly_image drempel te agressief voor anatomie-atlassen
@@ -12,7 +13,7 @@
 
 ## 🟡 Backlog — gepland
 - [ ] generate_protocol.py bouwen — protocol generator
-      (RAG query → K/A/I gefilterd → Ollama → Word document output)
+      (RAG query → K/A/I gefilterd → Ollama → Word document output → save_protocol_metadata())
 - [ ] /protocols uitbreiden — behandelprotocol generator tab
       (naast standaard protocol: RAG query → Ollama → Word document output)
 - [ ] Eerste behandelprotocol genereren via RAG
@@ -40,6 +41,10 @@
 - [ ] EPUBs voor betere afbeeldingskwaliteit (Sobotta EPUB)
 
 ## ✅ Afgerond
+- [x] Literatuur tracking per protocol — protocol_metadata.py (save_protocol_metadata, get_all_protocol_status)
+- [x] Earmarking protocollen bij nieuwe literatuur — check_protocols_for_review() in book_ingest_queue
+- [x] Protocol review workflow in /protocols tab — cards met status badge + markeer als bekeken
+- [x] Dashboard review banner — oranje notificatie als protocol(len) verouderd zijn
 - [x] /protocols pagina — NRT standaard protocol v3 bekijken + bewerken + git commit (GET/POST/raw endpoints)
 - [x] K/A/I classificatiesysteem — config/book_classifications.json (29 boeken), get_kai_scores() in parse_pdf + parse_epub
 - [x] normalize_points.py — canonieke puntnormalisatie, 21/21 tests geslaagd, QAT_BALANCE_2026 map
