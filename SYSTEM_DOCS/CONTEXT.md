@@ -22,7 +22,7 @@ Outputs: Word behandelprotocollen | NRT-Amsterdam.nl blog | Ad hoc Q&A
 | Ollama (llama3.1:8b) | 11434 | ✅ Active |
 | book-ingest-queue | — | ✅ Active |
 | transcription-queue | — | ⏸ Paused (20 NRT + 15 QAT waiting) |
-| ttyd terminal | 7682 | ✅ Active (iframe bug open) |
+| ttyd terminal | 7682 | ✅ Active |
 | sync-status.timer | — | ✅ Every 5 min |
 | queue-watchdog.timer | — | ✅ Every 10 min (BOOK=120min, TRANS=30min) |
 
@@ -92,7 +92,7 @@ Fix applied: audit non-blocking. Deadman re-queued for clean reprocessing.
 | /images | ✅ | Image browser + approval |
 | /videos | ✅ | Upload + transcription + pause/resume |
 | /protocols | ✅ | NRT protocol v3 + behandelprotocollen + generator |
-| /terminal | ✅ | ttyd iframe (bug: does not load) |
+| /terminal | ✅ | ttyd browser terminal (port 7682) |
 
 ## PDF/OCR Pipeline
 Native (≥50 words/page): pdfplumber detect → Docling (do_ocr=False)

@@ -20,10 +20,6 @@
       Test: python3 /root/medical-rag/scripts/generate_protocol.py "Etalagebenen"
       Vergelijk output met /data/protocols/gold_standard referentie
 
-- [ ] Browser terminal iframe fixen
-      ttyd draait op 7682 maar iframe laadt niet in /terminal pagina
-      Diagnose: curl -s http://localhost:7682/ → wat geeft het terug?
-
 - [ ] Retroactive audit bouwen in nightly_maintenance.py
       Chunks met audit_status="skipped_ollama_timeout" alsnog auditoren
       Max 200 chunks per nacht (Deadman heeft 987 → ~5 nachten)
@@ -158,3 +154,4 @@
 - [x] Video transcript zoeken met timestamp
 - [x] Image approval systeem /images
 - [x] Literatuuroverzicht /library/overview
+- [x] Browser terminal iframe (ttyd poort 7682) — bevestigd werkend in browser
