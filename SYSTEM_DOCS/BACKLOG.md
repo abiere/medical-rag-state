@@ -6,7 +6,6 @@
 - [ ] Meer boeken uploaden voor nachtverwerking
       (Travell+Simons staat al in queue)
 - [ ] Video transcriptie hervatten na boek verwerking
-- [ ] Browser terminal (ttyd) — iframe laadt niet in /terminal pagina
 - [ ] Whisper taaldetectie verbeteren — detecteer audiotaal eerst,
       dan transcribe (EN) of translate (NL), sla detected_language op
 
@@ -38,6 +37,8 @@
 - [ ] EPUBs voor betere afbeeldingskwaliteit (Sobotta EPUB)
 
 ## ✅ Afgerond
+- [x] Browser terminal (ttyd) — iframe fix: --base-path /terminal/shell + trailing slash + bash shell
+- [x] LIVE_STATUS sync betrouwbaar — PATH env toegevoegd, sync loopt elke 5 min
 - [x] Queue watchdog (queue_watchdog.py + systemd timer elke 10 min — auto-restart bij vastgelopen queue)
 - [x] Sync retry logic (sync_status.py — 3 pogingen, 10s delay, error log, Restart=on-failure)
 - [x] Nightly consistency check (transcripts + boeken vs Qdrant — auto her-ingest + log)

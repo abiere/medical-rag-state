@@ -1309,7 +1309,7 @@ async def terminal_page():
 // Point iframe at ttyd using the same hostname the browser used
 (function() {
   const host = window.location.hostname;
-  document.getElementById('ttyd-frame').src = 'http://' + host + ':7682/terminal/shell';
+  document.getElementById('ttyd-frame').src = 'http://' + host + ':7682/terminal/shell/';
 })();
 
 function fetchLog(name) {
