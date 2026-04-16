@@ -1,101 +1,130 @@
 # BACKLOG — Medical RAG
 > Auto-updated by Claude Code after each session.
+> Last updated: 2026-04-16
 
 ## 🔴 Prioriteit — volgende sessie
-- [ ] Deadman ingest valideren — chunk count + audit score controleren
-- [ ] Travell+Simons opnieuw in queue zetten (crashte bij ingest)
-- [ ] Trail Guide OCR fix — is_mostly_image drempel te agressief voor anatomie-atlassen
-- [ ] K/A/I tags retroactief toepassen op al ingested chunks (Deadman als eerste)
-- [ ] Video transcriptie hervatten na boek verwerking
-- [ ] Whisper taaldetectie verbeteren — detecteer audiotaal eerst,
-      dan transcribe (EN) of translate (NL), sla detected_language op
+
+- [ ] Travell+Simons valideren na ingest — chunk count + audit score
+- [ ] Deadman valideren na ingest — 987 chunks correct in Qdrant?
+      Controleer: curl localhost:6333/collections/medical_library
+      Verwacht: 987+ vectors na herverwerking
+- [ ] Eerste protocol testen — "Etalagebenen" genereren via /protocols
+      Vereist: Deadman in Qdrant (kai_a=1 chunks)
+      Test: python3 scripts/generate_protocol.py "Etalagebenen"
+- [ ] Browser terminal iframe fixen — ttyd draait maar iframe laadt niet
+- [ ] Retroactive audit implementeren in nightly_maintenance.py
+      Chunks met audit_status="skipped_ollama_timeout" alsnog auditoren
+      Max 200 chunks per nacht
+- [ ] Heraudit knop in /library pagina per boek
 
 ## 🟡 Backlog — gepland
-- [ ] Protocol testen met Deadman data zodra ingested — etalagebenen als testcase
+
+- [ ] Video transcriptie hervatten na boek verwerking
+      systemctl start transcription-queue (videos gepauzeerd voor CPU)
+- [ ] QAT curriculum uploaden (Axel doet dit zelf)
+      Upload via /library → nrt_qat_curriculum collectie
+- [ ] NRT standaard protocol v3 testen in /protocols
+      Bekijken + eventueel aanpassen via edit functie
 - [ ] Interactieve afbeelding selectie UI voor weefsel sectie
-- [ ] Embedding fix — nomic-embed-text installeren in Ollama voor RAG queries
-- [ ] Protocol regeneratie per sectie (herbouw alleen gewijzigde secties)
-- [ ] Taal optie Amerikaans Engels in protocol generator
-- [ ] Protocol versie management (v1, v2, diff weergave)
-- [ ] Streaming antwoord testen met echte boeken in Qdrant
-- [ ] LLM kwaliteitsaudit voor video transcripts
-      (steekproef chunks → Ollama → rapport in /data/transcript_quality/)
-- [ ] Nightly AI review — transcripts + chunks gecontroleerd,
-      rapport in LIVE_STATUS.md
+      Per weefselrij: 3-5 kandidaat afbeeldingen tonen
+      Axel selecteert 0-3 per weefsel met fullscreen optie
+      AI geeft waarschijnlijkheidsscore per kandidaat
+- [ ] Streaming protocol generatie (SSE progress events)
+      Elke sectie completion → UI update
+- [ ] /search testen met echte Deadman data
+      Verwacht: acupunctuurpunten chunks correct ophalen
+- [ ] Nightly AI review transcripts
+      Steekproef chunks → Ollama → kwaliteitsrapport
 - [ ] Query optimizer — Ollama herschrijft zwakke RAG queries
-- [ ] NRT/QAT curriculum uploaden
-- [ ] FlexBeam behandelplannen uploaden (gedownload van recharge.health)
-- [ ] PEMF documentatie uploaden
-- [ ] /images pagina verfijnen — goedkeuring workflow testen met echte afbeeldingen
+- [ ] Meer boeken uploaden:
+      Sobotta Vol 1/2/3 (EPUB) — primaire anatomie + afbeeldingen
+      Maciocia TCM (3 boeken) — TCM compleet
+      Campbell acupunctuur — anatomy-acupuncture bridge
+      Magee orthopedic assessment
+      AnatomyTrains (EPUB)
+- [ ] Protocol taal optie — Amerikaans Engels naast Nederlands
+- [ ] Protocol versie management (v1, v2 naast elkaar bewaren)
+- [ ] Protocol regeneratie per sectie (niet alles opnieuw)
 
 ## 🟢 Ideeën — nog niet besloten
-- [ ] Consistentie guardian — cross-collectie terminologie check
-- [ ] Protocol pre-validatie — Ollama checkt dekking voor protocolgen
-- [ ] Dynamische PEMF/RLT settings via Ollama op basis van klachtbeeld
-- [ ] Zelf-debuggende pipeline — Ollama analyseert stacktraces
-- [ ] Scraper recharge.health blog (publieke content)
-- [ ] Schematische lichaamstekening generator voor QAT pad plaatsing
-- [ ] Visueel zoeken — upload afbeelding, vind vergelijkbare
-- [ ] Officiële digitale versie Deadman aanschaffen
-- [ ] EPUBs voor betere afbeeldingskwaliteit (Sobotta EPUB)
 
-## ✅ Afgerond
-- [x] generate_protocol.py — volledig protocol generator: RAG + Ollama + Word .docx via Node.js docx
-- [x] /protocols/generate + /protocols/generate/status/{id} + /protocols/download — web API
-- [x] 8 gold standard protocol metadata records aangemaakt (Etalagebenen, OMD, Vertigo, etc.)
-- [x] Literatuur tracking per protocol — protocol_metadata.py (save_protocol_metadata, get_all_protocol_status)
-- [x] Earmarking protocollen bij nieuwe literatuur — check_protocols_for_review() in book_ingest_queue
-- [x] Protocol review workflow in /protocols tab — cards met status badge + markeer als bekeken
-- [x] Dashboard review banner — oranje notificatie als protocol(len) verouderd zijn
-- [x] /protocols pagina — NRT standaard protocol v3 bekijken + bewerken + git commit (GET/POST/raw endpoints)
-- [x] K/A/I classificatiesysteem — config/book_classifications.json (29 boeken), get_kai_scores() in parse_pdf + parse_epub
-- [x] normalize_points.py — canonieke puntnormalisatie, 21/21 tests geslaagd, QAT_BALANCE_2026 map
-- [x] 476 Deadman acupunctuurpunt-afbeeldingen + point_index.json
-- [x] Bladder Channel mappen samengevoegd (BL-01..BL-67)
-- [x] Browser terminal (ttyd) — iframe fix: --base-path /terminal/shell + trailing slash + bash shell
-- [x] LIVE_STATUS sync betrouwbaar — PATH env toegevoegd, sync loopt elke 5 min
-- [x] Queue watchdog (queue_watchdog.py + systemd timer elke 10 min — auto-restart bij vastgelopen queue)
-- [x] Sync retry logic (sync_status.py — 3 pogingen, 10s delay, error log, Restart=on-failure)
-- [x] Nightly consistency check (transcripts + boeken vs Qdrant — auto her-ingest + log)
-- [x] /var/log/nightly_consistency.log — nachtelijke resultaten in LIVE_STATUS.md
-- [x] FastAPI web interface (medical-rag-web.service)
-- [x] Dashboard — CPU/RAM/disk/services live
-- [x] Sequentiële transcriptie queue (systemd, auto-resume na reboot)
-- [x] Whisper --task translate — transcripts in Engels
-- [x] Auto-ingest transcripts → Qdrant video_transcripts
-- [x] Status endpoint — running/queued/waiting/done/queued
-- [x] Browser terminal gebouwd (ttyd poort 7682)
-- [x] Live status sync → GitHub elke 5 min (LIVE_STATUS.md)
-- [x] BACKLOG.md sync naar GitHub
-- [x] Claude Code auto-permissions ingesteld
-- [x] ANTHROPIC_API_KEY permanent in /root/.bashrc
-- [x] Marker systeem (notify.sh + /status/markers)
-- [x] Log observer endpoints (/logs/{logname})
-- [x] Status snapshot endpoint (/status/snapshot)
+- [ ] Officiële digitale versie Deadman aanschaffen
+      (huidige versie is scan — officieel betere OCR kwaliteit)
+- [ ] PEMF/RLT documentatie uploaden (FlexBeam behandelplannen)
+- [ ] EPUBs voor betere afbeeldingskwaliteit
+- [ ] Consistentie guardian — cross-collectie terminologie check
+- [ ] Protocol pre-validatie — Ollama checkt dekking voor generatie
+- [ ] Dynamische PEMF/RLT settings via Ollama op basis van klachtbeeld
+- [ ] Scraper recharge.health blog (publieke content)
+- [ ] Visueel zoeken — upload afbeelding, vind vergelijkbare
+- [ ] Blog generator voor NRT-Amsterdam.nl
+
+## ✅ Afgerond deze sessie (2026-04-15/16)
+
+### Pipeline & Ingest
 - [x] Book ingest pipeline — parse_pdf.py, parse_epub.py
+- [x] Smart PDF type detectie (native/mixed/scanned)
 - [x] OCR cascade fallback (EasyOCR → Surya → Tesseract)
-- [x] OCR pre-processing (deskew, denoise, CLAHE, Otsu binarization)
+- [x] OCR pre-processing (deskew, denoise, CLAHE, Otsu)
 - [x] OCR kalibratie per boek via Ollama (5 steekproefpagina's)
 - [x] Adaptive DPI per pagina
 - [x] Ollama post-correctie OCR output
-- [x] Cross-boek learning log (config/ai_instructions/learning_log.md)
-- [x] Smart PDF type detectie (native/mixed/scanned)
-- [x] Book ingest queue (systemd, sequential, auto-resume)
-- [x] LLM kwaliteitsaudit bij boek ingest (steekproef + auto-classificatie)
-- [x] AI usability tagging per chunk (Ollama)
-- [x] Single medical_library collection (was 6 aparte collecties)
-- [x] Image approval systeem (/images pagina, pending/approved/rejected)
-- [x] Literatuuroverzicht (/library/overview met usability scores)
-- [x] Versiedetectie duplicate boeken
-- [x] Multi-file upload bibliotheek + videos
-- [x] AI instructie bestanden als MD in Git (nrt_qat_bridge, protocol_structure,
-      tagging_rules, learning_log, feedback_history)
-- [x] Vereenvoudigde library UI — 3 secties
-- [x] nrt_qat_curriculum Qdrant collectie
-- [x] sync_status.py synct AI_INSTRUCTIONS/ naar GitHub
-- [x] /search pagina — RAG query + image search + streaming antwoord
-- [x] Video transcript zoeken met timestamp display
-- [x] Dashboard vectoren count fix
-- [x] Voortgangsweergave library + videos (progress polling)
-- [x] Pause/resume knoppen videos + boeken (schone database bij pauze)
-- [x] FlexBeam documentatie PDF aangemaakt
+- [x] Cross-boek learning log
+- [x] Book ingest queue (systemd, sequential, heartbeat, startup guard)
+- [x] Watchdog fix — BOOK_STALE=120min ipv 30min
+- [x] Audit non-blocking bij Ollama timeout
+- [x] Embedding fix — BAAI/bge-large voor RAG queries (was nomic-embed-text)
+
+### Monitoring & Sync
+- [x] Voortgangsweergave library + videos (progress polling 10s)
+- [x] Pagina X van Y progress bar met fase indicator
+- [x] Pause/resume knoppen videos + boeken
+- [x] Schone database bij pauze (geen halve chunks)
+- [x] Sync retry logic (3 pogingen, error log)
+- [x] Queue watchdog (auto-restart stale queues)
+- [x] Nightly consistency check (Qdrant vs disk)
+- [x] LIVE_STATUS.md sync betrouwbaar
+
+### K/A/I & Classificatie
+- [x] K/A/I classificatiesysteem (hybride statisch+dynamisch)
+- [x] book_classifications.json (30+ boeken geclassificeerd)
+- [x] Auto-link bij ingest (exact filepath → classificatie)
+- [x] Unclassified detection met waarschuwing
+- [x] K/A/I query profielen voor protocol generator
+
+### Acupunctuurpunten
+- [x] 476 Deadman punt afbeeldingen geüpload naar server
+- [x] point_index.json aangemaakt
+- [x] Bladder Channel mappen samengevoegd
+- [x] normalize_points.py met complete meridiaanmapping
+- [x] meridian_mapping.md met QAT balancepunten
+
+### Protocol Generator
+- [x] /protocols tab — NRT standaard protocol v3 bekijken + bewerken
+- [x] Auto-commit bij opslaan protocol naar GitHub
+- [x] generate_protocol.py — volledig protocol generator
+- [x] RAG query met K/A/I filtering
+- [x] Word .docx output via Node.js (exacte Etalagebenen stijl)
+- [x] Acupunctuurpunt afbeeldingen automatisch uit Deadman index
+- [x] QAT balancepunten automatisch berekend
+- [x] /protocols/generate + /protocols/download endpoints
+- [x] Literatuur tracking per protocol (protocol_metadata.py)
+- [x] Earmarking bij nieuwe literatuur (needs_review badge)
+- [x] Dashboard oranje banner bij verouderde protocollen
+- [x] 8 gold standard protocol metadata records aangemaakt
+
+### Eerder afgerond
+- [x] FastAPI web interface (medical-rag-web.service)
+- [x] Dashboard CPU/RAM/disk/services live
+- [x] Sequentiële transcriptie queue (systemd)
+- [x] Whisper --task translate → Engels
+- [x] Auto-ingest transcripts → Qdrant
+- [x] Browser terminal (ttyd poort 7682)
+- [x] Live status sync → GitHub (LIVE_STATUS.md)
+- [x] BACKLOG.md sync naar GitHub
+- [x] ANTHROPIC_API_KEY in /root/.bashrc
+- [x] Marker systeem + log observer endpoints
+- [x] /search pagina — RAG + image search + streaming
+- [x] Video transcript zoeken met timestamp
+- [x] Literatuuroverzicht /library/overview
+- [x] Image approval systeem /images
