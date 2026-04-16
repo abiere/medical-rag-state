@@ -860,6 +860,10 @@ async function _refreshBookProgress() {
     if (!el) return;
     if (!d.current && d.queue_count === 0 && !ps.paused) { el.innerHTML = ''; return; }
     const isPaused = ps.paused;
+
+    // Dutch thousands separator: 1247 → "1.247"
+    const fmt = n => (n == null || n === '' ? '?' : Number(n).toLocaleString('nl-NL'));
+
     let html = '<div style="background:#e8f4f5;border:1px solid #1A6B72;border-radius:10px;padding:16px 20px">';
     html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
     html += '<span style="font-weight:700;font-size:15px;color:#1A6B72">\uD83D\uDCDA Boek ingest voortgang</span>';
@@ -868,68 +872,126 @@ async function _refreshBookProgress() {
     html += `<button id="book-pause-btn" onclick="_toggleBookPause()" data-paused="${isPaused}" style="font-size:12px;padding:4px 12px;border-radius:6px;border:none;cursor:pointer;color:#fff;background:${isPaused ? '#059669' : '#dc2626'}">${isPaused ? '\u25B6 Hervat' : '\u23F8 Pauzeer'}</button>`;
     html += '<span style="font-size:12px;color:#6b7280">\u21BB 10s</span>';
     html += '</div></div>';
-    if (d.current) {
-      html += `<div style="font-size:14px;margin-bottom:8px"><strong>Bezig:</strong> ${d.current.filename} <span style="color:#6b7280">(${d.current.elapsed_minutes} min)</span></div>`;
 
-      // Enhanced phase widget from state-machine data
+    if (d.current) {
+      html += `<div style="font-size:14px;margin-bottom:10px"><strong>Bezig:</strong> ${d.current.filename} <span style="color:#6b7280">(${d.current.elapsed_minutes} min)</span></div>`;
+
       if (active && active.phases) {
         const phaseOrder = ['parse','audit','embed','qdrant'];
-        const phaseLabels = {parse:'1. Parsing',audit:'2. Audit & Tagging',embed:'3. Embedding',qdrant:'4. Qdrant upload'};
-        const phaseColors = {done:'#059669',running:'#1A6B72',failed:'#dc2626',pending:'#9ca3af',queued_background:'#7c3aed'};
-        html += '<div style="display:flex;flex-direction:column;gap:4px;margin-bottom:8px">';
-        for (const ph of phaseOrder) {
+        const phaseNames = {parse:'Parsing', audit:'Audit & Tagging', embed:'Embedding', qdrant:'Qdrant upload'};
+        const circleColor = {done:'#059669', running:'#1A6B72', failed:'#dc2626', pending:'#d1d5db'};
+        const circleIcon  = {done:'\u2713', running:'\u25B6', failed:'\u2717', pending:'\u2022'};
+
+        html += '<div style="display:flex;flex-direction:column;gap:5px;margin-bottom:6px">';
+
+        for (let pi = 0; pi < phaseOrder.length; pi++) {
+          const ph   = phaseOrder[pi];
           const info = active.phases[ph] || {};
-          const st = info.status || 'pending';
-          const col = phaseColors[st] || '#9ca3af';
-          const icon = st === 'done' ? '\u2713' : st === 'running' ? '\u25B6' : st === 'failed' ? '\u2717' : '\u2022';
+          const st   = info.status || 'pending';
+          const ccol = circleColor[st] || '#d1d5db';
+          const icon = circleIcon[st]  || '\u2022';
+          const isRunning = st === 'running';
+          const isDone    = st === 'done';
+
+          // ── Per-phase detail string ───────────────────────────────────────
           let detail = '';
-          if (ph === 'parse' && active.current_page && active.total_pages) {
-            const pct = Math.round(active.current_page / active.total_pages * 100);
-            detail = ` — pagina ${active.current_page}/${active.total_pages} (${pct}%)`;
-          } else if (ph === 'embed' && active.chunks_embedded) {
-            const tot = active.total_chunks || '?';
-            const eta = active.eta_minutes ? ` ETA ${active.eta_minutes}min` : '';
-            detail = ` — ${active.chunks_embedded}/${tot} chunks${eta}`;
-          } else if (ph === 'qdrant' && info.chunks_upserted) {
-            detail = ` — ${info.chunks_upserted} vectors`;
+
+          if (ph === 'parse') {
+            if (isRunning && info.pages_total) {
+              detail = `pagina ${fmt(info.pages_done)} / ${fmt(info.pages_total)}`;
+            } else if (isDone) {
+              detail = `${fmt(info.pages_total)} pagina\u2019s`;
+              if (info.chunks_extracted) detail += ` \u00b7 ${fmt(info.chunks_extracted)} chunks`;
+            }
+
+          } else if (ph === 'audit') {
+            const processed = (info.chunks_tagged || 0) + (info.chunks_skipped || 0);
+            if (isRunning && info.chunks_total) {
+              detail = `chunk ${fmt(processed)} / ${fmt(info.chunks_total)}`;
+            } else if (isDone && info.chunks_total) {
+              detail = `${fmt(info.chunks_total)} chunks`;
+              if (info.chunks_tagged)  detail += ` \u00b7 ${fmt(info.chunks_tagged)} getagd`;
+              if (info.chunks_skipped) detail += ` \u00b7 ${fmt(info.chunks_skipped)} overgeslagen`;
+            }
+            // Ollama availability indicator — shown whenever known
+            if (info.ollama_available === false || info.consecutive_failures_hit) {
+              detail += (detail ? ' \u2014 ' : '') + '<span style="color:#b45309;font-size:11px">Ollama timeout</span>';
+            } else if ((isDone || isRunning) && info.ollama_available === true) {
+              detail += (detail ? ' \u2014 ' : '') + '<span style="color:#059669;font-size:11px">Ollama \u2713</span>';
+            }
+
+          } else if (ph === 'embed') {
+            const done_e  = info.chunks_done  || 0;
+            const total_e = info.chunks_total;
+            if (isRunning && total_e) {
+              detail = `chunk ${fmt(done_e)} / ${fmt(total_e)}`;
+              if (info.vectors_per_minute) detail += ` \u00b7 ${fmt(Math.round(info.vectors_per_minute))}/min`;
+              if (info.eta_minutes != null && info.eta_minutes > 1) detail += ` \u00b7 ETA ${Math.round(info.eta_minutes)} min`;
+            } else if (isDone) {
+              const v = info.chunks_done || info.chunks_total;
+              if (v) detail = `${fmt(v)} vectors`;
+            }
+
+          } else if (ph === 'qdrant') {
+            const ins    = info.chunks_inserted || 0;
+            const coll   = info.collection || active.collection || '';
+            // total vectors = embed.chunks_total or parse.chunks_extracted
+            const total_q = (active.phases.embed || {}).chunks_total
+                          || (active.phases.parse || {}).chunks_extracted;
+            if (isRunning) {
+              detail = total_q ? `${fmt(ins)} / ${fmt(total_q)} vectors` : `${fmt(ins)} vectors`;
+            } else if (isDone) {
+              detail = `${fmt(ins)} vectors`;
+              if (coll) detail += ` \u2192 ${coll}`;
+            }
           }
-          html += `<div style="display:flex;align-items:center;gap:6px;font-size:13px">`;
-          html += `<span style="width:16px;height:16px;border-radius:50%;background:${col};color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">${icon}</span>`;
-          html += `<span style="color:${st==='running'?'#1A6B72':'#374151'};${st==='running'?'font-weight:600':''}">${phaseLabels[ph]}${detail}</span>`;
-          html += `</div>`;
+
+          // ── Row HTML ──────────────────────────────────────────────────────
+          html += '<div>';
+          html += '<div style="display:flex;align-items:center;gap:7px">';
+          html += `<span style="width:18px;height:18px;border-radius:50%;background:${ccol};color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${icon}</span>`;
+          html += `<span style="font-size:13px;color:${isRunning?'#1A6B72':'#374151'};font-weight:${isRunning?600:400}">${pi+1}. ${phaseNames[ph]}</span>`;
+          if (detail) html += `<span style="font-size:12px;color:#6b7280">${detail}</span>`;
+          html += '</div>';
+
+          // ── Progress bar (parse pages + embed chunks only) ─────────────────
+          if (ph === 'parse' && isRunning && info.pages_total) {
+            const pct = Math.min(Math.round((info.pages_done||0) / info.pages_total * 100), 100);
+            html += `<div style="margin:3px 0 0 25px;background:#c7e8eb;border-radius:999px;height:4px">`;
+            html += `<div style="background:#1A6B72;border-radius:999px;height:4px;width:${pct}%;transition:width 0.5s"></div>`;
+            html += '</div>';
+          }
+          if (ph === 'embed' && isRunning && info.chunks_total) {
+            const pct = Math.min(Math.round((info.chunks_done||0) / info.chunks_total * 100), 100);
+            html += `<div style="margin:3px 0 0 25px;background:#c7e8eb;border-radius:999px;height:4px">`;
+            html += `<div style="background:#1A6B72;border-radius:999px;height:4px;width:${pct}%;transition:width 0.8s"></div>`;
+            html += '</div>';
+          }
+
+          html += '</div>';
         }
         html += '</div>';
-        // Parse progress bar
-        if (active.current_page && active.total_pages) {
-          const pct = Math.min(Math.round(active.current_page / active.total_pages * 100), 100);
-          html += `<div style="background:#e5e7eb;border-radius:999px;height:6px;margin-bottom:8px">`;
-          html += `<div style="background:#1A6B72;border-radius:999px;height:6px;width:${pct}%;transition:width 0.5s"></div>`;
-          html += `</div>`;
-        }
+
       } else {
-        // Fallback: legacy progress object
+        // Fallback: pre-state-machine legacy progress object
         const prog = d.current.progress;
-        if (prog) {
-          const phaseColors2 = {parsing:'#7c3aed',chunking:'#0369a1',auditing:'#b45309',embedding:'#065f46'};
-          const phaseLabels2 = {parsing:'Parsing',chunking:'Chunking',auditing:'Auditing',embedding:'Embedding'};
-          const col = phaseColors2[prog.phase] || '#374151';
-          const lbl = phaseLabels2[prog.phase] || prog.phase;
+        if (prog && prog.phase) {
+          const legacyCol = {parsing:'#7c3aed',auditing:'#b45309',embedding:'#065f46'}[prog.phase] || '#374151';
           html += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">`;
-          html += `<span style="background:${col};color:#fff;border-radius:999px;padding:2px 10px;font-size:11px;font-weight:600">${lbl}</span>`;
-          if (prog.total_pages > 0) html += `<span style="font-size:13px;color:#374151">Pagina ${prog.current_page}/${prog.total_pages}</span>`;
-          if (prog.chunks_so_far > 0) html += `<span style="font-size:12px;color:#6b7280">${prog.chunks_so_far} chunks</span>`;
-          html += `</div>`;
-          if (prog.total_pages > 0) {
-            const pct = Math.min(prog.percent, 100);
-            html += `<div style="background:#e5e7eb;border-radius:999px;height:8px;margin-bottom:6px"><div style="background:${col};border-radius:999px;height:8px;width:${pct}%;transition:width 0.5s"></div></div>`;
-          }
+          html += `<span style="background:${legacyCol};color:#fff;border-radius:999px;padding:2px 10px;font-size:11px;font-weight:600">${prog.phase}</span>`;
+          if (prog.total_pages > 0) html += `<span style="font-size:12px;color:#6b7280">Pagina ${prog.current_page}/${prog.total_pages}</span>`;
+          html += '</div>';
         }
       }
-      if (d.last_log) html += `<div style="font-size:11px;color:#6b7280;font-family:monospace;margin-bottom:8px;word-break:break-all;background:#e8f4f5;border-radius:4px;padding:4px 8px">${d.last_log.slice(-140)}</div>`;
+
+      if (d.last_log) {
+        html += `<div style="font-size:11px;color:#6b7280;font-family:monospace;word-break:break-all;background:#ddf2f3;border-radius:4px;padding:3px 8px;margin-top:4px">${d.last_log.slice(-140)}</div>`;
+      }
     }
+
     if (d.queue_count > 0) {
-      html += `<div style="font-size:13px;color:#374151;margin-top:4px"><strong>${d.queue_count}</strong> boek(en) in wachtrij:</div>`;
-      html += '<ul style="margin:4px 0 0 20px;font-size:12px;color:#6b7280">';
+      html += `<div style="font-size:13px;color:#374151;margin-top:8px"><strong>${d.queue_count}</strong> boek(en) in wachtrij:</div>`;
+      html += '<ul style="margin:3px 0 0 20px;font-size:12px;color:#6b7280">';
       d.queue.forEach(f => { html += `<li>${f}</li>`; });
       html += '</ul>';
     }
