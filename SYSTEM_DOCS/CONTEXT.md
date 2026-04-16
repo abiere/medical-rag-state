@@ -162,5 +162,5 @@ After every task:
 
 ## Test status
 
-**Laatste run:** 16-04-2026 11:30 (62.6s)  
+**Laatste run:** 16-04-2026 12:21 (57.7s)  
 **Uitslag:** ✅ GESLAAGD — 33/33 geslaagd, 0 overgeslagen
