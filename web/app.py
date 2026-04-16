@@ -20,6 +20,7 @@ BOOK_QUEUE_FILE    = Path("/tmp/book_ingest_queue.json")
 BOOK_CURRENT_FILE  = Path("/tmp/book_ingest_current.json")
 QUALITY_DIR        = BASE / "data" / "book_quality"
 CACHE_DIR          = BASE / "data" / "ingest_cache"
+TRANS_STATS_FILE   = BASE / "data" / "transcription_stats.json"
 
 SECTION_MAP = {
     "medical_literature": {
@@ -799,33 +800,164 @@ async function _toggleVideoPause() {
 }
 async function _refreshVideoProgress() {
   try {
-    const [pr, ps] = await Promise.all([
+    const [pr, ps, ts] = await Promise.all([
       fetch('/videos/progress').then(r => r.json()),
       fetch('/videos/paused').then(r => r.json()),
+      fetch('/api/transcription/stats').then(r => r.ok ? r.json() : null).catch(() => null),
     ]);
     const d = pr;
     const el = document.getElementById('video-progress');
     if (!el) return;
     if (!d.current && d.queue_count === 0 && !ps.paused) { el.innerHTML = ''; return; }
     const isPaused = ps.paused;
+
+    // ── Helpers (same as book widget) ─────────────────────────────────────
+    const fmt = n => (n == null || n === '' ? '?' : Number(n).toLocaleString('nl-NL'));
+    const parseTs = s => s ? new Date(s) : null;
+    const fmtTime = dt => dt
+      ? dt.toLocaleTimeString('nl-NL', {hour:'2-digit', minute:'2-digit'})
+      : '\u2014';
+    const fmtDateTime = dt => dt
+      ? dt.toLocaleDateString('nl-NL', {day:'2-digit', month:'2-digit'}).replace('/', '-') + ' ' + fmtTime(dt)
+      : '\u2014';
+    const elapsed = (start, end) => {
+      if (!start) return '\u2014';
+      const ms  = (end || new Date()) - start;
+      const tot = Math.floor(ms / 60000);
+      const h   = Math.floor(tot / 60);
+      const m   = String(tot % 60).padStart(2, '0');
+      return `${h}:${m}`;
+    };
+
+    // ── Outer card ────────────────────────────────────────────────────────
     let html = '<div style="background:#e8f4f5;border:1px solid #1A6B72;border-radius:10px;padding:16px 20px">';
-    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
-    html += '<span style="font-weight:700;font-size:15px;color:#1A6B72">🎬 Transcriptie voortgang</span>';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">';
+    html += '<span style="font-weight:700;font-size:15px;color:#1A6B72">\uD83C\uDFAC Video transcriptie wachtrij</span>';
     html += '<div style="display:flex;gap:8px;align-items:center">';
-    if (isPaused) html += '<span style="background:#fef3c7;color:#92400e;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600">⏸ Gepauzeerd</span>';
-    html += `<button id="video-pause-btn" onclick="_toggleVideoPause()" data-paused="${isPaused}" style="font-size:12px;padding:4px 12px;border-radius:6px;border:none;cursor:pointer;color:#fff;background:${isPaused ? '#059669' : '#dc2626'}">${isPaused ? '▶ Hervat' : '⏸ Pauzeer'}</button>`;
-    html += '<span style="font-size:12px;color:#6b7280">↻ 10s</span>';
+    if (isPaused) html += '<span style="background:#fef3c7;color:#92400e;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600">\u23F8 Gepauzeerd</span>';
+    html += `<button id="video-pause-btn" onclick="_toggleVideoPause()" data-paused="${isPaused}" style="font-size:12px;padding:4px 12px;border-radius:6px;border:none;cursor:pointer;color:#fff;background:${isPaused ? '#059669' : '#dc2626'}">${isPaused ? '\u25B6 Hervat' : '\u23F8 Pauzeer'}</button>`;
+    html += '<span style="font-size:12px;color:#6b7280">\u21BB 10s</span>';
     html += '</div></div>';
+
     if (d.current) {
-      html += `<div style="font-size:14px;margin-bottom:4px"><strong>Bezig:</strong> ${d.current.file} <span style="color:#6b7280">(${d.current.elapsed_minutes} min)</span></div>`;
-      if (d.last_log) html += `<div style="font-size:11px;color:#6b7280;font-family:monospace;margin-bottom:8px;word-break:break-all;background:#e8f4f5;border-radius:4px;padding:4px 8px">${d.last_log.slice(-140)}</div>`;
+      // Filename + category + size line
+      const cur  = d.current;
+      const vtype = cur.video_type || '';
+      const sizeMb = ts && ts.current_file_size_mb ? `${ts.current_file_size_mb}\u00a0MB` : '';
+      const catLabel = vtype ? vtype.toUpperCase() : '';
+      const metaParts = [cur.file, catLabel, sizeMb].filter(Boolean);
+      html += `<div style="font-size:13px;margin-bottom:10px;color:#374151">${metaParts.join(' \u00b7 ')}</div>`;
+
+      // Summary bar
+      const bookStart = parseTs(cur.started || (ts && ts.current_started_at));
+      const sumParts  = [
+        `Start ${fmtDateTime(bookStart)}`,
+        `Eind \u2014`,
+        `Verstreken ${elapsed(bookStart, null)}`,
+      ];
+      html += `<div style="background:#ddf2f3;border-radius:6px;padding:3px 10px;font-size:12px;font-family:monospace;color:#085041;margin-bottom:10px">${sumParts.join('  \u00b7  ')}</div>`;
+
+      // ── Phase table ───────────────────────────────────────────────────
+      const thBase = 'text-align:left;padding:5px 6px 7px;font-weight:500;font-size:12px;border-bottom:1.5px solid #1A6B72;white-space:nowrap;background:#ddf2f3;color:#085041';
+      const thS  = `style="${thBase}"`;
+      const thSF = `style="${thBase};padding-left:0"`;
+      const tdS  = 'style="padding:7px 6px;vertical-align:top;border-bottom:1px solid #e2e8f0"';
+      const tdSF = 'style="padding:7px 0;vertical-align:top;border-bottom:1px solid #e2e8f0"';
+
+      html += '<div style="overflow-x:auto;margin-bottom:8px">';
+      html += '<table style="width:100%;border-collapse:collapse;table-layout:fixed;font-size:13px">';
+      html += '<colgroup><col style="width:32%"><col style="width:14%"><col style="width:18%"><col style="width:18%"><col style="width:18%"></colgroup>';
+      html += `<thead><tr><th ${thSF}>Fase</th><th ${thS}>Status</th><th ${thS}>Start</th><th ${thS}>Eind</th><th ${thS}>Totaal</th></tr></thead>`;
+      html += '<tbody>';
+
+      // ── Row 1: Whisper transcriptie ──────────────────────────────────
+      const whisperStart = parseTs(cur.started || (ts && ts.current_started_at));
+      const mr = ts && ts.model_rate;
+      const sizeMb2 = ts && ts.current_file_size_mb;
+      let whisperDetail = '';
+      let whisperBar = '';
+
+      if (mr && sizeMb2) {
+        const estSec     = mr.seconds_per_mb * sizeMb2;
+        const elapsedSec = whisperStart ? (new Date() - whisperStart) / 1000 : 0;
+        const pct        = Math.min(Math.round(elapsedSec / estSec * 100), 95);
+        const etaSec     = Math.max(estSec - elapsedSec, 0);
+        const etaMin     = Math.round(etaSec / 60);
+        const nSamples   = mr.n_samples || 0;
+        whisperDetail = etaMin > 1
+          ? `ETA ~${etaMin} min \u00b7 schatting op basis van ${nSamples} video${nSamples === 1 ? '' : "'s"}`
+          : `afronden\u2026 \u00b7 schatting op basis van ${nSamples} video${nSamples === 1 ? '' : "'s"}`;
+        whisperBar = `<div style="margin-top:4px;background:#c7e8eb;border-radius:999px;height:4px"><div style="background:#1A6B72;border-radius:999px;height:4px;width:${pct}%;transition:width 0.8s"></div></div>`;
+      } else {
+        whisperDetail = 'geen schatting beschikbaar (eerste video)';
+      }
+
+      html += `<tr style="background:#f0faf8">`;
+      html += `<td ${tdSF}><div style="display:flex;align-items:flex-start;gap:6px">`;
+      html += `<span style="margin-top:2px;width:16px;height:16px;border-radius:50%;background:#1A6B72;color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">\u25B6</span>`;
+      html += `<div><span style="font-size:13px;color:#1A6B72;font-weight:600">1. Whisper transcriptie</span>`;
+      html += `<div style="font-size:12px;color:#6b7280;margin-top:1px">${whisperDetail}</div>`;
+      html += whisperBar;
+      html += `</div></div></td>`;
+      html += `<td ${tdS}><span style="background:#e8f4f5;color:#1A6B72;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:600">Bezig</span></td>`;
+      html += `<td ${tdS} style="padding:7px 6px;vertical-align:top;border-bottom:1px solid #e2e8f0;font-size:12px;color:#4a5568">${fmtTime(whisperStart)}</td>`;
+      html += `<td ${tdS} style="padding:7px 6px;vertical-align:top;border-bottom:1px solid #e2e8f0;font-size:12px;color:#1A6B72">bezig</td>`;
+      html += `<td ${tdS} style="padding:7px 6px;vertical-align:top;border-bottom:1px solid #e2e8f0;font-size:12px;color:#4a5568;font-variant-numeric:tabular-nums">${elapsed(whisperStart, null)}</td>`;
+      html += '</tr>';
+
+      // ── Row 2: Qdrant ingest (pending for active video) ──────────────
+      html += '<tr>';
+      html += `<td ${tdSF}><div style="display:flex;align-items:center;gap:6px">`;
+      html += `<span style="width:16px;height:16px;border-radius:50%;background:#d1d5db;color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">\u2022</span>`;
+      html += `<span style="font-size:13px;color:#374151">2. Qdrant ingest</span>`;
+      html += `</div></td>`;
+      html += `<td ${tdS}><span style="background:#f3f4f6;color:#6b7280;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:600">Wacht</span></td>`;
+      html += `<td ${tdS} style="padding:7px 6px;vertical-align:top;border-bottom:1px solid #e2e8f0;font-size:12px;color:#4a5568">\u2014</td>`;
+      html += `<td ${tdS} style="padding:7px 6px;vertical-align:top;border-bottom:1px solid #e2e8f0;font-size:12px;color:#4a5568">\u2014</td>`;
+      html += `<td ${tdS} style="padding:7px 6px;vertical-align:top;border-bottom:1px solid #e2e8f0;font-size:12px;color:#4a5568">\u2014</td>`;
+      html += '</tr>';
+
+      html += '</tbody></table></div>';
     }
-    if (d.queue_count > 0) {
-      html += `<div style="font-size:13px;color:#374151;margin-top:4px"><strong>${d.queue_count}</strong> video's in wachtrij:</div>`;
-      html += '<ul style="margin:4px 0 0 20px;font-size:12px;color:#6b7280">';
-      d.queue.forEach(f => { html += `<li>${f}</li>`; });
-      html += '</ul>';
+
+    // ── Queue stats row ────────────────────────────────────────────────────
+    const nDone = d.done_count || 0;
+    const nActive = d.current ? 1 : 0;
+    const nWait = d.queue_count || 0;
+    html += `<div style="font-size:12px;color:#374151;margin-bottom:8px">`;
+    html += `<span style="background:#dcfce7;color:#16a34a;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:600;margin-right:4px">Klaar ${nDone}</span>`;
+    html += `<span style="background:#e8f4f5;color:#1A6B72;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:600;margin-right:4px">Bezig ${nActive}</span>`;
+    html += `<span style="background:#f3f4f6;color:#6b7280;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:600;margin-right:4px">Wachtrij ${nWait}</span>`;
+    html += `<span style="background:#f3f4f6;color:#374151;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:600">Totaal ${nDone + nActive + nWait}</span>`;
+    html += '</div>';
+
+    // ── Queue grouped by category ──────────────────────────────────────────
+    if (nWait > 0) {
+      const items = d.queue_items || d.queue.map(f => ({filename: f, video_type: ''}));
+      const byType = {};
+      items.forEach(it => {
+        const t = (it.video_type || 'overig').toUpperCase();
+        (byType[t] = byType[t] || []).push(it.filename);
+      });
+      const MAX_SHOW = 3;
+      Object.entries(byType).forEach(([cat, files]) => {
+        const shown = files.slice(0, MAX_SHOW);
+        const rest  = files.length - MAX_SHOW;
+        html += `<div style="font-size:12px;color:#374151;margin-bottom:3px">`;
+        html += `<span style="background:#e8f4f5;color:#1A6B72;border-radius:4px;padding:1px 6px;font-size:11px;font-weight:600;margin-right:6px">${cat}</span>`;
+        html += shown.join(', ');
+        if (rest > 0) html += ` <span style="color:#9ca3af">+${rest} meer</span>`;
+        html += '</div>';
+      });
     }
+
+    // ── Tempo indicator ────────────────────────────────────────────────────
+    const mr2 = ts && ts.model_rate;
+    if (mr2 && mr2.n_samples > 0) {
+      const rate = mr2.seconds_per_mb.toLocaleString('nl-NL', {minimumFractionDigits:1, maximumFractionDigits:1});
+      html += `<div style="font-size:11px;color:#6b7280;margin-top:8px;text-align:right">Leersnelheid: ${rate}\u00a0sec/MB \u00b7 ${mr2.n_samples} meting${mr2.n_samples === 1 ? '' : 'en'}</div>`;
+    }
+
     html += '</div>';
     el.innerHTML = html;
   } catch(e) {}
@@ -907,8 +1039,9 @@ async function _refreshBookProgress() {
         html += '<table style="width:100%;border-collapse:collapse;table-layout:fixed;font-size:13px">';
         html += '<colgroup><col style="width:32%"><col style="width:14%"><col style="width:18%"><col style="width:18%"><col style="width:18%"></colgroup>';
         // Header
-        const thS = 'style="text-align:left;padding:4px 6px 6px;color:#1A6B72;font-weight:600;font-size:12px;border-bottom:1px solid #1A6B72;white-space:nowrap"';
-        const thSF = 'style="text-align:left;padding:4px 0 6px;color:#1A6B72;font-weight:600;font-size:12px;border-bottom:1px solid #1A6B72"';
+        const thBase = 'text-align:left;padding:5px 6px 7px;font-weight:500;font-size:12px;border-bottom:1.5px solid #1A6B72;white-space:nowrap;background:#ddf2f3;color:#085041';
+        const thS  = `style="${thBase}"`;
+        const thSF = `style="${thBase};padding-left:0"`;
         html += `<thead><tr><th ${thSF}>Fase</th><th ${thS}>Status</th><th ${thS}>Start</th><th ${thS}>Eind</th><th ${thS}>Totaal</th></tr></thead>`;
         html += '<tbody>';
 
@@ -2587,7 +2720,12 @@ async def api_library_progress_book(book_hash: str):
 
 @app.get("/videos/progress")
 async def videos_progress():
-    result: dict = {"current": None, "queue": [], "queue_count": 0, "last_log": ""}
+    result: dict = {"current": None, "queue": [], "queue_items": [], "queue_count": 0, "last_log": "", "done_count": 0}
+    # Count completed transcripts
+    try:
+        result["done_count"] = sum(1 for _ in TRANS_DIR.glob("*.json")) if TRANS_DIR.exists() else 0
+    except Exception:
+        pass
     try:
         if CURRENT_FILE.exists():
             cur = json.loads(CURRENT_FILE.read_text())
@@ -2600,6 +2738,7 @@ async def videos_progress():
                 elapsed_min = int((datetime.now(timezone.utc) - started).total_seconds() / 60)
             result["current"] = {
                 "file":            cur.get("file", ""),
+                "video_type":      cur.get("video_type", ""),
                 "started":         started_str,
                 "elapsed_minutes": elapsed_min,
             }
@@ -2618,7 +2757,35 @@ async def videos_progress():
             q = json.loads(QUEUE_FILE.read_text())
             if isinstance(q, list):
                 result["queue"]       = [item.get("filename", item.get("file", "")) for item in q]
+                result["queue_items"] = [{"filename": item.get("filename", item.get("file", "")), "video_type": item.get("video_type", "")} for item in q]
                 result["queue_count"] = len(q)
+    except Exception:
+        pass
+    return result
+
+
+# ── GET /api/transcription/stats ─────────────────────────────────────────────
+
+@app.get("/api/transcription/stats")
+async def api_transcription_stats():
+    """Return model_rate and current video file size for ETA estimation."""
+    result: dict = {"model_rate": None, "current_file_size_mb": None, "current_started_at": None}
+    try:
+        if TRANS_STATS_FILE.exists():
+            stats = json.loads(TRANS_STATS_FILE.read_text())
+            result["model_rate"] = stats.get("model_rate")
+    except Exception:
+        pass
+    try:
+        if CURRENT_FILE.exists():
+            cur = json.loads(CURRENT_FILE.read_text())
+            vtype    = cur.get("video_type", "")
+            filename = cur.get("file", "")
+            result["current_started_at"] = cur.get("started")
+            if vtype and filename:
+                vpath = BASE / "videos" / vtype / filename
+                if vpath.exists():
+                    result["current_file_size_mb"] = round(vpath.stat().st_size / 1e6, 1)
     except Exception:
         pass
     return result

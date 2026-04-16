@@ -13,10 +13,12 @@ Current job → /tmp/transcription_current.json  (removed when done)
 
 import json
 import logging
+import os
 import subprocess
 import sys
+import tempfile
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 # ── config ────────────────────────────────────────────────────────────────────
@@ -30,6 +32,7 @@ CURRENT    = Path("/tmp/transcription_current.json")
 NOTIFY      = BASE / "scripts" / "notify.sh"
 INGEST      = BASE / "scripts" / "ingest_transcript.py"
 PAUSE_FILE  = Path("/tmp/transcription_pause")
+STATS_FILE  = BASE / "data" / "transcription_stats.json"
 VIDEO_TYPES = ["nrt", "qat", "pemf", "rlt"]
 VIDEO_EXTS  = {".mp4", ".mov", ".mkv", ".m4v"}
 CONTENT_TYPE_MAP = {
@@ -137,6 +140,77 @@ def _ingest_transcript(filename: str, vtype: str) -> bool:
     return True
 
 
+# ── transcription stats ───────────────────────────────────────────────────────
+
+def _update_stats(filename: str, video_path: Path, duration_seconds: float) -> None:
+    """
+    Record seconds_per_mb for a completed transcription and update model_rate
+    (weighted average, recency-weighted: weight = 1 / (days_since + 1)).
+    Writes atomically via tempfile rename.
+    """
+    try:
+        file_size_mb = os.path.getsize(video_path) / 1e6
+    except OSError:
+        return  # video file gone — skip silently
+
+    if file_size_mb < 0.1 or duration_seconds < 1:
+        return
+
+    seconds_per_mb = duration_seconds / file_size_mb
+    completed_at   = datetime.now(timezone.utc).isoformat()
+
+    # Load existing
+    try:
+        stats: dict = json.loads(STATS_FILE.read_text()) if STATS_FILE.exists() else {}
+    except Exception:
+        stats = {}
+    stats.setdefault("completed", [])
+    stats.setdefault("model_rate", {"seconds_per_mb": seconds_per_mb, "n_samples": 0, "updated_at": ""})
+
+    # Append new record
+    stats["completed"].append({
+        "filename":        filename,
+        "file_size_mb":    round(file_size_mb, 2),
+        "duration_seconds": round(duration_seconds, 1),
+        "seconds_per_mb":  round(seconds_per_mb, 2),
+        "completed_at":    completed_at,
+    })
+
+    # Recompute weighted average (recency weight = 1 / (days_since + 1))
+    now = datetime.now(timezone.utc)
+    total_w = 0.0
+    total_wr = 0.0
+    for entry in stats["completed"]:
+        try:
+            ts = datetime.fromisoformat(entry["completed_at"])
+            if ts.tzinfo is None:
+                ts = ts.replace(tzinfo=timezone.utc)
+            days = max((now - ts).total_seconds() / 86400, 0)
+        except Exception:
+            days = 0
+        w = 1.0 / (days + 1)
+        total_w  += w
+        total_wr += w * entry["seconds_per_mb"]
+
+    if total_w > 0:
+        stats["model_rate"] = {
+            "seconds_per_mb": round(total_wr / total_w, 2),
+            "n_samples":      len(stats["completed"]),
+            "updated_at":     completed_at,
+        }
+
+    # Atomic write
+    try:
+        STATS_FILE.parent.mkdir(parents=True, exist_ok=True)
+        tmp_fd, tmp_path = tempfile.mkstemp(dir=STATS_FILE.parent, suffix=".tmp")
+        with os.fdopen(tmp_fd, "w") as f:
+            json.dump(stats, f, indent=2)
+        os.replace(tmp_path, STATS_FILE)
+        log.info(f"Stats updated: {filename} — {seconds_per_mb:.1f}s/MB  rate={stats['model_rate']['seconds_per_mb']:.1f}s/MB ({stats['model_rate']['n_samples']} samples)")
+    except Exception as exc:
+        log.warning(f"Stats write failed: {exc}")
+
+
 # ── transcription ─────────────────────────────────────────────────────────────
 
 def _transcribe_one(item: dict) -> bool:
@@ -181,6 +255,7 @@ def _transcribe_one(item: dict) -> bool:
 
     if result.returncode == 0:
         log.info(f"DONE   {vtype}/{filename}  ({elapsed:.0f}s)")
+        _update_stats(filename, video_path, elapsed)
     else:
         log.error(
             f"FAIL   {vtype}/{filename}  ({elapsed:.0f}s)\n"
