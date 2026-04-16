@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-16 06:53:54 UTC**
+> Last update: **2026-04-16 06:59:11 UTC**
 
 ## Services
 | Service | Status |
@@ -14,8 +14,8 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `969553977-Trail-Guide-to-the-Body-6th-Edition-Andrew-Biel.pdf` (20 min) |
-| Queued | 1 |
+| Current job | `pdfcoffee.com_a-manual-of-acupuncture-peter-deadmanpdf-4-pdf-free.pdf` |
+| Queued | 0 |
 | Total books | 3 |
 | Ingested | 1 |
 | Vectors in medical_library | 2 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` (438 min) |
+| Current job | `1.Upper_Body_Techniques.mp4` (443 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 3.53 GB / 32.86 GB (11%) |
-| CPU | 8.0% |
-| Disk used | 55.5 GB / 322.3 GB (18%) |
-| Uptime | up 1 day, 21 hours, 11 minutes |
+| RAM used | 5.22 GB / 32.86 GB (16%) |
+| CPU | 10.9% |
+| Disk used | 56.4 GB / 322.3 GB (18%) |
+| Uptime | up 1 day, 21 hours, 16 minutes |
 
 ## Recent markers
 - `2026-04-16T05:20:54.750223+00:00` **watchdog_restart** — book-ingest-queue hung (41 min stale) — restarted successfully
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-16 06:49:11,460  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 06:49:41,461  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 06:50:11,461  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 06:50:41,462  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 06:51:11,464  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 06:51:41,465  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 06:52:11,466  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 06:52:41,467  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 06:53:11,468  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 06:53:41,469  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 06:54:41,471  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 06:55:11,472  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 06:55:41,473  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 06:56:11,475  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 06:56:41,477  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 06:57:11,478  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 06:57:41,479  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 06:58:11,480  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 06:58:41,481  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 06:59:11,482  INFO      Queue paused (pause flag set) — waiting 30s
 ```
