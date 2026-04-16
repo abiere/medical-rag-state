@@ -134,6 +134,15 @@
 - [x] Dashboard oranje banner bij verouderde protocollen
 - [x] 8 gold standard protocol metadata records
 
+### Developer Tooling & Hooks
+- [x] PostToolUse hook — py_syntax_check.sh (python3 -m py_compile na elke Write/Edit)
+- [x] PreToolUse hook — security_check.sh (secrets/injection scan, non-blocking, exit 0)
+- [x] Stop hook — mempalace_save.sh (auto-mine SYSTEM_DOCS in MemPalace na sessie)
+- [x] MemPalace MCP server — .mcp.json, palace /root/.mempalace/medical-rag (116 drawers)
+- [x] Playwright MCP server — headless Chromium, alle 8 nav items geverifieerd
+- [x] nrt-ui-standards Claude Code skill — design tokens + schrijfregels
+- [x] Design audit — #2563eb vervangen door #1A6B72 teal in alle pagina's
+
 ### Bibliotheek Catalogus
 - [x] /library cataloguspagina — 6 categorie-tabs, zoekbalk, sortering
 - [x] /api/library/items — JSON met K/A/I, chunk count, status (35 boeken)

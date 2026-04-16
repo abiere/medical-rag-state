@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "mempalace": {
+      "command": "python3",
+      "args": ["-m", "mempalace.mcp_server", "--palace", "/root/.mempalace/medical-rag"]
+    },
+    "playwright": {
+      "command": "/root/.npm-global/bin/playwright-mcp",
+      "args": ["--headless"]
+    }
+  }
+}

@@ -1,5 +1,17 @@
 {
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/root/medical-rag/.claude/hooks/security_check.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Write|Edit|MultiEdit",
@@ -8,6 +20,17 @@
             "type": "command",
             "command": "/root/medical-rag/.claude/hooks/py_syntax_check.sh",
             "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/root/medical-rag/.claude/hooks/mempalace_save.sh",
+            "timeout": 60
           }
         ]
       }

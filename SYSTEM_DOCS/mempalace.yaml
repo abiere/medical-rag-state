@@ -1,0 +1,5 @@
+wing: system_docs
+rooms:
+- name: general
+  description: All project files
+  keywords: []
