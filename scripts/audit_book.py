@@ -30,6 +30,7 @@ logging.basicConfig(
 
 BASE             = Path(__file__).parent.parent
 QUALITY_DIR      = BASE / "data" / "book_quality"
+CACHE_DIR        = BASE / "data" / "ingest_cache"
 TAGS_FILE        = BASE / "config" / "usability_tags.json"
 IMAGE_APPROVALS  = BASE / "data" / "image_approvals.json"
 AI_INSTRUCTIONS  = BASE / "config" / "ai_instructions"
@@ -402,24 +403,38 @@ def prescreeen_images(chunks: list[dict], book_name: str) -> None:
     }
 
     new_entries: list[dict] = []
+    consecutive_failures = 0
+    MAX_CONSECUTIVE_FAILURES = 3
     for img_path, surrounding_text in image_context.items():
         if img_path in existing_paths:
             continue
 
-        # AI pre-screening
-        prompt = (
-            "Based on this image path and surrounding text, is this image "
-            "useful for acupuncture treatment protocols?\n"
-            f"image_path: {img_path}\n"
-            f"surrounding_text: {surrounding_text}\n"
-            'Respond JSON: {"useful":true,"reason":"...","confidence":0.0}'
-        )
-        result = _ollama(prompt, timeout=30)
         ai_suggestion = None
         ai_confidence = None
-        if result:
-            ai_suggestion = bool(result.get("useful"))
-            ai_confidence = float(result.get("confidence", 0.0))
+
+        # Skip Ollama if it has been unresponsive — add as pending without AI suggestion
+        if consecutive_failures < MAX_CONSECUTIVE_FAILURES:
+            prompt = (
+                "Based on this image path and surrounding text, is this image "
+                "useful for acupuncture treatment protocols?\n"
+                f"image_path: {img_path}\n"
+                f"surrounding_text: {surrounding_text}\n"
+                'Respond JSON: {"useful":true,"reason":"...","confidence":0.0}'
+            )
+            result = _ollama(prompt, timeout=30)
+            if result:
+                consecutive_failures = 0
+                ai_suggestion = bool(result.get("useful"))
+                ai_confidence = float(result.get("confidence", 0.0))
+            else:
+                consecutive_failures += 1
+                if consecutive_failures >= MAX_CONSECUTIVE_FAILURES:
+                    logger.warning(
+                        "prescreeen_images: Ollama unavailable after %d timeouts — "
+                        "remaining %d images queued without AI suggestion",
+                        MAX_CONSECUTIVE_FAILURES,
+                        sum(1 for p in image_context if p not in existing_paths),
+                    )
 
         try:
             page = int(img_path.split("_")[1]) if "_" in img_path else 0
@@ -444,6 +459,99 @@ def prescreeen_images(chunks: list[dict], book_name: str) -> None:
         IMAGE_APPROVALS.parent.mkdir(parents=True, exist_ok=True)
         IMAGE_APPROVALS.write_text(json.dumps(approvals, indent=2))
         logger.info("Added %d images to pending approval list", len(new_entries))
+
+
+# ── Background image screening ────────────────────────────────────────────────
+
+def screen_images_background(book_hash: str, max_images: int = 200) -> dict:
+    """
+    Process up to max_images pending image-approval entries for the given
+    book_hash by running Ollama AI screening in the background.
+
+    Reads/writes image_approvals.json.  Designed to be called from the
+    nightly maintenance script or the watchdog — NOT from the main ingest
+    pipeline.
+
+    Returns {"processed": N, "skipped": N, "errors": N}.
+    """
+    # Locate phase1 chunks to know the book name
+    cache_dir = CACHE_DIR / book_hash
+    state_file = cache_dir / "state.json"
+
+    book_name = book_hash  # fallback
+    if state_file.exists():
+        try:
+            state = json.loads(state_file.read_text())
+            book_name = state.get("filename", book_hash)
+        except Exception:
+            pass
+
+    logger.info("screen_images_background: book_hash=%s book=%s max=%d", book_hash, book_name, max_images)
+
+    try:
+        approvals = json.loads(IMAGE_APPROVALS.read_text()) if IMAGE_APPROVALS.exists() else {}
+    except Exception:
+        approvals = {}
+    if not isinstance(approvals, dict):
+        approvals = {}
+    approvals.setdefault("approved", [])
+    approvals.setdefault("rejected", [])
+    approvals.setdefault("pending", [])
+
+    # Filter pending entries for this book without AI suggestion
+    candidates = [
+        (i, e) for i, e in enumerate(approvals["pending"])
+        if isinstance(e, dict)
+        and e.get("book") == book_name
+        and e.get("ai_suggestion") is None
+    ][:max_images]
+
+    if not candidates:
+        logger.info("screen_images_background: nothing to screen for %s", book_name)
+        return {"processed": 0, "skipped": 0, "errors": 0}
+
+    processed = errors = 0
+    consecutive_failures = 0
+    MAX_CONSECUTIVE_FAILURES = 3
+
+    for idx, entry in candidates:
+        if consecutive_failures >= MAX_CONSECUTIVE_FAILURES:
+            logger.warning(
+                "screen_images_background: Ollama unavailable after %d timeouts — stopping early",
+                MAX_CONSECUTIVE_FAILURES,
+            )
+            break
+
+        img_path       = entry.get("path", "")
+        surrounding    = entry.get("surrounding_text", "")[:100]
+        prompt = (
+            "Based on this image path and surrounding text, is this image "
+            "useful for acupuncture treatment protocols?\n"
+            f"image_path: {img_path}\n"
+            f"surrounding_text: {surrounding}\n"
+            'Respond JSON: {"useful":true,"reason":"...","confidence":0.0}'
+        )
+        result = _ollama(prompt, timeout=30)
+        if result:
+            approvals["pending"][idx]["ai_suggestion"] = bool(result.get("useful"))
+            approvals["pending"][idx]["ai_confidence"] = float(result.get("confidence", 0.0))
+            consecutive_failures = 0
+            processed += 1
+        else:
+            consecutive_failures += 1
+            errors += 1
+
+    try:
+        IMAGE_APPROVALS.parent.mkdir(parents=True, exist_ok=True)
+        IMAGE_APPROVALS.write_text(json.dumps(approvals, indent=2))
+    except Exception as exc:
+        logger.warning("screen_images_background: failed to write approvals: %s", exc)
+
+    logger.info(
+        "screen_images_background: processed=%d skipped=%d errors=%d",
+        processed, len(candidates) - processed - errors, errors,
+    )
+    return {"processed": processed, "skipped": len(candidates) - processed - errors, "errors": errors}
 
 
 # ── Auto-remediation check ────────────────────────────────────────────────────
@@ -525,8 +633,9 @@ def audit_book(
         usability_profile = build_usability_profile(chunks)
         logger.info("Usability profile: %d tags applied", len(usability_profile.get("scores", {})))
 
-    if book_name and chunks:
-        prescreeen_images(chunks, book_name)
+    # NOTE: prescreeen_images() is NOT called here.
+    # Image screening is decoupled — handled by screen_images_background()
+    # called from nightly_maintenance.py after the book's qdrant phase completes.
 
     remediation = check_remediation(s, llm)
 

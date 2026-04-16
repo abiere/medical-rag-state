@@ -1,15 +1,20 @@
 #!/usr/bin/env python3
 """
-book_ingest_queue.py — Sequential book ingestion queue for Medical RAG.
+book_ingest_queue.py — Sequential book ingestion queue with state-machine checkpointing.
 
-Architecture mirrors transcription_queue.py:
-  Queue file:   /tmp/book_ingest_queue.json
-  Current job:  /tmp/book_ingest_current.json
-  Log:          /var/log/book_ingest_queue.log
+Architecture:
+  Queue file:    /tmp/book_ingest_queue.json
+  Current job:   /tmp/book_ingest_current.json
+  Cache dir:     /root/medical-rag/data/ingest_cache/{book_hash}/
+  Log:           /var/log/book_ingest_queue.log
 
+State machine per book:
+  parse → audit → embed → qdrant → done
+  image_screen is a background-only phase, never blocks the pipeline.
+
+On restart: reads state.json, resumes from first non-done phase.
 Run as systemd service (book-ingest-queue.service).
 """
-
 from __future__ import annotations
 
 import hashlib
@@ -25,17 +30,16 @@ from pathlib import Path
 
 # ── paths & config ─────────────────────────────────────────────────────────────
 
-BASE         = Path("/root/medical-rag")
-QUEUE_FILE   = Path("/tmp/book_ingest_queue.json")
-CURRENT_FILE = Path("/tmp/book_ingest_current.json")
-BOOKS_DIR    = BASE / "books"
-QUALITY_DIR  = BASE / "data" / "book_quality"
-MARKERS_FILE = Path("/var/log/markers.json")
+BASE          = Path("/root/medical-rag")
+QUEUE_FILE    = Path("/tmp/book_ingest_queue.json")
+CURRENT_FILE  = Path("/tmp/book_ingest_current.json")
+BOOKS_DIR     = BASE / "books"
+QUALITY_DIR   = BASE / "data" / "book_quality"
+CACHE_DIR     = BASE / "data" / "ingest_cache"
+MARKERS_FILE  = Path("/var/log/markers.json")
 
-QDRANT_URL   = "http://localhost:6333"
-OLLAMA_URL   = "http://localhost:11434"
-OLLAMA_MODEL = "llama3.1:8b"
-PAUSE_FILE   = Path("/tmp/book_ingest_pause")
+QDRANT_URL    = "http://localhost:6333"
+PAUSE_FILE    = Path("/tmp/book_ingest_pause")
 
 VECTOR_SIZE       = 1024
 BOOK_EXTS         = {".pdf", ".epub"}
@@ -62,24 +66,203 @@ logging.basicConfig(
     ],
 )
 logger = logging.getLogger(__name__)
-
 SEP = "─" * 60
 
-# ── protocol earmarking (lazy import to avoid circular deps) ───────────────────
+# ── state machine helpers ──────────────────────────────────────────────────────
 
-def _check_protocols_for_review(book_key: str) -> None:
-    """Import lazily so protocol_metadata failures never break ingest."""
+def _book_hash(filepath: Path) -> str:
+    """Deterministic 16-char hash from filepath (fast, no file read needed)."""
+    return hashlib.sha256(str(filepath).encode()).hexdigest()[:16]
+
+
+def _cache_dir(book_hash: str) -> Path:
+    d = CACHE_DIR / book_hash
+    d.mkdir(parents=True, exist_ok=True)
+    return d
+
+
+def _now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _blank_state(filename: str, filepath: Path, collection: str, category: str) -> dict:
+    """Build a fresh state.json structure for a book."""
+    return {
+        "filename":         filename,
+        "book_hash":        _book_hash(filepath),
+        "filepath":         str(filepath),
+        "collection":       collection,
+        "library_category": category,
+        "started_at":       _now_iso(),
+        "updated_at":       _now_iso(),
+        "completed_at":     None,
+        "phases": {
+            "parse": {
+                "status":          "pending",
+                "started_at":      None,
+                "completed_at":    None,
+                "pages_total":     None,
+                "pages_done":      0,
+                "chunks_extracted": None,
+                "images_extracted": None,
+                "parse_method":    None,
+                "output_file":     "phase1_chunks.json",
+                "error":           None,
+                "warnings":        [],
+            },
+            "audit": {
+                "status":                   "pending",
+                "started_at":               None,
+                "completed_at":             None,
+                "chunks_total":             None,
+                "chunks_tagged":            0,
+                "chunks_skipped":           0,
+                "ollama_available":         None,
+                "consecutive_failures_hit": False,
+                "output_file":              "phase2_audited.json",
+            },
+            "embed": {
+                "status":              "pending",
+                "started_at":          None,
+                "completed_at":        None,
+                "chunks_total":        None,
+                "chunks_done":         0,
+                "vectors_per_minute":  None,
+                "eta_minutes":         None,
+                "last_progress_at":    None,
+                "output_file":         "phase3_vectors.npy",
+            },
+            "qdrant": {
+                "status":          "pending",
+                "started_at":      None,
+                "completed_at":    None,
+                "chunks_inserted": 0,
+                "collection":      collection,
+            },
+            "image_screen": {
+                "status":        "queued_background",
+                "images_total":  0,
+                "images_done":   0,
+                "images_useful": 0,
+                "last_run":      None,
+                "note":          "Nightly job — does not block main pipeline",
+            },
+        },
+    }
+
+
+def _read_state(book_hash: str) -> dict | None:
+    p = _cache_dir(book_hash) / "state.json"
+    if not p.exists():
+        return None
     try:
-        from protocol_metadata import check_protocols_for_review
-        flagged = check_protocols_for_review(book_key)
-        if flagged:
-            logger.info("Earmarked %d protocol(s) for review: %s", len(flagged), flagged)
-            _notify(
-                "protocol_review",
-                f"{len(flagged)} protocol(s) mogelijk verouderd door nieuwe literatuur",
-            )
+        return json.loads(p.read_text())
+    except Exception:
+        return None
+
+
+def _write_state(state: dict) -> None:
+    state["updated_at"] = _now_iso()
+    bh = state["book_hash"]
+    p  = _cache_dir(bh) / "state.json"
+    try:
+        p.write_text(json.dumps(state, indent=2, ensure_ascii=False))
     except Exception as e:
-        logger.warning("Protocol earmark check failed (non-fatal): %s", e)
+        logger.warning("Could not write state.json: %s", e)
+    # Also update CURRENT_FILE for backward-compat with existing UI
+    _sync_current_file(state)
+
+
+def _sync_current_file(state: dict) -> None:
+    """Mirror key fields into /tmp/book_ingest_current.json for existing API."""
+    try:
+        # Find active phase
+        active_phase = None
+        active_data  = {}
+        for phase_name, phase_data in state.get("phases", {}).items():
+            if phase_data.get("status") == "running":
+                active_phase = phase_name
+                active_data  = phase_data
+                break
+
+        current = {
+            "filename":  state.get("filename", ""),
+            "filepath":  state.get("filepath", ""),
+            "started":   state.get("started_at", ""),
+            "book_hash": state.get("book_hash", ""),
+        }
+
+        if active_phase == "parse":
+            pages_done  = active_data.get("pages_done", 0)
+            pages_total = active_data.get("pages_total") or 0
+            pct = int(pages_done / pages_total * 100) if pages_total else 0
+            current["progress"] = {
+                "phase":         "parsing",
+                "current_page":  pages_done,
+                "total_pages":   pages_total,
+                "percent":       pct,
+                "chunks_so_far": 0,
+            }
+        elif active_phase == "audit":
+            tagged  = active_data.get("chunks_tagged", 0) + active_data.get("chunks_skipped", 0)
+            total   = active_data.get("chunks_total") or 0
+            pct     = int(tagged / total * 100) if total else 0
+            current["progress"] = {
+                "phase":         "auditing",
+                "current_page":  tagged,
+                "total_pages":   total,
+                "percent":       pct,
+                "chunks_so_far": tagged,
+            }
+        elif active_phase == "embed":
+            done  = active_data.get("chunks_done", 0)
+            total = active_data.get("chunks_total") or 0
+            pct   = int(done / total * 100) if total else 0
+            current["progress"] = {
+                "phase":         "embedding",
+                "current_page":  done,
+                "total_pages":   total,
+                "percent":       pct,
+                "chunks_so_far": done,
+            }
+        elif active_phase == "qdrant":
+            current["progress"] = {
+                "phase": "qdrant", "current_page": 0, "total_pages": 0,
+                "percent": 95, "chunks_so_far": 0,
+            }
+
+        CURRENT_FILE.write_text(json.dumps(current, indent=2))
+    except Exception:
+        pass
+
+
+def _set_phase_running(state: dict, phase: str) -> None:
+    state["phases"][phase]["status"]     = "running"
+    state["phases"][phase]["started_at"] = _now_iso()
+    _write_state(state)
+
+
+def _set_phase_done(state: dict, phase: str, **extra) -> None:
+    state["phases"][phase]["status"]       = "done"
+    state["phases"][phase]["completed_at"] = _now_iso()
+    for k, v in extra.items():
+        state["phases"][phase][k] = v
+    _write_state(state)
+
+
+def _set_phase_failed(state: dict, phase: str, error: str) -> None:
+    state["phases"][phase]["status"] = "failed"
+    state["phases"][phase]["error"]  = error
+    _write_state(state)
+
+
+def _find_resume_phase(state: dict) -> str | None:
+    """Return name of first phase that is not done/queued_background, or None if all done."""
+    for phase in ("parse", "audit", "embed", "qdrant"):
+        s = state["phases"][phase]["status"]
+        if s not in ("done",):
+            return phase
+    return None
 
 
 # ── queue helpers ──────────────────────────────────────────────────────────────
@@ -113,7 +296,7 @@ def _notify(event: str, message: str) -> None:
         if MARKERS_FILE.exists():
             markers = json.loads(MARKERS_FILE.read_text())
         markers.append({
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": _now_iso(),
             "event":     event,
             "message":   message,
         })
@@ -126,7 +309,7 @@ def _notify(event: str, message: str) -> None:
 
 def _qdrant_request(method: str, path: str, body: dict | None = None) -> dict:
     data = json.dumps(body).encode() if body else None
-    req = urllib.request.Request(
+    req  = urllib.request.Request(
         f"{QDRANT_URL}{path}",
         data=data,
         method=method,
@@ -137,20 +320,14 @@ def _qdrant_request(method: str, path: str, body: dict | None = None) -> dict:
 
 
 def _ensure_collection(name: str) -> None:
-    """Create Qdrant collection if it doesn't exist."""
     try:
         _qdrant_request("GET", f"/collections/{name}")
-        logger.debug("Collection %s exists", name)
         return
     except Exception:
         pass
-
     logger.info("Creating Qdrant collection: %s", name)
     _qdrant_request("PUT", f"/collections/{name}", {
-        "vectors": {
-            "size":     VECTOR_SIZE,
-            "distance": "Cosine",
-        },
+        "vectors": {"size": VECTOR_SIZE, "distance": "Cosine"},
         "hnsw_config": {"m": 16, "ef_construct": 100},
         "optimizers_config": {
             "indexing_threshold": 20000,
@@ -159,189 +336,19 @@ def _ensure_collection(name: str) -> None:
     })
 
 
-def _source_file_exists(collection: str, source_file: str) -> bool:
-    """Check if any vector from this source_file already exists."""
-    try:
-        body = {
-            "filter": {
-                "must": [{"key": "source_file", "match": {"value": source_file}}]
-            },
-            "limit": 1,
-            "with_payload": False,
-            "with_vector": False,
-        }
-        r = _qdrant_request("POST", f"/collections/{collection}/points/scroll", body)
-        return len(r.get("result", {}).get("points", [])) > 0
-    except Exception:
-        return False
-
-
-def _embed(texts: list[str]) -> list[list[float]]:
-    from sentence_transformers import SentenceTransformer
-    model = SentenceTransformer("BAAI/bge-large-en-v1.5")
-    return model.encode(texts, show_progress_bar=False, batch_size=16).tolist()
-
-
-def _upsert_chunks(collection: str, chunks: list[dict]) -> int:
-    """Embed and upsert chunks into Qdrant. Returns count of upserted vectors."""
-    if not chunks:
-        return 0
-
-    from qdrant_client import QdrantClient
-    from qdrant_client.models import PointStruct
-
-    client = QdrantClient(host="localhost", port=6333, timeout=60)
-    _ensure_collection(collection)
-
-    # Deduplicate by chunk_hash
-    seen_hashes: set[str] = set()
-    unique_chunks = []
-    for c in chunks:
-        h = c.get("chunk_hash", "")
-        if h not in seen_hashes:
-            seen_hashes.add(h)
-            unique_chunks.append(c)
-
-    texts = [c["text"] for c in unique_chunks]
-    logger.info("Embedding %d unique chunks...", len(unique_chunks))
-    vectors = _embed(texts)
-
-    # Build points
-    points = []
-    for i, (chunk, vec) in enumerate(zip(unique_chunks, vectors)):
-        # Build a deterministic integer ID from hash
-        pid = int(hashlib.sha256(chunk["chunk_hash"].encode()).hexdigest()[:15], 16)
-        payload = {k: v for k, v in chunk.items() if k != "text"}
-        payload["text"] = chunk["text"]
-        points.append(PointStruct(id=pid, vector=vec, payload=payload))
-
-    # Upsert in batches of 100
-    BATCH = 100
-    for i in range(0, len(points), BATCH):
-        client.upsert(collection_name=collection, points=points[i:i+BATCH])
-
-    logger.info("Upserted %d vectors → %s", len(points), collection)
-    return len(points)
-
-
-# ── startup scan ───────────────────────────────────────────────────────────────
-
-def startup_scan() -> int:
-    """Scan books/ subdirs and enqueue any un-ingested files. Returns count added."""
-    added = 0
-    queue = _read_queue()
-    queued_paths = {item["filepath"] for item in queue}
-
-    # Skip the book that was being processed when the service was last killed.
-    # On restart after a watchdog kill, CURRENT_FILE still exists with the
-    # interrupted book's path.  Re-enqueueing it would cause a round-robin cycle.
-    currently_processing: str | None = None
-    if CURRENT_FILE.exists():
-        try:
-            cur = json.loads(CURRENT_FILE.read_text())
-            currently_processing = cur.get("filepath")
-            if currently_processing:
-                logger.info(
-                    "Startup scan: skipping in-progress book: %s",
-                    Path(currently_processing).name,
-                )
-        except Exception:
-            pass
-
-    for subdir, collection in SECTION_COLLECTION_MAP.items():
-        d = BOOKS_DIR / subdir
-        if not d.exists():
-            continue
-        for f in d.iterdir():
-            if f.suffix.lower() not in BOOK_EXTS:
-                continue
-            if str(f) in queued_paths:
-                continue
-            # Don't re-enqueue the book that's currently being processed
-            if currently_processing and str(f) == currently_processing:
-                continue
-            audit_path = QUALITY_DIR / f"{f.stem}_audit.json"
-            if audit_path.exists():
-                try:
-                    audit = json.loads(audit_path.read_text())
-                    if audit.get("status") == "approved":
-                        logger.debug("Skip (already ingested): %s", f.name)
-                        continue
-                except Exception:
-                    pass
-            queue.append({
-                "filename":        f.name,
-                "filepath":        str(f),
-                "collection":      collection,
-                "source_category": subdir,
-                "format":          f.suffix.lstrip(".").lower(),
-                "requested":       datetime.now(timezone.utc).isoformat(),
-            })
-            added += 1
-            logger.info("Startup scan: enqueued %s → %s", f.name, collection)
-
-    if added:
-        _write_queue(queue)
-    return added
-
-
-# ── process one book ───────────────────────────────────────────────────────────
-
-def process_book(item: dict) -> bool:
-    """
-    Full pipeline for one book: parse → audit → ingest.
-    Returns True on success.
-    """
-    filename   = item["filename"]
-    filepath   = Path(item["filepath"])
-    collection = item.get("collection") or SECTION_COLLECTION_MAP.get(
-        item.get("source_category", ""), "medical_library"
-    )
-    category   = item["source_category"]
-    fmt        = item.get("format", filepath.suffix.lstrip(".").lower())
-
-    logger.info(SEP)
-    logger.info("START  %s → %s", filename, collection)
-    t0 = time.monotonic()
-
-    # Heartbeat: touch CURRENT_FILE every 5 min so the watchdog sees a live mtime
-    _hb_stop = threading.Event()
-
-    def _heartbeat() -> None:
-        while not _hb_stop.wait(timeout=300):  # 5 min
-            try:
-                CURRENT_FILE.touch()
-            except Exception:
-                pass
-
-    _hb_thread = threading.Thread(target=_heartbeat, daemon=True)
-    _hb_thread.start()
-
-    try:
-        return _process_book_inner(
-            filename, filepath, collection, category, fmt, t0,
-        )
-    finally:
-        _hb_stop.set()
-
+# ── classification linker ──────────────────────────────────────────────────────
 
 _CLASSIFICATIONS_FILE = BASE / "config" / "book_classifications.json"
 
 
 def _link_classification(filename: str, filepath: str) -> str | None:
-    """
-    After successful ingest, record the exact server path in
-    book_classifications.json so the protocol generator can find files directly.
-    Creates an unclassified entry for unknown books so nothing is silently lost.
-    Returns the matched classification key (or auto_key if unclassified).
-    """
     try:
         config = json.loads(_CLASSIFICATIONS_FILE.read_text())
     except Exception as e:
         logger.warning("Could not read book_classifications.json: %s", e)
         return None
 
-    fname_lower = filename.lower()
+    fname_lower  = filename.lower()
     matched_key: str | None = None
     for key, val in config.get("classifications", {}).items():
         patterns = val.get("filename_patterns", [])
@@ -349,8 +356,7 @@ def _link_classification(filename: str, filepath: str) -> str | None:
             matched_key = key
             break
 
-    ts = datetime.now(timezone.utc).isoformat()
-
+    ts = _now_iso()
     if matched_key:
         config["classifications"][matched_key]["server_path"]     = filepath
         config["classifications"][matched_key]["server_filename"] = filename
@@ -380,148 +386,475 @@ def _link_classification(filename: str, filepath: str) -> str | None:
     return matched_key
 
 
-def _write_progress(phase: str, current_page: int, total_pages: int, chunks_so_far: int) -> None:
-    """Merge progress fields into CURRENT_FILE so the API can expose them."""
+def _check_protocols_for_review(book_key: str) -> None:
     try:
-        data = json.loads(CURRENT_FILE.read_text()) if CURRENT_FILE.exists() else {}
-        pct = int(current_page / total_pages * 100) if total_pages else 0
-        data["progress"] = {
-            "phase":         phase,
-            "current_page":  current_page,
-            "total_pages":   total_pages,
-            "percent":       pct,
-            "chunks_so_far": chunks_so_far,
-        }
-        CURRENT_FILE.write_text(json.dumps(data, indent=2))
-    except Exception:
-        pass
+        from protocol_metadata import check_protocols_for_review
+        flagged = check_protocols_for_review(book_key)
+        if flagged:
+            logger.info("Earmarked %d protocol(s) for review: %s", len(flagged), flagged)
+    except Exception as e:
+        logger.warning("Protocol earmark check failed (non-fatal): %s", e)
 
 
-def _process_book_inner(
-    filename: str,
-    filepath: Path,
-    collection: str,
-    category: str,
-    fmt: str,
-    t0: float,
-) -> bool:
-    """Core pipeline — called by process_book() under a heartbeat thread."""
+# ── Phase 1: Parse ─────────────────────────────────────────────────────────────
 
-    if not filepath.exists():
-        logger.error("File not found: %s", filepath)
-        return False
+def _phase_parse(state: dict, filepath: Path, fmt: str, collection: str, category: str) -> bool:
+    """Parse PDF/EPUB → chunks. Saves phase1_chunks.json. Returns True on success."""
+    bh        = state["book_hash"]
+    cache     = _cache_dir(bh)
+    out_file  = cache / "phase1_chunks.json"
+    phase     = state["phases"]["parse"]
 
-    # 1. Parse (with progress callback so CURRENT_FILE gets live updates)
+    _set_phase_running(state, "parse")
+    logger.info("Phase 1 — Parsing %s (format=%s)", filepath.name, fmt)
+
+    def _progress_fn(phase_name: str, current: int, total: int, chunks_so_far: int) -> None:
+        """Called by parse_pdf every 10 pages."""
+        if current % 10 == 0 or current == total:
+            state["phases"]["parse"]["pages_done"]  = current
+            state["phases"]["parse"]["pages_total"] = total
+            _write_state(state)
+
     try:
         sys.path.insert(0, str(BASE / "scripts"))
         if fmt == "pdf":
             from parse_pdf import parse_pdf
-            chunks = parse_pdf(filepath, collection, category, progress_fn=_write_progress)
+            chunks = parse_pdf(filepath, collection, category, progress_fn=_progress_fn)
         elif fmt == "epub":
             from parse_epub import parse_epub
             chunks = parse_epub(filepath, collection, category)
         else:
-            logger.error("Unsupported format: %s", fmt)
+            _set_phase_failed(state, "parse", f"Unsupported format: {fmt}")
             return False
     except Exception as e:
-        logger.error("Parse failed for %s: %s", filename, e)
+        _set_phase_failed(state, "parse", str(e))
+        logger.error("Parse failed: %s", e)
         return False
 
     if not chunks:
-        logger.error("No chunks produced from %s", filename)
+        _set_phase_failed(state, "parse", "No chunks produced")
         return False
 
-    # 2. Structural audit (fast, always)
-    _write_progress("auditing", 0, len(chunks), len(chunks))
-    from audit_book import structural_audit, llm_audit, auto_classify, check_remediation, audit_book
+    # Count images across all chunks
+    images_total = sum(len(c.get("image_links", [])) for c in chunks)
+
+    # Save output
+    out_file.write_text(json.dumps(chunks, ensure_ascii=False))
+
+    # Update image_screen with total count (background phase)
+    state["phases"]["image_screen"]["images_total"] = images_total
+
+    _set_phase_done(state, "parse",
+                    chunks_extracted=len(chunks),
+                    images_extracted=images_total,
+                    pages_total=state["phases"]["parse"].get("pages_total") or len(chunks),
+                    pages_done=state["phases"]["parse"].get("pages_total") or len(chunks))
+
+    logger.info("Parse done: %d chunks, %d images", len(chunks), images_total)
+    return True
+
+
+# ── Phase 2: Audit ─────────────────────────────────────────────────────────────
+
+def _phase_audit(state: dict) -> bool:
+    """Audit + LLM-tag chunks. NO image screening. Saves phase2_audited.json."""
+    bh       = state["book_hash"]
+    cache    = _cache_dir(bh)
+    in_file  = cache / "phase1_chunks.json"
+    out_file = cache / "phase2_audited.json"
+
+    if not in_file.exists():
+        _set_phase_failed(state, "audit", "phase1_chunks.json not found")
+        return False
+
+    chunks = json.loads(in_file.read_text())
+    _set_phase_running(state, "audit")
+    state["phases"]["audit"]["chunks_total"] = len(chunks)
+    _write_state(state)
+
+    logger.info("Phase 2 — Auditing %d chunks (LLM + tagging)", len(chunks))
+
+    from audit_book import structural_audit, llm_audit, auto_classify, tag_chunks_with_ollama, build_usability_profile, check_remediation
+
+    # Structural audit (fast, no Ollama)
     s = structural_audit(chunks)
     logger.info("Structural: avg_words=%.0f short=%d long=%d",
                 s["avg_chunk_words"], s["short_chunks"], s["long_chunks"])
 
-    # 3. LLM audit
+    # LLM audit (sample, Ollama — bail on failure)
     llm = llm_audit(chunks)
     quality_score = llm.get("quality_score")
     logger.info("LLM quality_score=%s flagged=%d",
                 quality_score, llm.get("flagged_chunks", 0))
 
-    # 4. Remediation attempt (once)
-    remediation_applied = False
+    # Auto-classify
+    classification = auto_classify(chunks)
+
+    # AI usability tagging — updates chunks in-place
+    # NOTE: prescreeen_images is NOT called here — it runs in background/nightly
+    tag_chunks_with_ollama(chunks)
+    usability_profile = build_usability_profile(chunks)
+
+    # Update audit progress in state
+    tagged  = sum(1 for c in chunks if c.get("usability_tags"))
+    skipped = sum(1 for c in chunks if c.get("audit_status") == "skipped_ollama_timeout")
+    state["phases"]["audit"]["chunks_tagged"]  = tagged
+    state["phases"]["audit"]["chunks_skipped"] = skipped
+    state["phases"]["audit"]["ollama_available"] = (tagged > 0)
+    state["phases"]["audit"]["consecutive_failures_hit"] = (skipped > 0)
+
+    # Remediation attempt for low quality
+    qs = quality_score or 0
     if quality_score is not None and quality_score < MIN_QUALITY_SCORE:
-        logger.warning("Quality score %.2f < %.1f — retrying with 600-word target",
-                       quality_score, MIN_QUALITY_SCORE)
+        logger.warning("Quality score %.2f < %.1f — trying remediation", quality_score, MIN_QUALITY_SCORE)
         try:
+            filepath = Path(state["filepath"])
+            fmt      = filepath.suffix.lstrip(".").lower()
             mod_name = "parse_pdf" if fmt == "pdf" else "parse_epub"
-            mod = sys.modules.get(mod_name)
+            mod      = sys.modules.get(mod_name)
             if mod:
                 orig = mod.TARGET_WORDS
                 mod.TARGET_WORDS = 600
                 chunks2 = (mod.parse_pdf if fmt == "pdf" else mod.parse_epub)(
-                    filepath, collection, category
+                    filepath, state["collection"], state["library_category"]
                 )
                 mod.TARGET_WORDS = orig
                 llm2 = llm_audit(chunks2)
-                if (llm2.get("quality_score") or 0) > (quality_score or 0):
+                if (llm2.get("quality_score") or 0) > qs:
                     chunks = chunks2
-                    llm = llm2
-                    quality_score = llm.get("quality_score")
-                    remediation_applied = True
-                    logger.info("Remediation improved score to %.2f", quality_score or 0)
+                    llm    = llm2
+                    qs     = llm.get("quality_score") or 0
+                    tag_chunks_with_ollama(chunks)
+                    usability_profile = build_usability_profile(chunks)
+                    logger.info("Remediation improved score to %.2f", qs)
         except Exception as e:
             logger.warning("Remediation failed: %s", e)
 
-    # 5. Auto-classify
-    classification = auto_classify(chunks)
-
-    # 6. AI usability tagging
-    from audit_book import tag_chunks_with_ollama, build_usability_profile, prescreeen_images
-    logger.info("Tagging %d chunks with usability tags...", len(chunks))
-    tag_chunks_with_ollama(chunks)
-    usability_profile = build_usability_profile(chunks)
-    prescreeen_images(chunks, filename)
-
-    # 7. Build and save audit report
-    from audit_book import check_remediation
-    remediation_check = check_remediation(s, llm)
-    qs = quality_score or 0
-    status = "approved" if qs >= MIN_QUALITY_SCORE else "low_quality"
-    report = {
-        "book":               filename,
-        "collection":         collection,
-        "audited_at":         datetime.now(timezone.utc).isoformat(),
-        "total_chunks":       len(chunks),
-        "structural":         s,
-        "llm_audit":          llm,
+    # Save audit report
+    status  = "approved" if qs >= MIN_QUALITY_SCORE else "low_quality"
+    report  = {
+        "book":                filename_from_state(state),
+        "collection":          state["collection"],
+        "audited_at":          _now_iso(),
+        "total_chunks":        len(chunks),
+        "structural":          s,
+        "llm_audit":           llm,
         "auto_classification": classification,
-        "usability_profile":  usability_profile,
-        "remediation":        remediation_check,
-        "remediation_applied": remediation_applied,
-        "status":             status,
+        "usability_profile":   usability_profile,
+        "remediation":         check_remediation(s, llm),
+        "status":              status,
     }
     QUALITY_DIR.mkdir(parents=True, exist_ok=True)
-    (QUALITY_DIR / f"{filepath.stem}_audit.json").write_text(
+    stem = Path(filename_from_state(state)).stem
+    (QUALITY_DIR / f"{stem}_audit.json").write_text(
         json.dumps(report, indent=2, ensure_ascii=False)
     )
 
-    # 8. Ingest to Qdrant (even if low quality — but log warning)
-    if qs < MIN_QUALITY_SCORE:
-        logger.warning("Ingesting anyway with low quality score %.2f", qs)
+    # Save audited chunks
+    out_file.write_text(json.dumps(chunks, ensure_ascii=False))
+    _set_phase_done(state, "audit",
+                    chunks_total=len(chunks),
+                    chunks_tagged=tagged,
+                    chunks_skipped=skipped)
+    logger.info("Audit done: %d tagged, %d skipped, quality=%.2f", tagged, skipped, qs)
+    return True
 
-    _write_progress("embedding", 0, len(chunks), 0)
-    try:
-        n_upserted = _upsert_chunks(collection, chunks)
-    except Exception as e:
-        logger.error("Qdrant upsert failed: %s", e)
+
+def filename_from_state(state: dict) -> str:
+    return state.get("filename", Path(state.get("filepath", "unknown")).name)
+
+
+# ── Phase 3: Embed ─────────────────────────────────────────────────────────────
+
+def _phase_embed(state: dict) -> bool:
+    """Embed chunks with BAAI/bge-large. Saves phase3_vectors.npy. Returns True."""
+    bh       = state["book_hash"]
+    cache    = _cache_dir(bh)
+    in_file  = cache / "phase2_audited.json"
+    out_file = cache / "phase3_vectors.npy"
+
+    if not in_file.exists():
+        _set_phase_failed(state, "embed", "phase2_audited.json not found")
         return False
 
-    elapsed = time.monotonic() - t0
-    logger.info("DONE   %s  (%ds)  %d chunks  score=%.2f",
-                filename, int(elapsed), n_upserted, qs)
-    book_key = _link_classification(filename, str(filepath))
-    _notify("book_ingested",
-            f"{filename} → {collection}: {n_upserted} chunks, score {qs:.2f}")
-    if book_key:
-        _check_protocols_for_review(book_key)
+    chunks = json.loads(in_file.read_text())
+    _set_phase_running(state, "embed")
+    state["phases"]["embed"]["chunks_total"] = len(chunks)
+    _write_state(state)
+
+    logger.info("Phase 3 — Embedding %d chunks with BAAI/bge-large-en-v1.5", len(chunks))
+
+    # Load model
+    from sentence_transformers import SentenceTransformer
+    model = SentenceTransformer("BAAI/bge-large-en-v1.5")
+
+    # Embed in batches of 16, updating state every 50 chunks
+    import numpy as np
+
+    texts      = [c["text"] for c in chunks]
+    all_vecs   = []
+    batch_size = 16
+    t_start    = time.monotonic()
+
+    for i in range(0, len(texts), batch_size):
+        batch = texts[i : i + batch_size]
+        vecs  = model.encode(batch, show_progress_bar=False).tolist()
+        all_vecs.extend(vecs)
+
+        done = len(all_vecs)
+        # Update state every 50 chunks
+        if done % 50 < batch_size or done == len(texts):
+            elapsed = time.monotonic() - t_start
+            vpm     = round(done / (elapsed / 60), 1) if elapsed > 0 else None
+            eta     = round((len(texts) - done) / (done / elapsed), 1) / 60 if elapsed > 0 and done > 0 else None
+            state["phases"]["embed"]["chunks_done"]       = done
+            state["phases"]["embed"]["vectors_per_minute"] = vpm
+            state["phases"]["embed"]["eta_minutes"]        = eta
+            state["phases"]["embed"]["last_progress_at"]   = _now_iso()
+            _write_state(state)
+
+    # Save vectors
+    np.save(str(out_file), np.array(all_vecs, dtype=np.float32))
+
+    elapsed = time.monotonic() - t_start
+    logger.info("Embed done: %d vectors in %.0fs", len(all_vecs), elapsed)
+    _set_phase_done(state, "embed",
+                    chunks_total=len(chunks),
+                    chunks_done=len(all_vecs))
     return True
+
+
+# ── Phase 4: Qdrant ────────────────────────────────────────────────────────────
+
+def _phase_qdrant(state: dict) -> bool:
+    """Load vectors + chunks, upsert to Qdrant. Writes phase4_done.marker."""
+    bh          = state["book_hash"]
+    cache       = _cache_dir(bh)
+    chunks_file = cache / "phase2_audited.json"
+    vecs_file   = cache / "phase3_vectors.npy"
+    done_marker = cache / "phase4_done.marker"
+
+    if not chunks_file.exists():
+        _set_phase_failed(state, "qdrant", "phase2_audited.json not found")
+        return False
+    if not vecs_file.exists():
+        _set_phase_failed(state, "qdrant", "phase3_vectors.npy not found")
+        return False
+
+    chunks     = json.loads(chunks_file.read_text())
+    collection = state["collection"]
+
+    _set_phase_running(state, "qdrant")
+    logger.info("Phase 4 — Upserting %d chunks → %s", len(chunks), collection)
+
+    import numpy as np
+    from qdrant_client import QdrantClient
+    from qdrant_client.models import PointStruct
+
+    vectors = np.load(str(vecs_file)).tolist()
+
+    if len(vectors) != len(chunks):
+        _set_phase_failed(state, "qdrant",
+                          f"Vector count {len(vectors)} != chunk count {len(chunks)}")
+        return False
+
+    client = QdrantClient(host="localhost", port=6333, timeout=60)
+    _ensure_collection(collection)
+
+    # Deduplicate by chunk_hash
+    seen_hashes: set[str] = set()
+    points = []
+    for chunk, vec in zip(chunks, vectors):
+        h = chunk.get("chunk_hash", "")
+        if h in seen_hashes:
+            continue
+        seen_hashes.add(h)
+        pid     = int(hashlib.sha256(h.encode()).hexdigest()[:15], 16)
+        payload = {k: v for k, v in chunk.items()}
+        points.append(PointStruct(id=pid, vector=vec, payload=payload))
+
+    # Upsert in batches of 100
+    BATCH = 100
+    n_upserted = 0
+    for i in range(0, len(points), BATCH):
+        client.upsert(collection_name=collection, points=points[i : i + BATCH])
+        n_upserted += len(points[i : i + BATCH])
+        state["phases"]["qdrant"]["chunks_inserted"] = n_upserted
+        _write_state(state)
+
+    # Write done marker
+    done_marker.write_text(json.dumps({
+        "completed_at":  _now_iso(),
+        "chunks_inserted": n_upserted,
+        "collection":    collection,
+    }))
+
+    logger.info("Qdrant done: %d vectors upserted to %s", n_upserted, collection)
+    _set_phase_done(state, "qdrant", chunks_inserted=n_upserted)
+    return True
+
+
+# ── startup scan ───────────────────────────────────────────────────────────────
+
+def startup_scan() -> int:
+    """Scan books/ subdirs, enqueue any un-ingested files. Returns count added."""
+    added   = 0
+    queue   = _read_queue()
+    queued_paths = {item["filepath"] for item in queue}
+
+    for subdir, collection in SECTION_COLLECTION_MAP.items():
+        d = BOOKS_DIR / subdir
+        if not d.exists():
+            continue
+        for f in sorted(d.iterdir()):
+            if f.suffix.lower() not in BOOK_EXTS:
+                continue
+            if str(f) in queued_paths:
+                continue
+
+            # Check state machine — skip fully completed books
+            bh    = _book_hash(f)
+            state = _read_state(bh)
+            if state and state.get("completed_at"):
+                logger.debug("Skip (completed): %s", f.name)
+                continue
+
+            # Also check legacy audit file (backward compat)
+            audit_path = QUALITY_DIR / f"{f.stem}_audit.json"
+            if audit_path.exists() and state is None:
+                try:
+                    audit = json.loads(audit_path.read_text())
+                    if audit.get("status") == "approved":
+                        logger.debug("Skip (legacy audit approved): %s", f.name)
+                        continue
+                except Exception:
+                    pass
+
+            queue.append({
+                "filename":        f.name,
+                "filepath":        str(f),
+                "collection":      collection,
+                "source_category": subdir,
+                "format":          f.suffix.lstrip(".").lower(),
+                "requested":       _now_iso(),
+            })
+            added += 1
+            logger.info("Startup scan: enqueued %s → %s", f.name, collection)
+
+    if added:
+        _write_queue(queue)
+    return added
+
+
+# ── process one book ───────────────────────────────────────────────────────────
+
+def process_book(item: dict) -> bool:
+    """
+    Full pipeline for one book, with state-machine checkpointing.
+    Resumes from first incomplete phase.
+    Returns True on success.
+    """
+    filename   = item["filename"]
+    filepath   = Path(item["filepath"])
+    collection = item.get("collection") or SECTION_COLLECTION_MAP.get(
+        item.get("source_category", ""), "medical_library"
+    )
+    category   = item.get("source_category", "medical_literature")
+    fmt        = item.get("format", filepath.suffix.lstrip(".").lower())
+
+    logger.info(SEP)
+    logger.info("START  %s → %s", filename, collection)
+    t0 = time.monotonic()
+
+    # Load or create state
+    bh    = _book_hash(filepath)
+    state = _read_state(bh)
+    if state is None:
+        state = _blank_state(filename, filepath, collection, category)
+        _write_state(state)
+        logger.info("Created new state for %s (hash=%s)", filename, bh)
+    else:
+        resume_phase = _find_resume_phase(state)
+        if resume_phase:
+            logger.info("Resuming from phase '%s' (cache found)", resume_phase)
+        else:
+            logger.info("All phases already done for %s — skipping", filename)
+            state["completed_at"] = _now_iso()
+            _write_state(state)
+            return True
+
+    # Heartbeat: touch CURRENT_FILE every 5 min
+    _hb_stop = threading.Event()
+    def _heartbeat() -> None:
+        while not _hb_stop.wait(timeout=300):
+            try:
+                CURRENT_FILE.touch()
+            except Exception:
+                pass
+    _hb_thread = threading.Thread(target=_heartbeat, daemon=True)
+    _hb_thread.start()
+
+    try:
+        resume_phase = _find_resume_phase(state)
+        if not resume_phase:
+            logger.info("All phases done — nothing to do")
+            state["completed_at"] = _now_iso()
+            _write_state(state)
+            return True
+
+        # ── Phase 1: Parse ─────────────────────────────────────────────────
+        if resume_phase == "parse":
+            if not _phase_parse(state, filepath, fmt, collection, category):
+                return False
+            resume_phase = "audit"
+
+        # ── Phase 2: Audit ─────────────────────────────────────────────────
+        if resume_phase == "audit":
+            if not _phase_audit(state):
+                return False
+            resume_phase = "embed"
+
+        # ── Phase 3: Embed ─────────────────────────────────────────────────
+        if resume_phase == "embed":
+            if not _phase_embed(state):
+                return False
+            resume_phase = "qdrant"
+
+        # ── Phase 4: Qdrant ────────────────────────────────────────────────
+        if resume_phase == "qdrant":
+            if not _phase_qdrant(state):
+                return False
+
+        # All phases done
+        elapsed = time.monotonic() - t0
+        state["completed_at"] = _now_iso()
+        _write_state(state)
+        logger.info("DONE   %s  (%.0fs)  phases: parse+audit+embed+qdrant",
+                    filename, elapsed)
+
+        # Link classification + check protocols
+        book_key = _link_classification(filename, str(filepath))
+        n_inserted = state["phases"]["qdrant"].get("chunks_inserted", 0)
+        _notify("book_ingested",
+                f"{filename} → {collection}: {n_inserted} chunks")
+        if book_key:
+            _check_protocols_for_review(book_key)
+
+        # Reset OllamaManager failure counter between books
+        try:
+            from ollama_manager import ollama
+            ollama.reset()
+        except Exception:
+            pass
+
+        return True
+
+    except Exception as e:
+        logger.error("Unhandled error in process_book(%s): %s", filename, e)
+        return False
+    finally:
+        _hb_stop.set()
+        _set_current(None)
 
 
 # ── main loop ──────────────────────────────────────────────────────────────────
@@ -535,7 +868,6 @@ def main() -> None:
         logger.info("Startup scan: %d file(s) added to queue", added)
 
     while True:
-        # Pause support: check flag before starting next book
         if PAUSE_FILE.exists():
             logger.info("Queue paused (pause flag set) — waiting 30s")
             time.sleep(30)
@@ -547,11 +879,11 @@ def main() -> None:
             _set_current(None)
             break
 
-        item = queue[0]
+        item      = queue[0]
         remaining = queue[1:]
         _write_queue(remaining)
 
-        item["started"] = datetime.now(timezone.utc).isoformat()
+        item["started"] = _now_iso()
         _set_current(item)
 
         try:

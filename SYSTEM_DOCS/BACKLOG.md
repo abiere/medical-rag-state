@@ -1,18 +1,12 @@
 # BACKLOG — Medical RAG
 > Auto-updated by Claude Code after each session.
-> Last updated: 2026-04-16 — multi-file video upload + GitHub MCP + CLAUDE.md + CONTEXT.md
+> Last updated: 2026-04-16 — complete pipeline rebuild (state machine + watchdog + nightly phases)
 
 ## 🔴 Prioriteit — volgende sessie
 
-- [ ] Travell+Simons valideren na ingest
+- [ ] Deadman + Travell+Simons + Trail Guide valideren na ingest (alle 3 boeken in queue)
       Check: curl localhost:6333/collections/medical_library | grep points_count
-      Verwacht: 1000+ chunks voor een 63MB medisch boek
-
-- [ ] Deadman valideren na herverwerking
-      987 chunks aangemaakt maar niet in Qdrant door audit timeout
-      Audit fix toegepast — Deadman opnieuw in queue
-      Check: source_file="deadman" chunks in medical_library
-      Verwacht: 987 chunks correct embedded
+      Verwacht: 1000+ chunks per boek — Deadman (673p), Travell (838p), Trail Guide
 
 - [ ] Eerste protocol genereren via /protocols pagina
       Klacht: "Etalagebenen" (gold standard beschikbaar als referentie)
@@ -82,6 +76,24 @@
 - [ ] Visueel zoeken — upload afbeelding, vind vergelijkbare
 
 - [ ] Scraper recharge.health blog (publieke content)
+
+## ✅ Afgerond sessie 2026-04-16 (pipeline rebuild)
+
+### Complete Pipeline Rebuild
+- [x] State machine per boek — state.json + fase-bestanden + resume logic
+- [x] ollama_manager.py — OllamaManager singleton met health checks + auto-restart
+- [x] Image screening volledig ontkoppeld van hoofdpipeline
+- [x] screen_images_background() in audit_book.py (nightly job)
+- [x] Autonoom watchdog service (watchdog.py + book-ingest-watchdog.service)
+- [x] WATCHDOG_LOG.md — auto-bijgewerkt door watchdog, gesynchroniseerd naar GitHub
+- [x] sync_status.py — WATCHDOG_LOG.md toegevoegd aan git sync
+- [x] /api/library/progress/active + /all + /{book_hash} endpoints
+- [x] Progress widget — fase-voor-fase display (parse → audit → embed → qdrant)
+- [x] nightly_maintenance.py — image screening batch fase
+- [x] nightly_maintenance.py — state integriteit controle (Qdrant vs state.json)
+- [x] nightly_maintenance.py — cache cleanup (fase-bestanden >30 dagen)
+- [x] STAP 0 schone start — collection deleted, caches cleared, PDFs hernoemd 01/02/03
+- [x] 33/33 tests geslaagd
 
 ## ✅ Afgerond sessie 2026-04-15/16
 

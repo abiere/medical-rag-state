@@ -103,12 +103,14 @@ class MaintenanceRunner:
 
         # Run the five measurement phases first so the report can be complete
         phases = [
-            ("pre_check",    "Pre-checks",          self._phase_pre_check),
-            ("qdrant",       "Qdrant maintenance",  self._phase_qdrant),
-            ("consistency",  "Data consistentie",   self._phase_consistency),
-            ("retro_audit",  "Retroaudit chunks",   self._phase_retro_audit),
-            ("software",     "Software check",      self._phase_software),
-            ("cleanup",      "Opruimen",            self._phase_cleanup),
+            ("pre_check",      "Pre-checks",              self._phase_pre_check),
+            ("qdrant",         "Qdrant maintenance",      self._phase_qdrant),
+            ("consistency",    "Data consistentie",       self._phase_consistency),
+            ("retro_audit",    "Retroaudit chunks",       self._phase_retro_audit),
+            ("image_screen",   "Afbeelding screening",    self._phase_image_screening),
+            ("state_integrity","State integriteit",       self._phase_state_integrity),
+            ("software",       "Software check",          self._phase_software),
+            ("cleanup",        "Opruimen",                self._phase_cleanup),
         ]
         results: dict[str, dict] = {}
         for key, label, fn in phases:
@@ -819,6 +821,156 @@ class MaintenanceRunner:
         return status, {"findings": findings}
 
     # ─────────────────────────────────────────────────────────────────────────
+    # PHASE 4b — IMAGE SCREENING BACKGROUND
+    # ─────────────────────────────────────────────────────────────────────────
+
+    def _phase_image_screening(self) -> tuple[str, dict]:
+        """
+        For each book whose qdrant phase is done but image_screen != done,
+        call screen_images_background() for up to 200 images.
+        """
+        findings = []
+        status   = "OK"
+        CACHE_DIR = BASE / "data" / "ingest_cache"
+
+        if not CACHE_DIR.exists():
+            findings.append("ingest_cache map niet gevonden — overgeslagen")
+            return "OK", {"findings": findings}
+
+        sys.path.insert(0, str(BASE / "scripts"))
+        try:
+            from audit_book import screen_images_background
+        except ImportError as exc:
+            findings.append(f"Import audit_book mislukt: {exc} — overgeslagen")
+            return "WARNING", {"findings": findings}
+
+        screened_books = 0
+        total_processed = 0
+
+        for state_file in CACHE_DIR.glob("*/state.json"):
+            try:
+                state = json.loads(state_file.read_text())
+            except Exception:
+                continue
+
+            phases = state.get("phases", {})
+            qdrant_done = (phases.get("qdrant") or {}).get("status") == "done"
+            image_screen = (phases.get("image_screen") or {}).get("status", "")
+
+            if not qdrant_done:
+                continue
+            if image_screen == "done":
+                continue
+
+            book_hash = state.get("book_hash", state_file.parent.name)
+            book_name = state.get("filename", book_hash)
+            try:
+                result = screen_images_background(book_hash, max_images=200)
+                processed = result.get("processed", 0)
+                findings.append(
+                    f"{book_name}: {processed} afbeeldingen gescreend "
+                    f"(skip={result.get('skipped',0)} err={result.get('errors',0)})"
+                )
+                total_processed += processed
+                screened_books += 1
+
+                # Mark image_screen done if no errors and processed > 0
+                if result.get("errors", 0) == 0:
+                    state.setdefault("phases", {})["image_screen"] = {"status": "done"}
+                    state_file.write_text(json.dumps(state, indent=2))
+            except Exception as exc:
+                findings.append(f"{book_name}: screening mislukt: {exc}")
+                if status == "OK": status = "WARNING"
+
+        if screened_books == 0:
+            findings.append("Geen boeken gevonden voor afbeelding screening")
+        else:
+            findings.append(
+                f"Totaal: {screened_books} boek(en) gescreend, "
+                f"{total_processed} afbeeldingen verwerkt"
+            )
+
+        return status, {"findings": findings}
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # PHASE 4c — STATE MACHINE INTEGRITY
+    # ─────────────────────────────────────────────────────────────────────────
+
+    def _phase_state_integrity(self) -> tuple[str, dict]:
+        """
+        Compare Qdrant chunk counts vs state.json for each completed book.
+        Flag books where qdrant phase shows done but no vectors found.
+        """
+        findings = []
+        status   = "OK"
+        CACHE_DIR = BASE / "data" / "ingest_cache"
+        COLLECTION = "medical_library"
+
+        if not CACHE_DIR.exists():
+            findings.append("ingest_cache map niet gevonden — overgeslagen")
+            return "OK", {"findings": findings}
+
+        # Check Qdrant availability
+        code, _ = http_get(f"{QDRANT_BASE}/healthz", timeout=5)
+        if code != 200:
+            findings.append("Qdrant offline — state integriteit overgeslagen")
+            return "WARNING", {"findings": findings}
+
+        checked = ok_count = mismatch_count = 0
+
+        for state_file in CACHE_DIR.glob("*/state.json"):
+            try:
+                state = json.loads(state_file.read_text())
+            except Exception:
+                continue
+
+            phases = state.get("phases", {})
+            qdrant_done = (phases.get("qdrant") or {}).get("status") == "done"
+            if not qdrant_done:
+                continue
+
+            book_filename = state.get("filename", "")
+            expected_chunks = (phases.get("qdrant") or {}).get("chunks_upserted", 0)
+            checked += 1
+
+            code2, res = http_post(
+                f"{QDRANT_BASE}/collections/{COLLECTION}/points/count",
+                data={
+                    "filter": {
+                        "must": [{
+                            "key": "source_file",
+                            "match": {"value": book_filename},
+                        }]
+                    },
+                    "exact": True,
+                },
+                timeout=15,
+            )
+            if code2 != 200:
+                findings.append(f"Qdrant query mislukt voor {book_filename} (HTTP {code2})")
+                continue
+
+            actual = (res or {}).get("result", {}).get("count", 0)
+
+            if actual == 0 and expected_chunks > 0:
+                findings.append(
+                    f"MISMATCH: {book_filename} — verwacht {expected_chunks} chunks, "
+                    f"Qdrant heeft 0"
+                )
+                mismatch_count += 1
+                if status == "OK": status = "WARNING"
+            elif actual > 0:
+                ok_count += 1
+            else:
+                findings.append(f"{book_filename}: 0 chunks — qdrant was leeg bij embed?")
+
+        findings.insert(0,
+            f"State integriteit: {checked} voltooide boeken gecontroleerd, "
+            f"{ok_count} OK, {mismatch_count} mismatches"
+        )
+        return status, {"findings": findings}
+
+    # ─────────────────────────────────────────────────────────────────────────
     # PHASE 5 — CLEANUP
     # ─────────────────────────────────────────────────────────────────────────
 
@@ -900,6 +1052,48 @@ class MaintenanceRunner:
         if removed_snaps:
             findings.append(
                 f"backups/qdrant: {removed_snaps} snapshot(s) (> 7 dgn) verwijderd"
+            )
+
+        # Ingest cache phase files older than 30 days
+        # Keep: state.json + phase4_done.marker  (needed for re-ingest detection)
+        # Delete: phase1_chunks.json, phase2_audited.json, phase3_vectors.npy
+        CACHE_DIR = BASE / "data" / "ingest_cache"
+        CACHE_PHASE_FILES = {"phase1_chunks.json", "phase2_audited.json", "phase3_vectors.npy"}
+        removed_cache = 0
+        if CACHE_DIR.exists():
+            for state_file in CACHE_DIR.glob("*/state.json"):
+                book_dir = state_file.parent
+                try:
+                    state = json.loads(state_file.read_text())
+                    phases = state.get("phases", {})
+                    qdrant_done = (phases.get("qdrant") or {}).get("status") == "done"
+                    if not qdrant_done:
+                        continue  # never clean up incomplete ingests
+                    completed_at = (phases.get("qdrant") or {}).get("completed_at", "")
+                    if completed_at:
+                        try:
+                            ts = datetime.fromisoformat(completed_at)
+                            age_days = (datetime.now() - ts.replace(tzinfo=None)).days
+                            if age_days < MAX_PROC_LOG_DAYS:
+                                continue
+                        except Exception:
+                            pass
+                    # Remove bulky phase files
+                    for fname in CACHE_PHASE_FILES:
+                        fp = book_dir / fname
+                        if fp.exists():
+                            try:
+                                bytes_freed += fp.stat().st_size
+                                fp.unlink()
+                                removed_cache += 1
+                            except OSError:
+                                pass
+                except Exception:
+                    continue
+        if removed_cache:
+            findings.append(
+                f"ingest_cache: {removed_cache} fase-bestand(en) "
+                f"(> {MAX_PROC_LOG_DAYS} dgn oud) verwijderd"
             )
 
         # Summary

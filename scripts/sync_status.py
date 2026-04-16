@@ -333,6 +333,9 @@ def main() -> None:
     backlog = BASE / "SYSTEM_DOCS" / "BACKLOG.md"
     if backlog.exists():
         files_to_add.append("SYSTEM_DOCS/BACKLOG.md")
+    watchdog_log = BASE / "SYSTEM_DOCS" / "WATCHDOG_LOG.md"
+    if watchdog_log.exists():
+        files_to_add.append("SYSTEM_DOCS/WATCHDOG_LOG.md")
     if AI_INSTRUCTIONS_DST.exists():
         files_to_add.append("AI_INSTRUCTIONS/")
 
