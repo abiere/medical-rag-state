@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-16 01:02:08 UTC**
+> Last update: **2026-04-16 01:07:54 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `359609833-Travell-and-Simons-Myofascial-Pain-and-Dysfunction-Vol-1-2nd-Ed-D-Simons-Et-Al-Williams-and-Wilkins-1999-WW.pdf` (1 min) |
+| Current job | `359609833-Travell-and-Simons-Myofascial-Pain-and-Dysfunction-Vol-1-2nd-Ed-D-Simons-Et-Al-Williams-and-Wilkins-1999-WW.pdf` (6 min) |
 | Queued | 2 |
 | Total books | 3 |
 | Ingested | 1 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` (86 min) |
+| Current job | `1.Upper_Body_Techniques.mp4` (92 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 9.04 GB / 32.86 GB (28%) |
-| CPU | 91.9% |
+| RAM used | 16.16 GB / 32.86 GB (49%) |
+| CPU | 99.3% |
 | Disk used | 54.3 GB / 322.3 GB (18%) |
-| Uptime | up 1 day, 15 hours, 19 minutes |
+| Uptime | up 1 day, 15 hours, 25 minutes |
 
 ## Recent markers
 - `2026-04-16T01:00:56.248757+00:00` **watchdog_restart** — book-ingest-queue hung (30 min stale) — restarted successfully
