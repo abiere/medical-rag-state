@@ -1994,10 +1994,11 @@ const CAT_LABELS = {
 const CAT_ORDER = ['all','medical_literature','acupuncture','nrt_kinesiology','qat_curriculum','device','videos'];
 const KAI_COLORS = {1:'#16a34a', 2:'#ea580c', 3:'#6b7280'};
 const STATUS_CFG = {
-  ingested:     {bg:'#dcfce7', fg:'#16a34a', label:'✅ Ingested'},
-  processing:   {bg:'#ffedd5', fg:'#ea580c', label:'⏳ Bezig'},
-  queued:       {bg:'#fef9c3', fg:'#ca8a04', label:'🕐 Wachtrij'},
-  not_ingested: {bg:'#f3f4f6', fg:'#6b7280', label:'⬜ Nog niet'},
+  ingested:      {bg:'#dcfce7', fg:'#166534', label:'✅ Klaar'},
+  audit_pending: {bg:'#fef3c7', fg:'#92400e', label:'\U0001F319 Audit lopend'},
+  processing:    {bg:'#ffedd5', fg:'#ea580c', label:'⏳ Bezig'},
+  queued:        {bg:'#fef9c3', fg:'#ca8a04', label:'🕐 Wachtrij'},
+  not_ingested:  {bg:'#f3f4f6', fg:'#6b7280', label:'⬜ Nog niet'},
 };
 
 async function loadItems() {
@@ -2185,8 +2186,8 @@ function buildPhaseTable(d) {
   };
   const pillLabels  = {done:'Klaar', running:'Bezig', failed:'Fout', pending:'Wacht'};
 
-  // Book-level summary bar
-  const bkStart = parseTs(d.started_at);
+  // Book-level summary bar — started_at may be null at top level; fall back to parse phase
+  const bkStart = parseTs(d.started_at || (d.phases && d.phases.parse && d.phases.parse.started_at));
   const bkEnd   = parseTs(d.completed_at);
   let html = `<div style="background:#ddf2f3;border-radius:6px;padding:3px 10px;`
     + `font-size:12px;font-family:monospace;color:#085041;margin-bottom:10px">`
@@ -2218,8 +2219,8 @@ function buildPhaseTable(d) {
     const st   = info.status || 'pending';
     const isDone    = st === 'done';
     const isRunning = st === 'running';
-    const ccol = circleColor[st] || '#d1d5db';
-    const icon = circleIcon[st]  || '\u2022';
+    let ccol = circleColor[st] || '#d1d5db';
+    let icon = circleIcon[st]  || '\u2022';
 
     let detail = '';
     if (ph === 'parse' && isDone) {
@@ -2228,9 +2229,24 @@ function buildPhaseTable(d) {
       if (info.ocr_engine && info.ocr_engine !== 'native' && info.ocr_engine !== 'pymupdf')
         detail += ' \u00b7 <span style="color:#6b7280">' + info.ocr_engine + '</span>';
     } else if (ph === 'audit' && isDone) {
-      detail = fmt(info.chunks_total) + ' chunks';
-      if (info.chunks_tagged)  detail += ' \u00b7 ' + fmt(info.chunks_tagged) + ' getagd';
-      if (info.chunks_skipped) detail += ' \u00b7 ' + fmt(info.chunks_skipped) + ' overgeslagen';
+      const cs = info.chunks_skipped || 0;
+      const ct = info.chunks_tagged  || 0;
+      const cx = info.chunks_total   || 0;
+      if (cs > 0) {
+        const nights = Math.ceil(cs / 200);
+        const doneDate = new Date();
+        doneDate.setDate(doneDate.getDate() + nights);
+        const doneDateStr = doneDate.toLocaleDateString('nl-NL', {day:'2-digit', month:'long'});
+        detail = fmt(ct) + ' getagd \u00b7 ' + fmt(cs) + ' overgeslagen \u00b7 nachtrun vereist'
+          + '<div style="background:#fde68a;border-radius:6px;padding:4px 8px;font-size:11px;'
+          + 'color:#78350f;margin-top:5px">Nachtrun: 200 chunks/nacht \u00b7 ~' + nights
+          + ' nachten resterend \u00b7 klaar ~' + doneDateStr + '</div>';
+        ccol = '#d97706';
+        icon = '\u263D';
+      } else {
+        detail = fmt(cx) + ' chunks';
+        if (ct) detail += ' \u00b7 ' + fmt(ct) + ' getagd';
+      }
     } else if (ph === 'embed' && isDone) {
       detail = fmt(info.chunks_done || info.chunks_total) + ' vectors';
     } else if (ph === 'qdrant' && isDone) {
@@ -2240,11 +2256,19 @@ function buildPhaseTable(d) {
       detail = '<span style="color:#dc2626">' + String(info.error).slice(0, 80) + '</span>';
     }
 
-    const phStart  = parseTs(info.started_at);
-    const phEnd    = parseTs(info.completed_at);
-    const pill     = `<span style="${pillStyles[st]||pillStyles.pending};border-radius:999px;`
-      + `padding:2px 8px;font-size:11px;font-weight:600">${pillLabels[st]||'Wacht'}</span>`;
-    const rowBg    = isRunning ? 'background:#f0faf8;' : '';
+    const phStart = parseTs(info.started_at);
+    const phEnd   = parseTs(info.completed_at);
+    const auditNachtrun = ph === 'audit' && isDone && (info.chunks_skipped || 0) > 0;
+    let pill, rowBg;
+    if (auditNachtrun) {
+      pill  = `<span style="background:#fef3c7;color:#92400e;border-radius:999px;`
+        + `padding:2px 8px;font-size:11px;font-weight:600">Nachtrun</span>`;
+      rowBg = 'background:#fffbeb;';
+    } else {
+      pill  = `<span style="${pillStyles[st]||pillStyles.pending};border-radius:999px;`
+        + `padding:2px 8px;font-size:11px;font-weight:600">${pillLabels[st]||'Wacht'}</span>`;
+      rowBg = isRunning ? 'background:#f0faf8;' : '';
+    }
 
     html += `<tr style="${rowBg}border-bottom:0.5px solid #e2e8f0">`
       + `<td style="padding:7px 0;vertical-align:top">`
@@ -2363,12 +2387,18 @@ async def api_library_items():
                         phases.get(ph, {}).get("status") == "done"
                         for ph in ("parse", "audit", "embed", "qdrant")
                     )
+                    audit_ph = phases.get("audit") or {}
+                    retroaudit_pending = (
+                        audit_ph.get("status") == "done"
+                        and (audit_ph.get("chunks_skipped") or 0) > 0
+                    )
                     state_map[fn] = {
-                        "book_hash":    s.get("book_hash", ""),
-                        "ocr_engine":   phases.get("parse", {}).get("ocr_engine") or "",
-                        "completed_at": s.get("completed_at") or "",
-                        "all_done":     all_done,
-                        "chunks_inserted": phases.get("qdrant", {}).get("chunks_inserted") or 0,
+                        "book_hash":          s.get("book_hash", ""),
+                        "ocr_engine":         phases.get("parse", {}).get("ocr_engine") or "",
+                        "completed_at":       s.get("completed_at") or "",
+                        "all_done":           all_done,
+                        "chunks_inserted":    phases.get("qdrant", {}).get("chunks_inserted") or 0,
+                        "retroaudit_pending": retroaudit_pending,
                     }
             except Exception:
                 pass
@@ -2434,17 +2464,16 @@ async def api_library_items():
             status = "processing"
         elif any(_matches_file(qf) for qf in queued_files):
             status = "queued"
-        elif chunk_count > 0:
-            status = "ingested"
-        elif sm.get("all_done"):
-            # state.json says all 4 phases completed — trust it even if Qdrant count is cached 0
-            status = "ingested"
-            chunk_count = sm.get("chunks_inserted", 0)
+        elif chunk_count > 0 or sm.get("all_done"):
+            if sm.get("all_done") and chunk_count == 0:
+                chunk_count = sm.get("chunks_inserted", 0)
+            status = "audit_pending" if sm.get("retroaudit_pending") else "ingested"
         else:
             status = "not_ingested"
 
         items_out.append({**meta, "chunk_count": chunk_count, "status": status,
-                          "ocr_engine": ocr_engine, "book_hash": book_hash})
+                          "ocr_engine": ocr_engine, "book_hash": book_hash,
+                          "retroaudit_pending": sm.get("retroaudit_pending", False)})
 
     return {"items": items_out}
 
