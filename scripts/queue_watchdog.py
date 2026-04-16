@@ -21,9 +21,10 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-BASE          = Path("/root/medical-rag")
-STALE_MINUTES = 30
-MARKERS_FILE  = Path("/var/log/markers.json")
+BASE                 = Path("/root/medical-rag")
+BOOK_STALE_MINUTES   = 120   # Docling can legitimately run 30–90 min per book
+TRANS_STALE_MINUTES  = 30    # Whisper jobs are much shorter
+MARKERS_FILE         = Path("/var/log/markers.json")
 
 BOOK_CURRENT  = Path("/tmp/book_ingest_current.json")
 BOOK_PAUSE    = Path("/tmp/book_ingest_pause")
@@ -88,6 +89,7 @@ def _write_marker(event: str, message: str) -> None:
 def check_service(
     service: str,
     current_file: Path,
+    stale_minutes: float,
     pause_file: Path | None = None,
 ) -> str:
     """
@@ -107,9 +109,9 @@ def check_service(
         print(f"[watchdog] {service}: active, no current job — ok")
         return "ok"
 
-    if age > STALE_MINUTES:
+    if age > stale_minutes:
         print(
-            f"[watchdog] {service}: current job stale ({age:.0f} min > {STALE_MINUTES} min) — restarting"
+            f"[watchdog] {service}: current job stale ({age:.0f} min > {stale_minutes:.0f} min) — restarting"
         )
         ok = _restart(service)
         msg = (
@@ -129,8 +131,8 @@ def check_service(
 def main() -> None:
     print(f"[watchdog] {datetime.now(timezone.utc).isoformat()} — queue watchdog running")
 
-    book_result  = check_service("book-ingest-queue",  BOOK_CURRENT,  BOOK_PAUSE)
-    trans_result = check_service("transcription-queue", TRANS_CURRENT, TRANS_PAUSE)
+    book_result  = check_service("book-ingest-queue",  BOOK_CURRENT,  BOOK_STALE_MINUTES,  BOOK_PAUSE)
+    trans_result = check_service("transcription-queue", TRANS_CURRENT, TRANS_STALE_MINUTES, TRANS_PAUSE)
 
     print(f"[watchdog] results — book: {book_result}, transcription: {trans_result}")
 

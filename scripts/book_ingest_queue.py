@@ -17,6 +17,7 @@ import json
 import logging
 import os
 import sys
+import threading
 import time
 import urllib.request
 from datetime import datetime, timezone
@@ -215,6 +216,22 @@ def startup_scan() -> int:
     queue = _read_queue()
     queued_paths = {item["filepath"] for item in queue}
 
+    # Skip the book that was being processed when the service was last killed.
+    # On restart after a watchdog kill, CURRENT_FILE still exists with the
+    # interrupted book's path.  Re-enqueueing it would cause a round-robin cycle.
+    currently_processing: str | None = None
+    if CURRENT_FILE.exists():
+        try:
+            cur = json.loads(CURRENT_FILE.read_text())
+            currently_processing = cur.get("filepath")
+            if currently_processing:
+                logger.info(
+                    "Startup scan: skipping in-progress book: %s",
+                    Path(currently_processing).name,
+                )
+        except Exception:
+            pass
+
     for subdir, collection in SECTION_COLLECTION_MAP.items():
         d = BOOKS_DIR / subdir
         if not d.exists():
@@ -223,6 +240,9 @@ def startup_scan() -> int:
             if f.suffix.lower() not in BOOK_EXTS:
                 continue
             if str(f) in queued_paths:
+                continue
+            # Don't re-enqueue the book that's currently being processed
+            if currently_processing and str(f) == currently_processing:
                 continue
             audit_path = QUALITY_DIR / f"{f.stem}_audit.json"
             if audit_path.exists():
@@ -267,6 +287,37 @@ def process_book(item: dict) -> bool:
     logger.info(SEP)
     logger.info("START  %s → %s", filename, collection)
     t0 = time.monotonic()
+
+    # Heartbeat: touch CURRENT_FILE every 5 min so the watchdog sees a live mtime
+    _hb_stop = threading.Event()
+
+    def _heartbeat() -> None:
+        while not _hb_stop.wait(timeout=300):  # 5 min
+            try:
+                CURRENT_FILE.touch()
+            except Exception:
+                pass
+
+    _hb_thread = threading.Thread(target=_heartbeat, daemon=True)
+    _hb_thread.start()
+
+    try:
+        return _process_book_inner(
+            filename, filepath, collection, category, fmt, t0,
+        )
+    finally:
+        _hb_stop.set()
+
+
+def _process_book_inner(
+    filename: str,
+    filepath: Path,
+    collection: str,
+    category: str,
+    fmt: str,
+    t0: float,
+) -> bool:
+    """Core pipeline — called by process_book() under a heartbeat thread."""
 
     if not filepath.exists():
         logger.error("File not found: %s", filepath)
