@@ -3092,130 +3092,251 @@ async def api_settings_test_claude():
         return JSONResponse({"ok": False, "error": str(e)[:200]})
 
 
+# ── GET /api/pipeline-diagrams ────────────────────────────────────────────────
+
+PIPELINE_DIAGRAMS_PATH = BASE / "config" / "pipeline_diagrams.json"
+
+
+def _load_pipeline_diagrams() -> dict:
+    """Load pipeline_diagrams.json and overlay live settings values."""
+    try:
+        data = json.loads(PIPELINE_DIAGRAMS_PATH.read_text())
+    except Exception:
+        data = {}
+
+    live = _load_settings_cfg()
+    n  = live.get("nightly", {})
+    ca = live.get("claude_api", {})
+
+    data.setdefault("nightly", {})
+    data.setdefault("audit", {})
+    data["audit"].setdefault("primary", {})
+    data["audit"].setdefault("retroaudit", {})
+
+    # Overlay live nightly settings
+    data["nightly"]["start_time"]         = n.get("start_time",        data["nightly"].get("start_time", "02:00"))
+    data["nightly"]["end_time"]           = n.get("end_time",          data["nightly"].get("end_time",   "05:00"))
+    data["nightly"]["image_screen_limit"] = n.get("image_screen_limit",data["nightly"].get("image_screen_limit", 200))
+
+    # Overlay live audit settings
+    data["audit"]["primary"]["model"]   = ca.get("model",       data["audit"]["primary"].get("model",   "claude-haiku-4-5-20251001"))
+    data["audit"]["primary"]["workers"] = ca.get("max_workers", data["audit"]["primary"].get("workers", 10))
+    data["audit"]["primary"]["enabled"] = ca.get("enabled",     False)
+
+    # Keep ollama_window in sync with nightly window
+    start = data["nightly"]["start_time"]
+    end   = data["nightly"]["end_time"]
+    data["audit"]["retroaudit"]["ollama_window"] = f"{start}–{end} Amsterdam"
+
+    return data
+
+
+@app.get("/api/pipeline-diagrams")
+async def api_pipeline_diagrams():
+    return JSONResponse(_load_pipeline_diagrams())
+
+
+@app.get("/api/pipeline-diagrams/refresh")
+async def api_pipeline_diagrams_refresh():
+    """Re-extract constants from parse_pdf.py and update pipeline_diagrams.json."""
+    import importlib.util as _ilu
+    min_ocr = 10
+    native_threshold = 15
+    try:
+        spec = _ilu.spec_from_file_location("parse_pdf", BASE / "scripts" / "parse_pdf.py")
+        mod  = _ilu.module_from_spec(spec)
+        spec.loader.exec_module(mod)  # type: ignore
+        min_ocr          = getattr(mod, "MIN_OCR_WORDS",    min_ocr)
+        native_threshold = getattr(mod, "NATIVE_THRESHOLD", native_threshold)
+    except Exception:
+        pass
+
+    try:
+        data = json.loads(PIPELINE_DIAGRAMS_PATH.read_text())
+    except Exception:
+        data = {}
+
+    data.setdefault("pdf_type_detection", {})
+    data.setdefault("ocr_cascade", {})
+    data["pdf_type_detection"]["threshold_words_per_page_native"] = 50
+    data["pdf_type_detection"]["threshold_words_per_page_low"]    = native_threshold
+    data["ocr_cascade"]["min_words_threshold"]                    = min_ocr
+    data["updated_at"]  = datetime.now(timezone.utc).isoformat()
+    data["updated_by"]  = "Claude Code — auto-refresh"
+
+    PIPELINE_DIAGRAMS_PATH.write_text(json.dumps(data, indent=2, ensure_ascii=False))
+    return JSONResponse(_load_pipeline_diagrams())
+
+
 # ── GET /settings ──────────────────────────────────────────────────────────────
 
 @app.get("/settings", response_class=HTMLResponse)
 async def settings_page():
     body = """
 <div class="wrap">
-  <h1 style="font-size:22px;font-weight:700;margin-bottom:24px;color:#111">Instellingen</h1>
+  <h1 style="font-size:22px;font-weight:700;margin-bottom:20px;color:#111">Instellingen</h1>
 
-  <!-- Claude API card -->
-  <div class="section" style="max-width:680px;margin-bottom:24px">
-    <div class="section-head">
-      <span class="section-title">Claude API audit</span>
-      <span id="claude-status-badge" style="font-size:12px;color:#6b7280"></span>
-    </div>
-    <div style="padding:20px 24px;display:flex;flex-direction:column;gap:18px">
+  <!-- Tab bar -->
+  <div style="display:flex;gap:0;border-bottom:1px solid #e5e7eb;margin-bottom:24px;max-width:880px">
+    <button id="tab-params" onclick="switchTab('params')"
+      style="padding:10px 22px;border:none;background:none;cursor:pointer;font-size:14px;
+             font-weight:600;color:#1A6B72;border-bottom:2px solid #1A6B72;margin-bottom:-1px">
+      Parameters
+    </button>
+    <button id="tab-schemas" onclick="switchTab('schemas')"
+      style="padding:10px 22px;border:none;background:none;cursor:pointer;font-size:14px;
+             font-weight:400;color:#6b7280;border-bottom:2px solid transparent;margin-bottom:-1px">
+      Schema's
+    </button>
+  </div>
 
-      <!-- API key row -->
-      <div>
-        <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">API key</label>
-        <div style="display:flex;gap:8px;align-items:center">
-          <input id="api-key-input" type="password" placeholder="sk-ant-api03-…"
-            style="flex:1;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;
-                   font-size:13px;font-family:monospace;color:#111">
-          <button onclick="testClaude()"
-            style="padding:9px 16px;background:#1A6B72;color:#fff;border:none;
-                   border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;
-                   white-space:nowrap">
-            Testen
-          </button>
-        </div>
-        <div id="test-result" style="margin-top:6px;font-size:12px;color:#6b7280"></div>
+  <!-- TAB 1: Parameters -->
+  <div id="pane-params">
+
+    <!-- Claude API card -->
+    <div class="section" style="max-width:680px;margin-bottom:24px">
+      <div class="section-head">
+        <span class="section-title">Claude API audit</span>
+        <span id="claude-status-badge" style="font-size:12px;color:#6b7280"></span>
       </div>
+      <div style="padding:20px 24px;display:flex;flex-direction:column;gap:18px">
 
-      <!-- Enabled toggle -->
-      <div style="display:flex;align-items:center;justify-content:space-between">
+        <!-- API key row -->
         <div>
-          <div style="font-size:13px;font-weight:600;color:#374151">Ingeschakeld</div>
-          <div style="font-size:12px;color:#6b7280;margin-top:2px">
-            Vervangt Ollama voor chunk-tagging. Geen nachtlimiet bij retroaudit.
+          <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">API key</label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input id="api-key-input" type="password" placeholder="sk-ant-api03-\u2026"
+              style="flex:1;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;
+                     font-size:13px;font-family:monospace;color:#111">
+            <button onclick="testClaude()"
+              style="padding:9px 16px;background:#1A6B72;color:#fff;border:none;
+                     border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;
+                     white-space:nowrap">
+              Testen
+            </button>
+          </div>
+          <div id="test-result" style="margin-top:6px;font-size:12px;color:#6b7280"></div>
+        </div>
+
+        <!-- Enabled toggle -->
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div style="font-size:13px;font-weight:600;color:#374151">Ingeschakeld</div>
+            <div style="font-size:12px;color:#6b7280;margin-top:2px">
+              Vervangt Ollama voor chunk-tagging. Geen nachtlimiet bij retroaudit.
+            </div>
+          </div>
+          <label style="position:relative;display:inline-block;width:44px;height:24px">
+            <input id="enabled-toggle" type="checkbox" style="opacity:0;width:0;height:0"
+              onchange="toggleChanged()">
+            <span id="toggle-slider"
+              style="position:absolute;cursor:pointer;inset:0;border-radius:12px;
+                     background:#d1d5db;transition:.2s">
+              <span id="toggle-thumb"
+                style="position:absolute;width:18px;height:18px;border-radius:50%;
+                       background:#fff;top:3px;left:3px;transition:.2s;
+                       box-shadow:0 1px 3px rgba(0,0,0,.3)"></span>
+            </span>
+          </label>
+        </div>
+
+        <!-- Model + Workers -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div>
+            <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">Model</label>
+            <select id="model-select"
+              style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;
+                     font-size:13px;color:#111;background:#fff">
+              <option value="claude-haiku-4-5-20251001">claude-haiku-4-5 (snel)</option>
+              <option value="claude-sonnet-4-6">claude-sonnet-4-6 (beter)</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">Parallelle workers</label>
+            <input id="workers-input" type="number" min="1" max="50" value="10"
+              style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;
+                     font-size:13px;color:#111">
           </div>
         </div>
-        <label style="position:relative;display:inline-block;width:44px;height:24px">
-          <input id="enabled-toggle" type="checkbox" style="opacity:0;width:0;height:0"
-            onchange="toggleChanged()">
-          <span id="toggle-slider"
-            style="position:absolute;cursor:pointer;inset:0;border-radius:12px;
-                   background:#d1d5db;transition:.2s">
-            <span id="toggle-thumb"
-              style="position:absolute;width:18px;height:18px;border-radius:50%;
-                     background:#fff;top:3px;left:3px;transition:.2s;
-                     box-shadow:0 1px 3px rgba(0,0,0,.3)"></span>
-          </span>
-        </label>
-      </div>
 
-      <!-- Model + Workers -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-        <div>
-          <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">Model</label>
-          <select id="model-select"
-            style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;
-                   font-size:13px;color:#111;background:#fff">
-            <option value="claude-haiku-4-5-20251001">claude-haiku-4-5 (snel)</option>
-            <option value="claude-sonnet-4-6">claude-sonnet-4-6 (beter)</option>
-          </select>
-        </div>
-        <div>
-          <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">Parallelle workers</label>
-          <input id="workers-input" type="number" min="1" max="50" value="10"
-            style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;
-                   font-size:13px;color:#111">
+        <!-- Save button -->
+        <div style="display:flex;justify-content:flex-end;padding-top:4px">
+          <button onclick="saveSettings()"
+            style="padding:10px 24px;background:#1A6B72;color:#fff;border:none;
+                   border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">
+            Opslaan
+          </button>
         </div>
       </div>
+    </div>
 
-      <!-- Save button -->
-      <div style="display:flex;justify-content:flex-end;padding-top:4px">
-        <button onclick="saveSettings()"
-          style="padding:10px 24px;background:#1A6B72;color:#fff;border:none;
-                 border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">
-          Opslaan
-        </button>
+    <!-- Nightly limits card -->
+    <div class="section" style="max-width:680px">
+      <div class="section-head">
+        <span class="section-title">Nachtelijke onderhoud</span>
       </div>
+      <div style="padding:20px 24px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">
+            Nachtrun start (Amsterdam)
+          </label>
+          <input id="nightly-start" type="time" value="02:00"
+            style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px">
+        </div>
+        <div>
+          <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">
+            Nachtrun einde (Amsterdam)
+          </label>
+          <input id="nightly-end" type="time" value="05:00"
+            style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px">
+        </div>
+        <div>
+          <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">
+            Afbeelding screening/nacht
+          </label>
+          <input id="image-limit" type="number" min="50" max="2000" value="200"
+            style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px">
+        </div>
+        <div style="grid-column:1/-1;display:flex;justify-content:flex-end">
+          <button onclick="saveNightly()"
+            style="padding:10px 24px;background:#1A6B72;color:#fff;border:none;
+                   border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">
+            Opslaan
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /pane-params -->
+
+  <!-- TAB 2: Schema's -->
+  <div id="pane-schemas" style="display:none;max-width:880px">
+    <div id="diagrams-container">
+      <div style="color:#6b7280;font-size:13px;padding:20px 0">Schema's laden\u2026</div>
     </div>
   </div>
 
-  <!-- Nightly limits card -->
-  <div class="section" style="max-width:680px">
-    <div class="section-head">
-      <span class="section-title">Nachtelijke onderhoud</span>
-    </div>
-    <div style="padding:20px 24px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
-      <div>
-        <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">
-          Nachtrun start (Amsterdam)
-        </label>
-        <input id="nightly-start" type="time" value="02:00"
-          style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px">
-      </div>
-      <div>
-        <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">
-          Nachtrun einde (Amsterdam)
-        </label>
-        <input id="nightly-end" type="time" value="05:00"
-          style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px">
-      </div>
-      <div>
-        <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">
-          Afbeelding screening/nacht
-        </label>
-        <input id="image-limit" type="number" min="50" max="2000" value="200"
-          style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px">
-      </div>
-      <div style="grid-column:1/-1;display:flex;justify-content:flex-end">
-        <button onclick="saveNightly()"
-          style="padding:10px 24px;background:#1A6B72;color:#fff;border:none;
-                 border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">
-          Opslaan
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
+</div><!-- /wrap -->
 
 <script>
+// ═══════════════════════════════════════════════════════════
+// TAB SWITCHING
+// ═══════════════════════════════════════════════════════════
+function switchTab(tab) {
+  ['params','schemas'].forEach(t => {
+    document.getElementById('pane-' + t).style.display = t === tab ? 'block' : 'none';
+    const btn = document.getElementById('tab-' + t);
+    const active = t === tab;
+    btn.style.fontWeight     = active ? '600' : '400';
+    btn.style.color          = active ? '#1A6B72' : '#6b7280';
+    btn.style.borderBottom   = active ? '2px solid #1A6B72' : '2px solid transparent';
+  });
+  if (tab === 'schemas' && !window._diagramsLoaded) loadDiagrams();
+}
+
+// ═══════════════════════════════════════════════════════════
+// PARAMETERS TAB — existing settings functions
+// ═══════════════════════════════════════════════════════════
 let _settings = {};
 
 async function loadSettings() {
@@ -3225,71 +3346,46 @@ async function loadSettings() {
     const ca = _settings.claude_api || {};
     const n  = _settings.nightly    || {};
 
-    // API key placeholder — show masked if set
     if (ca.api_key_set) {
       document.getElementById('api-key-input').placeholder =
-        ca.api_key_masked || '●●●● (opgeslagen)';
+        ca.api_key_masked || '\u25cf\u25cf\u25cf\u25cf (opgeslagen)';
       updateStatus('\u2713 API key aanwezig', '#059669');
     } else {
       updateStatus('Geen API key', '#6b7280');
     }
-
-    // Toggle
     const tog = document.getElementById('enabled-toggle');
     tog.checked = ca.enabled || false;
     refreshToggleUI(tog.checked);
 
-    // Model
     const sel = document.getElementById('model-select');
-    if (ca.model) {
-      sel.value = ca.model;
-      if (!sel.value) sel.value = 'claude-haiku-4-5-20251001';
-    }
-
-    // Workers
+    if (ca.model) { sel.value = ca.model; if (!sel.value) sel.value = 'claude-haiku-4-5-20251001'; }
     if (ca.max_workers) document.getElementById('workers-input').value = ca.max_workers;
 
-    // Nightly
     if (n.start_time) document.getElementById('nightly-start').value = n.start_time;
     if (n.end_time)   document.getElementById('nightly-end').value   = n.end_time;
     if (n.image_screen_limit) document.getElementById('image-limit').value = n.image_screen_limit;
-  } catch(e) {
-    console.error('loadSettings failed:', e);
-  }
+  } catch(e) { console.error('loadSettings failed:', e); }
 }
 
 function updateStatus(msg, color) {
   const el = document.getElementById('claude-status-badge');
-  el.textContent = msg;
-  el.style.color = color;
+  el.textContent = msg; el.style.color = color;
 }
-
-function toggleChanged() {
-  const tog = document.getElementById('enabled-toggle');
-  refreshToggleUI(tog.checked);
-}
-
+function toggleChanged() { refreshToggleUI(document.getElementById('enabled-toggle').checked); }
 function refreshToggleUI(on) {
-  const slider = document.getElementById('toggle-slider');
-  const thumb  = document.getElementById('toggle-thumb');
-  slider.style.background = on ? '#1A6B72' : '#d1d5db';
-  thumb.style.left = on ? '23px' : '3px';
+  document.getElementById('toggle-slider').style.background = on ? '#1A6B72' : '#d1d5db';
+  document.getElementById('toggle-thumb').style.left = on ? '23px' : '3px';
 }
 
 async function testClaude() {
   const btn = document.querySelector('button[onclick="testClaude()"]');
   const res = document.getElementById('test-result');
-  btn.disabled = true;
-  btn.textContent = 'Testen\u2026';
-  res.textContent = '';
-
-  // Save key first if new value entered
+  btn.disabled = true; btn.textContent = 'Testen\u2026'; res.textContent = '';
   const keyVal = document.getElementById('api-key-input').value.trim();
-  if (keyVal && keyVal !== '●●●● (opgeslagen)') {
+  if (keyVal && keyVal !== '\u25cf\u25cf\u25cf\u25cf (opgeslagen)') {
     await fetch('/api/settings', {method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({claude_api: {api_key: keyVal}})});
   }
-
   try {
     const r = await fetch('/api/settings/test-claude', {method:'POST'});
     const d = await r.json();
@@ -3302,46 +3398,31 @@ async function testClaude() {
       res.style.color = '#dc2626';
       updateStatus('Verbindingsfout', '#dc2626');
     }
-  } catch(e) {
-    res.textContent = 'Netwerkfout: ' + e;
-    res.style.color = '#dc2626';
-  }
-
-  btn.disabled = false;
-  btn.textContent = 'Testen';
+  } catch(e) { res.textContent = 'Netwerkfout: ' + e; res.style.color = '#dc2626'; }
+  btn.disabled = false; btn.textContent = 'Testen';
 }
 
 async function saveSettings() {
   const keyVal = document.getElementById('api-key-input').value.trim();
-  const payload = {
-    claude_api: {
-      enabled:     document.getElementById('enabled-toggle').checked,
-      model:       document.getElementById('model-select').value,
-      max_workers: parseInt(document.getElementById('workers-input').value) || 10,
-    }
-  };
-  if (keyVal && !keyVal.startsWith('\u25cf')) {
-    payload.claude_api.api_key = keyVal;
-  }
+  const payload = { claude_api: {
+    enabled:     document.getElementById('enabled-toggle').checked,
+    model:       document.getElementById('model-select').value,
+    max_workers: parseInt(document.getElementById('workers-input').value) || 10,
+  }};
+  if (keyVal && !keyVal.startsWith('\u25cf')) payload.claude_api.api_key = keyVal;
   const r = await fetch('/api/settings', {method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify(payload)});
   const d = await r.json();
-  if (d.ok) {
-    showToast('Opgeslagen');
-    await loadSettings();
-  } else {
-    showToast('Fout: ' + JSON.stringify(d), true);
-  }
+  if (d.ok) { showToast('Opgeslagen'); await loadSettings(); }
+  else showToast('Fout: ' + JSON.stringify(d), true);
 }
 
 async function saveNightly() {
-  const payload = {
-    nightly: {
-      start_time:         document.getElementById('nightly-start').value || '02:00',
-      end_time:           document.getElementById('nightly-end').value   || '05:00',
-      image_screen_limit: parseInt(document.getElementById('image-limit').value) || 200,
-    }
-  };
+  const payload = { nightly: {
+    start_time:         document.getElementById('nightly-start').value || '02:00',
+    end_time:           document.getElementById('nightly-end').value   || '05:00',
+    image_screen_limit: parseInt(document.getElementById('image-limit').value) || 200,
+  }};
   const r = await fetch('/api/settings', {method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify(payload)});
   const d = await r.json();
@@ -3356,6 +3437,425 @@ function showToast(msg, isError) {
     + 'background:' + (isError ? '#dc2626' : '#059669');
   document.body.appendChild(t);
   setTimeout(() => t.remove(), 2800);
+}
+
+// ═══════════════════════════════════════════════════════════
+// DIAGRAM RENDERER
+// ═══════════════════════════════════════════════════════════
+let _nuTimer = null;
+
+async function loadDiagrams() {
+  try {
+    const r = await fetch('/api/pipeline-diagrams');
+    const d = await r.json();
+    renderPipelineDiagrams(d);
+    window._diagramsLoaded = true;
+  } catch(e) {
+    document.getElementById('diagrams-container').innerHTML =
+      '<p style="color:#dc2626;font-size:13px">Fout bij laden: ' + e + '</p>';
+  }
+}
+
+function renderPipelineDiagrams(d) {
+  const c = document.getElementById('diagrams-container');
+  c.innerHTML = '';
+  c.appendChild(dCard('A. 24-uurs tijdlijn', renderTimeline(d)));
+  c.appendChild(dCard('B. Boekimport pipeline', renderImportFlow(d)));
+  c.appendChild(dCard('C. OCR engine cascade', renderOcrCascade(d)));
+  c.appendChild(dCard('D. Audit engine selectie', renderAuditSelection(d)));
+  c.appendChild(dCard('E. Nachtrun fasen', renderNightlyPhases(d)));
+}
+
+function dCard(title, contentEl) {
+  const wrap = document.createElement('div');
+  wrap.className = 'section';
+  wrap.style.marginBottom = '20px';
+  const head = document.createElement('div');
+  head.className = 'section-head';
+  const t = document.createElement('span');
+  t.className = 'section-title'; t.textContent = title;
+  head.appendChild(t);
+  wrap.appendChild(head);
+  const body = document.createElement('div');
+  body.style.padding = '20px 24px';
+  body.appendChild(contentEl);
+  wrap.appendChild(body);
+  return wrap;
+}
+
+// ─── A. 24-uurs tijdlijn ───────────────────────────────────
+function hmToMin(hm) {
+  const [h, m] = (hm || '00:00').split(':').map(Number);
+  return h * 60 + m;
+}
+function minToPct(min) { return (min / 1440 * 100).toFixed(3) + '%'; }
+
+function renderTimeline(d) {
+  const n = d.nightly || {};
+  const startMin = hmToMin(n.start_time || '02:00');
+  const endMin   = hmToMin(n.end_time   || '05:00');
+  const startHm  = n.start_time || '02:00';
+  const endHm    = n.end_time   || '05:00';
+
+  const outer = document.createElement('div');
+  outer.style.cssText = 'width:100%;overflow-x:auto';
+
+  // Hour labels
+  const lblRow = document.createElement('div');
+  lblRow.style.cssText = 'position:relative;height:18px;margin-bottom:6px;margin-left:110px';
+  [0,3,6,9,12,15,18,21,24].forEach(h => {
+    const s = document.createElement('span');
+    s.textContent = h + 'h';
+    s.style.cssText = 'position:absolute;font-size:10px;color:#9ca3af;transform:translateX(-50%)';
+    s.style.left = (h / 24 * 100) + '%';
+    lblRow.appendChild(s);
+  });
+  outer.appendChild(lblRow);
+
+  // Process rows
+  const processes = [
+    { label: 'Boekverwerking', color: '#e8f4f5', border: '#a7d5d8', pauseAmber: true },
+    { label: 'Transcriptie',   color: '#e8f4f5', border: '#a7d5d8', pauseAmber: true },
+    { label: 'Nachtrun',       color: '#fef3c7', border: '#fde68a', fixed: [startMin, endMin] },
+  ];
+
+  const grid = document.createElement('div');
+  grid.style.cssText = 'display:flex;flex-direction:column;gap:4px';
+
+  processes.forEach(proc => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;height:26px';
+
+    const lbl = document.createElement('div');
+    lbl.textContent = proc.label;
+    lbl.style.cssText = 'width:110px;font-size:11px;color:#4a5568;flex-shrink:0;padding-right:8px;text-align:right';
+    row.appendChild(lbl);
+
+    const barWrap = document.createElement('div');
+    barWrap.style.cssText = 'flex:1;position:relative;height:20px;background:#f3f4f6;border-radius:3px;overflow:hidden';
+
+    if (proc.fixed) {
+      // Nachtrun: just the window
+      const bar = document.createElement('div');
+      bar.style.cssText = 'position:absolute;top:0;bottom:0;background:' + proc.color
+        + ';border:1px solid ' + proc.border + ';border-radius:3px;box-sizing:border-box';
+      bar.style.left  = minToPct(proc.fixed[0]);
+      bar.style.width = minToPct(proc.fixed[1] - proc.fixed[0]);
+      barWrap.appendChild(bar);
+    } else {
+      // Full bar with pause overlay
+      const bar = document.createElement('div');
+      bar.style.cssText = 'position:absolute;top:0;bottom:0;left:0;right:0;background:' + proc.color
+        + ';border:1px solid ' + proc.border + ';border-radius:3px;box-sizing:border-box';
+      barWrap.appendChild(bar);
+      // Pause overlay
+      const pause = document.createElement('div');
+      pause.style.cssText = 'position:absolute;top:0;bottom:0;background:rgba(254,243,199,.7)';
+      pause.style.left  = minToPct(startMin);
+      pause.style.width = minToPct(endMin - startMin);
+      barWrap.appendChild(pause);
+    }
+
+    // "Nu" marker placeholder (filled by updateNuLine)
+    const nu = document.createElement('div');
+    nu.className = 'nu-marker';
+    nu.style.cssText = 'position:absolute;top:-2px;bottom:-2px;width:2px;background:#dc2626;z-index:5;border-radius:1px';
+    barWrap.appendChild(nu);
+
+    row.appendChild(barWrap);
+    grid.appendChild(row);
+  });
+
+  outer.appendChild(grid);
+
+  // Legend
+  const leg = document.createElement('div');
+  leg.style.cssText = 'display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:11px;color:#6b7280;align-items:center';
+  leg.innerHTML = '<span style="display:inline-flex;align-items:center;gap:4px">'
+    + '<span style="width:14px;height:10px;background:#e8f4f5;border:1px solid #a7d5d8;border-radius:2px;display:inline-block"></span>Actief</span>'
+    + '<span style="display:inline-flex;align-items:center;gap:4px">'
+    + '<span style="width:14px;height:10px;background:#fef3c7;border:1px solid #fde68a;border-radius:2px;display:inline-block"></span>'
+    + 'Nachtrun (' + startHm + '\u2013' + endHm + ' Amsterdam)</span>'
+    + '<span style="display:inline-flex;align-items:center;gap:4px">'
+    + '<span style="width:2px;height:12px;background:#dc2626;display:inline-block;border-radius:1px"></span>Nu</span>';
+  outer.appendChild(leg);
+
+  // Start live nu-line update
+  updateNuLine();
+  if (_nuTimer) clearInterval(_nuTimer);
+  _nuTimer = setInterval(updateNuLine, 60000);
+
+  return outer;
+}
+
+function updateNuLine() {
+  const now = new Date();
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+  const pct = minToPct(nowMin);
+  document.querySelectorAll('.nu-marker').forEach(el => { el.style.left = pct; });
+}
+
+// ─── B. Boekimport pipeline ────────────────────────────────
+function renderImportFlow(d) {
+  const pt = (d.pdf_type_detection || {}).engines || {};
+  const thr_native = (d.pdf_type_detection || {}).threshold_words_per_page_native || 50;
+  const thr_low    = (d.pdf_type_detection || {}).threshold_words_per_page_low    || 15;
+
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'overflow-x:auto';
+
+  // Main flow: horizontal steps
+  const steps = [
+    { label: 'Upload PDF', sub: 'via /library/ingest', color: '#e8f4f5', border: '#1A6B72' },
+    { label: 'Detectie', sub: '\u2265'+thr_native+' w/p \u2192 native\n\u2265'+thr_low+' w/p \u2192 mixed\n< '+thr_low+' w/p \u2192 scanned',
+      color: '#f3f4f6', border: '#9ca3af' },
+    { label: 'Parse', sub: 'PyMuPDF / pdfplumber+OCR / cascade',
+      color: '#f3f4f6', border: '#9ca3af' },
+    { label: 'Chunking', sub: '~450 woorden / chunk', color: '#e8f4f5', border: '#1A6B72' },
+    { label: 'Embedding', sub: 'BAAI/bge-large-en-v1.5\n1024 dims', color: '#e8f4f5', border: '#1A6B72' },
+    { label: 'Audit', sub: 'Claude \u2192 K/A/I + tags\n(Ollama fallback)',
+      color: '#EEEDFE', border: '#3C3489' },
+    { label: 'Qdrant', sub: 'medical_library', color: '#dcfce7', border: '#16a34a' },
+  ];
+
+  const flow = document.createElement('div');
+  flow.style.cssText = 'display:flex;align-items:center;gap:0;flex-wrap:nowrap;min-width:600px';
+
+  steps.forEach((s, i) => {
+    const box = document.createElement('div');
+    box.style.cssText = 'flex:1;min-width:80px;padding:10px 8px;text-align:center;'
+      + 'border-radius:8px;border:1.5px solid ' + s.border + ';background:' + s.color + ';'
+      + 'position:relative';
+
+    const name = document.createElement('div');
+    name.textContent = s.label;
+    name.style.cssText = 'font-size:12px;font-weight:600;color:#111;margin-bottom:4px';
+    box.appendChild(name);
+
+    const sub = document.createElement('div');
+    sub.style.cssText = 'font-size:10px;color:#6b7280;white-space:pre-line;line-height:1.4';
+    sub.textContent = s.sub;
+    box.appendChild(sub);
+
+    flow.appendChild(box);
+
+    if (i < steps.length - 1) {
+      const arrow = document.createElement('div');
+      arrow.textContent = '\u2192';
+      arrow.style.cssText = 'color:#9ca3af;font-size:16px;padding:0 4px;flex-shrink:0';
+      flow.appendChild(arrow);
+    }
+  });
+
+  wrap.appendChild(flow);
+  return wrap;
+}
+
+// ─── C. OCR cascade ────────────────────────────────────────
+function renderOcrCascade(d) {
+  const engines = ((d.ocr_cascade || {}).engines || []).slice().sort((a,b) => a.order - b.order);
+  const minWords = (d.ocr_cascade || {}).min_words_threshold || 10;
+
+  const wrap = document.createElement('div');
+
+  const note = document.createElement('div');
+  note.style.cssText = 'font-size:12px;color:#6b7280;margin-bottom:14px';
+  note.textContent = 'Elke engine wordt geprobeerd totdat \u2265' + minWords + ' woorden herkend zijn. '
+    + 'Bij succes: resultaat gebruikt, cascade stopt.';
+  wrap.appendChild(note);
+
+  const list = document.createElement('div');
+  list.style.cssText = 'display:flex;flex-direction:column;gap:0';
+
+  engines.forEach((eng, i) => {
+    const isCloud = eng.type === 'cloud';
+    const isLast  = i === engines.length - 1;
+    const bg      = isCloud ? '#fef3c7' : (i === 0 ? '#e8f4f5' : '#f8fafc');
+    const border  = isCloud ? '#fde68a' : '#e5e7eb';
+    const numBg   = isCloud ? '#92400e' : '#1A6B72';
+
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:10px 14px;'
+      + 'background:' + bg + ';border:1px solid ' + border + ';'
+      + (i === 0 ? 'border-radius:8px 8px 0 0;' : '')
+      + (isLast  ? 'border-radius:0 0 8px 8px;' : 'border-bottom:none;');
+
+    const num = document.createElement('div');
+    num.textContent = eng.order;
+    num.style.cssText = 'width:22px;height:22px;border-radius:50%;background:' + numBg
+      + ';color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;'
+      + 'justify-content:center;flex-shrink:0';
+    row.appendChild(num);
+
+    const info = document.createElement('div');
+    info.style.cssText = 'flex:1';
+    const name = document.createElement('div');
+    name.textContent = eng.name;
+    name.style.cssText = 'font-size:13px;font-weight:600;color:#111';
+    info.appendChild(name);
+    const speed = document.createElement('div');
+    speed.textContent = eng.speed;
+    speed.style.cssText = 'font-size:11px;color:#6b7280;margin-top:1px';
+    info.appendChild(speed);
+    row.appendChild(info);
+
+    const badge = document.createElement('span');
+    badge.textContent = isCloud ? 'cloud' : 'local';
+    badge.style.cssText = 'font-size:10px;font-weight:600;padding:2px 8px;border-radius:999px;'
+      + (isCloud ? 'background:#fde68a;color:#92400e' : 'background:#dcfce7;color:#166534');
+    row.appendChild(badge);
+
+    list.appendChild(row);
+
+    if (!isLast) {
+      const arrow = document.createElement('div');
+      arrow.textContent = '↓  resultaat < ' + minWords + ' woorden \u2192 volgende';
+      arrow.style.cssText = 'font-size:10px;color:#9ca3af;padding:3px 14px;'
+        + 'border-left:1px solid #e5e7eb;border-right:1px solid #e5e7eb;background:#fff';
+      list.appendChild(arrow);
+    }
+  });
+
+  wrap.appendChild(list);
+  return wrap;
+}
+
+// ─── D. Audit engine selectie ──────────────────────────────
+function renderAuditSelection(d) {
+  const pri  = (d.audit || {}).primary   || {};
+  const fall = (d.audit || {}).fallback  || {};
+  const retro= (d.audit || {}).retroaudit|| {};
+  const claudeEnabled = pri.enabled;
+
+  const wrap = document.createElement('div');
+
+  // Decision node
+  const dec = document.createElement('div');
+  dec.style.cssText = 'text-align:center;padding:10px 20px;background:#f3f4f6;border-radius:8px;'
+    + 'border:2px solid #e5e7eb;font-size:13px;font-weight:600;color:#374151;margin-bottom:16px';
+  dec.innerHTML = 'claude_api.enabled = <span style="font-family:monospace;color:' + (claudeEnabled ? '#16a34a' : '#dc2626') + '">'
+    + (claudeEnabled ? 'true' : 'false') + '</span>';
+  wrap.appendChild(dec);
+
+  const cols = document.createElement('div');
+  cols.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px';
+
+  // Left: Claude
+  const leftActive = claudeEnabled;
+  const left = document.createElement('div');
+  left.style.cssText = 'padding:16px;border-radius:8px;border:2px solid '
+    + (leftActive ? '#3C3489' : '#e5e7eb') + ';background:' + (leftActive ? '#EEEDFE' : '#f9f9ff');
+  left.innerHTML = '<div style="font-size:12px;font-weight:700;color:' + (leftActive ? '#3C3489' : '#9ca3af') + ';margin-bottom:8px">'
+    + (leftActive ? '\u2713 ACTIEF' : 'INACTIEF') + ' \u2014 Claude API</div>'
+    + '<div style="font-size:13px;font-weight:600;color:#111;margin-bottom:4px">' + (pri.name || 'Claude Haiku') + '</div>'
+    + '<div style="font-size:11px;color:#6b7280;font-family:monospace;margin-bottom:6px">' + (pri.model || '') + '</div>'
+    + '<div style="font-size:11px;color:#6b7280">' + (pri.workers || 10) + ' parallelle workers</div>'
+    + '<div style="font-size:11px;color:#6b7280;margin-top:4px">K/A/I + tags + summary</div>';
+  cols.appendChild(left);
+
+  // Right: Ollama
+  const rightActive = !claudeEnabled;
+  const right = document.createElement('div');
+  right.style.cssText = 'padding:16px;border-radius:8px;border:2px solid '
+    + (rightActive ? '#1A6B72' : '#e5e7eb') + ';background:' + (rightActive ? '#e8f4f5' : '#f9fafb');
+  right.innerHTML = '<div style="font-size:12px;font-weight:700;color:' + (rightActive ? '#1A6B72' : '#9ca3af') + ';margin-bottom:8px">'
+    + (rightActive ? '\u2713 ACTIEF' : 'FALLBACK') + ' \u2014 Ollama</div>'
+    + '<div style="font-size:13px;font-weight:600;color:#111;margin-bottom:4px">' + (fall.name || 'Ollama llama3.1:8b') + '</div>'
+    + '<div style="font-size:11px;color:#6b7280;margin-bottom:6px">Sequentieel · lokaal</div>'
+    + '<div style="font-size:11px;color:#6b7280">Stopt na ' + (fall.timeout_failures || 3) + ' opeenvolgende timeouts</div>'
+    + '<div style="font-size:11px;color:#6b7280;margin-top:4px">usability_tags + protocol_relevance</div>';
+  cols.appendChild(right);
+
+  wrap.appendChild(cols);
+
+  // Retroaudit box
+  const retBox = document.createElement('div');
+  retBox.style.cssText = 'padding:12px 16px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;font-size:12px';
+  retBox.innerHTML = '<div style="font-weight:600;color:#374151;margin-bottom:6px">Retroaudit (skipped chunks)</div>'
+    + '<div style="color:#6b7280;line-height:1.6">'
+    + '<span style="color:#3C3489;font-weight:600">Claude:</span> ' + (retro.claude_limit || 'geen limiet') + '<br>'
+    + '<span style="color:#1A6B72;font-weight:600">Ollama:</span> ' + (retro.ollama_window || '') + '<br>'
+    + '<span style="color:#6b7280">Trigger:</span> <code style="font-size:10px">' + (retro.trigger || '') + '</code>'
+    + '</div>';
+  wrap.appendChild(retBox);
+
+  return wrap;
+}
+
+// ─── E. Nachtrun fasen ─────────────────────────────────────
+function renderNightlyPhases(d) {
+  const n = d.nightly || {};
+  const phases = (n.phases || []).slice().sort((a,b) => a.order - b.order);
+  const claudeEnabled = ((d.audit || {}).primary || {}).enabled;
+  const startHm = n.start_time || '02:00';
+  const endHm   = n.end_time   || '05:00';
+  const limit   = n.image_screen_limit || 200;
+
+  const wrap = document.createElement('div');
+
+  const meta = document.createElement('div');
+  meta.style.cssText = 'display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;font-size:12px;color:#6b7280';
+  meta.innerHTML = '<span>\u23F0 Tijdvenster: <strong>' + startHm + '\u2013' + endHm + ' Amsterdam</strong></span>'
+    + '<span>Afbeeldingen: max <strong>' + limit + '/nacht</strong></span>'
+    + '<span>Timezone: Europe/Amsterdam</span>';
+  wrap.appendChild(meta);
+
+  const list = document.createElement('div');
+  list.style.cssText = 'display:flex;flex-direction:column;gap:6px';
+
+  phases.forEach(ph => {
+    const isRetro = ph.order === 4;
+    const isEdge  = ph.order === 0 || ph.order === 8;
+    const bg      = isEdge  ? '#f0fdf4' :
+                    isRetro ? (claudeEnabled ? '#EEEDFE' : '#e8f4f5') : '#f8fafc';
+    const numBg   = isEdge  ? '#16a34a' :
+                    isRetro ? (claudeEnabled ? '#3C3489' : '#1A6B72') : '#6b7280';
+
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:flex-start;gap:12px;padding:10px 14px;'
+      + 'background:' + bg + ';border-radius:8px;border:1px solid #e5e7eb';
+
+    const num = document.createElement('div');
+    num.textContent = ph.order;
+    num.style.cssText = 'width:24px;height:24px;border-radius:50%;background:' + numBg
+      + ';color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;'
+      + 'justify-content:center;flex-shrink:0;margin-top:1px';
+    row.appendChild(num);
+
+    const info = document.createElement('div');
+    const name = document.createElement('div');
+    name.textContent = ph.name;
+    name.style.cssText = 'font-size:13px;font-weight:600;color:#111';
+    info.appendChild(name);
+
+    let desc = ph.description;
+    if (isRetro) {
+      desc += ' \u00b7 venster ' + startHm + '\u2013' + endHm;
+    }
+    if (ph.order === 5) {
+      desc = 'Max ' + limit + '/nacht via Ollama';
+    }
+    const sub = document.createElement('div');
+    sub.textContent = desc;
+    sub.style.cssText = 'font-size:11px;color:#6b7280;margin-top:2px';
+    info.appendChild(sub);
+
+    if (ph.engine) {
+      const eng = document.createElement('span');
+      eng.textContent = ph.engine;
+      eng.style.cssText = 'font-size:10px;font-weight:600;padding:1px 6px;border-radius:999px;margin-top:4px;display:inline-block;'
+        + (ph.engine === 'claude_or_ollama' ? 'background:#EEEDFE;color:#3C3489'
+          : ph.engine === 'ollama'          ? 'background:#e8f4f5;color:#1A6B72'
+          : 'background:#f3f4f6;color:#6b7280');
+      info.appendChild(eng);
+    }
+
+    row.appendChild(info);
+    list.appendChild(row);
+  });
+
+  wrap.appendChild(list);
+  return wrap;
 }
 
 loadSettings();

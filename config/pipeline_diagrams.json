@@ -1,0 +1,164 @@
+{
+  "version": "1.0",
+  "updated_at": "2026-04-16T19:44:49.463199+00:00",
+  "updated_by": "Claude Code — auto-refresh",
+  "pdf_type_detection": {
+    "threshold_words_per_page_native": 50,
+    "threshold_words_per_page_low": 15,
+    "sample_pages": 5,
+    "sample_indices": [
+      1,
+      10,
+      50,
+      100,
+      200
+    ],
+    "method": "pdfplumber word count per page",
+    "engines": {
+      "native": {
+        "name": "PyMuPDF",
+        "speed": "< 10 sec / boek",
+        "note": "directe tekstlaag"
+      },
+      "mixed": {
+        "name": "pdfplumber + OCR per pagina",
+        "speed": "minuten",
+        "note": "native tekst + OCR voor schaarse pagina's"
+      },
+      "scanned": {
+        "name": "OCR cascade",
+        "speed": "minuten – uren",
+        "note": "elke pagina via cascade"
+      }
+    }
+  },
+  "ocr_cascade": {
+    "min_words_threshold": 10,
+    "engines": [
+      {
+        "order": 1,
+        "name": "RapidOCR (ONNX)",
+        "speed": "0.6–1.2 sec/pag",
+        "type": "local",
+        "available": true
+      },
+      {
+        "order": 2,
+        "name": "EasyOCR",
+        "speed": "2–5 sec/pag",
+        "type": "local",
+        "available": true
+      },
+      {
+        "order": 3,
+        "name": "Surya",
+        "speed": "3–8 sec/pag",
+        "type": "local",
+        "available": true
+      },
+      {
+        "order": 4,
+        "name": "Tesseract",
+        "speed": "1–3 sec/pag",
+        "type": "local",
+        "available": true
+      },
+      {
+        "order": 5,
+        "name": "Google Vision",
+        "speed": "API-call (~1 sec)",
+        "type": "cloud",
+        "available": true
+      }
+    ]
+  },
+  "audit": {
+    "primary": {
+      "name": "Claude Haiku",
+      "model": "claude-haiku-4-5-20251001",
+      "workers": 10,
+      "condition": "claude_api.enabled = true",
+      "type": "cloud_parallel"
+    },
+    "fallback": {
+      "name": "Ollama llama3.1:8b",
+      "type": "local_sequential",
+      "timeout_failures": 3
+    },
+    "retroaudit": {
+      "claude_limit": "geen limiet (alle skipped in één keer)",
+      "ollama_window": "00:00–07:00 Amsterdam",
+      "trigger": "audit_status starts with skipped_"
+    }
+  },
+  "nightly": {
+    "start_time": "00:00",
+    "end_time": "07:00",
+    "timezone": "Europe/Amsterdam",
+    "image_screen_limit": 200,
+    "phases": [
+      {
+        "order": 0,
+        "name": "Pauzeer queues",
+        "description": "Boeken + video's gepauzeerd via API",
+        "engine": null
+      },
+      {
+        "order": 1,
+        "name": "Pre-checks",
+        "description": "Services, Qdrant, Ollama bereikbaar",
+        "engine": null
+      },
+      {
+        "order": 2,
+        "name": "Qdrant maintenance",
+        "description": "Statistieken + snapshot backup",
+        "engine": "qdrant"
+      },
+      {
+        "order": 3,
+        "name": "Data consistentie",
+        "description": "Chunk-hashes, dubbelen detecteren",
+        "engine": null
+      },
+      {
+        "order": 4,
+        "name": "Retroaudit",
+        "description": "Claude: alle skipped / Ollama: tijdvenster",
+        "engine": "claude_or_ollama"
+      },
+      {
+        "order": 5,
+        "name": "Afbeelding screening",
+        "description": "Max 200/nacht via Ollama",
+        "engine": "ollama"
+      },
+      {
+        "order": 6,
+        "name": "State integriteit",
+        "description": "Qdrant chunk-counts vs state.json",
+        "engine": null
+      },
+      {
+        "order": 7,
+        "name": "Cleanup",
+        "description": "Fase-bestanden ouder dan 30 dagen",
+        "engine": null
+      },
+      {
+        "order": 8,
+        "name": "Hervat queues",
+        "description": "Altijd in finally block",
+        "engine": null
+      }
+    ]
+  },
+  "video": {
+    "transcription": {
+      "engine": "Whisper",
+      "rate_model": "sec/MB gewogen gemiddelde",
+      "stats_file": "data/transcription_stats.json"
+    },
+    "storage": "video_transcripts"
+  }
+}

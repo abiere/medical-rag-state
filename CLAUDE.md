@@ -136,3 +136,26 @@ Read this skill before ANY UI task. Key tokens: teal `#1A6B72`, nav `NAV_ITEMS` 
 4. **Teal primary color:** `#1A6B72`. Never `#2563eb` for primary buttons/headers.
 5. **Destructive actions:** Always show confirmation dialog with chunk count first.
 6. **Terminology:** NRT-Amsterdam.nl (with hyphen + .nl). Never "NRT Amsterdam".
+
+## Pipeline diagram updates
+
+After ANY change to these files:
+- `scripts/parse_pdf.py`
+- `scripts/claude_audit.py`
+- `scripts/audit_book.py`
+- `scripts/nightly_maintenance.py`
+- `config/settings.json`
+
+Always update `config/pipeline_diagrams.json`:
+1. Re-read the changed file to extract current values
+2. Update the relevant section:
+   - `parse_pdf.py` → `pdf_type_detection` + `ocr_cascade` sections
+   - `claude_audit.py` / `audit_book.py` → `audit` section
+   - `nightly_maintenance.py` → `nightly.phases` section
+   - `settings.json` → `nightly.start_time/end_time`, `audit.primary.model/workers`, `image_screen_limit`
+3. Update `updated_at` to current ISO timestamp
+4. Update `updated_by` to describe what changed, e.g. `"Claude Code — added PaddleOCR to OCR cascade"`
+
+The PostToolUse hook `.claude/hooks/update_pipeline_diagrams.sh` calls
+`GET /api/pipeline-diagrams/refresh` automatically, but also update
+`pipeline_diagrams.json` manually when adding new engines or phases.
