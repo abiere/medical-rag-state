@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-16 14:26:04 UTC**
+> Last update: **2026-04-16 14:31:32 UTC**
 
 ## Services
 | Service | Status |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` (890 min) |
+| Current job | `1.Upper_Body_Techniques.mp4` (896 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 2.19 GB / 32.86 GB (7%) |
-| CPU | 2.4% |
+| RAM used | 2.15 GB / 32.86 GB (6%) |
+| CPU | 2.7% |
 | Disk used | 55.6 GB / 322.3 GB (18%) |
-| Uptime | up 2 days, 4 hours, 43 minutes |
+| Uptime | up 2 days, 4 hours, 48 minutes |
 
 ## Recent markers
 - `2026-04-16T05:20:54.750223+00:00` **watchdog_restart** — book-ingest-queue hung (41 min stale) — restarted successfully
