@@ -1894,6 +1894,18 @@ async def library_paused():
     return {"paused": _BOOK_PAUSE_FILE.exists()}
 
 
+# ── GET /library/classifications ──────────────────────────────────────────────
+
+@app.get("/library/classifications")
+async def library_classifications():
+    """Return book_classifications.json with ingestion status per book."""
+    cfg_path = Path("/root/medical-rag/config/book_classifications.json")
+    try:
+        return json.loads(cfg_path.read_text())
+    except Exception as e:
+        return {"error": str(e), "classifications": {}}
+
+
 @app.post("/videos/pause")
 async def videos_pause():
     _VIDEO_PAUSE_FILE.touch()

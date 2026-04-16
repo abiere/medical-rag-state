@@ -309,6 +309,57 @@ def process_book(item: dict) -> bool:
         _hb_stop.set()
 
 
+_CLASSIFICATIONS_FILE = BASE / "config" / "book_classifications.json"
+
+
+def _link_classification(filename: str, filepath: str) -> None:
+    """
+    After successful ingest, record the exact server path in
+    book_classifications.json so the protocol generator can find files directly.
+    Creates an unclassified entry for unknown books so nothing is silently lost.
+    """
+    try:
+        config = json.loads(_CLASSIFICATIONS_FILE.read_text())
+    except Exception as e:
+        logger.warning("Could not read book_classifications.json: %s", e)
+        return
+
+    fname_lower = filename.lower()
+    matched_key: str | None = None
+    for key, val in config.get("classifications", {}).items():
+        patterns = val.get("filename_patterns", [])
+        if any(p.lower() in fname_lower for p in patterns):
+            matched_key = key
+            break
+
+    ts = datetime.now(timezone.utc).isoformat()
+
+    if matched_key:
+        config["classifications"][matched_key]["server_path"]     = filepath
+        config["classifications"][matched_key]["server_filename"] = filename
+        config["classifications"][matched_key]["ingested"]        = True
+        config["classifications"][matched_key]["ingested_at"]     = ts
+        logger.info("Classification linked: %s → %s", filename, matched_key)
+    else:
+        auto_key = f"unclassified_{Path(filename).stem[:30]}"
+        logger.warning("No classification for '%s' — adding as %s", filename, auto_key)
+        config["classifications"][auto_key] = {
+            "k": 2, "a": 2, "i": 2,
+            "role": "unclassified",
+            "server_path":     filepath,
+            "server_filename": filename,
+            "ingested":        True,
+            "ingested_at":     ts,
+            "filename_patterns": [filename],
+            "notes": "Auto-added — needs manual K/A/I classification",
+        }
+
+    try:
+        _CLASSIFICATIONS_FILE.write_text(json.dumps(config, indent=2))
+    except Exception as e:
+        logger.warning("Could not write book_classifications.json: %s", e)
+
+
 def _write_progress(phase: str, current_page: int, total_pages: int, chunks_so_far: int) -> None:
     """Merge progress fields into CURRENT_FILE so the API can expose them."""
     try:
@@ -445,6 +496,7 @@ def _process_book_inner(
     elapsed = time.monotonic() - t0
     logger.info("DONE   %s  (%ds)  %d chunks  score=%.2f",
                 filename, int(elapsed), n_upserted, qs)
+    _link_classification(filename, str(filepath))
     _notify("book_ingested",
             f"{filename} → {collection}: {n_upserted} chunks, score {qs:.2f}")
     return True
