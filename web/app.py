@@ -3114,7 +3114,7 @@ function showToast(msg, isError) {
 loadSettings();
 </script>
 """
-    return _page("Instellingen", body, "/settings")
+    return HTMLResponse(_page_shell("Instellingen", "/settings", body))
 
 
 # ── GET /library/overview ──────────────────────────────────────────────────────
