@@ -180,6 +180,5 @@ After every task:
 
 ## Test status
 
-**Laatste run:** 16-04-2026 14:39 (52.7s)  
-**Uitslag:** ❌ MISLUKT — 32/33 geslaagd, 1 mislukt, 0 overgeslagen  
-**Mislukt:** `test_web_dashboard_health`  
+**Laatste run:** 16-04-2026 14:40 (43.8s)  
+**Uitslag:** ✅ GESLAAGD — 33/33 geslaagd, 0 overgeslagen
