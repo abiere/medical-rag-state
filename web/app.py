@@ -23,7 +23,7 @@ QUALITY_DIR        = BASE / "data" / "book_quality"
 SECTION_MAP = {
     "medical_literature": {
         "label":       "Medische Literatuur",
-        "color":       "#2563eb",
+        "color":       "#1A6B72",
         "collection":  "medical_library",
         "category":    "medical_literature",
         "description": "Upload PDF of EPUB — AI analyseert automatisch bruikbaarheid",
@@ -62,7 +62,7 @@ VIDEO_TYPES = {
     "rlt":  "RLT — Red Light Therapy",
 }
 VIDEO_TYPE_COLORS = {
-    "nrt":  "#2563eb",
+    "nrt":  "#1A6B72",
     "qat":  "#7c3aed",
     "pemf": "#059669",
     "rlt":  "#dc2626",
@@ -138,7 +138,7 @@ def _ollama_info() -> dict:
     except Exception:
         return {"online": False, "models": []}
 
-def _progress_bar(pct: float, color: str = "#3b82f6") -> str:
+def _progress_bar(pct: float, color: str = "#1A6B72") -> str:
     pct = min(max(pct, 0), 100)
     warn = pct > 80
     c = "#ef4444" if pct > 90 else ("#f59e0b" if warn else color)
@@ -159,10 +159,10 @@ def _badge(text: str, ok: bool) -> str:
         f'background:{dot};margin-right:5px;vertical-align:middle"></span>{text}</span>'
     )
 
-def _card(title: str, body: str, accent: str = "#3b82f6") -> str:
+def _card(title: str, body: str, accent: str = "#1A6B72") -> str:
     return (
-        f'<div style="background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.08);'
-        f'padding:20px;border-top:3px solid {accent}">'
+        f'<div style="background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.08);'
+        f'border:1px solid #e2e8f0;padding:20px;border-top:3px solid {accent}">'
         f'<div style="font-size:13px;font-weight:700;color:#6b7280;text-transform:uppercase;'
         f'letter-spacing:.05em;margin-bottom:12px">{title}</div>'
         f'{body}'
@@ -216,11 +216,11 @@ def _page_shell(title: str, active: str, body: str) -> str:
   body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f1f5f9;color:#111827;min-height:100vh}}
   .wrap{{max-width:1100px;margin:0 auto;padding:24px 20px}}
   table{{width:100%;border-collapse:collapse}}
-  th{{text-align:left;font-size:12px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;padding:8px 12px;border-bottom:2px solid #e5e7eb}}
-  td{{padding:10px 12px;border-bottom:1px solid #f3f4f6;font-size:14px;vertical-align:middle}}
-  tr:hover td{{background:#f9fafb}}
+  th{{text-align:left;font-size:12px;font-weight:700;background:#1A6B72;color:#fff;text-transform:uppercase;letter-spacing:.05em;padding:8px 12px}}
+  td{{padding:10px 12px;border-bottom:1px solid #e2e8f0;font-size:14px;vertical-align:middle}}
+  tr:hover td{{background:#f8fafc}}
   .btn{{display:inline-block;padding:6px 14px;border-radius:7px;font-size:13px;font-weight:600;text-decoration:none;border:none;cursor:pointer;white-space:nowrap}}
-  .btn-primary{{background:#2563eb;color:#fff}}
+  .btn-primary{{background:#1A6B72;color:#fff}}
   .btn-secondary{{background:#f3f4f6;color:#374151}}
   .btn-purple{{background:#7c3aed;color:#fff}}
   .btn-green{{background:#059669;color:#fff}}
@@ -234,11 +234,11 @@ def _page_shell(title: str, active: str, body: str) -> str:
 </style>
 </head>
 <body>
-<div style="background:linear-gradient(135deg,#1e3a5f 0%,#2563eb 100%);padding:16px 24px">
+<div style="background:linear-gradient(135deg,#1e3a5f 0%,#1A6B72 100%);padding:16px 24px">
   <div style="max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
     <div>
       <div style="color:#fff;font-size:20px;font-weight:700;letter-spacing:-.02em">⚕ Medical RAG</div>
-      <div style="color:#93c5fd;font-size:13px">NRT-Amsterdam.nl</div>
+      <div style="color:#e8f4f5;font-size:13px">NRT-Amsterdam.nl</div>
     </div>
     <div style="display:flex;gap:6px;flex-wrap:wrap">{nav}</div>
   </div>
@@ -475,11 +475,11 @@ async def dashboard():
 </head>
 <body>
 <!-- header -->
-<div style="background:linear-gradient(135deg,#1e3a5f 0%,#2563eb 100%);padding:16px 24px">
+<div style="background:linear-gradient(135deg,#1e3a5f 0%,#1A6B72 100%);padding:16px 24px">
   <div style="max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
     <div>
       <div style="color:#fff;font-size:20px;font-weight:700;letter-spacing:-.02em">⚕ Medical RAG</div>
-      <div style="color:#93c5fd;font-size:13px">NRT-Amsterdam.nl</div>
+      <div style="color:#e8f4f5;font-size:13px">NRT-Amsterdam.nl</div>
     </div>
     <div style="display:flex;gap:6px;flex-wrap:wrap">{nav_links}</div>
   </div>
@@ -505,7 +505,7 @@ async def dashboard():
 <!-- grid -->
 <div class="grid" style="max-width:1200px;margin:0 auto">
   {_card("Systeembronnen", sys_body, "#8b5cf6")}
-  {_card("Qdrant — Vector Store", q_body, "#3b82f6")}
+  {_card("Qdrant — Vector Store", q_body, "#1A6B72")}
   {_card("Ollama — LLM", o_body, "#10b981")}
   {_card("Docker containers", d_body, "#f59e0b")}
   {_card("RAG statistieken", rag_body, "#ec4899")}
@@ -518,13 +518,13 @@ async def dashboard():
     <div style="font-size:13px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">Snel zoeken</div>
     <form onsubmit="event.preventDefault();window.location='/search?q='+encodeURIComponent(document.getElementById('dash-q').value)" style="display:flex;gap:8px">
       <input id="dash-q" type="text" placeholder="Zoeken in medische literatuur, video's..." style="flex:1;padding:9px 14px;border:1px solid #d1d5db;border-radius:8px;font-size:14px">
-      <button type="submit" style="background:#2563eb;color:#fff;border:none;border-radius:8px;padding:9px 18px;font-size:14px;font-weight:600;cursor:pointer">Zoeken</button>
+      <button type="submit" style="background:#1A6B72;color:#fff;border:none;border-radius:8px;padding:9px 18px;font-size:14px;font-weight:600;cursor:pointer">Zoeken</button>
     </form>
   </div>
   <div style="background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:20px">
     <div style="font-size:13px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:14px">Snelle acties</div>
     <div style="display:flex;gap:10px;flex-wrap:wrap">
-      <a href="/library" style="background:#2563eb;color:#fff;text-decoration:none;padding:9px 18px;border-radius:8px;font-size:14px;font-weight:600">+ Boek uploaden</a>
+      <a href="/library" style="background:#1A6B72;color:#fff;text-decoration:none;padding:9px 18px;border-radius:8px;font-size:14px;font-weight:600">+ Boek uploaden</a>
       <a href="/videos" style="background:#7c3aed;color:#fff;text-decoration:none;padding:9px 18px;border-radius:8px;font-size:14px;font-weight:600">+ Video toevoegen</a>
       <a href="/protocols" style="background:#059669;color:#fff;text-decoration:none;padding:9px 18px;border-radius:8px;font-size:14px;font-weight:600">Nieuw protocol</a>
       <a href="/search" style="background:#0891b2;color:#fff;text-decoration:none;padding:9px 18px;border-radius:8px;font-size:14px;font-weight:600">Zoeken in RAG</a>
@@ -590,8 +590,8 @@ async def videos_status(video_type: str, filename: str):
 _VIDEO_SCRIPT = r"""
 <style>
 @keyframes _vspin{to{transform:rotate(360deg)}}
-.vspin{display:inline-block;width:11px;height:11px;border:2px solid #93c5fd;
-       border-top-color:#1d4ed8;border-radius:50%;
+.vspin{display:inline-block;width:11px;height:11px;border:2px solid #e8f4f5;
+       border-top-color:#1A6B72;border-radius:50%;
        animation:_vspin .8s linear infinite;vertical-align:middle;margin-right:5px}
 </style>
 <script>
@@ -600,7 +600,7 @@ function _clearTimer(k) { if (_timers[k]) { clearInterval(_timers[k]); delete _t
 
 function setRunning(vtype, safeId) {
   document.getElementById('status-' + vtype + '-' + safeId).innerHTML =
-    '<span style="background:#dbeafe;color:#1e40af;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:600">' +
+    '<span style="background:#e8f4f5;color:#1A6B72;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:600">' +
     '<span class="vspin"></span>Bezig</span>';
   const actEl = document.getElementById('actions-' + vtype + '-' + safeId);
   const key = vtype + '-' + safeId;
@@ -772,9 +772,9 @@ async function _refreshVideoProgress() {
     if (!el) return;
     if (!d.current && d.queue_count === 0 && !ps.paused) { el.innerHTML = ''; return; }
     const isPaused = ps.paused;
-    let html = '<div style="background:#dbeafe;border:1px solid #93c5fd;border-radius:10px;padding:16px 20px">';
+    let html = '<div style="background:#e8f4f5;border:1px solid #1A6B72;border-radius:10px;padding:16px 20px">';
     html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
-    html += '<span style="font-weight:700;font-size:15px;color:#1e40af">🎬 Transcriptie voortgang</span>';
+    html += '<span style="font-weight:700;font-size:15px;color:#1A6B72">🎬 Transcriptie voortgang</span>';
     html += '<div style="display:flex;gap:8px;align-items:center">';
     if (isPaused) html += '<span style="background:#fef3c7;color:#92400e;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600">⏸ Gepauzeerd</span>';
     html += `<button id="video-pause-btn" onclick="_toggleVideoPause()" data-paused="${isPaused}" style="font-size:12px;padding:4px 12px;border-radius:6px;border:none;cursor:pointer;color:#fff;background:${isPaused ? '#059669' : '#dc2626'}">${isPaused ? '▶ Hervat' : '⏸ Pauzeer'}</button>`;
@@ -782,7 +782,7 @@ async function _refreshVideoProgress() {
     html += '</div></div>';
     if (d.current) {
       html += `<div style="font-size:14px;margin-bottom:4px"><strong>Bezig:</strong> ${d.current.file} <span style="color:#6b7280">(${d.current.elapsed_minutes} min)</span></div>`;
-      if (d.last_log) html += `<div style="font-size:11px;color:#6b7280;font-family:monospace;margin-bottom:8px;word-break:break-all;background:#eff6ff;border-radius:4px;padding:4px 8px">${d.last_log.slice(-140)}</div>`;
+      if (d.last_log) html += `<div style="font-size:11px;color:#6b7280;font-family:monospace;margin-bottom:8px;word-break:break-all;background:#e8f4f5;border-radius:4px;padding:4px 8px">${d.last_log.slice(-140)}</div>`;
     }
     if (d.queue_count > 0) {
       html += `<div style="font-size:13px;color:#374151;margin-top:4px"><strong>${d.queue_count}</strong> video's in wachtrij:</div>`;
@@ -823,9 +823,9 @@ async function _refreshBookProgress() {
     if (!el) return;
     if (!d.current && d.queue_count === 0 && !ps.paused) { el.innerHTML = ''; return; }
     const isPaused = ps.paused;
-    let html = '<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:16px 20px">';
+    let html = '<div style="background:#e8f4f5;border:1px solid #1A6B72;border-radius:10px;padding:16px 20px">';
     html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
-    html += '<span style="font-weight:700;font-size:15px;color:#1e40af">📚 Boek ingest voortgang</span>';
+    html += '<span style="font-weight:700;font-size:15px;color:#1A6B72">📚 Boek ingest voortgang</span>';
     html += '<div style="display:flex;gap:8px;align-items:center">';
     if (isPaused) html += '<span style="background:#fef3c7;color:#92400e;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600">⏸ Gepauzeerd</span>';
     html += `<button id="book-pause-btn" onclick="_toggleBookPause()" data-paused="${isPaused}" style="font-size:12px;padding:4px 12px;border-radius:6px;border:none;cursor:pointer;color:#fff;background:${isPaused ? '#059669' : '#dc2626'}">${isPaused ? '▶ Hervat' : '⏸ Pauzeer'}</button>`;
@@ -855,7 +855,7 @@ async function _refreshBookProgress() {
           html += `</div>`;
         }
       }
-      if (d.last_log) html += `<div style="font-size:11px;color:#6b7280;font-family:monospace;margin-bottom:8px;word-break:break-all;background:#f0f7ff;border-radius:4px;padding:4px 8px">${d.last_log.slice(-140)}</div>`;
+      if (d.last_log) html += `<div style="font-size:11px;color:#6b7280;font-family:monospace;margin-bottom:8px;word-break:break-all;background:#e8f4f5;border-radius:4px;padding:4px 8px">${d.last_log.slice(-140)}</div>`;
     }
     if (d.queue_count > 0) {
       html += `<div style="font-size:13px;color:#374151;margin-top:4px"><strong>${d.queue_count}</strong> boek(en) in wachtrij:</div>`;
@@ -1380,7 +1380,7 @@ def _book_status(filename: str) -> dict:
         if BOOK_CURRENT_FILE.exists():
             cur = json.loads(BOOK_CURRENT_FILE.read_text())
             if cur.get("filename") == filename:
-                return {"status": "running", "label": "Ingesteren…", "color": "#2563eb"}
+                return {"status": "running", "label": "Ingesteren…", "color": "#1A6B72"}
     except Exception:
         pass
     # Queued?
@@ -1651,11 +1651,11 @@ const CAT_LABELS = {
   videos:           "Video's",
 };
 const CAT_ORDER = ['all','medical_literature','acupuncture','nrt_kinesiology','qat_curriculum','device','videos'];
-const KAI_COLORS = {1:'#16a34a', 2:'#d97706', 3:'#9ca3af'};
+const KAI_COLORS = {1:'#16a34a', 2:'#ea580c', 3:'#6b7280'};
 const STATUS_CFG = {
-  ingested:     {bg:'#dcfce7', fg:'#166534', label:'✅ Ingested'},
-  processing:   {bg:'#fef3c7', fg:'#92400e', label:'⏳ Bezig'},
-  queued:       {bg:'#e0e7ff', fg:'#3730a3', label:'🕐 Wachtrij'},
+  ingested:     {bg:'#dcfce7', fg:'#16a34a', label:'✅ Ingested'},
+  processing:   {bg:'#ffedd5', fg:'#ea580c', label:'⏳ Bezig'},
+  queued:       {bg:'#fef9c3', fg:'#ca8a04', label:'🕐 Wachtrij'},
   not_ingested: {bg:'#f3f4f6', fg:'#6b7280', label:'⬜ Nog niet'},
 };
 
@@ -2542,7 +2542,7 @@ async def images_page(book: str = "", filter: str = "all"):
 
     filter_links = ""
     for fkey, flabel in [("all","Alle"),("pending","Wachten"),("approved","Goedgekeurd"),("rejected","Afgewezen")]:
-        active = "background:#2563eb;color:#fff;" if filter == fkey else ""
+        active = "background:#1A6B72;color:#fff;" if filter == fkey else ""
         filter_links += f'<a href="/images?filter={fkey}" class="btn btn-secondary" style="font-size:13px;{active}">{flabel}</a>'
 
     body = f"""
@@ -2625,7 +2625,7 @@ _QUICK_QUERIES = [
 ]
 
 _COLL_OPTIONS = [
-    ("medical_library",     "Medische Literatuur",   "#2563eb"),
+    ("medical_library",     "Medische Literatuur",   "#1A6B72"),
     ("nrt_qat_curriculum",  "NRT & QAT Curriculum",  "#7c3aed"),
     ("video_transcripts",   "Video Transcripts",      "#059669"),
 ]
@@ -2634,7 +2634,7 @@ _TAG_COLORS = {
     "acupuncture_point":     "#059669",
     "acupuncture_point_location": "#059669",
     "acupuncture_point_indication": "#059669",
-    "treatment_protocol":    "#2563eb",
+    "treatment_protocol":    "#1A6B72",
     "tissue_cause":          "#dc2626",
     "tissue_consequence":    "#d97706",
     "anatomy_visualization": "#7c3aed",
@@ -2687,7 +2687,7 @@ async def search_page(q: str = ""):
 <div style="display:flex;gap:2px;margin-bottom:20px;border-bottom:2px solid #e5e7eb">
   <button id="tab-search-btn" onclick="switchTab('search')"
     style="padding:10px 20px;font-size:14px;font-weight:600;border:none;cursor:pointer;
-           border-bottom:3px solid #2563eb;margin-bottom:-2px;color:#2563eb;background:#fff">
+           border-bottom:3px solid #1A6B72;margin-bottom:-2px;color:#1A6B72;background:#fff">
     Zoeken
   </button>
   <button id="tab-images-btn" onclick="switchTab('images')"
@@ -2727,9 +2727,9 @@ async def search_page(q: str = ""):
     <!-- LEFT: Answer + Sources -->
     <div>
       <!-- Answer box -->
-      <div id="answer-box" style="display:none;background:#eff6ff;border:2px solid #bfdbfe;
+      <div id="answer-box" style="display:none;background:#e8f4f5;border:2px solid #1A6B72;
            border-radius:10px;padding:16px;margin-bottom:16px">
-        <div style="font-size:11px;font-weight:700;color:#2563eb;text-transform:uppercase;
+        <div style="font-size:11px;font-weight:700;color:#1A6B72;text-transform:uppercase;
              letter-spacing:.08em;margin-bottom:8px">Antwoord</div>
         <div id="answer-text" style="font-size:14px;line-height:1.7;color:#1e293b;
              white-space:pre-wrap"></div>
@@ -2783,15 +2783,15 @@ async def search_page(q: str = ""):
 
 <style>
 @keyframes blink {{ 0%,100%{{opacity:1}} 50%{{opacity:0}} }}
-#answer-text .cursor {{ display:inline-block;width:2px;height:1.1em;background:#2563eb;
+#answer-text .cursor {{ display:inline-block;width:2px;height:1.1em;background:#1A6B72;
   vertical-align:middle;animation:blink .8s step-end infinite;margin-left:1px }}
-.source-card {{ background:#fff;border-radius:8px;border:1px solid #e5e7eb;padding:12px;
-  margin-bottom:8px }}
-.source-card:hover {{ border-color:#bfdbfe }}
-.img-thumb {{ background:#f9fafb;border-radius:8px;border:1px solid #e5e7eb;overflow:hidden;cursor:zoom-in }}
-.img-thumb:hover {{ border-color:#93c5fd }}
-.img-thumb img {{ width:100%;aspect-ratio:1;object-fit:cover;background:#e5e7eb }}
-.tab-active {{ border-bottom-color:#2563eb!important;color:#2563eb!important }}
+.source-card {{ background:#fff;border-radius:12px;border:1px solid #e2e8f0;padding:12px;
+  margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.08) }}
+.source-card:hover {{ border-color:#1A6B72 }}
+.img-thumb {{ background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;overflow:hidden;cursor:zoom-in }}
+.img-thumb:hover {{ border-color:#1A6B72 }}
+.img-thumb img {{ width:100%;aspect-ratio:1;object-fit:cover;background:#e2e8f0 }}
+.tab-active {{ border-bottom-color:#1A6B72!important;color:#1A6B72!important }}
 .tab-inactive {{ border-bottom-color:transparent!important;color:#6b7280!important }}
 </style>
 
@@ -2805,10 +2805,10 @@ function switchTab(name) {{
   const sb = document.getElementById('tab-search-btn');
   const ib = document.getElementById('tab-images-btn');
   if (name==='search') {{
-    sb.style.borderBottomColor='#2563eb'; sb.style.color='#2563eb';
+    sb.style.borderBottomColor='#1A6B72'; sb.style.color='#1A6B72';
     ib.style.borderBottomColor='transparent'; ib.style.color='#6b7280';
   }} else {{
-    ib.style.borderBottomColor='#2563eb'; ib.style.color='#2563eb';
+    ib.style.borderBottomColor='#1A6B72'; ib.style.color='#1A6B72';
     sb.style.borderBottomColor='transparent'; sb.style.color='#6b7280';
   }}
 }}
@@ -2894,7 +2894,7 @@ function renderSources(sources, container) {{
     const title   = isBook
       ? (s.source_file || '').replace(/\\.pdf$/i,'').replace(/\\.epub$/i,'').slice(0,40) + ' p.' + (s.page_number||'?')
       : (s.source_file||'').replace(/\\.mp4$/i,'').replace(/_/g,' ').slice(0,35) + ' ' + (s.timestamp_display||'');
-    const badges  = (s.usability_tags||[]).map(t => '<span style="background:#2563eb22;color:#2563eb;padding:2px 7px;border-radius:999px;font-size:10px;font-weight:600">' + t.replace(/_/g,' ') + '</span>').join(' ');
+    const badges  = (s.usability_tags||[]).map(t => '<span style="background:#e8f4f5;color:#1A6B72;padding:2px 7px;border-radius:999px;font-size:10px;font-weight:600">' + t.replace(/_/g,' ') + '</span>').join(' ');
     const ptBadges = (s.point_codes||[]).map(p => '<span style="background:#05996922;color:#059669;padding:2px 6px;border-radius:4px;font-size:11px;font-weight:700">' + p + '</span>').join(' ');
     const figBadge = (s.figure_refs||[]).map(f => '<span style="background:#7c3aed22;color:#7c3aed;padding:2px 6px;border-radius:4px;font-size:11px">Fig '+f+'</span>').join(' ');
     const score   = s.score || 0;
@@ -3214,8 +3214,8 @@ def _render_md_to_html(md: str) -> str:
             close_list()
             text = _inline_md(_html.escape(line[2:]))
             out.append(
-                f'<blockquote style="border-left:3px solid #2563eb;margin:10px 0;'
-                f'padding:8px 14px;background:#eff6ff;color:#1e40af;font-size:14px">{text}</blockquote>'
+                f'<blockquote style="border-left:3px solid #1A6B72;margin:10px 0;'
+                f'padding:8px 14px;background:#e8f4f5;color:#155a60;font-size:14px">{text}</blockquote>'
             )
             continue
 
@@ -3358,8 +3358,8 @@ async def protocols_page(tab: str = "standaard"):
                     if n_review else "")
 
     tab1_active = tab != "protocollen"
-    tab1_style  = "border-bottom:3px solid #2563eb;color:#2563eb"   if tab1_active else "border-bottom:3px solid transparent;color:#6b7280"
-    tab2_style  = "border-bottom:3px solid #2563eb;color:#2563eb"   if not tab1_active else "border-bottom:3px solid transparent;color:#6b7280"
+    tab1_style  = "border-bottom:3px solid #1A6B72;color:#1A6B72"   if tab1_active else "border-bottom:3px solid transparent;color:#6b7280"
+    tab2_style  = "border-bottom:3px solid #1A6B72;color:#1A6B72"   if not tab1_active else "border-bottom:3px solid transparent;color:#6b7280"
 
     body = f"""
 <div class="wrap" style="max-width:960px">
@@ -3400,7 +3400,7 @@ async def protocols_page(tab: str = "standaard"):
     <div id="edit-view" style="display:none">
       <textarea id="md-editor"
         style="width:100%;height:65vh;font-family:monospace;font-size:13px;
-               padding:16px;border:2px solid #2563eb;border-radius:10px;
+               padding:16px;border:2px solid #1A6B72;border-radius:10px;
                resize:vertical;background:#1e293b;color:#e2e8f0;line-height:1.6"
       >{raw_escaped}</textarea>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;flex-wrap:wrap;gap:8px">
@@ -3434,7 +3434,7 @@ async def protocols_page(tab: str = "standaard"):
       <!-- Progress -->
       <div id="gen-progress" style="display:none;margin-top:14px">
         <div style="background:#e5e7eb;border-radius:6px;height:22px;overflow:hidden;margin-bottom:8px">
-          <div id="gen-bar-inner" style="height:100%;background:#2563eb;border-radius:6px;
+          <div id="gen-bar-inner" style="height:100%;background:#1A6B72;border-radius:6px;
                width:0%;text-align:center;font-size:11px;color:#fff;font-weight:700;
                line-height:22px;transition:width .4s ease">0%</div>
         </div>
@@ -3456,8 +3456,8 @@ function switchTab(name) {{
     const active = (t === name);
     document.getElementById('tab-' + t).style.display = active ? 'block' : 'none';
     const btn = document.getElementById('tab-' + t + '-btn');
-    btn.style.borderBottom = active ? '3px solid #2563eb' : '3px solid transparent';
-    btn.style.color = active ? '#2563eb' : '#6b7280';
+    btn.style.borderBottom = active ? '3px solid #1A6B72' : '3px solid transparent';
+    btn.style.color = active ? '#1A6B72' : '#6b7280';
   }});
 }}
 
