@@ -1,8 +1,10 @@
 # WATCHDOG_LOG — Book Ingest Watchdog
-> Auto-updated by watchdog.py — last written: **2026-04-16 15:42:21 UTC**
+> Auto-updated by watchdog.py — last written: **2026-04-16 21:35:33 UTC**
 
 | Timestamp | Event | Detail |
 |---|---|---|
+| 2026-04-16 21:35:33 UTC | RESTART_OK | book-ingest-queue |
+| 2026-04-16 21:35:33 UTC | RESTART_BOOK_INGEST | service not active — restarting |
 | 2026-04-16 15:42:21 UTC | RESTART_OK | book-ingest-queue |
 | 2026-04-16 15:42:21 UTC | RESTART_BOOK_INGEST | service not active — restarting |
 | 2026-04-16 14:38:16 UTC | RESTART_OK | transcription-queue |
@@ -12,6 +14,4 @@
 
 ## Current state
 
-- **Book:** `01_deadman_manual_of_acupuncture.pdf`
-- **Phase:** ?
-- **Running for:** 64 min
+- Ingest queue: idle
