@@ -3141,14 +3141,14 @@ async def settings_page():
     <div style="padding:20px 24px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
       <div>
         <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">
-          Nachtrun start
+          Nachtrun start (Amsterdam)
         </label>
         <input id="nightly-start" type="time" value="02:00"
           style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px">
       </div>
       <div>
         <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">
-          Nachtrun einde
+          Nachtrun einde (Amsterdam)
         </label>
         <input id="nightly-end" type="time" value="05:00"
           style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px">

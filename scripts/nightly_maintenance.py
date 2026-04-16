@@ -95,7 +95,8 @@ def _in_window(start_hm: str, end_hm: str) -> bool:
     try:
         sh, sm = (int(x) for x in start_hm.split(":"))
         eh, em = (int(x) for x in end_hm.split(":"))
-        now    = datetime.now()
+        from zoneinfo import ZoneInfo
+        now    = datetime.now(ZoneInfo("Europe/Amsterdam"))
         t_now   = dtime(now.hour, now.minute)
         t_start = dtime(sh, sm)
         t_end   = dtime(eh, em)
