@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-16 05:15:24 UTC**
+> Last update: **2026-04-16 05:20:54 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `969553977-Trail-Guide-to-the-Body-6th-Edition-Andrew-Biel.pdf` (35 min) |
+| Current job | `pdfcoffee.com_a-manual-of-acupuncture-peter-deadmanpdf-4-pdf-free.pdf` |
 | Queued | 2 |
 | Total books | 3 |
 | Ingested | 1 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` (339 min) |
+| Current job | `1.Upper_Body_Techniques.mp4` (345 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 14.24 GB / 32.86 GB (43%) |
-| CPU | 97.1% |
-| Disk used | 54.4 GB / 322.3 GB (18%) |
-| Uptime | up 1 day, 19 hours, 32 minutes |
+| RAM used | 6.55 GB / 32.86 GB (20%) |
+| CPU | 95.7% |
+| Disk used | 54.7 GB / 322.3 GB (18%) |
+| Uptime | up 1 day, 19 hours, 38 minutes |
 
 ## Recent markers
+- `2026-04-16T05:20:54.750223+00:00` **watchdog_restart** — book-ingest-queue hung (41 min stale) — restarted successfully
 - `2026-04-16T04:40:08.074792+00:00` **watchdog_restart** — book-ingest-queue hung (31 min stale) — restarted successfully
 - `2026-04-16T04:09:34.281903+00:00` **watchdog_restart** — book-ingest-queue hung (32 min stale) — restarted successfully
 - `2026-04-16T03:37:44.605626+00:00` **watchdog_restart** — book-ingest-queue hung (32 min stale) — restarted successfully
 - `2026-04-16T03:05:56.398437+00:00` **watchdog_restart** — book-ingest-queue hung (31 min stale) — restarted successfully
-- `2026-04-16T02:34:26.358084+00:00` **watchdog_restart** — book-ingest-queue hung (31 min stale) — restarted successfully
 
 ## Nightly Consistency
 ```
