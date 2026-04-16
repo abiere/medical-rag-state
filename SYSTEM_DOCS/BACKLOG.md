@@ -40,6 +40,9 @@
 - [ ] EPUBs voor betere afbeeldingskwaliteit (Sobotta EPUB)
 
 ## ✅ Afgerond
+- [x] generate_protocol.py — volledig protocol generator: RAG + Ollama + Word .docx via Node.js docx
+- [x] /protocols/generate + /protocols/generate/status/{id} + /protocols/download — web API
+- [x] 8 gold standard protocol metadata records aangemaakt (Etalagebenen, OMD, Vertigo, etc.)
 - [x] Literatuur tracking per protocol — protocol_metadata.py (save_protocol_metadata, get_all_protocol_status)
 - [x] Earmarking protocollen bij nieuwe literatuur — check_protocols_for_review() in book_ingest_queue
 - [x] Protocol review workflow in /protocols tab — cards met status badge + markeer als bekeken
