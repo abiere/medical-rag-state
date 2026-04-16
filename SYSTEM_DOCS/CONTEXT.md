@@ -145,8 +145,9 @@ Currently: 20 NRT + 15 QAT videos queued, PAUSED (CPU voor boeken)
 
 ## Test status
 
-**Laatste run:** 15-04-2026 20:23 (44.4s)  
-**Uitslag:** ✅ GESLAAGD — 33/33 geslaagd, 0 overgeslagen  
+**Laatste run:** 16-04-2026 00:00 (50.4s)  
+**Uitslag:** ❌ MISLUKT — 32/33 geslaagd, 1 mislukt, 0 overgeslagen  
+**Mislukt:** `test_anthropic_api_key_set`
 
 ---
 
