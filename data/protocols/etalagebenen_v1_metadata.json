@@ -1,0 +1,44 @@
+{
+  "protocol_id": "etalagebenen_v1",
+  "klacht": "Etalagebenen (Claudicatio Intermittens)",
+  "version": 1,
+  "generated_at": "2026-04-16T08:58:19.141470+00:00",
+  "literature_used": [
+    {
+      "book_key": "travell_simons",
+      "title": "Travell & Simons \u2014 Myofascial Pain Vol 1",
+      "chunk_ids": [],
+      "pages": [
+        142,
+        156
+      ],
+      "kai_role": "trigger_points"
+    },
+    {
+      "book_key": "deadman",
+      "title": "Deadman \u2014 A Manual of Acupuncture",
+      "chunk_ids": [],
+      "pages": [
+        88,
+        91,
+        204
+      ],
+      "kai_role": "primary_acupuncture"
+    },
+    {
+      "book_key": "guyton",
+      "title": "Guyton \u2014 Medical Physiology",
+      "chunk_ids": [],
+      "pages": [
+        312
+      ],
+      "kai_role": "physiology"
+    }
+  ],
+  "library_snapshot": [],
+  "needs_review": true,
+  "review_reasons": [
+    "Nieuwe primaire anatomie/klinische bron: Anatomy Trains 3rd edition"
+  ],
+  "reviewed_at": "2026-04-16T08:58:45.627085+00:00"
+}

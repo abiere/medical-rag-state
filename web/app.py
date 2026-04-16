@@ -351,6 +351,14 @@ async def dashboard():
     ollama  = _ollama_info()
     dockers = _docker_containers()
 
+    # ── protocol review notifications ──
+    try:
+        from protocol_metadata import get_all_protocol_status as _proto_status
+        _proto_list    = _proto_status()
+        n_proto_review = sum(1 for p in _proto_list if p.get("needs_review"))
+    except Exception:
+        n_proto_review = 0
+
     # ── rag stats ──
     books_dir  = BASE / "books"
     imgs_dir   = BASE / "data" / "extracted_images"
@@ -489,6 +497,17 @@ async def dashboard():
   <span style="color:#6b7280;font-size:13px">Bijgewerkt: {now}</span>
   <span id="countdown" style="color:#9ca3af;font-size:13px">Vernieuwt over 30s</span>
 </div>
+
+{"" if not n_proto_review else f'''<!-- protocol review banner -->
+<div style="max-width:1200px;margin:0 auto;padding:0 24px 10px">
+  <a href="/protocols?tab=protocollen" style="display:flex;align-items:center;gap:10px;
+     background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:12px 18px;
+     text-decoration:none;color:#c2410c">
+    <span style="font-size:18px">&#x1F514;</span>
+    <span style="font-size:14px;font-weight:600">{n_proto_review} protocol(len) mogelijk verouderd door nieuwe literatuur</span>
+    <span style="font-size:13px;margin-left:auto">Bekijk &rarr;</span>
+  </a>
+</div>'''}
 
 <!-- grid -->
 <div class="grid" style="max-width:1200px;margin:0 auto">
@@ -2746,56 +2765,186 @@ def _inline_md(text: str) -> str:
     return text
 
 
+def _protocol_card_html(p: dict) -> str:
+    """Render a single protocol status card for Tab 2."""
+    import html as _html
+    pid           = _html.escape(p["protocol_id"])
+    klacht        = _html.escape(p["klacht"])
+    version       = p.get("version", 1)
+    needs_review  = p.get("needs_review", False)
+    reasons       = p.get("review_reasons", [])
+    lit_count     = p.get("literature_count", 0)
+    lit_titles    = p.get("literature_titles", [])
+    generated_at  = p.get("generated_at", "")
+
+    # Format date
+    try:
+        from datetime import datetime as _dt
+        dt = _dt.fromisoformat(generated_at.replace("Z", "+00:00"))
+        date_str = dt.strftime("%d-%m-%Y %H:%M")
+    except Exception:
+        date_str = generated_at[:10] if generated_at else "—"
+
+    # Lit summary: first 2 titles + "en N meer"
+    if lit_titles:
+        shown = lit_titles[:2]
+        extra = len(lit_titles) - 2
+        lit_str = ", ".join(shown)
+        if extra > 0:
+            lit_str += f" en {extra} meer"
+    else:
+        lit_str = "—"
+
+    # Status badge
+    if needs_review:
+        badge = ('<span style="background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;'
+                 'padding:3px 10px;border-radius:12px;font-size:12px;font-weight:600">'
+                 '&#x1F514; Update beschikbaar</span>')
+    else:
+        badge = ('<span style="background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;'
+                 'padding:3px 10px;border-radius:12px;font-size:12px;font-weight:600">'
+                 '&#x1F7E2; Actueel</span>')
+
+    # Reasons list
+    reasons_html = ""
+    if needs_review and reasons:
+        items = "".join(f"<li style='margin:3px 0'>{_html.escape(r)}</li>" for r in reasons)
+        reasons_html = (
+            f'<div style="margin-top:10px;background:#fff7ed;border-left:3px solid #f97316;'
+            f'padding:10px 14px;border-radius:0 6px 6px 0">'
+            f'<div style="font-size:12px;font-weight:700;color:#9a3412;margin-bottom:4px">Reden voor review:</div>'
+            f'<ul style="font-size:13px;color:#c2410c;margin:0 0 0 16px">{items}</ul>'
+            f'<button onclick="markReviewed(\'{pid}\')" style="margin-top:10px;background:#f97316;'
+            f'color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:12px;'
+            f'font-weight:600;cursor:pointer">Markeer als bekeken</button>'
+            f'</div>'
+        )
+
+    return f"""
+<div id="card-{pid}" style="background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.08);
+     padding:18px 20px;margin-bottom:14px">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">
+    <div>
+      <div style="font-size:16px;font-weight:700;color:#111827">{klacht}</div>
+      <div style="font-size:12px;color:#6b7280;margin-top:2px">v{version} &nbsp;·&nbsp; {date_str}</div>
+    </div>
+    {badge}
+  </div>
+  <div style="margin-top:10px;font-size:13px;color:#374151">
+    <strong>Literatuur ({lit_count}):</strong> {_html.escape(lit_str)}
+  </div>
+  {reasons_html}
+</div>"""
+
+
 @app.get("/protocols", response_class=HTMLResponse)
-async def protocols_page():
+async def protocols_page(tab: str = "standaard"):
+    import html as _html
+
+    # --- Tab 1: Standaard Protocol ---
     try:
         raw_md = _PROTOCOL_FILE.read_text(encoding="utf-8")
     except Exception as e:
         raw_md = f"# Fout\n\nKon protocol niet laden: {e}"
-
-    rendered = _render_md_to_html(raw_md)
-    import html as _html
+    rendered    = _render_md_to_html(raw_md)
     raw_escaped = _html.escape(raw_md)
 
+    # --- Tab 2: Behandelprotocollen ---
+    try:
+        from protocol_metadata import get_all_protocol_status
+        all_protocols = get_all_protocol_status()
+    except Exception:
+        all_protocols = []
+
+    n_review = sum(1 for p in all_protocols if p.get("needs_review"))
+
+    if all_protocols:
+        cards_html = "".join(_protocol_card_html(p) for p in all_protocols)
+    else:
+        cards_html = ('<div style="background:#fff;border-radius:10px;padding:32px 20px;'
+                      'text-align:center;color:#9ca3af;font-size:14px">'
+                      'Nog geen protocollen gegenereerd. '
+                      'Gebruik <code>generate_protocol.py</code> om protocollen aan te maken.'
+                      '</div>')
+
+    review_badge = (f' <span style="background:#f97316;color:#fff;border-radius:10px;'
+                    f'padding:1px 7px;font-size:11px;font-weight:700">{n_review}</span>'
+                    if n_review else "")
+
+    tab1_active = tab != "protocollen"
+    tab1_style  = "border-bottom:3px solid #2563eb;color:#2563eb"   if tab1_active else "border-bottom:3px solid transparent;color:#6b7280"
+    tab2_style  = "border-bottom:3px solid #2563eb;color:#2563eb"   if not tab1_active else "border-bottom:3px solid transparent;color:#6b7280"
+
     body = f"""
-<div class="wrap" style="max-width:900px">
+<div class="wrap" style="max-width:960px">
 
-  <!-- Header -->
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px">
-    <div>
-      <h1 style="font-size:22px;font-weight:700">Behandelprotocollen</h1>
-      <div style="font-size:13px;color:#6b7280;margin-top:4px">NRT-Amsterdam.nl — config/ai_instructions/</div>
-    </div>
-    <div style="display:flex;gap:8px">
+  <!-- Page header -->
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+    <h1 style="font-size:22px;font-weight:700">Behandelprotocollen</h1>
+    <div style="font-size:13px;color:#6b7280">NRT-Amsterdam.nl</div>
+  </div>
+
+  <!-- Tab bar -->
+  <div style="display:flex;gap:2px;margin-bottom:24px;border-bottom:2px solid #e5e7eb" id="tab-bar">
+    <button onclick="switchTab('standaard')"
+      id="tab-standaard-btn"
+      style="padding:10px 20px;font-size:14px;font-weight:600;border:none;cursor:pointer;
+             margin-bottom:-2px;background:#fff;{tab1_style}">
+      Standaard Protocol
+    </button>
+    <button onclick="switchTab('protocollen')"
+      id="tab-protocollen-btn"
+      style="padding:10px 20px;font-size:14px;font-weight:600;border:none;cursor:pointer;
+             margin-bottom:-2px;background:#fff;{tab2_style}">
+      Behandelprotocollen{review_badge}
+    </button>
+  </div>
+
+  <!-- TAB 1: Standaard Protocol -->
+  <div id="tab-standaard" style="display:{'block' if tab1_active else 'none'}">
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:14px">
       <a href="/protocols/raw" target="_blank" class="btn btn-secondary">↓ Raw MD</a>
-      <button id="edit-btn" onclick="toggleEdit()" class="btn btn-primary">✏ Bewerken</button>
+      <button id="edit-btn" onclick="toggleEdit()" class="btn btn-primary">&#x270F; Bewerken</button>
     </div>
-  </div>
-
-  <!-- Read view -->
-  <div id="read-view" class="section" style="padding:24px 28px">
-    {rendered}
-  </div>
-
-  <!-- Edit view (hidden by default) -->
-  <div id="edit-view" style="display:none">
-    <textarea id="md-editor"
-      style="width:100%;height:65vh;font-family:monospace;font-size:13px;
-             padding:16px;border:2px solid #2563eb;border-radius:10px;
-             resize:vertical;background:#1e293b;color:#e2e8f0;line-height:1.6"
-    >{raw_escaped}</textarea>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;flex-wrap:wrap;gap:8px">
-      <span id="save-msg" style="font-size:13px;color:#6b7280"></span>
-      <div style="display:flex;gap:8px">
-        <button onclick="cancelEdit()" class="btn btn-secondary">Annuleren</button>
-        <button onclick="saveProtocol()" class="btn btn-green">💾 Opslaan &amp; committen</button>
+    <!-- Read view -->
+    <div id="read-view" class="section" style="padding:24px 28px">
+      {rendered}
+    </div>
+    <!-- Edit view (hidden by default) -->
+    <div id="edit-view" style="display:none">
+      <textarea id="md-editor"
+        style="width:100%;height:65vh;font-family:monospace;font-size:13px;
+               padding:16px;border:2px solid #2563eb;border-radius:10px;
+               resize:vertical;background:#1e293b;color:#e2e8f0;line-height:1.6"
+      >{raw_escaped}</textarea>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;flex-wrap:wrap;gap:8px">
+        <span id="save-msg" style="font-size:13px;color:#6b7280"></span>
+        <div style="display:flex;gap:8px">
+          <button onclick="cancelEdit()" class="btn btn-secondary">Annuleren</button>
+          <button onclick="saveProtocol()" class="btn btn-green">&#x1F4BE; Opslaan &amp; committen</button>
+        </div>
       </div>
     </div>
+  </div>
+
+  <!-- TAB 2: Behandelprotocollen -->
+  <div id="tab-protocollen" style="display:{'none' if tab1_active else 'block'}">
+    {cards_html}
   </div>
 
 </div>
 
 <script>
+function switchTab(name) {{
+  ['standaard', 'protocollen'].forEach(t => {{
+    const active = (t === name);
+    document.getElementById('tab-' + t).style.display = active ? 'block' : 'none';
+    const btn = document.getElementById('tab-' + t + '-btn');
+    btn.style.borderBottom = active ? '3px solid #2563eb' : '3px solid transparent';
+    btn.style.color = active ? '#2563eb' : '#6b7280';
+  }});
+}}
+
 function toggleEdit() {{
   document.getElementById('read-view').style.display = 'none';
   document.getElementById('edit-view').style.display = 'block';
@@ -2823,7 +2972,7 @@ async function saveProtocol() {{
     const d = await r.json();
     if (d.ok) {{
       msg.style.color = '#059669';
-      msg.textContent = '✓ Opgeslagen + gecommit (' + (d.commit || '') + ')';
+      msg.textContent = '&#x2713; Opgeslagen + gecommit (' + (d.commit || '') + ')';
       setTimeout(() => location.reload(), 1500);
     }} else {{
       msg.style.color = '#dc2626';
@@ -2832,6 +2981,18 @@ async function saveProtocol() {{
   }} catch(e) {{
     msg.style.color = '#dc2626';
     msg.textContent = 'Netwerk fout: ' + e;
+  }}
+}}
+
+async function markReviewed(protocolId) {{
+  try {{
+    const r = await fetch('/protocols/' + protocolId + '/reviewed', {{method: 'POST'}});
+    const d = await r.json();
+    if (d.status === 'ok') {{
+      location.reload();
+    }}
+  }} catch(e) {{
+    alert('Fout: ' + e);
   }}
 }}
 </script>
@@ -2892,6 +3053,31 @@ async def protocols_raw():
         )
     except Exception as e:
         return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@app.get("/protocols/status")
+async def protocols_status():
+    """Return status of all generated protocols including review flags."""
+    try:
+        from protocol_metadata import get_all_protocol_status
+        return get_all_protocol_status()
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@app.post("/protocols/{protocol_id}/reviewed")
+async def protocol_mark_reviewed(protocol_id: str):
+    """Mark a protocol as reviewed after the user acknowledges the earmark."""
+    # Basic sanitisation
+    safe_id = re.sub(r"[^a-zA-Z0-9_\-]", "", protocol_id)
+    if not safe_id:
+        return JSONResponse({"status": "error", "error": "Invalid protocol id"}, status_code=400)
+    try:
+        from protocol_metadata import mark_as_reviewed
+        mark_as_reviewed(safe_id)
+        return JSONResponse({"status": "ok"})
+    except Exception as e:
+        return JSONResponse({"status": "error", "error": str(e)}, status_code=500)
 
 
 # ── GET /images/file/{filename} ───────────────────────────────────────────────

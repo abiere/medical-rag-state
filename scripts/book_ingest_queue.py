@@ -65,6 +65,22 @@ logger = logging.getLogger(__name__)
 
 SEP = "─" * 60
 
+# ── protocol earmarking (lazy import to avoid circular deps) ───────────────────
+
+def _check_protocols_for_review(book_key: str) -> None:
+    """Import lazily so protocol_metadata failures never break ingest."""
+    try:
+        from protocol_metadata import check_protocols_for_review
+        flagged = check_protocols_for_review(book_key)
+        if flagged:
+            logger.info("Earmarked %d protocol(s) for review: %s", len(flagged), flagged)
+            _notify(
+                "protocol_review",
+                f"{len(flagged)} protocol(s) mogelijk verouderd door nieuwe literatuur",
+            )
+    except Exception as e:
+        logger.warning("Protocol earmark check failed (non-fatal): %s", e)
+
 
 # ── queue helpers ──────────────────────────────────────────────────────────────
 
@@ -312,17 +328,18 @@ def process_book(item: dict) -> bool:
 _CLASSIFICATIONS_FILE = BASE / "config" / "book_classifications.json"
 
 
-def _link_classification(filename: str, filepath: str) -> None:
+def _link_classification(filename: str, filepath: str) -> str | None:
     """
     After successful ingest, record the exact server path in
     book_classifications.json so the protocol generator can find files directly.
     Creates an unclassified entry for unknown books so nothing is silently lost.
+    Returns the matched classification key (or auto_key if unclassified).
     """
     try:
         config = json.loads(_CLASSIFICATIONS_FILE.read_text())
     except Exception as e:
         logger.warning("Could not read book_classifications.json: %s", e)
-        return
+        return None
 
     fname_lower = filename.lower()
     matched_key: str | None = None
@@ -353,11 +370,14 @@ def _link_classification(filename: str, filepath: str) -> None:
             "filename_patterns": [filename],
             "notes": "Auto-added — needs manual K/A/I classification",
         }
+        matched_key = auto_key
 
     try:
         _CLASSIFICATIONS_FILE.write_text(json.dumps(config, indent=2))
     except Exception as e:
         logger.warning("Could not write book_classifications.json: %s", e)
+
+    return matched_key
 
 
 def _write_progress(phase: str, current_page: int, total_pages: int, chunks_so_far: int) -> None:
@@ -496,9 +516,11 @@ def _process_book_inner(
     elapsed = time.monotonic() - t0
     logger.info("DONE   %s  (%ds)  %d chunks  score=%.2f",
                 filename, int(elapsed), n_upserted, qs)
-    _link_classification(filename, str(filepath))
+    book_key = _link_classification(filename, str(filepath))
     _notify("book_ingested",
             f"{filename} → {collection}: {n_upserted} chunks, score {qs:.2f}")
+    if book_key:
+        _check_protocols_for_review(book_key)
     return True
 
 
