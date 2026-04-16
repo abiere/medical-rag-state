@@ -1733,8 +1733,7 @@ def _book_status(filename: str) -> dict:
             a = json.loads(audit_path.read_text())
             qs = (a.get("llm_audit") or {}).get("quality_score")
             if a.get("status") == "approved":
-                score_str = f" (score {qs:.1f})" if qs else ""
-                return {"status": "done", "label": f"Klaar{score_str}", "color": "#059669",
+                return {"status": "done", "label": "Klaar", "color": "#059669",
                         "quality_score": qs, "total_chunks": a.get("total_chunks", 0)}
             else:
                 return {"status": "low_quality", "label": f"Lage kwaliteit ({qs:.1f})",
@@ -1820,7 +1819,6 @@ def _library_section_html(section_key: str) -> str:
     if books:
         for b in books:
             badge_bg  = b["color"] + "22"
-            dots_html = _usability_dots(b["usability_scores"], []) if b["status"] == "done" else ""
             safe_id   = re.sub(r"[^a-zA-Z0-9]", "_", b["name"])
             is_done   = b["status"] in ("done", "low_quality")
             reaudit_btn = (
@@ -1832,7 +1830,6 @@ def _library_section_html(section_key: str) -> str:
 <tr>
   <td>
     <span style="font-weight:600">{b['name']}</span>
-    {f'<div style="margin-top:4px">{dots_html}</div>' if dots_html else ''}
   </td>
   <td class="hide-sm">{b.get('size','')}</td>
   <td><span style="background:{badge_bg};color:{b['color']};padding:3px 10px;
@@ -2097,15 +2094,6 @@ function ocrBadge(engine) {
 }
 
 function renderCard(item) {
-  const canDelete = item.chunk_count > 0;
-  const delBtn = canDelete
-    ? `<button onclick="event.stopPropagation();openDelModal('${escJs(item.id)}','${escJs(item.title)}',${item.chunk_count},'${escJs(item.collection)}')"
-         style="background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;border-radius:6px;
-                padding:4px 10px;font-size:12px;cursor:pointer;font-weight:600;white-space:nowrap">
-         Verwijder uit Qdrant
-       </button>`
-    : '';
-
   const clickable = item.book_hash
     ? `class="book-row" onclick="toggleBookDetail(this,'${escJs(item.book_hash)}')" style="cursor:pointer;`
     : 'style="';
@@ -2121,9 +2109,7 @@ function renderCard(item) {
     </div>
     <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
       ${statusPill(item.status)}${ocrBadge(item.ocr_engine)}
-      <span style="font-size:12px;color:#6b7280">${item.chunk_count !== null ? item.chunk_count.toLocaleString() + ' chunks' : '\u2026'}</span>
     </div>
-    ${delBtn}
   </div>`;
 }
 
@@ -2151,14 +2137,21 @@ async function toggleBookDetail(row, bookHash) {
       placeholder.innerHTML = '<div style="font-size:12px;color:#dc2626;padding:6px 0">Geen ingest data beschikbaar voor dit boek.</div>';
       return;
     }
-    const d = await resp.json();
-    placeholder.innerHTML = buildPhaseTable(d);
+    const d    = await resp.json();
+    const item = (_allItems || []).find(it => it.book_hash === bookHash) || {};
+    placeholder.innerHTML = buildPhaseTable(d, {
+      itemId:     item.id         || '',
+      itemTitle:  item.title      || '',
+      itemColl:   item.collection || '',
+      chunkCount: item.chunk_count || 0,
+    });
   } catch(e) {
     placeholder.innerHTML = '<div style="font-size:12px;color:#dc2626;padding:6px 0">Fout: ' + e + '</div>';
   }
 }
 
-function buildPhaseTable(d) {
+function buildPhaseTable(d, meta) {
+  meta = meta || {};
   const parseTs = s => s ? new Date(s) : null;
   const fmtTime = dt => dt
     ? dt.toLocaleTimeString('nl-NL', {hour:'2-digit', minute:'2-digit'})
@@ -2186,10 +2179,47 @@ function buildPhaseTable(d) {
   };
   const pillLabels  = {done:'Klaar', running:'Bezig', failed:'Fout', pending:'Wacht'};
 
+  // ── Audit score + categories info block ─────────────────────────────────────
+  const auditScore   = (d.audit_score != null) ? d.audit_score.toFixed(1) + ' / 5.0' : '\u2014';
+  const chunkCountD  = d.chunk_count || 0;
+  const catScores    = d.category_scores || {};
+  const catDefs      = [
+    ['Protocol',   catScores.protocol   || 0],
+    ['Diagnose',   catScores.diagnose   || 0],
+    ['Anatomie',   catScores.anatomie   || 0],
+    ['Literatuur', catScores.literatuur || 0],
+  ];
+  const dotRow = (label, n) => {
+    const dots = Array.from({length: 5}, (_, i) =>
+      '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;'
+      + 'background:' + (i < n ? '#1A6B72' : '#c7e8eb') + ';margin-right:2px"></span>'
+    ).join('');
+    return '<div style="display:flex;align-items:center;gap:4px;margin-bottom:2px">'
+      + '<span style="font-size:11px;color:#085041;width:62px">' + label + '</span>' + dots + '</div>';
+  };
+  let html = '<div style="background:#ddf2f3;border-radius:8px;padding:10px 12px;margin-bottom:12px;'
+    + 'display:flex;justify-content:space-between;align-items:flex-start;gap:16px">'
+    + '<div>'
+      + '<div style="font-size:11px;color:#085041;font-weight:500;margin-bottom:4px">Audit score</div>'
+      + '<div style="font-size:22px;font-weight:500;color:#085041">' + auditScore + '</div>'
+    + '</div>'
+    + '<div style="flex:1">'
+      + '<div style="display:flex;justify-content:space-between;align-items:flex-start">'
+        + '<div>'
+          + '<div style="font-size:11px;color:#085041;font-weight:500;margin-bottom:4px">Categorie\u00ebn</div>'
+          + catDefs.map(([l, n]) => dotRow(l, n)).join('')
+        + '</div>'
+        + '<div style="font-size:13px;font-weight:500;color:#085041;white-space:nowrap">'
+          + (chunkCountD ? chunkCountD.toLocaleString('nl-NL') + ' chunks' : '\u2014')
+        + '</div>'
+      + '</div>'
+    + '</div>'
+  + '</div>';
+
   // Book-level summary bar — started_at may be null at top level; fall back to parse phase
   const bkStart = parseTs(d.started_at || (d.phases && d.phases.parse && d.phases.parse.started_at));
   const bkEnd   = parseTs(d.completed_at);
-  let html = `<div style="background:#ddf2f3;border-radius:6px;padding:3px 10px;`
+  html += `<div style="background:#ddf2f3;border-radius:6px;padding:3px 10px;`
     + `font-size:12px;font-family:monospace;color:#085041;margin-bottom:10px">`
     + `Start ${bkStart
         ? bkStart.toLocaleDateString('nl-NL',{day:'2-digit',month:'2-digit'}).replace('/','-')
@@ -2293,6 +2323,23 @@ function buildPhaseTable(d) {
   }
 
   html += '</tbody></table>';
+
+  // Delete button at drawer bottom
+  const delItemId    = meta.itemId     || '';
+  const delTitle     = meta.itemTitle  || '';
+  const delColl      = meta.itemColl   || '';
+  const delChunks    = meta.chunkCount || 0;
+  if (delItemId && delChunks > 0) {
+    html += '<div style="display:flex;justify-content:flex-end;margin-top:14px;'
+      + 'padding-top:10px;border-top:0.5px solid #e2e8f0">'
+      + '<button onclick="event.stopPropagation();openDelModal(\''
+        + escJs(delItemId) + '\',\'' + escJs(delTitle) + '\',' + delChunks + ',\'' + escJs(delColl) + '\')"'
+      + ' style="font-size:12px;padding:5px 14px;border-radius:6px;'
+      + 'border:0.5px solid #dc2626;color:#dc2626;background:transparent;cursor:pointer">'
+      + 'Verwijder uit Qdrant'
+      + '</button></div>';
+  }
+
   return html;
 }
 
@@ -2482,13 +2529,44 @@ async def api_library_items():
 
 @app.get("/api/library/book/{book_hash}/detail")
 async def api_library_book_detail(book_hash: str):
-    """Return state.json for a specific book — used by the library detail drawer."""
+    """Return state.json enriched with audit data — used by the library detail drawer."""
     safe = re.sub(r"[^a-f0-9]", "", book_hash)[:16]
     sf   = CACHE_DIR / safe / "state.json"
     state = _load_state(sf)
     if state is None:
         return JSONResponse({"error": "not found"}, status_code=404)
-    return state
+
+    # Enrich with audit score + category scores
+    audit_score: float | None = None
+    category_scores = {"protocol": 0, "diagnose": 0, "anatomie": 0, "literatuur": 0}
+    chunk_count = (state.get("phases") or {}).get("qdrant", {}).get("chunks_inserted") or 0
+
+    filename = state.get("filename", "")
+    if filename:
+        stem = Path(filename).stem
+        audit_path = QUALITY_DIR / f"{stem}_audit.json"
+        if audit_path.exists():
+            try:
+                a = json.loads(audit_path.read_text())
+                qs_val = (a.get("llm_audit") or {}).get("quality_score")
+                if qs_val is not None:
+                    audit_score = float(qs_val)
+                up = (a.get("usability_profile") or {}).get("scores", {})
+                if up:
+                    category_scores = {
+                        "protocol":   round(max(
+                            float(up.get("acupuncture_point_indication", 0)),
+                            float(up.get("treatment_protocol", 0))
+                        )),
+                        "diagnose":   round(float(up.get("tcm_diagnosis", 0))),
+                        "anatomie":   round(float(up.get("anatomy", 0))),
+                        "literatuur": round(float(up.get("literature_reference", 0))),
+                    }
+            except Exception:
+                pass
+
+    return {**state, "audit_score": audit_score,
+            "category_scores": category_scores, "chunk_count": chunk_count}
 
 
 # ── DELETE /api/library/items/{item_id} ────────────────────────────────────────
