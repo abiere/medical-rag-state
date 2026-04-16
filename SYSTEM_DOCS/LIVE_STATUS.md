@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-16 06:32:04 UTC**
+> Last update: **2026-04-16 06:37:44 UTC**
 
 ## Services
 | Service | Status |
@@ -14,8 +14,8 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `359609833-Travell-and-Simons-Myofascial-Pain-and-Dysfunction-Vol-1-2nd-Ed-D-Simons-Et-Al-Williams-and-Wilkins-1999-WW.pdf` (44 min) |
-| Queued | 2 |
+| Current job | `969553977-Trail-Guide-to-the-Body-6th-Edition-Andrew-Biel.pdf` (4 min) |
+| Queued | 1 |
 | Total books | 3 |
 | Ingested | 1 |
 | Vectors in medical_library | 2 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` (416 min) |
+| Current job | `1.Upper_Body_Techniques.mp4` (422 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 16.16 GB / 32.86 GB (49%) |
-| CPU | 99.6% |
+| RAM used | 3.49 GB / 32.86 GB (11%) |
+| CPU | 6.5% |
 | Disk used | 54.7 GB / 322.3 GB (18%) |
-| Uptime | up 1 day, 20 hours, 49 minutes |
+| Uptime | up 1 day, 20 hours, 54 minutes |
 
 ## Recent markers
 - `2026-04-16T05:20:54.750223+00:00` **watchdog_restart** — book-ingest-queue hung (41 min stale) — restarted successfully
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-15 16:06:26,061  INFO      Transcription queue manager started
-2026-04-15 16:06:26,063  INFO      Startup scan: 20 untranscribed video(s) found, 0 new entry/entries added to queue
-2026-04-15 16:06:26,063  INFO      START  nrt/1.Lower_Body_Techniques.mp4
-2026-04-15 23:33:49,373  INFO      DONE   nrt/1.Lower_Body_Techniques.mp4  (26843s)
-2026-04-15 23:33:49,376  INFO      INGEST nrt/1.Lower_Body_Techniques.mp4
-2026-04-15 23:35:25,255  INFO        [ingest] 1.Lower_Body_Techniques.json: 770 segments → 35 chunks
-2026-04-15 23:35:25,255  INFO        [ingest] Loading embedding model …
-2026-04-15 23:35:25,255  INFO        [ingest]   Ingested chunk 35/35 for 1.Lower_Body_Techniques.mp4
-2026-04-15 23:35:25,255  INFO        [ingest] Done: 35 chunks ingested, 0 skipped (already exists)
-2026-04-15 23:35:25,550  INFO      START  nrt/1.Upper_Body_Techniques.mp4
+2026-04-16 06:33:11,417  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 06:33:41,418  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 06:34:11,419  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 06:34:41,420  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 06:35:11,422  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 06:35:41,424  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 06:36:11,425  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 06:36:41,427  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 06:37:11,428  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 06:37:41,430  INFO      Queue paused (pause flag set) — waiting 30s
 ```
