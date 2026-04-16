@@ -1,0 +1,2382 @@
+{
+  "The Bladder divergent channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Bladder divergent channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Bladder divergent channel"
+  },
+  "The Bladder luo-connecting channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Bladder luo-connecting channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Bladder luo-connecting channel"
+  },
+  "The Bladder primary channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Bladder primary channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Bladder primary channel"
+  },
+  "The Bladder sinew channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Bladder sinew channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Bladder sinew channel"
+  },
+  "The Conception Vessel luo-connecting vessel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Conception Vessel luo-connecting vessel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Conception Vessel luo-connecting vessel"
+  },
+  "The Conception Vessel primary pathway": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Conception Vessel primary pathway.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Conception Vessel primary pathway"
+  },
+  "The Gall Bladder divergent channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Gall Bladder divergent channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Gall Bladder divergent channel"
+  },
+  "The Gall Bladder luo-connecting channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Gall Bladder luo-connecting channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Gall Bladder luo-connecting channel"
+  },
+  "The Gall Bladder primary channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Gall Bladder primary channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Gall Bladder primary channel"
+  },
+  "The Gall Bladder sinew channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Gall Bladder sinew channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Gall Bladder sinew channel"
+  },
+  "The Governing Vessel luo-connecting vessel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Governing Vessel luo-connecting vessel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Governing Vessel luo-connecting vessel"
+  },
+  "The Governing Vessel primary pathway": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Governing Vessel primary pathway.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Governing Vessel primary pathway"
+  },
+  "The Governing Vessel second branch": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Governing Vessel second branch.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Governing Vessel second branch"
+  },
+  "The Governing Vessel third branch": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Governing Vessel third branch.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Governing Vessel third branch"
+  },
+  "The Governing vessel first branch": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Governing vessel first branch.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Governing vessel first branch"
+  },
+  "The Heart divergent channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Heart divergent channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Heart divergent channel"
+  },
+  "The Heart luo-connecting channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Heart luo-connecting channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Heart luo-connecting channel"
+  },
+  "The Heart primary channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Heart primary channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Heart primary channel"
+  },
+  "The Heart sinew channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Heart sinew channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Heart sinew channel"
+  },
+  "The Kidney divergent channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Kidney divergent channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Kidney divergent channel"
+  },
+  "The Kidney luo-connecting channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Kidney luo-connecting channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Kidney luo-connecting channel"
+  },
+  "The Kidney primary channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Kidney primary channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Kidney primary channel"
+  },
+  "The Kidney sinew channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Kidney sinew channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Kidney sinew channel"
+  },
+  "The Large Intestine divergent channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Large Intestine divergent channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Large Intestine divergent channel"
+  },
+  "The Large Intestine luo-connecting channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Large Intestine luo-connecting channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Large Intestine luo-connecting channel"
+  },
+  "The Large Intestine primary channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Large Intestine primary channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Large Intestine primary channel"
+  },
+  "The Large Intestine sinew channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Large Intestine sinew channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Large Intestine sinew channel"
+  },
+  "The Liver divergent channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Liver divergent channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Liver divergent channel"
+  },
+  "The Liver luo-connecting channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Liver luo-connecting channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Liver luo-connecting channel"
+  },
+  "The Liver primary channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Liver primary channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Liver primary channel"
+  },
+  "The Liver sinew channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Liver sinew channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Liver sinew channel"
+  },
+  "The Lung divergent channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Lung divergent channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Lung divergent channel"
+  },
+  "The Lung luo-connecting channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Lung luo-connecting channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Lung luo-connecting channel"
+  },
+  "The Lung primary channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Lung primary channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Lung primary channel"
+  },
+  "The Lung sinew channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Lung sinew channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Lung sinew channel"
+  },
+  "The Pericardium divergent channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Pericardium divergent channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Pericardium divergent channel"
+  },
+  "The Pericardium luo-connecting channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Pericardium luo-connecting channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Pericardium luo-connecting channel"
+  },
+  "The Pericardium primary channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Pericardium primary channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Pericardium primary channel"
+  },
+  "The Pericardium sinew channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Pericardium sinew channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Pericardium sinew channel"
+  },
+  "The Sanjiao divergent channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Sanjiao divergent channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Sanjiao divergent channel"
+  },
+  "The Sanjiao primary channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Sanjiao primary channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Sanjiao primary channel"
+  },
+  "The Sanjiao sinew channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Sanjiao sinew channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Sanjiao sinew channel"
+  },
+  "The Small Intestine divergent channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Small Intestine divergent channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Small Intestine divergent channel"
+  },
+  "The Small Intestine luo-connecting channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Small Intestine luo-connecting channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Small Intestine luo-connecting channel"
+  },
+  "The Small Intestine primary channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Small Intestine primary channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Small Intestine primary channel"
+  },
+  "The Small Intestine sinew channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Small Intestine sinew channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Small Intestine sinew channel"
+  },
+  "The Spleen divergent channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Spleen divergent channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Spleen divergent channel"
+  },
+  "The Spleen great luo-connecting channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Spleen great luo-connecting channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Spleen great luo-connecting channel"
+  },
+  "The Spleen luo-connecting channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Spleen luo-connecting channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Spleen luo-connecting channel"
+  },
+  "The Spleen primary channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Spleen primary channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Spleen primary channel"
+  },
+  "The Spleen sinew channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Spleen sinew channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Spleen sinew channel"
+  },
+  "The Stomach divergent channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Stomach divergent channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Stomach divergent channel"
+  },
+  "The Stomach luo-connecting channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Stomach luo-connecting channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Stomach luo-connecting channel"
+  },
+  "The Stomach primary channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Stomach primary channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Stomach primary channel"
+  },
+  "The Stomach sinew channel": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Channels (Meridians)/The Stomach sinew channel.png",
+    "meridian": "- Channels (Meridians)",
+    "code": "The Stomach sinew channel"
+  },
+  "ANMIAN (N-HN-54)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/ANMIAN (N-HN-54).png",
+    "meridian": "- Extra Points",
+    "code": "ANMIAN (N-HN-54)"
+  },
+  "BAFENG (M-LE-8)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/BAFENG (M-LE-8).png",
+    "meridian": "- Extra Points",
+    "code": "BAFENG (M-LE-8)"
+  },
+  "BAICHONGWO (M-LE-34)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/BAICHONGWO (M-LE-34).png",
+    "meridian": "- Extra Points",
+    "code": "BAICHONGWO (M-LE-34)"
+  },
+  "BAILAO (M-HN-30)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/BAILAO (M-HN-30).png",
+    "meridian": "- Extra Points",
+    "code": "BAILAO (M-HN-30)"
+  },
+  "BAXIE (M-UE-22)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/BAXIE (M-UE-22).png",
+    "meridian": "- Extra Points",
+    "code": "BAXIE (M-UE-22)"
+  },
+  "BITONG (M-HN-14)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/BITONG (M-HN-14).png",
+    "meridian": "- Extra Points",
+    "code": "BITONG (M-HN-14)"
+  },
+  "DANNANGXUE (M-LE-23)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/DANNANGXUE (M-LE-23).png",
+    "meridian": "- Extra Points",
+    "code": "DANNANGXUE (M-LE-23)"
+  },
+  "DINGCHUAN (M-BW-1)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/DINGCHUAN (M-BW-1).png",
+    "meridian": "- Extra Points",
+    "code": "DINGCHUAN (M-BW-1)"
+  },
+  "ERBAI (M-UE-29)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/ERBAI (M-UE-29).png",
+    "meridian": "- Extra Points",
+    "code": "ERBAI (M-UE-29)"
+  },
+  "ERJIAN (M-HN-10)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/ERJIAN (M-HN-10).png",
+    "meridian": "- Extra Points",
+    "code": "ERJIAN (M-HN-10)"
+  },
+  "HAIQUAN (M-HN-37)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/HAIQUAN (M-HN-37).png",
+    "meridian": "- Extra Points",
+    "code": "HAIQUAN (M-HN-37)"
+  },
+  "HEDING (M-LE-27)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/HEDING (M-LE-27).png",
+    "meridian": "- Extra Points",
+    "code": "HEDING (M-LE-27)"
+  },
+  "HUANMEN (M-BW-6)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/HUANMEN (M-BW-6).png",
+    "meridian": "- Extra Points",
+    "code": "HUANMEN (M-BW-6)"
+  },
+  "HUATUOJIAJI (M-BW-35)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/HUATUOJIAJI (M-BW-35).png",
+    "meridian": "- Extra Points",
+    "code": "HUATUOJIAJI (M-BW-35)"
+  },
+  "JIACHENGJIANG (M-HN-18)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/JIACHENGJIANG (M-HN-18).png",
+    "meridian": "- Extra Points",
+    "code": "JIACHENGJIANG (M-HN-18)"
+  },
+  "JIANQIAN (M-UE-48)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/JIANQIAN (M-UE-48).png",
+    "meridian": "- Extra Points",
+    "code": "JIANQIAN (M-UE-48)"
+  },
+  "JINJINYUYE (M-HN-20)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/JINJINYUYE (M-HN-20).png",
+    "meridian": "- Extra Points",
+    "code": "JINJINYUYE (M-HN-20)"
+  },
+  "LANWEIXUE (M-LE-13)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/LANWEIXUE (M-LE-13).png",
+    "meridian": "- Extra Points",
+    "code": "LANWEIXUE (M-LE-13)"
+  },
+  "LUOZHEN (M-UE-24)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/LUOZHEN (M-UE-24).png",
+    "meridian": "- Extra Points",
+    "code": "LUOZHEN (M-UE-24)"
+  },
+  "QIUHOU (M-HN-8)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/QIUHOU (M-HN-8).png",
+    "meridian": "- Extra Points",
+    "code": "QIUHOU (M-HN-8)"
+  },
+  "SANJIAOJIU (M-CA-23)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/SANJIAOJIU (M-CA-23).png",
+    "meridian": "- Extra Points",
+    "code": "SANJIAOJIU (M-CA-23)"
+  },
+  "SHIQIZHUIXIA (M-BW-25)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/SHIQIZHUIXIA (M-BW-25).png",
+    "meridian": "- Extra Points",
+    "code": "SHIQIZHUIXIA (M-BW-25)"
+  },
+  "SHIXUAN (M-UE-1)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/SHIXUAN (M-UE-1).png",
+    "meridian": "- Extra Points",
+    "code": "SHIXUAN (M-UE-1)"
+  },
+  "SIFENG (M-UE-9)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/SIFENG (M-UE-9).png",
+    "meridian": "- Extra Points",
+    "code": "SIFENG (M-UE-9)"
+  },
+  "SISHENCONG (M-HN-1)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/SISHENCONG (M-HN-1).png",
+    "meridian": "- Extra Points",
+    "code": "SISHENCONG (M-HN-1)"
+  },
+  "TAIYANG (M-HN-9)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/TAIYANG (M-HN-9).png",
+    "meridian": "- Extra Points",
+    "code": "TAIYANG (M-HN-9)"
+  },
+  "TITUO (N-CA-4)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/TITUO (N-CA-4).png",
+    "meridian": "- Extra Points",
+    "code": "TITUO (N-CA-4)"
+  },
+  "WEIGUANXIASHU (M-BW-12)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/WEIGUANXIASHU (M-BW-12).png",
+    "meridian": "- Extra Points",
+    "code": "WEIGUANXIASHU (M-BW-12)"
+  },
+  "XIYAN (MN-LE-16)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/XIYAN (MN-LE-16).png",
+    "meridian": "- Extra Points",
+    "code": "XIYAN (MN-LE-16)"
+  },
+  "YAOTONGXUE (N-UE-19)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/YAOTONGXUE (N-UE-19).png",
+    "meridian": "- Extra Points",
+    "code": "YAOTONGXUE (N-UE-19)"
+  },
+  "YAOYAN (M-BW-24)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/YAOYAN (M-BW-24).png",
+    "meridian": "- Extra Points",
+    "code": "YAOYAN (M-BW-24)"
+  },
+  "YINTANG (M-HN-3)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/YINTANG (M-HN-3).png",
+    "meridian": "- Extra Points",
+    "code": "YINTANG (M-HN-3)"
+  },
+  "YUYAO (M-HN-6)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/YUYAO (M-HN-6).png",
+    "meridian": "- Extra Points",
+    "code": "YUYAO (M-HN-6)"
+  },
+  "ZHOUJIAN (M-UE-46)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/ZHOUJIAN (M-UE-46).png",
+    "meridian": "- Extra Points",
+    "code": "ZHOUJIAN (M-UE-46)"
+  },
+  "ZIGONG (M-CA-18)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Extra Points/ZIGONG (M-CA-18).png",
+    "meridian": "- Extra Points",
+    "code": "ZIGONG (M-CA-18)"
+  },
+  "Major Points of the Anterior Lower Leg": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Major Points/Major Points of the Anterior Lower Leg.png",
+    "meridian": "- Major Points",
+    "code": "Major Points of the Anterior Lower Leg"
+  },
+  "Major Points of the Anterior Thigh": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Major Points/Major Points of the Anterior Thigh.png",
+    "meridian": "- Major Points",
+    "code": "Major Points of the Anterior Thigh"
+  },
+  "Major Points of the Back of the Head": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Major Points/Major Points of the Back of the Head.png",
+    "meridian": "- Major Points",
+    "code": "Major Points of the Back of the Head"
+  },
+  "Major Points of the Chest": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Major Points/Major Points of the Chest.png",
+    "meridian": "- Major Points",
+    "code": "Major Points of the Chest"
+  },
+  "Major Points of the Dorsum of the Hand": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Major Points/Major Points of the Dorsum of the Hand.png",
+    "meridian": "- Major Points",
+    "code": "Major Points of the Dorsum of the Hand"
+  },
+  "Major Points of the Eye region": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Major Points/Major Points of the Eye region.png",
+    "meridian": "- Major Points",
+    "code": "Major Points of the Eye region"
+  },
+  "Major Points of the Face": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Major Points/Major Points of the Face.png",
+    "meridian": "- Major Points",
+    "code": "Major Points of the Face"
+  },
+  "Major Points of the Lateral Foot": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Major Points/Major Points of the Lateral Foot.png",
+    "meridian": "- Major Points",
+    "code": "Major Points of the Lateral Foot"
+  },
+  "Major Points of the Lateral Forearm": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Major Points/Major Points of the Lateral Forearm.png",
+    "meridian": "- Major Points",
+    "code": "Major Points of the Lateral Forearm"
+  },
+  "Major Points of the Lateral Lower Leg": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Major Points/Major Points of the Lateral Lower Leg.png",
+    "meridian": "- Major Points",
+    "code": "Major Points of the Lateral Lower Leg"
+  },
+  "Major Points of the Lower Abdomen": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Major Points/Major Points of the Lower Abdomen.png",
+    "meridian": "- Major Points",
+    "code": "Major Points of the Lower Abdomen"
+  },
+  "Major Points of the Lower Back": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Major Points/Major Points of the Lower Back.png",
+    "meridian": "- Major Points",
+    "code": "Major Points of the Lower Back"
+  },
+  "Major Points of the Medial Foot": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Major Points/Major Points of the Medial Foot.png",
+    "meridian": "- Major Points",
+    "code": "Major Points of the Medial Foot"
+  },
+  "Major Points of the Medial Forearm": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Major Points/Major Points of the Medial Forearm.png",
+    "meridian": "- Major Points",
+    "code": "Major Points of the Medial Forearm"
+  },
+  "Major Points of the Medial Lower Leg": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Major Points/Major Points of the Medial Lower Leg.png",
+    "meridian": "- Major Points",
+    "code": "Major Points of the Medial Lower Leg"
+  },
+  "Major Points of the Neck region": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Major Points/Major Points of the Neck region.png",
+    "meridian": "- Major Points",
+    "code": "Major Points of the Neck region"
+  },
+  "Major Points of the Palm of the Hand": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Major Points/Major Points of the Palm of the Hand.png",
+    "meridian": "- Major Points",
+    "code": "Major Points of the Palm of the Hand"
+  },
+  "Major Points of the Shoulder region and Lateral Upper Arm": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Major Points/Major Points of the Shoulder region and Lateral Upper Arm.png",
+    "meridian": "- Major Points",
+    "code": "Major Points of the Shoulder region and Lateral Upper Arm"
+  },
+  "Major Points of the Top of the Foot": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Major Points/Major Points of the Top of the Foot.png",
+    "meridian": "- Major Points",
+    "code": "Major Points of the Top of the Foot"
+  },
+  "Major Points of the Upper Abdomen": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Major Points/Major Points of the Upper Abdomen.png",
+    "meridian": "- Major Points",
+    "code": "Major Points of the Upper Abdomen"
+  },
+  "Major Points of the Upper Arm": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Major Points/Major Points of the Upper Arm.png",
+    "meridian": "- Major Points",
+    "code": "Major Points of the Upper Arm"
+  },
+  "Major Points of the Upper Back": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Major Points/Major Points of the Upper Back.png",
+    "meridian": "- Major Points",
+    "code": "Major Points of the Upper Back"
+  },
+  "Major Points of the side of the Head": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Major Points/Major Points of the side of the Head.png",
+    "meridian": "- Major Points",
+    "code": "Major Points of the side of the Head"
+  },
+  "Major Points of the top of the Head": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Major Points/Major Points of the top of the Head.png",
+    "meridian": "- Major Points",
+    "code": "Major Points of the top of the Head"
+  },
+  "Points of the Back (Governing Vessel and Bladder Channel)": {
+    "file": "/root/medical-rag/data/acupuncture_points/- Major Points/Points of the Back (Governing Vessel and Bladder Channel).png",
+    "meridian": "- Major Points",
+    "code": "Points of the Back (Governing Vessel and Bladder Channel)"
+  },
+  "BL-01": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-01.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-01"
+  },
+  "BL-02": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-02.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-02"
+  },
+  "BL-03": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-03.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-03"
+  },
+  "BL-04": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-04.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-04"
+  },
+  "BL-05": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-05.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-05"
+  },
+  "BL-06": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-06.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-06"
+  },
+  "BL-07": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-07.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-07"
+  },
+  "BL-08": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-08.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-08"
+  },
+  "BL-09": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-09.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-09"
+  },
+  "BL-10": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-10.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-10"
+  },
+  "BL-11": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-11.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-11"
+  },
+  "BL-12": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-12.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-12"
+  },
+  "BL-13": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-13.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-13"
+  },
+  "BL-14": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-14.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-14"
+  },
+  "BL-15": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-15.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-15"
+  },
+  "BL-16": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-16.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-16"
+  },
+  "BL-17": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-17.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-17"
+  },
+  "BL-18": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-18.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-18"
+  },
+  "BL-19": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-19.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-19"
+  },
+  "BL-20": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-20.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-20"
+  },
+  "BL-21": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-21.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-21"
+  },
+  "BL-22": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-22.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-22"
+  },
+  "BL-23": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-23.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-23"
+  },
+  "BL-24": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-24.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-24"
+  },
+  "BL-25": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-25.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-25"
+  },
+  "BL-26": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-26.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-26"
+  },
+  "BL-27": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-27.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-27"
+  },
+  "BL-28": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-28.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-28"
+  },
+  "BL-29": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-29.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-29"
+  },
+  "BL-30": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-30.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-30"
+  },
+  "BL-31": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-31.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-31"
+  },
+  "BL-32": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-32.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-32"
+  },
+  "BL-33": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-33.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-33"
+  },
+  "BL-34": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-34.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-34"
+  },
+  "BL-35": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-35.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-35"
+  },
+  "BL-36": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-36.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-36"
+  },
+  "BL-37": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-37.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-37"
+  },
+  "BL-38": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-38.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-38"
+  },
+  "BL-39": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-39.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-39"
+  },
+  "BL-40": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-40.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-40"
+  },
+  "BL-41": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-41.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-41"
+  },
+  "BL-42": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-42.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-42"
+  },
+  "BL-43": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-43.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-43"
+  },
+  "BL-44": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-44.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-44"
+  },
+  "BL-45": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-45.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-45"
+  },
+  "BL-46": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-46.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-46"
+  },
+  "BL-47": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-47.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-47"
+  },
+  "BL-48": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-48.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-48"
+  },
+  "BL-49": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-49.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-49"
+  },
+  "BL-50": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (01-50)/BL-50.png",
+    "meridian": "Bladder Channel (01-50)",
+    "code": "BL-50"
+  },
+  "BL-51": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (51-67)/BL-51.png",
+    "meridian": "Bladder Channel (51-67)",
+    "code": "BL-51"
+  },
+  "BL-52": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (51-67)/BL-52.png",
+    "meridian": "Bladder Channel (51-67)",
+    "code": "BL-52"
+  },
+  "BL-53": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (51-67)/BL-53.png",
+    "meridian": "Bladder Channel (51-67)",
+    "code": "BL-53"
+  },
+  "BL-54": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (51-67)/BL-54.png",
+    "meridian": "Bladder Channel (51-67)",
+    "code": "BL-54"
+  },
+  "BL-55": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (51-67)/BL-55.png",
+    "meridian": "Bladder Channel (51-67)",
+    "code": "BL-55"
+  },
+  "BL-56": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (51-67)/BL-56.png",
+    "meridian": "Bladder Channel (51-67)",
+    "code": "BL-56"
+  },
+  "BL-57": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (51-67)/BL-57.png",
+    "meridian": "Bladder Channel (51-67)",
+    "code": "BL-57"
+  },
+  "BL-58": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (51-67)/BL-58.png",
+    "meridian": "Bladder Channel (51-67)",
+    "code": "BL-58"
+  },
+  "BL-59": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (51-67)/BL-59.png",
+    "meridian": "Bladder Channel (51-67)",
+    "code": "BL-59"
+  },
+  "BL-60": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (51-67)/BL-60.png",
+    "meridian": "Bladder Channel (51-67)",
+    "code": "BL-60"
+  },
+  "BL-61": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (51-67)/BL-61.png",
+    "meridian": "Bladder Channel (51-67)",
+    "code": "BL-61"
+  },
+  "BL-62": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (51-67)/BL-62.png",
+    "meridian": "Bladder Channel (51-67)",
+    "code": "BL-62"
+  },
+  "BL-63": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (51-67)/BL-63.png",
+    "meridian": "Bladder Channel (51-67)",
+    "code": "BL-63"
+  },
+  "BL-64": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (51-67)/BL-64.png",
+    "meridian": "Bladder Channel (51-67)",
+    "code": "BL-64"
+  },
+  "BL-65": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (51-67)/BL-65.png",
+    "meridian": "Bladder Channel (51-67)",
+    "code": "BL-65"
+  },
+  "BL-66": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (51-67)/BL-66.png",
+    "meridian": "Bladder Channel (51-67)",
+    "code": "BL-66"
+  },
+  "BL-67": {
+    "file": "/root/medical-rag/data/acupuncture_points/Bladder Channel (51-67)/BL-67.png",
+    "meridian": "Bladder Channel (51-67)",
+    "code": "BL-67"
+  },
+  "REN-01": {
+    "file": "/root/medical-rag/data/acupuncture_points/Conception Vessel (Ren Mai)/REN-01.png",
+    "meridian": "Conception Vessel (Ren Mai)",
+    "code": "REN-01"
+  },
+  "REN-02": {
+    "file": "/root/medical-rag/data/acupuncture_points/Conception Vessel (Ren Mai)/REN-02.png",
+    "meridian": "Conception Vessel (Ren Mai)",
+    "code": "REN-02"
+  },
+  "REN-03": {
+    "file": "/root/medical-rag/data/acupuncture_points/Conception Vessel (Ren Mai)/REN-03.png",
+    "meridian": "Conception Vessel (Ren Mai)",
+    "code": "REN-03"
+  },
+  "REN-04": {
+    "file": "/root/medical-rag/data/acupuncture_points/Conception Vessel (Ren Mai)/REN-04.png",
+    "meridian": "Conception Vessel (Ren Mai)",
+    "code": "REN-04"
+  },
+  "REN-05": {
+    "file": "/root/medical-rag/data/acupuncture_points/Conception Vessel (Ren Mai)/REN-05.png",
+    "meridian": "Conception Vessel (Ren Mai)",
+    "code": "REN-05"
+  },
+  "REN-06": {
+    "file": "/root/medical-rag/data/acupuncture_points/Conception Vessel (Ren Mai)/REN-06.png",
+    "meridian": "Conception Vessel (Ren Mai)",
+    "code": "REN-06"
+  },
+  "REN-07": {
+    "file": "/root/medical-rag/data/acupuncture_points/Conception Vessel (Ren Mai)/REN-07.png",
+    "meridian": "Conception Vessel (Ren Mai)",
+    "code": "REN-07"
+  },
+  "REN-08": {
+    "file": "/root/medical-rag/data/acupuncture_points/Conception Vessel (Ren Mai)/REN-08.png",
+    "meridian": "Conception Vessel (Ren Mai)",
+    "code": "REN-08"
+  },
+  "REN-09": {
+    "file": "/root/medical-rag/data/acupuncture_points/Conception Vessel (Ren Mai)/REN-09.png",
+    "meridian": "Conception Vessel (Ren Mai)",
+    "code": "REN-09"
+  },
+  "REN-10": {
+    "file": "/root/medical-rag/data/acupuncture_points/Conception Vessel (Ren Mai)/REN-10.png",
+    "meridian": "Conception Vessel (Ren Mai)",
+    "code": "REN-10"
+  },
+  "REN-11": {
+    "file": "/root/medical-rag/data/acupuncture_points/Conception Vessel (Ren Mai)/REN-11.png",
+    "meridian": "Conception Vessel (Ren Mai)",
+    "code": "REN-11"
+  },
+  "REN-12": {
+    "file": "/root/medical-rag/data/acupuncture_points/Conception Vessel (Ren Mai)/REN-12.png",
+    "meridian": "Conception Vessel (Ren Mai)",
+    "code": "REN-12"
+  },
+  "REN-13": {
+    "file": "/root/medical-rag/data/acupuncture_points/Conception Vessel (Ren Mai)/REN-13.png",
+    "meridian": "Conception Vessel (Ren Mai)",
+    "code": "REN-13"
+  },
+  "REN-14": {
+    "file": "/root/medical-rag/data/acupuncture_points/Conception Vessel (Ren Mai)/REN-14.png",
+    "meridian": "Conception Vessel (Ren Mai)",
+    "code": "REN-14"
+  },
+  "REN-15": {
+    "file": "/root/medical-rag/data/acupuncture_points/Conception Vessel (Ren Mai)/REN-15.png",
+    "meridian": "Conception Vessel (Ren Mai)",
+    "code": "REN-15"
+  },
+  "REN-16": {
+    "file": "/root/medical-rag/data/acupuncture_points/Conception Vessel (Ren Mai)/REN-16.png",
+    "meridian": "Conception Vessel (Ren Mai)",
+    "code": "REN-16"
+  },
+  "REN-17": {
+    "file": "/root/medical-rag/data/acupuncture_points/Conception Vessel (Ren Mai)/REN-17.png",
+    "meridian": "Conception Vessel (Ren Mai)",
+    "code": "REN-17"
+  },
+  "REN-18": {
+    "file": "/root/medical-rag/data/acupuncture_points/Conception Vessel (Ren Mai)/REN-18.png",
+    "meridian": "Conception Vessel (Ren Mai)",
+    "code": "REN-18"
+  },
+  "REN-19": {
+    "file": "/root/medical-rag/data/acupuncture_points/Conception Vessel (Ren Mai)/REN-19.png",
+    "meridian": "Conception Vessel (Ren Mai)",
+    "code": "REN-19"
+  },
+  "REN-20": {
+    "file": "/root/medical-rag/data/acupuncture_points/Conception Vessel (Ren Mai)/REN-20.png",
+    "meridian": "Conception Vessel (Ren Mai)",
+    "code": "REN-20"
+  },
+  "REN-21": {
+    "file": "/root/medical-rag/data/acupuncture_points/Conception Vessel (Ren Mai)/REN-21.png",
+    "meridian": "Conception Vessel (Ren Mai)",
+    "code": "REN-21"
+  },
+  "REN-22": {
+    "file": "/root/medical-rag/data/acupuncture_points/Conception Vessel (Ren Mai)/REN-22.png",
+    "meridian": "Conception Vessel (Ren Mai)",
+    "code": "REN-22"
+  },
+  "REN-23": {
+    "file": "/root/medical-rag/data/acupuncture_points/Conception Vessel (Ren Mai)/REN-23.png",
+    "meridian": "Conception Vessel (Ren Mai)",
+    "code": "REN-23"
+  },
+  "REN-24": {
+    "file": "/root/medical-rag/data/acupuncture_points/Conception Vessel (Ren Mai)/REN-24.png",
+    "meridian": "Conception Vessel (Ren Mai)",
+    "code": "REN-24"
+  },
+  "GB-01": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-01.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-01"
+  },
+  "GB-02": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-02.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-02"
+  },
+  "GB-03": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-03.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-03"
+  },
+  "GB-04": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-04.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-04"
+  },
+  "GB-05": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-05.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-05"
+  },
+  "GB-06": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-06.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-06"
+  },
+  "GB-07": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-07.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-07"
+  },
+  "GB-08": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-08.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-08"
+  },
+  "GB-09": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-09.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-09"
+  },
+  "GB-10": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-10.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-10"
+  },
+  "GB-11": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-11.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-11"
+  },
+  "GB-12": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-12.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-12"
+  },
+  "GB-13": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-13.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-13"
+  },
+  "GB-14": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-14.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-14"
+  },
+  "GB-15": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-15.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-15"
+  },
+  "GB-16": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-16.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-16"
+  },
+  "GB-17": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-17.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-17"
+  },
+  "GB-18": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-18.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-18"
+  },
+  "GB-19": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-19.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-19"
+  },
+  "GB-20": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-20.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-20"
+  },
+  "GB-21": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-21.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-21"
+  },
+  "GB-22": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-22.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-22"
+  },
+  "GB-23": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-23.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-23"
+  },
+  "GB-24": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-24.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-24"
+  },
+  "GB-25": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-25.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-25"
+  },
+  "GB-26": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-26.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-26"
+  },
+  "GB-27": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-27.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-27"
+  },
+  "GB-28": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-28.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-28"
+  },
+  "GB-29": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-29.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-29"
+  },
+  "GB-30": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-30.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-30"
+  },
+  "GB-31": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-31.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-31"
+  },
+  "GB-32": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-32.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-32"
+  },
+  "GB-33": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-33.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-33"
+  },
+  "GB-34": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-34.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-34"
+  },
+  "GB-35": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-35.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-35"
+  },
+  "GB-36": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-36.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-36"
+  },
+  "GB-37": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-37.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-37"
+  },
+  "GB-38": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-38.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-38"
+  },
+  "GB-39": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-39.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-39"
+  },
+  "GB-40": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-40.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-40"
+  },
+  "GB-41": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-41.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-41"
+  },
+  "GB-42": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-42.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-42"
+  },
+  "GB-43": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-43.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-43"
+  },
+  "GB-44": {
+    "file": "/root/medical-rag/data/acupuncture_points/Gall Bladder Channel/GB-44.png",
+    "meridian": "Gall Bladder Channel",
+    "code": "GB-44"
+  },
+  "DU-01": {
+    "file": "/root/medical-rag/data/acupuncture_points/Governing Vessel (Du Mai)/DU-01.png",
+    "meridian": "Governing Vessel (Du Mai)",
+    "code": "DU-01"
+  },
+  "DU-02": {
+    "file": "/root/medical-rag/data/acupuncture_points/Governing Vessel (Du Mai)/DU-02.png",
+    "meridian": "Governing Vessel (Du Mai)",
+    "code": "DU-02"
+  },
+  "DU-03": {
+    "file": "/root/medical-rag/data/acupuncture_points/Governing Vessel (Du Mai)/DU-03.png",
+    "meridian": "Governing Vessel (Du Mai)",
+    "code": "DU-03"
+  },
+  "DU-04": {
+    "file": "/root/medical-rag/data/acupuncture_points/Governing Vessel (Du Mai)/DU-04.png",
+    "meridian": "Governing Vessel (Du Mai)",
+    "code": "DU-04"
+  },
+  "DU-05": {
+    "file": "/root/medical-rag/data/acupuncture_points/Governing Vessel (Du Mai)/DU-05.png",
+    "meridian": "Governing Vessel (Du Mai)",
+    "code": "DU-05"
+  },
+  "DU-06": {
+    "file": "/root/medical-rag/data/acupuncture_points/Governing Vessel (Du Mai)/DU-06.png",
+    "meridian": "Governing Vessel (Du Mai)",
+    "code": "DU-06"
+  },
+  "DU-07": {
+    "file": "/root/medical-rag/data/acupuncture_points/Governing Vessel (Du Mai)/DU-07.png",
+    "meridian": "Governing Vessel (Du Mai)",
+    "code": "DU-07"
+  },
+  "DU-08": {
+    "file": "/root/medical-rag/data/acupuncture_points/Governing Vessel (Du Mai)/DU-08.png",
+    "meridian": "Governing Vessel (Du Mai)",
+    "code": "DU-08"
+  },
+  "DU-09": {
+    "file": "/root/medical-rag/data/acupuncture_points/Governing Vessel (Du Mai)/DU-09.png",
+    "meridian": "Governing Vessel (Du Mai)",
+    "code": "DU-09"
+  },
+  "DU-10": {
+    "file": "/root/medical-rag/data/acupuncture_points/Governing Vessel (Du Mai)/DU-10.png",
+    "meridian": "Governing Vessel (Du Mai)",
+    "code": "DU-10"
+  },
+  "DU-11": {
+    "file": "/root/medical-rag/data/acupuncture_points/Governing Vessel (Du Mai)/DU-11.png",
+    "meridian": "Governing Vessel (Du Mai)",
+    "code": "DU-11"
+  },
+  "DU-12": {
+    "file": "/root/medical-rag/data/acupuncture_points/Governing Vessel (Du Mai)/DU-12.png",
+    "meridian": "Governing Vessel (Du Mai)",
+    "code": "DU-12"
+  },
+  "DU-13": {
+    "file": "/root/medical-rag/data/acupuncture_points/Governing Vessel (Du Mai)/DU-13.png",
+    "meridian": "Governing Vessel (Du Mai)",
+    "code": "DU-13"
+  },
+  "DU-14": {
+    "file": "/root/medical-rag/data/acupuncture_points/Governing Vessel (Du Mai)/DU-14.png",
+    "meridian": "Governing Vessel (Du Mai)",
+    "code": "DU-14"
+  },
+  "DU-15": {
+    "file": "/root/medical-rag/data/acupuncture_points/Governing Vessel (Du Mai)/DU-15.png",
+    "meridian": "Governing Vessel (Du Mai)",
+    "code": "DU-15"
+  },
+  "DU-16": {
+    "file": "/root/medical-rag/data/acupuncture_points/Governing Vessel (Du Mai)/DU-16.png",
+    "meridian": "Governing Vessel (Du Mai)",
+    "code": "DU-16"
+  },
+  "DU-17": {
+    "file": "/root/medical-rag/data/acupuncture_points/Governing Vessel (Du Mai)/DU-17.png",
+    "meridian": "Governing Vessel (Du Mai)",
+    "code": "DU-17"
+  },
+  "DU-18": {
+    "file": "/root/medical-rag/data/acupuncture_points/Governing Vessel (Du Mai)/DU-18.png",
+    "meridian": "Governing Vessel (Du Mai)",
+    "code": "DU-18"
+  },
+  "DU-19": {
+    "file": "/root/medical-rag/data/acupuncture_points/Governing Vessel (Du Mai)/DU-19.png",
+    "meridian": "Governing Vessel (Du Mai)",
+    "code": "DU-19"
+  },
+  "DU-20": {
+    "file": "/root/medical-rag/data/acupuncture_points/Governing Vessel (Du Mai)/DU-20.png",
+    "meridian": "Governing Vessel (Du Mai)",
+    "code": "DU-20"
+  },
+  "DU-21": {
+    "file": "/root/medical-rag/data/acupuncture_points/Governing Vessel (Du Mai)/DU-21.png",
+    "meridian": "Governing Vessel (Du Mai)",
+    "code": "DU-21"
+  },
+  "DU-22": {
+    "file": "/root/medical-rag/data/acupuncture_points/Governing Vessel (Du Mai)/DU-22.png",
+    "meridian": "Governing Vessel (Du Mai)",
+    "code": "DU-22"
+  },
+  "DU-23": {
+    "file": "/root/medical-rag/data/acupuncture_points/Governing Vessel (Du Mai)/DU-23.png",
+    "meridian": "Governing Vessel (Du Mai)",
+    "code": "DU-23"
+  },
+  "DU-24": {
+    "file": "/root/medical-rag/data/acupuncture_points/Governing Vessel (Du Mai)/DU-24.png",
+    "meridian": "Governing Vessel (Du Mai)",
+    "code": "DU-24"
+  },
+  "DU-25": {
+    "file": "/root/medical-rag/data/acupuncture_points/Governing Vessel (Du Mai)/DU-25.png",
+    "meridian": "Governing Vessel (Du Mai)",
+    "code": "DU-25"
+  },
+  "DU-26": {
+    "file": "/root/medical-rag/data/acupuncture_points/Governing Vessel (Du Mai)/DU-26.png",
+    "meridian": "Governing Vessel (Du Mai)",
+    "code": "DU-26"
+  },
+  "DU-27": {
+    "file": "/root/medical-rag/data/acupuncture_points/Governing Vessel (Du Mai)/DU-27.png",
+    "meridian": "Governing Vessel (Du Mai)",
+    "code": "DU-27"
+  },
+  "DU-28": {
+    "file": "/root/medical-rag/data/acupuncture_points/Governing Vessel (Du Mai)/DU-28.png",
+    "meridian": "Governing Vessel (Du Mai)",
+    "code": "DU-28"
+  },
+  "HE-01": {
+    "file": "/root/medical-rag/data/acupuncture_points/Heart Channel/HE-01.png",
+    "meridian": "Heart Channel",
+    "code": "HE-01"
+  },
+  "HE-02": {
+    "file": "/root/medical-rag/data/acupuncture_points/Heart Channel/HE-02.png",
+    "meridian": "Heart Channel",
+    "code": "HE-02"
+  },
+  "HE-03": {
+    "file": "/root/medical-rag/data/acupuncture_points/Heart Channel/HE-03.png",
+    "meridian": "Heart Channel",
+    "code": "HE-03"
+  },
+  "HE-04": {
+    "file": "/root/medical-rag/data/acupuncture_points/Heart Channel/HE-04.png",
+    "meridian": "Heart Channel",
+    "code": "HE-04"
+  },
+  "HE-05": {
+    "file": "/root/medical-rag/data/acupuncture_points/Heart Channel/HE-05.png",
+    "meridian": "Heart Channel",
+    "code": "HE-05"
+  },
+  "HE-06": {
+    "file": "/root/medical-rag/data/acupuncture_points/Heart Channel/HE-06.png",
+    "meridian": "Heart Channel",
+    "code": "HE-06"
+  },
+  "HE-07": {
+    "file": "/root/medical-rag/data/acupuncture_points/Heart Channel/HE-07.png",
+    "meridian": "Heart Channel",
+    "code": "HE-07"
+  },
+  "HE-08": {
+    "file": "/root/medical-rag/data/acupuncture_points/Heart Channel/HE-08.png",
+    "meridian": "Heart Channel",
+    "code": "HE-08"
+  },
+  "HE-09": {
+    "file": "/root/medical-rag/data/acupuncture_points/Heart Channel/HE-09.png",
+    "meridian": "Heart Channel",
+    "code": "HE-09"
+  },
+  "KID-01": {
+    "file": "/root/medical-rag/data/acupuncture_points/Kidney Channel/KID-01.png",
+    "meridian": "Kidney Channel",
+    "code": "KID-01"
+  },
+  "KID-02": {
+    "file": "/root/medical-rag/data/acupuncture_points/Kidney Channel/KID-02.png",
+    "meridian": "Kidney Channel",
+    "code": "KID-02"
+  },
+  "KID-03": {
+    "file": "/root/medical-rag/data/acupuncture_points/Kidney Channel/KID-03.png",
+    "meridian": "Kidney Channel",
+    "code": "KID-03"
+  },
+  "KID-04": {
+    "file": "/root/medical-rag/data/acupuncture_points/Kidney Channel/KID-04.png",
+    "meridian": "Kidney Channel",
+    "code": "KID-04"
+  },
+  "KID-05": {
+    "file": "/root/medical-rag/data/acupuncture_points/Kidney Channel/KID-05.png",
+    "meridian": "Kidney Channel",
+    "code": "KID-05"
+  },
+  "KID-06": {
+    "file": "/root/medical-rag/data/acupuncture_points/Kidney Channel/KID-06.png",
+    "meridian": "Kidney Channel",
+    "code": "KID-06"
+  },
+  "KID-07": {
+    "file": "/root/medical-rag/data/acupuncture_points/Kidney Channel/KID-07.png",
+    "meridian": "Kidney Channel",
+    "code": "KID-07"
+  },
+  "KID-08": {
+    "file": "/root/medical-rag/data/acupuncture_points/Kidney Channel/KID-08.png",
+    "meridian": "Kidney Channel",
+    "code": "KID-08"
+  },
+  "KID-09": {
+    "file": "/root/medical-rag/data/acupuncture_points/Kidney Channel/KID-09.png",
+    "meridian": "Kidney Channel",
+    "code": "KID-09"
+  },
+  "KID-10": {
+    "file": "/root/medical-rag/data/acupuncture_points/Kidney Channel/KID-10.png",
+    "meridian": "Kidney Channel",
+    "code": "KID-10"
+  },
+  "KID-11": {
+    "file": "/root/medical-rag/data/acupuncture_points/Kidney Channel/KID-11.png",
+    "meridian": "Kidney Channel",
+    "code": "KID-11"
+  },
+  "KID-12": {
+    "file": "/root/medical-rag/data/acupuncture_points/Kidney Channel/KID-12.png",
+    "meridian": "Kidney Channel",
+    "code": "KID-12"
+  },
+  "KID-13": {
+    "file": "/root/medical-rag/data/acupuncture_points/Kidney Channel/KID-13.png",
+    "meridian": "Kidney Channel",
+    "code": "KID-13"
+  },
+  "KID-14": {
+    "file": "/root/medical-rag/data/acupuncture_points/Kidney Channel/KID-14.png",
+    "meridian": "Kidney Channel",
+    "code": "KID-14"
+  },
+  "KID-15": {
+    "file": "/root/medical-rag/data/acupuncture_points/Kidney Channel/KID-15.png",
+    "meridian": "Kidney Channel",
+    "code": "KID-15"
+  },
+  "KID-16": {
+    "file": "/root/medical-rag/data/acupuncture_points/Kidney Channel/KID-16.png",
+    "meridian": "Kidney Channel",
+    "code": "KID-16"
+  },
+  "KID-17": {
+    "file": "/root/medical-rag/data/acupuncture_points/Kidney Channel/KID-17.png",
+    "meridian": "Kidney Channel",
+    "code": "KID-17"
+  },
+  "KID-18": {
+    "file": "/root/medical-rag/data/acupuncture_points/Kidney Channel/KID-18.png",
+    "meridian": "Kidney Channel",
+    "code": "KID-18"
+  },
+  "KID-19": {
+    "file": "/root/medical-rag/data/acupuncture_points/Kidney Channel/KID-19.png",
+    "meridian": "Kidney Channel",
+    "code": "KID-19"
+  },
+  "KID-20": {
+    "file": "/root/medical-rag/data/acupuncture_points/Kidney Channel/KID-20.png",
+    "meridian": "Kidney Channel",
+    "code": "KID-20"
+  },
+  "KID-21": {
+    "file": "/root/medical-rag/data/acupuncture_points/Kidney Channel/KID-21.png",
+    "meridian": "Kidney Channel",
+    "code": "KID-21"
+  },
+  "KID-22": {
+    "file": "/root/medical-rag/data/acupuncture_points/Kidney Channel/KID-22.png",
+    "meridian": "Kidney Channel",
+    "code": "KID-22"
+  },
+  "KID-23": {
+    "file": "/root/medical-rag/data/acupuncture_points/Kidney Channel/KID-23.png",
+    "meridian": "Kidney Channel",
+    "code": "KID-23"
+  },
+  "KID-24": {
+    "file": "/root/medical-rag/data/acupuncture_points/Kidney Channel/KID-24.png",
+    "meridian": "Kidney Channel",
+    "code": "KID-24"
+  },
+  "KID-25": {
+    "file": "/root/medical-rag/data/acupuncture_points/Kidney Channel/KID-25.png",
+    "meridian": "Kidney Channel",
+    "code": "KID-25"
+  },
+  "KID-26": {
+    "file": "/root/medical-rag/data/acupuncture_points/Kidney Channel/KID-26.png",
+    "meridian": "Kidney Channel",
+    "code": "KID-26"
+  },
+  "KID-27": {
+    "file": "/root/medical-rag/data/acupuncture_points/Kidney Channel/KID-27.png",
+    "meridian": "Kidney Channel",
+    "code": "KID-27"
+  },
+  "LI-01": {
+    "file": "/root/medical-rag/data/acupuncture_points/Large Intestine Channel/LI-01.png",
+    "meridian": "Large Intestine Channel",
+    "code": "LI-01"
+  },
+  "LI-02": {
+    "file": "/root/medical-rag/data/acupuncture_points/Large Intestine Channel/LI-02.png",
+    "meridian": "Large Intestine Channel",
+    "code": "LI-02"
+  },
+  "LI-03": {
+    "file": "/root/medical-rag/data/acupuncture_points/Large Intestine Channel/LI-03.png",
+    "meridian": "Large Intestine Channel",
+    "code": "LI-03"
+  },
+  "LI-04": {
+    "file": "/root/medical-rag/data/acupuncture_points/Large Intestine Channel/LI-04.png",
+    "meridian": "Large Intestine Channel",
+    "code": "LI-04"
+  },
+  "LI-05": {
+    "file": "/root/medical-rag/data/acupuncture_points/Large Intestine Channel/LI-05.png",
+    "meridian": "Large Intestine Channel",
+    "code": "LI-05"
+  },
+  "LI-06": {
+    "file": "/root/medical-rag/data/acupuncture_points/Large Intestine Channel/LI-06.png",
+    "meridian": "Large Intestine Channel",
+    "code": "LI-06"
+  },
+  "LI-07": {
+    "file": "/root/medical-rag/data/acupuncture_points/Large Intestine Channel/LI-07.png",
+    "meridian": "Large Intestine Channel",
+    "code": "LI-07"
+  },
+  "LI-08": {
+    "file": "/root/medical-rag/data/acupuncture_points/Large Intestine Channel/LI-08.png",
+    "meridian": "Large Intestine Channel",
+    "code": "LI-08"
+  },
+  "LI-09": {
+    "file": "/root/medical-rag/data/acupuncture_points/Large Intestine Channel/LI-09.png",
+    "meridian": "Large Intestine Channel",
+    "code": "LI-09"
+  },
+  "LI-10": {
+    "file": "/root/medical-rag/data/acupuncture_points/Large Intestine Channel/LI-10.png",
+    "meridian": "Large Intestine Channel",
+    "code": "LI-10"
+  },
+  "LI-11": {
+    "file": "/root/medical-rag/data/acupuncture_points/Large Intestine Channel/LI-11.png",
+    "meridian": "Large Intestine Channel",
+    "code": "LI-11"
+  },
+  "LI-12": {
+    "file": "/root/medical-rag/data/acupuncture_points/Large Intestine Channel/LI-12.png",
+    "meridian": "Large Intestine Channel",
+    "code": "LI-12"
+  },
+  "LI-13": {
+    "file": "/root/medical-rag/data/acupuncture_points/Large Intestine Channel/LI-13.png",
+    "meridian": "Large Intestine Channel",
+    "code": "LI-13"
+  },
+  "LI-14": {
+    "file": "/root/medical-rag/data/acupuncture_points/Large Intestine Channel/LI-14.png",
+    "meridian": "Large Intestine Channel",
+    "code": "LI-14"
+  },
+  "LI-15": {
+    "file": "/root/medical-rag/data/acupuncture_points/Large Intestine Channel/LI-15.png",
+    "meridian": "Large Intestine Channel",
+    "code": "LI-15"
+  },
+  "LI-16": {
+    "file": "/root/medical-rag/data/acupuncture_points/Large Intestine Channel/LI-16.png",
+    "meridian": "Large Intestine Channel",
+    "code": "LI-16"
+  },
+  "LI-17": {
+    "file": "/root/medical-rag/data/acupuncture_points/Large Intestine Channel/LI-17.png",
+    "meridian": "Large Intestine Channel",
+    "code": "LI-17"
+  },
+  "LI-18": {
+    "file": "/root/medical-rag/data/acupuncture_points/Large Intestine Channel/LI-18.png",
+    "meridian": "Large Intestine Channel",
+    "code": "LI-18"
+  },
+  "LI-19": {
+    "file": "/root/medical-rag/data/acupuncture_points/Large Intestine Channel/LI-19.png",
+    "meridian": "Large Intestine Channel",
+    "code": "LI-19"
+  },
+  "LI-20": {
+    "file": "/root/medical-rag/data/acupuncture_points/Large Intestine Channel/LI-20.png",
+    "meridian": "Large Intestine Channel",
+    "code": "LI-20"
+  },
+  "LIV-01": {
+    "file": "/root/medical-rag/data/acupuncture_points/Liver Primary Channel/LIV-01.png",
+    "meridian": "Liver Primary Channel",
+    "code": "LIV-01"
+  },
+  "LIV-02": {
+    "file": "/root/medical-rag/data/acupuncture_points/Liver Primary Channel/LIV-02.png",
+    "meridian": "Liver Primary Channel",
+    "code": "LIV-02"
+  },
+  "LIV-03": {
+    "file": "/root/medical-rag/data/acupuncture_points/Liver Primary Channel/LIV-03.png",
+    "meridian": "Liver Primary Channel",
+    "code": "LIV-03"
+  },
+  "LIV-04": {
+    "file": "/root/medical-rag/data/acupuncture_points/Liver Primary Channel/LIV-04.png",
+    "meridian": "Liver Primary Channel",
+    "code": "LIV-04"
+  },
+  "LIV-05": {
+    "file": "/root/medical-rag/data/acupuncture_points/Liver Primary Channel/LIV-05.png",
+    "meridian": "Liver Primary Channel",
+    "code": "LIV-05"
+  },
+  "LIV-06": {
+    "file": "/root/medical-rag/data/acupuncture_points/Liver Primary Channel/LIV-06.png",
+    "meridian": "Liver Primary Channel",
+    "code": "LIV-06"
+  },
+  "LIV-07": {
+    "file": "/root/medical-rag/data/acupuncture_points/Liver Primary Channel/LIV-07.png",
+    "meridian": "Liver Primary Channel",
+    "code": "LIV-07"
+  },
+  "LIV-08": {
+    "file": "/root/medical-rag/data/acupuncture_points/Liver Primary Channel/LIV-08.png",
+    "meridian": "Liver Primary Channel",
+    "code": "LIV-08"
+  },
+  "LIV-09": {
+    "file": "/root/medical-rag/data/acupuncture_points/Liver Primary Channel/LIV-09.png",
+    "meridian": "Liver Primary Channel",
+    "code": "LIV-09"
+  },
+  "LIV-10": {
+    "file": "/root/medical-rag/data/acupuncture_points/Liver Primary Channel/LIV-10.png",
+    "meridian": "Liver Primary Channel",
+    "code": "LIV-10"
+  },
+  "LIV-11": {
+    "file": "/root/medical-rag/data/acupuncture_points/Liver Primary Channel/LIV-11.png",
+    "meridian": "Liver Primary Channel",
+    "code": "LIV-11"
+  },
+  "LIV-12": {
+    "file": "/root/medical-rag/data/acupuncture_points/Liver Primary Channel/LIV-12.png",
+    "meridian": "Liver Primary Channel",
+    "code": "LIV-12"
+  },
+  "LIV-13": {
+    "file": "/root/medical-rag/data/acupuncture_points/Liver Primary Channel/LIV-13.png",
+    "meridian": "Liver Primary Channel",
+    "code": "LIV-13"
+  },
+  "LIV-14": {
+    "file": "/root/medical-rag/data/acupuncture_points/Liver Primary Channel/LIV-14.png",
+    "meridian": "Liver Primary Channel",
+    "code": "LIV-14"
+  },
+  "LU-01": {
+    "file": "/root/medical-rag/data/acupuncture_points/Lung Channel/LU-01.png",
+    "meridian": "Lung Channel",
+    "code": "LU-01"
+  },
+  "LU-02": {
+    "file": "/root/medical-rag/data/acupuncture_points/Lung Channel/LU-02.png",
+    "meridian": "Lung Channel",
+    "code": "LU-02"
+  },
+  "LU-03": {
+    "file": "/root/medical-rag/data/acupuncture_points/Lung Channel/LU-03.png",
+    "meridian": "Lung Channel",
+    "code": "LU-03"
+  },
+  "LU-04": {
+    "file": "/root/medical-rag/data/acupuncture_points/Lung Channel/LU-04.png",
+    "meridian": "Lung Channel",
+    "code": "LU-04"
+  },
+  "LU-05": {
+    "file": "/root/medical-rag/data/acupuncture_points/Lung Channel/LU-05.png",
+    "meridian": "Lung Channel",
+    "code": "LU-05"
+  },
+  "LU-06": {
+    "file": "/root/medical-rag/data/acupuncture_points/Lung Channel/LU-06.png",
+    "meridian": "Lung Channel",
+    "code": "LU-06"
+  },
+  "LU-07": {
+    "file": "/root/medical-rag/data/acupuncture_points/Lung Channel/LU-07.png",
+    "meridian": "Lung Channel",
+    "code": "LU-07"
+  },
+  "LU-08": {
+    "file": "/root/medical-rag/data/acupuncture_points/Lung Channel/LU-08.png",
+    "meridian": "Lung Channel",
+    "code": "LU-08"
+  },
+  "LU-09": {
+    "file": "/root/medical-rag/data/acupuncture_points/Lung Channel/LU-09.png",
+    "meridian": "Lung Channel",
+    "code": "LU-09"
+  },
+  "LU-10": {
+    "file": "/root/medical-rag/data/acupuncture_points/Lung Channel/LU-10.png",
+    "meridian": "Lung Channel",
+    "code": "LU-10"
+  },
+  "LU-11": {
+    "file": "/root/medical-rag/data/acupuncture_points/Lung Channel/LU-11.png",
+    "meridian": "Lung Channel",
+    "code": "LU-11"
+  },
+  "P-01": {
+    "file": "/root/medical-rag/data/acupuncture_points/Pericardium Channel/P-01.png",
+    "meridian": "Pericardium Channel",
+    "code": "P-01"
+  },
+  "P-02": {
+    "file": "/root/medical-rag/data/acupuncture_points/Pericardium Channel/P-02.png",
+    "meridian": "Pericardium Channel",
+    "code": "P-02"
+  },
+  "P-03": {
+    "file": "/root/medical-rag/data/acupuncture_points/Pericardium Channel/P-03.png",
+    "meridian": "Pericardium Channel",
+    "code": "P-03"
+  },
+  "P-04": {
+    "file": "/root/medical-rag/data/acupuncture_points/Pericardium Channel/P-04.png",
+    "meridian": "Pericardium Channel",
+    "code": "P-04"
+  },
+  "P-05": {
+    "file": "/root/medical-rag/data/acupuncture_points/Pericardium Channel/P-05.png",
+    "meridian": "Pericardium Channel",
+    "code": "P-05"
+  },
+  "P-06": {
+    "file": "/root/medical-rag/data/acupuncture_points/Pericardium Channel/P-06.png",
+    "meridian": "Pericardium Channel",
+    "code": "P-06"
+  },
+  "P-07": {
+    "file": "/root/medical-rag/data/acupuncture_points/Pericardium Channel/P-07.png",
+    "meridian": "Pericardium Channel",
+    "code": "P-07"
+  },
+  "P-08": {
+    "file": "/root/medical-rag/data/acupuncture_points/Pericardium Channel/P-08.png",
+    "meridian": "Pericardium Channel",
+    "code": "P-08"
+  },
+  "P-09": {
+    "file": "/root/medical-rag/data/acupuncture_points/Pericardium Channel/P-09.png",
+    "meridian": "Pericardium Channel",
+    "code": "P-09"
+  },
+  "SI-01": {
+    "file": "/root/medical-rag/data/acupuncture_points/Small Intestine Channel/SI-01.png",
+    "meridian": "Small Intestine Channel",
+    "code": "SI-01"
+  },
+  "SI-02": {
+    "file": "/root/medical-rag/data/acupuncture_points/Small Intestine Channel/SI-02.png",
+    "meridian": "Small Intestine Channel",
+    "code": "SI-02"
+  },
+  "SI-03": {
+    "file": "/root/medical-rag/data/acupuncture_points/Small Intestine Channel/SI-03.png",
+    "meridian": "Small Intestine Channel",
+    "code": "SI-03"
+  },
+  "SI-04": {
+    "file": "/root/medical-rag/data/acupuncture_points/Small Intestine Channel/SI-04.png",
+    "meridian": "Small Intestine Channel",
+    "code": "SI-04"
+  },
+  "SI-05": {
+    "file": "/root/medical-rag/data/acupuncture_points/Small Intestine Channel/SI-05.png",
+    "meridian": "Small Intestine Channel",
+    "code": "SI-05"
+  },
+  "SI-06": {
+    "file": "/root/medical-rag/data/acupuncture_points/Small Intestine Channel/SI-06.png",
+    "meridian": "Small Intestine Channel",
+    "code": "SI-06"
+  },
+  "SI-07": {
+    "file": "/root/medical-rag/data/acupuncture_points/Small Intestine Channel/SI-07.png",
+    "meridian": "Small Intestine Channel",
+    "code": "SI-07"
+  },
+  "SI-08": {
+    "file": "/root/medical-rag/data/acupuncture_points/Small Intestine Channel/SI-08.png",
+    "meridian": "Small Intestine Channel",
+    "code": "SI-08"
+  },
+  "SI-09": {
+    "file": "/root/medical-rag/data/acupuncture_points/Small Intestine Channel/SI-09.png",
+    "meridian": "Small Intestine Channel",
+    "code": "SI-09"
+  },
+  "SI-10": {
+    "file": "/root/medical-rag/data/acupuncture_points/Small Intestine Channel/SI-10.png",
+    "meridian": "Small Intestine Channel",
+    "code": "SI-10"
+  },
+  "SI-11": {
+    "file": "/root/medical-rag/data/acupuncture_points/Small Intestine Channel/SI-11.png",
+    "meridian": "Small Intestine Channel",
+    "code": "SI-11"
+  },
+  "SI-12": {
+    "file": "/root/medical-rag/data/acupuncture_points/Small Intestine Channel/SI-12.png",
+    "meridian": "Small Intestine Channel",
+    "code": "SI-12"
+  },
+  "SI-13": {
+    "file": "/root/medical-rag/data/acupuncture_points/Small Intestine Channel/SI-13.png",
+    "meridian": "Small Intestine Channel",
+    "code": "SI-13"
+  },
+  "SI-14": {
+    "file": "/root/medical-rag/data/acupuncture_points/Small Intestine Channel/SI-14.png",
+    "meridian": "Small Intestine Channel",
+    "code": "SI-14"
+  },
+  "SI-15": {
+    "file": "/root/medical-rag/data/acupuncture_points/Small Intestine Channel/SI-15.png",
+    "meridian": "Small Intestine Channel",
+    "code": "SI-15"
+  },
+  "SI-16": {
+    "file": "/root/medical-rag/data/acupuncture_points/Small Intestine Channel/SI-16.png",
+    "meridian": "Small Intestine Channel",
+    "code": "SI-16"
+  },
+  "SI-17": {
+    "file": "/root/medical-rag/data/acupuncture_points/Small Intestine Channel/SI-17.png",
+    "meridian": "Small Intestine Channel",
+    "code": "SI-17"
+  },
+  "SI-18": {
+    "file": "/root/medical-rag/data/acupuncture_points/Small Intestine Channel/SI-18.png",
+    "meridian": "Small Intestine Channel",
+    "code": "SI-18"
+  },
+  "SI-19": {
+    "file": "/root/medical-rag/data/acupuncture_points/Small Intestine Channel/SI-19.png",
+    "meridian": "Small Intestine Channel",
+    "code": "SI-19"
+  },
+  "SP-01": {
+    "file": "/root/medical-rag/data/acupuncture_points/Spleen Channel/SP-01.png",
+    "meridian": "Spleen Channel",
+    "code": "SP-01"
+  },
+  "SP-02": {
+    "file": "/root/medical-rag/data/acupuncture_points/Spleen Channel/SP-02.png",
+    "meridian": "Spleen Channel",
+    "code": "SP-02"
+  },
+  "SP-03": {
+    "file": "/root/medical-rag/data/acupuncture_points/Spleen Channel/SP-03.png",
+    "meridian": "Spleen Channel",
+    "code": "SP-03"
+  },
+  "SP-04": {
+    "file": "/root/medical-rag/data/acupuncture_points/Spleen Channel/SP-04.png",
+    "meridian": "Spleen Channel",
+    "code": "SP-04"
+  },
+  "SP-05": {
+    "file": "/root/medical-rag/data/acupuncture_points/Spleen Channel/SP-05.png",
+    "meridian": "Spleen Channel",
+    "code": "SP-05"
+  },
+  "SP-06": {
+    "file": "/root/medical-rag/data/acupuncture_points/Spleen Channel/SP-06.png",
+    "meridian": "Spleen Channel",
+    "code": "SP-06"
+  },
+  "SP-07": {
+    "file": "/root/medical-rag/data/acupuncture_points/Spleen Channel/SP-07.png",
+    "meridian": "Spleen Channel",
+    "code": "SP-07"
+  },
+  "SP-08": {
+    "file": "/root/medical-rag/data/acupuncture_points/Spleen Channel/SP-08.png",
+    "meridian": "Spleen Channel",
+    "code": "SP-08"
+  },
+  "SP-09": {
+    "file": "/root/medical-rag/data/acupuncture_points/Spleen Channel/SP-09.png",
+    "meridian": "Spleen Channel",
+    "code": "SP-09"
+  },
+  "SP-10": {
+    "file": "/root/medical-rag/data/acupuncture_points/Spleen Channel/SP-10.png",
+    "meridian": "Spleen Channel",
+    "code": "SP-10"
+  },
+  "SP-11": {
+    "file": "/root/medical-rag/data/acupuncture_points/Spleen Channel/SP-11.png",
+    "meridian": "Spleen Channel",
+    "code": "SP-11"
+  },
+  "SP-12": {
+    "file": "/root/medical-rag/data/acupuncture_points/Spleen Channel/SP-12.png",
+    "meridian": "Spleen Channel",
+    "code": "SP-12"
+  },
+  "SP-13": {
+    "file": "/root/medical-rag/data/acupuncture_points/Spleen Channel/SP-13.png",
+    "meridian": "Spleen Channel",
+    "code": "SP-13"
+  },
+  "SP-14": {
+    "file": "/root/medical-rag/data/acupuncture_points/Spleen Channel/SP-14.png",
+    "meridian": "Spleen Channel",
+    "code": "SP-14"
+  },
+  "SP-15": {
+    "file": "/root/medical-rag/data/acupuncture_points/Spleen Channel/SP-15.png",
+    "meridian": "Spleen Channel",
+    "code": "SP-15"
+  },
+  "SP-16": {
+    "file": "/root/medical-rag/data/acupuncture_points/Spleen Channel/SP-16.png",
+    "meridian": "Spleen Channel",
+    "code": "SP-16"
+  },
+  "SP-17": {
+    "file": "/root/medical-rag/data/acupuncture_points/Spleen Channel/SP-17.png",
+    "meridian": "Spleen Channel",
+    "code": "SP-17"
+  },
+  "SP-18": {
+    "file": "/root/medical-rag/data/acupuncture_points/Spleen Channel/SP-18.png",
+    "meridian": "Spleen Channel",
+    "code": "SP-18"
+  },
+  "SP-19": {
+    "file": "/root/medical-rag/data/acupuncture_points/Spleen Channel/SP-19.png",
+    "meridian": "Spleen Channel",
+    "code": "SP-19"
+  },
+  "SP-20": {
+    "file": "/root/medical-rag/data/acupuncture_points/Spleen Channel/SP-20.png",
+    "meridian": "Spleen Channel",
+    "code": "SP-20"
+  },
+  "SP-21": {
+    "file": "/root/medical-rag/data/acupuncture_points/Spleen Channel/SP-21.png",
+    "meridian": "Spleen Channel",
+    "code": "SP-21"
+  },
+  "ST-01": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-01.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-01"
+  },
+  "ST-02": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-02.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-02"
+  },
+  "ST-03": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-03.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-03"
+  },
+  "ST-04": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-04.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-04"
+  },
+  "ST-05": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-05.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-05"
+  },
+  "ST-06": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-06.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-06"
+  },
+  "ST-07": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-07.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-07"
+  },
+  "ST-08": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-08.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-08"
+  },
+  "ST-09": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-09.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-09"
+  },
+  "ST-10": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-10.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-10"
+  },
+  "ST-11": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-11.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-11"
+  },
+  "ST-12": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-12.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-12"
+  },
+  "ST-13": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-13.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-13"
+  },
+  "ST-14": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-14.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-14"
+  },
+  "ST-15": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-15.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-15"
+  },
+  "ST-16": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-16.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-16"
+  },
+  "ST-17": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-17.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-17"
+  },
+  "ST-18": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-18.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-18"
+  },
+  "ST-19": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-19.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-19"
+  },
+  "ST-20": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-20.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-20"
+  },
+  "ST-21": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-21.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-21"
+  },
+  "ST-22": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-22.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-22"
+  },
+  "ST-23": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-23.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-23"
+  },
+  "ST-24": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-24.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-24"
+  },
+  "ST-25": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-25.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-25"
+  },
+  "ST-26": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-26.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-26"
+  },
+  "ST-27": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-27.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-27"
+  },
+  "ST-28": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-28.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-28"
+  },
+  "ST-29": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-29.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-29"
+  },
+  "ST-30": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-30.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-30"
+  },
+  "ST-31": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-31.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-31"
+  },
+  "ST-32": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-32.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-32"
+  },
+  "ST-33": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-33.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-33"
+  },
+  "ST-34": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-34.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-34"
+  },
+  "ST-35": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-35.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-35"
+  },
+  "ST-36": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-36.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-36"
+  },
+  "ST-37": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-37.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-37"
+  },
+  "ST-38": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-38.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-38"
+  },
+  "ST-39": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-39.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-39"
+  },
+  "ST-40": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-40.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-40"
+  },
+  "ST-41": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-41.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-41"
+  },
+  "ST-42": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-42.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-42"
+  },
+  "ST-43": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-43.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-43"
+  },
+  "ST-44": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-44.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-44"
+  },
+  "ST-45": {
+    "file": "/root/medical-rag/data/acupuncture_points/Stomach Channel/ST-45.png",
+    "meridian": "Stomach Channel",
+    "code": "ST-45"
+  },
+  "SJ-01": {
+    "file": "/root/medical-rag/data/acupuncture_points/Triple Burner Channel (Sanjiao Channel)/SJ-01.png",
+    "meridian": "Triple Burner Channel (Sanjiao Channel)",
+    "code": "SJ-01"
+  },
+  "SJ-02": {
+    "file": "/root/medical-rag/data/acupuncture_points/Triple Burner Channel (Sanjiao Channel)/SJ-02.png",
+    "meridian": "Triple Burner Channel (Sanjiao Channel)",
+    "code": "SJ-02"
+  },
+  "SJ-03": {
+    "file": "/root/medical-rag/data/acupuncture_points/Triple Burner Channel (Sanjiao Channel)/SJ-03.png",
+    "meridian": "Triple Burner Channel (Sanjiao Channel)",
+    "code": "SJ-03"
+  },
+  "SJ-04": {
+    "file": "/root/medical-rag/data/acupuncture_points/Triple Burner Channel (Sanjiao Channel)/SJ-04.png",
+    "meridian": "Triple Burner Channel (Sanjiao Channel)",
+    "code": "SJ-04"
+  },
+  "SJ-05": {
+    "file": "/root/medical-rag/data/acupuncture_points/Triple Burner Channel (Sanjiao Channel)/SJ-05.png",
+    "meridian": "Triple Burner Channel (Sanjiao Channel)",
+    "code": "SJ-05"
+  },
+  "SJ-06": {
+    "file": "/root/medical-rag/data/acupuncture_points/Triple Burner Channel (Sanjiao Channel)/SJ-06.png",
+    "meridian": "Triple Burner Channel (Sanjiao Channel)",
+    "code": "SJ-06"
+  },
+  "SJ-07": {
+    "file": "/root/medical-rag/data/acupuncture_points/Triple Burner Channel (Sanjiao Channel)/SJ-07.png",
+    "meridian": "Triple Burner Channel (Sanjiao Channel)",
+    "code": "SJ-07"
+  },
+  "SJ-08": {
+    "file": "/root/medical-rag/data/acupuncture_points/Triple Burner Channel (Sanjiao Channel)/SJ-08.png",
+    "meridian": "Triple Burner Channel (Sanjiao Channel)",
+    "code": "SJ-08"
+  },
+  "SJ-09": {
+    "file": "/root/medical-rag/data/acupuncture_points/Triple Burner Channel (Sanjiao Channel)/SJ-09.png",
+    "meridian": "Triple Burner Channel (Sanjiao Channel)",
+    "code": "SJ-09"
+  },
+  "SJ-10": {
+    "file": "/root/medical-rag/data/acupuncture_points/Triple Burner Channel (Sanjiao Channel)/SJ-10.png",
+    "meridian": "Triple Burner Channel (Sanjiao Channel)",
+    "code": "SJ-10"
+  },
+  "SJ-11": {
+    "file": "/root/medical-rag/data/acupuncture_points/Triple Burner Channel (Sanjiao Channel)/SJ-11.png",
+    "meridian": "Triple Burner Channel (Sanjiao Channel)",
+    "code": "SJ-11"
+  },
+  "SJ-12": {
+    "file": "/root/medical-rag/data/acupuncture_points/Triple Burner Channel (Sanjiao Channel)/SJ-12.png",
+    "meridian": "Triple Burner Channel (Sanjiao Channel)",
+    "code": "SJ-12"
+  },
+  "SJ-13": {
+    "file": "/root/medical-rag/data/acupuncture_points/Triple Burner Channel (Sanjiao Channel)/SJ-13.png",
+    "meridian": "Triple Burner Channel (Sanjiao Channel)",
+    "code": "SJ-13"
+  },
+  "SJ-14": {
+    "file": "/root/medical-rag/data/acupuncture_points/Triple Burner Channel (Sanjiao Channel)/SJ-14.png",
+    "meridian": "Triple Burner Channel (Sanjiao Channel)",
+    "code": "SJ-14"
+  },
+  "SJ-15": {
+    "file": "/root/medical-rag/data/acupuncture_points/Triple Burner Channel (Sanjiao Channel)/SJ-15.png",
+    "meridian": "Triple Burner Channel (Sanjiao Channel)",
+    "code": "SJ-15"
+  },
+  "SJ-16": {
+    "file": "/root/medical-rag/data/acupuncture_points/Triple Burner Channel (Sanjiao Channel)/SJ-16.png",
+    "meridian": "Triple Burner Channel (Sanjiao Channel)",
+    "code": "SJ-16"
+  },
+  "SJ-17": {
+    "file": "/root/medical-rag/data/acupuncture_points/Triple Burner Channel (Sanjiao Channel)/SJ-17.png",
+    "meridian": "Triple Burner Channel (Sanjiao Channel)",
+    "code": "SJ-17"
+  },
+  "SJ-18": {
+    "file": "/root/medical-rag/data/acupuncture_points/Triple Burner Channel (Sanjiao Channel)/SJ-18.png",
+    "meridian": "Triple Burner Channel (Sanjiao Channel)",
+    "code": "SJ-18"
+  },
+  "SJ-19": {
+    "file": "/root/medical-rag/data/acupuncture_points/Triple Burner Channel (Sanjiao Channel)/SJ-19.png",
+    "meridian": "Triple Burner Channel (Sanjiao Channel)",
+    "code": "SJ-19"
+  },
+  "SJ-20": {
+    "file": "/root/medical-rag/data/acupuncture_points/Triple Burner Channel (Sanjiao Channel)/SJ-20.png",
+    "meridian": "Triple Burner Channel (Sanjiao Channel)",
+    "code": "SJ-20"
+  },
+  "SJ-21": {
+    "file": "/root/medical-rag/data/acupuncture_points/Triple Burner Channel (Sanjiao Channel)/SJ-21.png",
+    "meridian": "Triple Burner Channel (Sanjiao Channel)",
+    "code": "SJ-21"
+  },
+  "SJ-22": {
+    "file": "/root/medical-rag/data/acupuncture_points/Triple Burner Channel (Sanjiao Channel)/SJ-22.png",
+    "meridian": "Triple Burner Channel (Sanjiao Channel)",
+    "code": "SJ-22"
+  },
+  "SJ-23": {
+    "file": "/root/medical-rag/data/acupuncture_points/Triple Burner Channel (Sanjiao Channel)/SJ-23.png",
+    "meridian": "Triple Burner Channel (Sanjiao Channel)",
+    "code": "SJ-23"
+  }
+}
