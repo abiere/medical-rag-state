@@ -181,13 +181,14 @@ def _stat_row(label: str, value: str) -> str:
 # ── shared page shell ────────────────────────────────────────────────────────
 
 NAV_ITEMS = [
-    ("/",          "Dashboard"),
-    ("/library",   "Bibliotheek"),
-    ("/images",    "Afbeeldingen"),
-    ("/protocols", "Protocollen"),
-    ("/search",    "Zoeken"),
-    ("/videos",    "Video's"),
-    ("/terminal",  "Terminal"),
+    ("/",                "Dashboard"),
+    ("/library",         "Bibliotheek"),
+    ("/library/ingest",  "Importeer"),
+    ("/images",          "Afbeeldingen"),
+    ("/protocols",       "Protocollen"),
+    ("/search",          "Zoeken"),
+    ("/videos",          "Video's"),
+    ("/terminal",        "Terminal"),
 ]
 
 def _nav_html(active: str) -> str:
@@ -386,19 +387,11 @@ async def dashboard():
     # ── build HTML ──────────────────────────────────────────────────────────
 
     # nav
-    nav_items = [
-        ("/",          "Dashboard"),
-        ("/library",   "Bibliotheek"),
-        ("/images",    "Afbeeldingen"),
-        ("/protocols", "Protocollen"),
-        ("/search",    "Zoeken"),
-        ("/videos",    "Video's"),
-    ]
     nav_links = "".join(
         f'<a href="{href}" style="color:#e0e7ff;text-decoration:none;padding:6px 14px;'
         f'border-radius:6px;font-size:14px;font-weight:500;'
         f'{"background:rgba(255,255,255,.15)" if href=="/" else ""}">{label}</a>'
-        for href, label in nav_items
+        for href, label in NAV_ITEMS
     )
 
     # system card
@@ -2056,7 +2049,7 @@ async function pollReaudit(filename) {{
   }} catch(e) {{ /* ignore poll errors */ }}
 }}
 </script>""" + _BOOK_PROGRESS_SCRIPT
-    return _page_shell("Bibliotheek", "/library", body)
+    return _page_shell("Importeer", "/library/ingest", body)
 
 
 # ── GET /library/status/{filename} ────────────────────────────────────────────
