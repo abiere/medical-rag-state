@@ -898,7 +898,11 @@ async function _refreshBookProgress() {
 
           if (ph === 'parse') {
             if (isRunning && info.pages_total) {
-              detail = `pagina ${fmt(info.pages_done)} / ${fmt(info.pages_total)}`;
+              if (info.pages_done > 0) {
+                detail = `pagina ${fmt(info.pages_done)} / ${fmt(info.pages_total)}`;
+              } else {
+                detail = `opstarten\u2026 / ${fmt(info.pages_total)} pagina\u2019s`;
+              }
             } else if (isDone) {
               detail = `${fmt(info.pages_total)} pagina\u2019s`;
               if (info.chunks_extracted) detail += ` \u00b7 ${fmt(info.chunks_extracted)} chunks`;

@@ -19,6 +19,12 @@ python3 /root/medical-rag/scripts/sync_status.py
 
 Keep `SYSTEM_DOCS/CONTEXT.md` and `SYSTEM_DOCS/BACKLOG.md` accurate — they are the session handover documents. Update them before committing.
 
+## UI taken
+
+Lees altijd eerst `.claude/skills/nrt-ui-standards/SKILL.md` via de Read tool voordat je HTML, CSS of UI-gerelateerde Python code schrijft. Dit bestand bevat de NRT kleurstandaarden (`#1A6B72` teal), componenten en schrijfregels.
+
+De Skill tool werkt niet voor deze skill — gebruik direct: `Read("/root/medical-rag/.claude/skills/nrt-ui-standards/SKILL.md")`.
+
 ## Before any deploy
 
 Run the full test suite and verify no failures:

@@ -693,8 +693,7 @@ def _parse_scanned(pdf_path: Path, book_stem: str, progress_fn=None) -> tuple[li
     _report_progress(progress_fn, "parsing", 0, n_pages, 0)
 
     for page_num in range(n_pages):
-        if page_num % 10 == 0:
-            _report_progress(progress_fn, "parsing", page_num, n_pages, len(pages))
+        _report_progress(progress_fn, "parsing", page_num, n_pages, len(pages))
         try:
             pil_image = _render_page(doc, page_num)
 
@@ -807,8 +806,7 @@ def _parse_mixed(pdf_path: Path, book_stem: str, progress_fn=None) -> tuple[list
     _report_progress(progress_fn, "parsing", 0, n_pages, 0)
 
     for page_num in range(n_pages):
-        if page_num % 10 == 0:
-            _report_progress(progress_fn, "parsing", page_num, n_pages, len(pages))
+        _report_progress(progress_fn, "parsing", page_num, n_pages, len(pages))
         try:
             # Try pdfplumber first
             native_text  = plumber.pages[page_num].extract_text() or ""
@@ -938,8 +936,7 @@ def parse_pdf(
     _report_progress(progress_fn, "chunking", 0, _n_pages, 0)
 
     for _page_idx, page in enumerate(pages):
-        if _page_idx % 10 == 0 and _page_idx > 0:
-            _report_progress(progress_fn, "chunking", _page_idx, _n_pages, chunk_idx)
+        _report_progress(progress_fn, "chunking", _page_idx, _n_pages, chunk_idx)
         page_no    = page["page_number"]
         paragraphs = page["paragraphs"]
 
