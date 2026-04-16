@@ -3463,7 +3463,7 @@ async def library_retag(filename: str, background_tasks: BackgroundTasks):
                 scroll_filter=Filter(must=[
                     FieldCondition(key="source_file", match=MatchValue(value=filename))
                 ]),
-                limit=5000, with_payload=True, with_vector=False,
+                limit=5000, with_payload=True, with_vectors=False,
             )
             chunks = [p.payload for p in results if p.payload]
             if not chunks:
@@ -4994,7 +4994,7 @@ def _run_reaudit_job(job_id: str, filename: str) -> None:
                 FieldCondition(key="source_file",  match=MatchValue(value=filename)),
                 FieldCondition(key="audit_status", match=MatchValue(value="skipped_ollama_timeout")),
             ]),
-            limit=2000, with_payload=True, with_vector=False,
+            limit=2000, with_payload=True, with_vectors=False,
         )
 
         points = [(p.id, p.payload) for p in results if p.payload]
@@ -5080,7 +5080,7 @@ def _run_retroaudit() -> None:
             scroll_filter=Filter(should=[
                 FieldCondition(key="audit_status", match=MatchAny(any=["skipped_ollama_timeout", "skipped_claude_error"])),
             ]),
-            limit=10_000, with_payload=True, with_vector=False,
+            limit=10_000, with_payload=True, with_vectors=False,
         )
         points = [(p.id, p.payload) for p in results if p.payload]
         _retroaudit_state["total_found"] = len(points)
