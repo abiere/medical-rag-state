@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-16 20:07:31 UTC**
+> Last update: **2026-04-16 20:11:30 UTC**
 
 ## Services
 | Service | Status |
@@ -14,10 +14,10 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `FlexBeam_RLT_Documentation.pdf` |
-| Queued | 27 |
+| Current job | `Warnings and Cautions - Recharge Health.pdf` |
+| Queued | 26 |
 | Total books | 43 |
-| Ingested | 12 |
+| Ingested | 13 |
 | Vectors in medical_library | 2773 |
 | Images pending approval | 0 |
 | Images approved | 0 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` (1232 min) |
+| Current job | `1.Upper_Body_Techniques.mp4` (1236 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 11.44 GB / 32.86 GB (35%) |
-| CPU | 50.6% |
+| RAM used | 11.35 GB / 32.86 GB (35%) |
+| CPU | 43.2% |
 | Disk used | 59.2 GB / 322.3 GB (19%) |
-| Uptime | up 2 days, 10 hours, 24 minutes |
+| Uptime | up 2 days, 10 hours, 28 minutes |
 
 ## Recent markers
+- `2026-04-16T20:10:33.574002+00:00` **book_ingested** — FlexBeam_RLT_Documentation.pdf → device_documentation: 4 chunks
 - `2026-04-16T20:06:50.533703+00:00` **book_ingested** — 16 Expanded Revised and New Techniques - Times.pdf → nrt_qat_curriculum: 2 chunks
 - `2026-04-16T20:04:54.651154+00:00` **book_ingested** — Advanced Seminar Manual- HS 08272022.pdf → nrt_qat_curriculum: 126 chunks
 - `2026-04-16T19:25:49.404384+00:00` **book_ingested** — Everything Reset Sequence - Times.pdf → nrt_qat_curriculum: 2 chunks
 - `2026-04-16T19:23:22.619831+00:00` **book_ingested** — How to Reset 23 More Muscles - Times.pdf → nrt_qat_curriculum: 1 chunks
-- `2026-04-16T19:22:20.206039+00:00` **book_ingested** — Miraculous Sequence - Times.pdf → nrt_qat_curriculum: 1 chunks
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-16 20:02:47,722  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 20:03:17,722  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 20:03:47,723  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 20:04:17,723  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 20:04:47,724  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 20:05:17,724  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 20:05:47,725  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 20:06:17,725  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 20:06:47,728  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 20:07:17,728  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 20:07:47,729  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 20:08:17,729  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 20:08:47,730  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 20:09:17,730  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 20:09:47,731  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 20:10:17,731  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 20:10:47,732  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 20:11:17,732  INFO      Queue paused (pause flag set) — waiting 30s
 ```
