@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-16 19:22:30 UTC**
+> Last update: **2026-04-16 19:27:30 UTC**
 
 ## Services
 | Service | Status |
@@ -14,10 +14,10 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `How to Reset 23 More Muscles - Times.pdf` |
-| Queued | 31 |
+| Current job | `Advanced Seminar Manual- HS 08272022.pdf` (1 min) |
+| Queued | 29 |
 | Total books | 43 |
-| Ingested | 8 |
+| Ingested | 10 |
 | Vectors in medical_library | 2773 |
 | Images pending approval | 0 |
 | Images approved | 0 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` (1187 min) |
+| Current job | `1.Upper_Body_Techniques.mp4` (1192 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 11.27 GB / 32.86 GB (34%) |
-| CPU | 50.1% |
-| Disk used | 59.1 GB / 322.3 GB (19%) |
-| Uptime | up 2 days, 9 hours, 39 minutes |
+| RAM used | 11.08 GB / 32.86 GB (34%) |
+| CPU | 51.1% |
+| Disk used | 59.2 GB / 322.3 GB (19%) |
+| Uptime | up 2 days, 9 hours, 44 minutes |
 
 ## Recent markers
+- `2026-04-16T19:25:49.404384+00:00` **book_ingested** — Everything Reset Sequence - Times.pdf → nrt_qat_curriculum: 2 chunks
+- `2026-04-16T19:23:22.619831+00:00` **book_ingested** — How to Reset 23 More Muscles - Times.pdf → nrt_qat_curriculum: 1 chunks
 - `2026-04-16T19:22:20.206039+00:00` **book_ingested** — Miraculous Sequence - Times.pdf → nrt_qat_curriculum: 1 chunks
 - `2026-04-16T19:21:16.476708+00:00` **book_ingested** — NRT Upper Body.pdf → nrt_qat_curriculum: 157 chunks
 - `2026-04-16T18:57:31.237178+00:00` **book_ingested** — NRT Lower Body.pdf → nrt_qat_curriculum: 132 chunks
-- `2026-04-16T18:23:07.585962+00:00` **book_ingested** — The QAT Life Pendant eu.pdf → nrt_qat_curriculum: 2 chunks
-- `2026-04-16T18:20:33.462183+00:00` **book_ingested** — The QAT Connect to the Brain eu.pdf → nrt_qat_curriculum: 2 chunks
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-16 19:17:47,667  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 19:18:17,667  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 19:18:47,668  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 19:19:17,668  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 19:19:47,671  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 19:20:17,671  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 19:20:47,672  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 19:21:17,672  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 19:21:47,673  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 19:22:17,674  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 19:22:47,674  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 19:23:17,675  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 19:23:47,675  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 19:24:17,676  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 19:24:47,676  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 19:25:17,677  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 19:25:47,677  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 19:26:17,678  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 19:26:47,678  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 19:27:17,678  INFO      Queue paused (pause flag set) — waiting 30s
 ```
