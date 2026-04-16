@@ -1491,8 +1491,15 @@ def _library_section_html(section_key: str) -> str:
     rows = ""
     if books:
         for b in books:
-            badge_bg = b["color"] + "22"
+            badge_bg  = b["color"] + "22"
             dots_html = _usability_dots(b["usability_scores"], []) if b["status"] == "done" else ""
+            safe_id   = re.sub(r"[^a-zA-Z0-9]", "_", b["name"])
+            is_done   = b["status"] in ("done", "low_quality")
+            reaudit_btn = (
+                f'<button onclick="reauditBook(\'{b["name"]}\')" '
+                f'class="btn btn-secondary" style="font-size:12px;margin-left:4px">Heraudit</button>'
+                f'<span id="ra-{safe_id}" style="font-size:11px;color:#6b7280;margin-left:4px"></span>'
+            ) if is_done else ""
             rows += f"""
 <tr>
   <td>
@@ -1507,6 +1514,7 @@ def _library_section_html(section_key: str) -> str:
     <a href="/library/audit/{b['name']}" class="btn btn-secondary" style="font-size:12px"
        {'onclick="return false;this.style.opacity=.4" ' if b['status'] == 'waiting' else ''}>Rapport</a>
     <a href="/images?book={b['name']}" class="btn btn-secondary" style="font-size:12px;margin-left:4px">Afb.</a>
+    {reaudit_btn}
   </td>
 </tr>"""
     else:
@@ -1588,6 +1596,48 @@ async function uploadBook(category) {{
     msg.textContent = `✓ ${{queued.length}} bestand(en) in wachtrij`;
     setTimeout(() => location.reload(), 1500);
   }}
+}}
+
+// ── Heraudit (retroactive chunk audit) ──────────────────────────────────────
+const _raJobs    = {{}};
+const _raPollers = {{}};
+
+async function reauditBook(filename) {{
+  const safeId = filename.replace(/[^a-zA-Z0-9]/g, '_');
+  const el = document.getElementById('ra-' + safeId);
+  if (el) {{ el.style.color = '#6b7280'; el.textContent = 'Bezig…'; }}
+  try {{
+    const r = await fetch('/library/reaudit/' + encodeURIComponent(filename), {{method: 'POST'}});
+    const d = await r.json();
+    if (d.job_id) {{
+      _raJobs[filename]    = d.job_id;
+      _raPollers[filename] = setInterval(() => pollReaudit(filename), 2000);
+    }} else {{
+      if (el) {{ el.style.color = '#dc2626'; el.textContent = 'Fout: ' + (d.error || 'onbekend'); }}
+    }}
+  }} catch(e) {{
+    if (el) {{ el.style.color = '#dc2626'; el.textContent = 'Fout: ' + e; }}
+  }}
+}}
+
+async function pollReaudit(filename) {{
+  const safeId = filename.replace(/[^a-zA-Z0-9]/g, '_');
+  const el     = document.getElementById('ra-' + safeId);
+  const jobId  = _raJobs[filename];
+  if (!jobId) return;
+  try {{
+    const r = await fetch('/library/reaudit/status/' + jobId);
+    const d = await r.json();
+    if (d.status === 'done') {{
+      clearInterval(_raPollers[filename]);
+      if (el) {{ el.style.color = '#059669'; el.textContent = '✓ ' + (d.result || ''); }}
+    }} else if (d.status === 'error') {{
+      clearInterval(_raPollers[filename]);
+      if (el) {{ el.style.color = '#dc2626'; el.textContent = 'Fout: ' + (d.error || ''); }}
+    }} else {{
+      if (el) {{ el.style.color = '#6b7280'; el.textContent = d.progress || 'Bezig…'; }}
+    }}
+  }} catch(e) {{ /* ignore poll errors */ }}
 }}
 </script>""" + _BOOK_PROGRESS_SCRIPT
     return _page_shell("Bibliotheek", "/library", body)
@@ -1804,6 +1854,33 @@ async def library_retag(filename: str, background_tasks: BackgroundTasks):
 
     background_tasks.add_task(_do_retag)
     return {"status": "started", "filename": filename}
+
+
+# ── POST /library/reaudit/{filename} ─────────────────────────────────────────
+
+@app.post("/library/reaudit/{filename}")
+async def library_reaudit(filename: str):
+    """Start a background retroaudit job for skipped chunks of this book."""
+    import uuid as _uuid
+    import threading
+    safe_name = re.sub(r"[^a-zA-Z0-9_\-.]", "_", filename)
+    job_id = str(_uuid.uuid4())[:8]
+    _REAUDIT_JOBS[job_id] = {"status": "queued", "progress": "Wachten op start…", "result": None, "error": None}
+    t = threading.Thread(target=_run_reaudit_job, args=(job_id, safe_name), daemon=True)
+    t.start()
+    return {"job_id": job_id, "filename": safe_name}
+
+
+# ── GET /library/reaudit/status/{job_id} ─────────────────────────────────────
+
+@app.get("/library/reaudit/status/{job_id}")
+async def library_reaudit_status(job_id: str):
+    """Poll status of a reaudit job."""
+    safe_id = re.sub(r"[^a-zA-Z0-9_\-]", "", job_id)
+    job = _REAUDIT_JOBS.get(safe_id)
+    if not job:
+        return JSONResponse({"status": "error", "error": "Job not found"}, status_code=404)
+    return JSONResponse(job)
 
 
 # ── GET /library/progress ─────────────────────────────────────────────────────
@@ -3176,6 +3253,72 @@ async def protocol_mark_reviewed(protocol_id: str):
 # ─── PROTOCOL GENERATOR — job tracking ───────────────────────────────────────
 
 _PROTO_JOBS: dict[str, dict] = {}   # job_id → {status, section, progress, output_path, error}
+
+# ─── RETROAUDIT — job tracking ────────────────────────────────────────────────
+
+_REAUDIT_JOBS: dict[str, dict] = {}  # job_id → {status, progress, result, error}
+
+
+def _run_reaudit_job(job_id: str, filename: str) -> None:
+    """Background thread: find skipped chunks for this book and re-tag them in Qdrant."""
+    try:
+        _REAUDIT_JOBS[job_id]["status"] = "running"
+        _REAUDIT_JOBS[job_id]["progress"] = "Skipped chunks ophalen…"
+
+        from qdrant_client import QdrantClient
+        from qdrant_client.models import Filter, FieldCondition, MatchValue
+        from audit_book import tag_chunks_with_ollama
+
+        client = QdrantClient(host="localhost", port=6333, timeout=60)
+
+        results, _ = client.scroll(
+            collection_name="medical_library",
+            scroll_filter=Filter(must=[
+                FieldCondition(key="source_file",  match=MatchValue(value=filename)),
+                FieldCondition(key="audit_status", match=MatchValue(value="skipped_ollama_timeout")),
+            ]),
+            limit=2000, with_payload=True, with_vector=False,
+        )
+
+        points = [(p.id, p.payload) for p in results if p.payload]
+        if not points:
+            _REAUDIT_JOBS[job_id].update({"status": "done", "result": "Geen overgeslagen chunks"})
+            return
+
+        _REAUDIT_JOBS[job_id]["progress"] = f"{len(points)} chunks taggen…"
+
+        # Clear audit_status so success is detectable after tagging
+        for _, chunk in points:
+            chunk.pop("audit_status", None)
+
+        chunks_only = [pair[1] for pair in points]
+        tag_chunks_with_ollama(chunks_only)
+
+        scored = still_pending = 0
+        for point_id, chunk in points:
+            if chunk.get("audit_status") == "skipped_ollama_timeout":
+                still_pending += 1
+                continue
+            client.set_payload(
+                collection_name="medical_library",
+                payload={
+                    "usability_tags":     chunk.get("usability_tags", []),
+                    "protocol_relevance": chunk.get("protocol_relevance", 0.0),
+                    "has_point_codes":    chunk.get("has_point_codes", False),
+                    "has_figure_refs":    chunk.get("has_figure_refs", False),
+                    "primary_use":        chunk.get("primary_use", ""),
+                    "audit_status":       "tagged",
+                },
+                points=[point_id],
+            )
+            scored += 1
+
+        _REAUDIT_JOBS[job_id].update({
+            "status": "done",
+            "result": f"{scored} gescoord, {still_pending} nog uitstaand",
+        })
+    except Exception as exc:
+        _REAUDIT_JOBS[job_id].update({"status": "error", "error": str(exc)[:300]})
 
 
 def _run_generate_job(job_id: str, klacht: str) -> None:

@@ -74,6 +74,10 @@ def http_post(url: str, data: dict | None = None, timeout: int = 30) -> tuple[in
     body = json.dumps(data).encode() if data is not None else b""
     return _http("POST", url, data=body, timeout=timeout)
 
+def http_put(url: str, data: dict | None = None, timeout: int = 30) -> tuple[int, Any]:
+    body = json.dumps(data).encode() if data is not None else b""
+    return _http("PUT", url, data=body, timeout=timeout)
+
 def http_delete(url: str, timeout: int = 15) -> tuple[int, Any]:
     return _http("DELETE", url, timeout=timeout)
 
@@ -102,6 +106,7 @@ class MaintenanceRunner:
             ("pre_check",    "Pre-checks",          self._phase_pre_check),
             ("qdrant",       "Qdrant maintenance",  self._phase_qdrant),
             ("consistency",  "Data consistentie",   self._phase_consistency),
+            ("retro_audit",  "Retroaudit chunks",   self._phase_retro_audit),
             ("software",     "Software check",      self._phase_software),
             ("cleanup",      "Opruimen",            self._phase_cleanup),
         ]
@@ -708,6 +713,108 @@ class MaintenanceRunner:
                     findings.append(f"{svc}: GitHub niet bereikbaar (HTTP {code})")
             except Exception as exc:
                 findings.append(f"{svc}: GitHub check mislukt: {exc}")
+
+        return status, {"findings": findings}
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # PHASE 4b — RETROACTIVE AUDIT
+    # ─────────────────────────────────────────────────────────────────────────
+
+    def _phase_retro_audit(self) -> tuple[str, dict]:
+        """Retry Ollama tagging for up to 200 chunks that were skipped earlier."""
+        findings   = []
+        status     = "OK"
+        COLLECTION = "medical_library"
+        MAX_CHUNKS = 200
+
+        # 1. Check Qdrant availability first
+        code, _ = http_get(f"{QDRANT_BASE}/healthz", timeout=5)
+        if code != 200:
+            findings.append("Qdrant offline — retroaudit overgeslagen")
+            return "WARNING", {"findings": findings}
+
+        # 2. Scroll for chunks with audit_status=skipped_ollama_timeout
+        code, data = http_post(
+            f"{QDRANT_BASE}/collections/{COLLECTION}/points/scroll",
+            data={
+                "filter": {
+                    "must": [{
+                        "key":   "audit_status",
+                        "match": {"value": "skipped_ollama_timeout"},
+                    }]
+                },
+                "limit":        MAX_CHUNKS,
+                "with_payload": True,
+                "with_vectors": False,
+            },
+            timeout=30,
+        )
+
+        if code != 200:
+            findings.append(f"Qdrant scroll mislukt (HTTP {code}) — retroaudit overgeslagen")
+            return "WARNING", {"findings": findings}
+
+        points_raw = (data.get("result") or {}).get("points", [])
+        if not points_raw:
+            findings.append("Geen chunks met audit_status=skipped_ollama_timeout — niets te doen")
+            return "OK", {"findings": findings}
+
+        findings.append(f"{len(points_raw)} overgeslagen chunk(s) gevonden voor retroaudit")
+
+        # 3. Import tagging function
+        import sys as _sys
+        _sys.path.insert(0, str(BASE / "scripts"))
+        try:
+            from audit_book import tag_chunks_with_ollama
+        except ImportError as exc:
+            findings.append(f"Import audit_book mislukt: {exc} — retroaudit overgeslagen")
+            return "WARNING", {"findings": findings}
+
+        # Build (point_id, chunk_dict) pairs
+        id_chunk_pairs: list[tuple] = []
+        for pt in points_raw:
+            pid     = pt.get("id")
+            payload = pt.get("payload") or {}
+            if pid is not None:
+                id_chunk_pairs.append((pid, payload))
+
+        # Clear audit_status so success vs. failure can be detected after tagging
+        for _, chunk in id_chunk_pairs:
+            chunk.pop("audit_status", None)
+
+        chunks_only = [pair[1] for pair in id_chunk_pairs]
+        tag_chunks_with_ollama(chunks_only)
+
+        # 4. Push successful tags back to Qdrant
+        scored        = 0
+        still_pending = 0
+
+        for pid, chunk in id_chunk_pairs:
+            if chunk.get("audit_status") == "skipped_ollama_timeout":
+                still_pending += 1
+                continue
+
+            update_payload = {
+                "usability_tags":     chunk.get("usability_tags", []),
+                "protocol_relevance": chunk.get("protocol_relevance", 0.0),
+                "has_point_codes":    chunk.get("has_point_codes", False),
+                "has_figure_refs":    chunk.get("has_figure_refs", False),
+                "primary_use":        chunk.get("primary_use", ""),
+                "audit_status":       "tagged",
+            }
+            http_put(
+                f"{QDRANT_BASE}/collections/{COLLECTION}/points/payload",
+                data={"payload": update_payload, "points": [pid]},
+                timeout=10,
+            )
+            scored += 1
+
+        findings.append(
+            f"Retroaudit: {len(id_chunk_pairs)} geprobeerd, "
+            f"{scored} gescoord, {still_pending} nog uitstaand"
+        )
+        if scored == 0 and still_pending > 0:
+            status = "WARNING"
 
         return status, {"findings": findings}
 
