@@ -1,12 +1,12 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-16 02:34:24 UTC**
+> Last update: **2026-04-16 02:39:38 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
 | transcription-queue | ✅ active |
-| book-ingest-queue | ⚠️ deactivating |
+| book-ingest-queue | ✅ active |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
 | ollama | ✅ healthy |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `pdfcoffee.com_a-manual-of-acupuncture-peter-deadmanpdf-4-pdf-free.pdf` (31 min) |
+| Current job | `359609833-Travell-and-Simons-Myofascial-Pain-and-Dysfunction-Vol-1-2nd-Ed-D-Simons-Et-Al-Williams-and-Wilkins-1999-WW.pdf` (5 min) |
 | Queued | 2 |
 | Total books | 3 |
 | Ingested | 1 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` (178 min) |
+| Current job | `1.Upper_Body_Techniques.mp4` (184 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 12.53 GB / 32.86 GB (38%) |
-| CPU | 98.1% |
+| RAM used | 13.89 GB / 32.86 GB (42%) |
+| CPU | 83.3% |
 | Disk used | 54.3 GB / 322.3 GB (18%) |
-| Uptime | up 1 day, 16 hours, 51 minutes |
+| Uptime | up 1 day, 16 hours, 56 minutes |
 
 ## Recent markers
+- `2026-04-16T02:34:26.358084+00:00` **watchdog_restart** — book-ingest-queue hung (31 min stale) — restarted successfully
 - `2026-04-16T02:02:54.715675+00:00` **watchdog_restart** — book-ingest-queue hung (31 min stale) — restarted successfully
 - `2026-04-16T01:31:56.512885+00:00` **watchdog_restart** — book-ingest-queue hung (31 min stale) — restarted successfully
 - `2026-04-16T01:00:56.248757+00:00` **watchdog_restart** — book-ingest-queue hung (30 min stale) — restarted successfully
 - `2026-04-16T00:30:40.058773+00:00` **watchdog_restart** — book-ingest-queue hung (31 min stale) — restarted successfully
-- `2026-04-16T00:00:06.752609+00:00` **watchdog_restart** — book-ingest-queue hung (31 min stale) — restarted successfully
 
 ## Nightly Consistency
 ```
