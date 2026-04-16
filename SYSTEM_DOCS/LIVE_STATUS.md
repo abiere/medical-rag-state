@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-16 19:42:30 UTC**
+> Last update: **2026-04-16 19:47:30 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Advanced Seminar Manual- HS 08272022.pdf` (16 min) |
+| Current job | `Advanced Seminar Manual- HS 08272022.pdf` (21 min) |
 | Queued | 29 |
 | Total books | 43 |
 | Ingested | 10 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` (1207 min) |
+| Current job | `1.Upper_Body_Techniques.mp4` (1212 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 11.24 GB / 32.86 GB (34%) |
-| CPU | 46.4% |
+| RAM used | 11.2 GB / 32.86 GB (34%) |
+| CPU | 51.5% |
 | Disk used | 59.2 GB / 322.3 GB (19%) |
-| Uptime | up 2 days, 9 hours, 59 minutes |
+| Uptime | up 2 days, 10 hours, 4 minutes |
 
 ## Recent markers
 - `2026-04-16T19:25:49.404384+00:00` **book_ingested** — Everything Reset Sequence - Times.pdf → nrt_qat_curriculum: 2 chunks
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-16 19:37:47,690  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 19:38:17,691  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 19:38:47,692  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 19:39:17,692  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 19:39:47,692  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 19:40:17,696  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 19:40:47,697  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 19:41:17,698  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 19:41:47,698  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 19:42:17,699  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 19:42:47,699  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 19:43:17,700  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 19:43:47,700  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 19:44:17,701  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 19:44:47,701  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 19:45:17,702  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 19:45:47,703  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 19:46:17,703  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 19:46:47,703  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 19:47:17,704  INFO      Queue paused (pause flag set) — waiting 30s
 ```
