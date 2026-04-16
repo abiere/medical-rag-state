@@ -1,0 +1,26 @@
+{
+  "protocol_id": "vertigo_v2",
+  "klacht": "Vertigo (BPPV)",
+  "version": 1,
+  "generated_at": "2026-04-16T09:26:31.672646+00:00",
+  "literature_used": [
+    {
+      "book_key": "deadman",
+      "title": "Deadman \u2014 A Manual of Acupuncture",
+      "chunk_ids": [],
+      "pages": [],
+      "kai_role": "primary_acupuncture"
+    },
+    {
+      "book_key": "patten",
+      "title": "Patten \u2014 Neurological Differential Diagnosis",
+      "chunk_ids": [],
+      "pages": [],
+      "kai_role": "neuroanatomy"
+    }
+  ],
+  "library_snapshot": [],
+  "needs_review": false,
+  "review_reasons": [],
+  "reviewed_at": null
+}

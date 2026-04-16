@@ -1,0 +1,19 @@
+{
+  "protocol_id": "hoofdpijn_v1",
+  "klacht": "Hoofdpijn / Migraine",
+  "version": 1,
+  "generated_at": "2026-04-16T09:26:31.673285+00:00",
+  "literature_used": [
+    {
+      "book_key": "deadman",
+      "title": "Deadman \u2014 A Manual of Acupuncture",
+      "chunk_ids": [],
+      "pages": [],
+      "kai_role": "primary_acupuncture"
+    }
+  ],
+  "library_snapshot": [],
+  "needs_review": false,
+  "review_reasons": [],
+  "reviewed_at": null
+}

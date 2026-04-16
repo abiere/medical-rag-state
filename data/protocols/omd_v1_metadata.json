@@ -1,0 +1,26 @@
+{
+  "protocol_id": "omd_v1",
+  "klacht": "Oromandibulaire Dystonie (OMD)",
+  "version": 1,
+  "generated_at": "2026-04-16T09:26:31.671699+00:00",
+  "literature_used": [
+    {
+      "book_key": "deadman",
+      "title": "Deadman \u2014 A Manual of Acupuncture",
+      "chunk_ids": [],
+      "pages": [],
+      "kai_role": "primary_acupuncture"
+    },
+    {
+      "book_key": "sobotta_vol3",
+      "title": "Sobotta Vol 3 \u2014 Head/Neck/Neuroanatomy",
+      "chunk_ids": [],
+      "pages": [],
+      "kai_role": "primary_anatomy_images"
+    }
+  ],
+  "library_snapshot": [],
+  "needs_review": false,
+  "review_reasons": [],
+  "reviewed_at": null
+}

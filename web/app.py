@@ -2929,6 +2929,36 @@ async def protocols_page(tab: str = "standaard"):
 
   <!-- TAB 2: Behandelprotocollen -->
   <div id="tab-protocollen" style="display:{'none' if tab1_active else 'block'}">
+
+    <!-- Generator panel -->
+    <div class="section" style="padding:20px 24px;margin-bottom:20px">
+      <div style="font-size:15px;font-weight:700;margin-bottom:14px">Nieuw Protocol Genereren</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+        <div style="flex:1;min-width:220px">
+          <label style="font-size:12px;font-weight:600;color:#6b7280;display:block;margin-bottom:4px">KLACHT</label>
+          <input id="gen-klacht" type="text" placeholder="bijv. Etalagebenen, Hoofdpijn, Artrose…"
+            style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:14px"
+            onkeydown="if(event.key==='Enter') startGenerate()">
+        </div>
+        <button id="gen-btn" onclick="startGenerate()" class="btn btn-primary"
+          style="padding:9px 20px;font-size:14px;white-space:nowrap">
+          &#x25B6; Genereer Protocol
+        </button>
+      </div>
+      <!-- Progress -->
+      <div id="gen-progress" style="display:none;margin-top:14px">
+        <div style="background:#e5e7eb;border-radius:6px;height:22px;overflow:hidden;margin-bottom:8px">
+          <div id="gen-bar-inner" style="height:100%;background:#2563eb;border-radius:6px;
+               width:0%;text-align:center;font-size:11px;color:#fff;font-weight:700;
+               line-height:22px;transition:width .4s ease">0%</div>
+        </div>
+        <div id="gen-msg" style="font-size:13px;color:#6b7280"></div>
+      </div>
+      <a id="gen-download" href="#" download style="display:none;margin-top:10px"
+         class="btn btn-green">&#x2193; Download .docx</a>
+    </div>
+
+    <!-- Existing protocols list -->
     {cards_html}
   </div>
 
@@ -2988,12 +3018,76 @@ async function markReviewed(protocolId) {{
   try {{
     const r = await fetch('/protocols/' + protocolId + '/reviewed', {{method: 'POST'}});
     const d = await r.json();
-    if (d.status === 'ok') {{
-      location.reload();
+    if (d.status === 'ok') location.reload();
+  }} catch(e) {{ alert('Fout: ' + e); }}
+}}
+
+// ── Protocol generator ──────────────────────────────────────────────────────
+let _genJobId   = null;
+let _genPoller  = null;
+
+async function startGenerate() {{
+  const klacht = document.getElementById('gen-klacht').value.trim();
+  if (!klacht) {{ showGenMsg('Vul een klacht in', '#dc2626'); return; }}
+
+  showGenMsg('Bezig met opstarten…', '#6b7280');
+  setGenBusy(true);
+
+  try {{
+    const r = await fetch('/protocols/generate', {{
+      method: 'POST',
+      headers: {{'Content-Type': 'application/json'}},
+      body: JSON.stringify({{klacht}})
+    }});
+    const d = await r.json();
+    if (d.job_id) {{
+      _genJobId = d.job_id;
+      _genPoller = setInterval(pollGenStatus, 2000);
+    }} else {{
+      showGenMsg('Fout: ' + (d.error || 'onbekend'), '#dc2626');
+      setGenBusy(false);
     }}
   }} catch(e) {{
-    alert('Fout: ' + e);
+    showGenMsg('Netwerk fout: ' + e, '#dc2626');
+    setGenBusy(false);
   }}
+}}
+
+async function pollGenStatus() {{
+  if (!_genJobId) return;
+  try {{
+    const r = await fetch('/protocols/generate/status/' + _genJobId);
+    const d = await r.json();
+    const pct = d.progress || 0;
+    document.getElementById('gen-bar-inner').style.width = pct + '%';
+    document.getElementById('gen-bar-inner').textContent = pct + '%';
+    showGenMsg(d.current_section || '…', '#6b7280');
+
+    if (d.status === 'complete') {{
+      clearInterval(_genPoller);
+      setGenBusy(false);
+      const dl = document.getElementById('gen-download');
+      dl.href = d.download_url;
+      dl.style.display = 'inline-block';
+      showGenMsg('&#x2713; Protocol aangemaakt!', '#059669');
+      setTimeout(() => location.reload(), 3000);
+    }} else if (d.status === 'error') {{
+      clearInterval(_genPoller);
+      setGenBusy(false);
+      showGenMsg('Fout: ' + (d.error || 'onbekend'), '#dc2626');
+    }}
+  }} catch(e) {{ /* ignore poll errors */ }}
+}}
+
+function setGenBusy(busy) {{
+  document.getElementById('gen-btn').disabled = busy;
+  document.getElementById('gen-progress').style.display = busy ? 'block' : 'none';
+}}
+
+function showGenMsg(msg, color) {{
+  const el = document.getElementById('gen-msg');
+  el.innerHTML = msg;
+  el.style.color = color || '#6b7280';
 }}
 </script>
 """
@@ -3068,7 +3162,6 @@ async def protocols_status():
 @app.post("/protocols/{protocol_id}/reviewed")
 async def protocol_mark_reviewed(protocol_id: str):
     """Mark a protocol as reviewed after the user acknowledges the earmark."""
-    # Basic sanitisation
     safe_id = re.sub(r"[^a-zA-Z0-9_\-]", "", protocol_id)
     if not safe_id:
         return JSONResponse({"status": "error", "error": "Invalid protocol id"}, status_code=400)
@@ -3078,6 +3171,91 @@ async def protocol_mark_reviewed(protocol_id: str):
         return JSONResponse({"status": "ok"})
     except Exception as e:
         return JSONResponse({"status": "error", "error": str(e)}, status_code=500)
+
+
+# ─── PROTOCOL GENERATOR — job tracking ───────────────────────────────────────
+
+_PROTO_JOBS: dict[str, dict] = {}   # job_id → {status, section, progress, output_path, error}
+
+
+def _run_generate_job(job_id: str, klacht: str) -> None:
+    """Run generate_protocol in a thread; update _PROTO_JOBS as it progresses."""
+    import importlib.util, uuid
+
+    def progress_fn(section: str, pct: int) -> None:
+        _PROTO_JOBS[job_id].update({"current_section": section, "progress": pct})
+
+    try:
+        _PROTO_JOBS[job_id]["status"] = "running"
+        sys.path.insert(0, str(BASE / "scripts"))
+        import generate_protocol as gp
+        importlib.reload(gp)               # always fresh on each call
+        output_path = gp.generate_protocol(klacht, progress_fn=progress_fn)
+        _PROTO_JOBS[job_id].update({
+            "status":         "complete",
+            "progress":       100,
+            "current_section": "Klaar!",
+            "output_path":    output_path,
+            "download_url":   "/protocols/download/" + Path(output_path).name,
+        })
+    except Exception as e:
+        _PROTO_JOBS[job_id].update({
+            "status":  "error",
+            "error":   str(e)[:300],
+        })
+
+
+@app.post("/protocols/generate")
+async def protocols_generate(request: Request):
+    """Start a protocol generation job in a background thread."""
+    import threading, uuid
+    body   = await request.json()
+    klacht = (body.get("klacht") or "").strip()
+    if not klacht:
+        return JSONResponse({"error": "klacht is required"}, status_code=400)
+    if len(klacht) > 200:
+        return JSONResponse({"error": "klacht too long"}, status_code=400)
+
+    job_id = str(uuid.uuid4())[:8]
+    _PROTO_JOBS[job_id] = {
+        "status":          "queued",
+        "current_section": "Wachten op start…",
+        "progress":        0,
+        "klacht":          klacht,
+        "output_path":     None,
+        "download_url":    None,
+        "error":           None,
+    }
+
+    t = threading.Thread(target=_run_generate_job, args=(job_id, klacht), daemon=True)
+    t.start()
+    return JSONResponse({"status": "started", "job_id": job_id})
+
+
+@app.get("/protocols/generate/status/{job_id}")
+async def protocols_generate_status(job_id: str):
+    """Poll status of a protocol generation job."""
+    safe_id = re.sub(r"[^a-zA-Z0-9_\-]", "", job_id)
+    job = _PROTO_JOBS.get(safe_id)
+    if not job:
+        return JSONResponse({"status": "error", "error": "Job not found"}, status_code=404)
+    return JSONResponse(job)
+
+
+@app.get("/protocols/download/{filename}")
+async def protocols_download(filename: str):
+    """Serve a generated .docx file."""
+    safe = Path(filename).name                 # strip path traversal
+    if not safe.endswith(".docx"):
+        return JSONResponse({"error": "Only .docx files"}, status_code=400)
+    path = BASE / "data/protocols" / safe
+    if not path.exists():
+        return JSONResponse({"error": "File not found"}, status_code=404)
+    return FileResponse(
+        str(path),
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        filename=safe,
+    )
 
 
 # ── GET /images/file/{filename} ───────────────────────────────────────────────

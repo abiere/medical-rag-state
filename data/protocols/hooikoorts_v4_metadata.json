@@ -1,16 +1,9 @@
 {
-  "protocol_id": "etalagebenen_v1",
-  "klacht": "Etalagebenen (Claudicatio Intermittens)",
+  "protocol_id": "hooikoorts_v4",
+  "klacht": "Hooikoorts (Allergische Rhinitis)",
   "version": 1,
-  "generated_at": "2026-04-16T09:26:31.670105+00:00",
+  "generated_at": "2026-04-16T09:26:31.674908+00:00",
   "literature_used": [
-    {
-      "book_key": "travell_simons",
-      "title": "Travell & Simons \u2014 Myofascial Pain Vol 1",
-      "chunk_ids": [],
-      "pages": [],
-      "kai_role": "trigger_points"
-    },
     {
       "book_key": "deadman",
       "title": "Deadman \u2014 A Manual of Acupuncture",
