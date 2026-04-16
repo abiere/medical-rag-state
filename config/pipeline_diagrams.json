@@ -1,36 +1,34 @@
 {
-  "version": "1.0",
-  "updated_at": "2026-04-16T19:44:49.463199+00:00",
-  "updated_by": "Claude Code — auto-refresh",
+  "version": "2.0",
+  "updated_at": "2026-04-16T20:00:00.000000+00:00",
+  "updated_by": "Claude Code — hybrid redesign",
   "pdf_type_detection": {
-    "threshold_words_per_page_native": 50,
-    "threshold_words_per_page_low": 15,
+    "threshold_words_native": 50,
+    "threshold_words_low": 15,
     "sample_pages": 5,
-    "sample_indices": [
-      1,
-      10,
-      50,
-      100,
-      200
-    ],
-    "method": "pdfplumber word count per page",
-    "engines": {
-      "native": {
-        "name": "PyMuPDF",
+    "paths": [
+      {
+        "label": "Native",
+        "condition": "\u226550 w/p",
+        "engine": "PyMuPDF",
         "speed": "< 10 sec / boek",
-        "note": "directe tekstlaag"
+        "color": "teal"
       },
-      "mixed": {
-        "name": "pdfplumber + OCR per pagina",
+      {
+        "label": "Mixed",
+        "condition": "\u226515 w/p",
+        "engine": "pdfplumber + OCR",
         "speed": "minuten",
-        "note": "native tekst + OCR voor schaarse pagina's"
+        "color": "teal"
       },
-      "scanned": {
-        "name": "OCR cascade",
-        "speed": "minuten – uren",
-        "note": "elke pagina via cascade"
+      {
+        "label": "Scanned",
+        "condition": "< 15 w/p",
+        "engine": "OCR cascade",
+        "speed": "minuten \u2013 uren",
+        "color": "amber"
       }
-    }
+    ]
   },
   "ocr_cascade": {
     "min_words_threshold": 10,
@@ -38,56 +36,66 @@
       {
         "order": 1,
         "name": "RapidOCR (ONNX)",
-        "speed": "0.6–1.2 sec/pag",
+        "subtitle": "0.6\u20131.2 sec/pag",
         "type": "local",
+        "color": "teal",
         "available": true
       },
       {
         "order": 2,
         "name": "EasyOCR",
-        "speed": "2–5 sec/pag",
+        "subtitle": "2\u20135 sec/pag",
         "type": "local",
+        "color": "teal",
         "available": true
       },
       {
         "order": 3,
         "name": "Surya",
-        "speed": "3–8 sec/pag",
+        "subtitle": "3\u20138 sec/pag",
         "type": "local",
+        "color": "teal",
         "available": true
       },
       {
         "order": 4,
         "name": "Tesseract",
-        "speed": "1–3 sec/pag",
+        "subtitle": "1\u20133 sec/pag",
         "type": "local",
+        "color": "teal",
         "available": true
       },
       {
         "order": 5,
         "name": "Google Vision",
-        "speed": "API-call (~1 sec)",
+        "subtitle": "API-call (~1 sec)",
         "type": "cloud",
+        "color": "amber",
         "available": true
       }
     ]
   },
   "audit": {
+    "enabled": true,
     "primary": {
       "name": "Claude Haiku",
       "model": "claude-haiku-4-5-20251001",
+      "subtitle": "10 workers parallel",
       "workers": 10,
       "condition": "claude_api.enabled = true",
+      "color": "purple",
       "type": "cloud_parallel"
     },
     "fallback": {
       "name": "Ollama llama3.1:8b",
-      "type": "local_sequential",
-      "timeout_failures": 3
+      "subtitle": "Sequentieel \u00b7 lokaal",
+      "color": "gray",
+      "timeout_failures": 3,
+      "type": "local_sequential"
     },
     "retroaudit": {
-      "claude_limit": "geen limiet (alle skipped in één keer)",
-      "ollama_window": "00:00–07:00 Amsterdam",
+      "claude_note": "geen limiet (alle skipped in \u00e9\u00e9n keer)",
+      "ollama_note": "00:00\u201307:00 Amsterdam",
       "trigger": "audit_status starts with skipped_"
     }
   },
@@ -100,65 +108,66 @@
       {
         "order": 0,
         "name": "Pauzeer queues",
-        "description": "Boeken + video's gepauzeerd via API",
-        "engine": null
+        "description": "Boeken + video\u2019s gepauzeerd via API",
+        "engine": null,
+        "color": "green"
       },
       {
         "order": 1,
         "name": "Pre-checks",
         "description": "Services, Qdrant, Ollama bereikbaar",
-        "engine": null
+        "engine": null,
+        "color": "teal"
       },
       {
         "order": 2,
         "name": "Qdrant maintenance",
         "description": "Statistieken + snapshot backup",
-        "engine": "qdrant"
+        "engine": "qdrant",
+        "color": "teal"
       },
       {
         "order": 3,
         "name": "Data consistentie",
         "description": "Chunk-hashes, dubbelen detecteren",
-        "engine": null
+        "engine": null,
+        "color": "teal"
       },
       {
         "order": 4,
         "name": "Retroaudit",
         "description": "Claude: alle skipped / Ollama: tijdvenster",
-        "engine": "claude_or_ollama"
+        "engine": "claude_or_ollama",
+        "color": "purple"
       },
       {
         "order": 5,
         "name": "Afbeelding screening",
         "description": "Max 200/nacht via Ollama",
-        "engine": "ollama"
+        "engine": "ollama",
+        "color": "teal"
       },
       {
         "order": 6,
         "name": "State integriteit",
         "description": "Qdrant chunk-counts vs state.json",
-        "engine": null
+        "engine": null,
+        "color": "teal"
       },
       {
         "order": 7,
         "name": "Cleanup",
         "description": "Fase-bestanden ouder dan 30 dagen",
-        "engine": null
+        "engine": null,
+        "color": "teal"
       },
       {
         "order": 8,
         "name": "Hervat queues",
         "description": "Altijd in finally block",
-        "engine": null
+        "engine": null,
+        "color": "green"
       }
     ]
-  },
-  "video": {
-    "transcription": {
-      "engine": "Whisper",
-      "rate_model": "sec/MB gewogen gemiddelde",
-      "stats_file": "data/transcription_stats.json"
-    },
-    "storage": "video_transcripts"
   }
 }

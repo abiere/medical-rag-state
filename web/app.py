@@ -3111,22 +3111,28 @@ def _load_pipeline_diagrams() -> dict:
     data.setdefault("nightly", {})
     data.setdefault("audit", {})
     data["audit"].setdefault("primary", {})
+    data["audit"].setdefault("fallback", {})
     data["audit"].setdefault("retroaudit", {})
 
     # Overlay live nightly settings
-    data["nightly"]["start_time"]         = n.get("start_time",        data["nightly"].get("start_time", "02:00"))
-    data["nightly"]["end_time"]           = n.get("end_time",          data["nightly"].get("end_time",   "05:00"))
+    data["nightly"]["start_time"]         = n.get("start_time",        data["nightly"].get("start_time", "00:00"))
+    data["nightly"]["end_time"]           = n.get("end_time",          data["nightly"].get("end_time",   "07:00"))
     data["nightly"]["image_screen_limit"] = n.get("image_screen_limit",data["nightly"].get("image_screen_limit", 200))
 
     # Overlay live audit settings
-    data["audit"]["primary"]["model"]   = ca.get("model",       data["audit"]["primary"].get("model",   "claude-haiku-4-5-20251001"))
-    data["audit"]["primary"]["workers"] = ca.get("max_workers", data["audit"]["primary"].get("workers", 10))
-    data["audit"]["primary"]["enabled"] = ca.get("enabled",     False)
+    workers = ca.get("max_workers", data["audit"]["primary"].get("workers", 10))
+    enabled = ca.get("enabled", False)
+    data["audit"]["enabled"]                  = enabled
+    data["audit"]["primary"]["model"]         = ca.get("model", data["audit"]["primary"].get("model", "claude-haiku-4-5-20251001"))
+    data["audit"]["primary"]["workers"]       = workers
+    data["audit"]["primary"]["enabled"]       = enabled
+    data["audit"]["primary"]["subtitle"]      = f"{workers} workers parallel"
 
-    # Keep ollama_window in sync with nightly window
+    # Keep retroaudit notes in sync with nightly window
     start = data["nightly"]["start_time"]
     end   = data["nightly"]["end_time"]
-    data["audit"]["retroaudit"]["ollama_window"] = f"{start}–{end} Amsterdam"
+    data["audit"]["retroaudit"]["ollama_note"]   = f"{start}\u2013{end} Amsterdam"
+    data["audit"]["retroaudit"]["ollama_window"] = f"{start}\u2013{end} Amsterdam"  # backward compat
 
     return data
 
@@ -3158,6 +3164,9 @@ async def api_pipeline_diagrams_refresh():
 
     data.setdefault("pdf_type_detection", {})
     data.setdefault("ocr_cascade", {})
+    data["pdf_type_detection"]["threshold_words_native"] = 50
+    data["pdf_type_detection"]["threshold_words_low"]    = native_threshold
+    # backward compat aliases
     data["pdf_type_detection"]["threshold_words_per_page_native"] = 50
     data["pdf_type_detection"]["threshold_words_per_page_low"]    = native_threshold
     data["ocr_cascade"]["min_words_threshold"]                    = min_ocr
@@ -3440,8 +3449,17 @@ function showToast(msg, isError) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// DIAGRAM RENDERER
+// DIAGRAM RENDERER — HYBRID (CSS/flexbox + SVG connectors)
 // ═══════════════════════════════════════════════════════════
+const COLORS = {
+  teal:   {bg:'#e8f4f5', bd:'#1A6B72', tx:'#085041'},
+  green:  {bg:'#dcfce7', bd:'#16a34a', tx:'#166534'},
+  amber:  {bg:'#fef3c7', bd:'#d97706', tx:'#78350f'},
+  purple: {bg:'#EEEDFE', bd:'#534AB7', tx:'#3C3489'},
+  red:    {bg:'#fee2e2', bd:'#dc2626', tx:'#991b1b'},
+  gray:   {bg:'#f3f4f6', bd:'#d1d5db', tx:'#6b7280'},
+};
+
 let _nuTimer = null;
 
 async function loadDiagrams() {
@@ -3492,31 +3510,33 @@ function minToPct(min) { return (min / 1440 * 100).toFixed(3) + '%'; }
 
 function renderTimeline(d) {
   const n = d.nightly || {};
-  const startMin = hmToMin(n.start_time || '02:00');
-  const endMin   = hmToMin(n.end_time   || '05:00');
-  const startHm  = n.start_time || '02:00';
-  const endHm    = n.end_time   || '05:00';
+  const startMin = hmToMin(n.start_time || '00:00');
+  const endMin   = hmToMin(n.end_time   || '07:00');
+  const startHm  = n.start_time || '00:00';
+  const endHm    = n.end_time   || '07:00';
+  const claudeOn = (d.audit || {}).enabled || false;
 
   const outer = document.createElement('div');
   outer.style.cssText = 'width:100%;overflow-x:auto';
 
-  // Hour labels
+  // Hour labels: 00:00 / 06:00 / 12:00 / 18:00 / 24:00
   const lblRow = document.createElement('div');
-  lblRow.style.cssText = 'position:relative;height:18px;margin-bottom:6px;margin-left:110px';
-  [0,3,6,9,12,15,18,21,24].forEach(h => {
+  lblRow.style.cssText = 'position:relative;height:18px;margin-bottom:6px;margin-left:130px';
+  [0,6,12,18,24].forEach(h => {
     const s = document.createElement('span');
-    s.textContent = h + 'h';
+    s.textContent = (h === 0 || h === 24) ? h + ':00' : h + ':00';
     s.style.cssText = 'position:absolute;font-size:10px;color:#9ca3af;transform:translateX(-50%)';
     s.style.left = (h / 24 * 100) + '%';
     lblRow.appendChild(s);
   });
   outer.appendChild(lblRow);
 
-  // Process rows
   const processes = [
-    { label: 'Boekverwerking', color: '#e8f4f5', border: '#a7d5d8', pauseAmber: true },
-    { label: 'Transcriptie',   color: '#e8f4f5', border: '#a7d5d8', pauseAmber: true },
-    { label: 'Nachtrun',       color: '#fef3c7', border: '#fde68a', fixed: [startMin, endMin] },
+    { label: 'Boekverwerking', colorKey: 'teal',   pauseAmber: true },
+    { label: "Video's",        colorKey: 'teal',   pauseAmber: true },
+    { label: 'Nachtrun',       colorKey: 'amber',  fixed: [startMin, endMin] },
+    { label: 'Claude API',     colorKey: claudeOn ? 'purple' : 'gray',
+      fixed: claudeOn ? [0, 1440] : null, inactive: !claudeOn },
   ];
 
   const grid = document.createElement('div');
@@ -3528,35 +3548,41 @@ function renderTimeline(d) {
 
     const lbl = document.createElement('div');
     lbl.textContent = proc.label;
-    lbl.style.cssText = 'width:110px;font-size:11px;color:#4a5568;flex-shrink:0;padding-right:8px;text-align:right';
+    lbl.style.cssText = 'width:130px;font-size:11px;color:#4a5568;flex-shrink:0;padding-right:8px;text-align:right';
     row.appendChild(lbl);
 
     const barWrap = document.createElement('div');
     barWrap.style.cssText = 'flex:1;position:relative;height:20px;background:#f3f4f6;border-radius:3px;overflow:hidden';
 
-    if (proc.fixed) {
-      // Nachtrun: just the window
+    const C = COLORS[proc.colorKey] || COLORS.gray;
+
+    if (proc.inactive) {
       const bar = document.createElement('div');
-      bar.style.cssText = 'position:absolute;top:0;bottom:0;background:' + proc.color
-        + ';border:1px solid ' + proc.border + ';border-radius:3px;box-sizing:border-box';
+      bar.style.cssText = 'position:absolute;inset:0;background:#f3f4f6;border:1px solid #d1d5db;'
+        + 'border-radius:3px;display:flex;align-items:center;justify-content:center';
+      bar.innerHTML = '<span style="font-size:9px;color:#9ca3af">uitgeschakeld</span>';
+      barWrap.appendChild(bar);
+    } else if (proc.fixed) {
+      const bar = document.createElement('div');
+      bar.style.cssText = 'position:absolute;top:0;bottom:0;background:' + C.bg
+        + ';border:1px solid ' + C.bd + ';border-radius:3px;box-sizing:border-box';
       bar.style.left  = minToPct(proc.fixed[0]);
-      bar.style.width = minToPct(proc.fixed[1] - proc.fixed[0]);
+      bar.style.width = proc.fixed[1] === 1440 ? '100%' : minToPct(proc.fixed[1] - proc.fixed[0]);
       barWrap.appendChild(bar);
     } else {
-      // Full bar with pause overlay
       const bar = document.createElement('div');
-      bar.style.cssText = 'position:absolute;top:0;bottom:0;left:0;right:0;background:' + proc.color
-        + ';border:1px solid ' + proc.border + ';border-radius:3px;box-sizing:border-box';
+      bar.style.cssText = 'position:absolute;inset:0;background:' + C.bg
+        + ';border:1px solid ' + C.bd + ';border-radius:3px;box-sizing:border-box';
       barWrap.appendChild(bar);
-      // Pause overlay
-      const pause = document.createElement('div');
-      pause.style.cssText = 'position:absolute;top:0;bottom:0;background:rgba(254,243,199,.7)';
-      pause.style.left  = minToPct(startMin);
-      pause.style.width = minToPct(endMin - startMin);
-      barWrap.appendChild(pause);
+      if (proc.pauseAmber) {
+        const pause = document.createElement('div');
+        pause.style.cssText = 'position:absolute;top:0;bottom:0;background:rgba(254,243,199,.75)';
+        pause.style.left  = minToPct(startMin);
+        pause.style.width = minToPct(endMin - startMin);
+        barWrap.appendChild(pause);
+      }
     }
 
-    // "Nu" marker placeholder (filled by updateNuLine)
     const nu = document.createElement('div');
     nu.className = 'nu-marker';
     nu.style.cssText = 'position:absolute;top:-2px;bottom:-2px;width:2px;background:#dc2626;z-index:5;border-radius:1px';
@@ -3568,19 +3594,17 @@ function renderTimeline(d) {
 
   outer.appendChild(grid);
 
-  // Legend
   const leg = document.createElement('div');
   leg.style.cssText = 'display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:11px;color:#6b7280;align-items:center';
   leg.innerHTML = '<span style="display:inline-flex;align-items:center;gap:4px">'
-    + '<span style="width:14px;height:10px;background:#e8f4f5;border:1px solid #a7d5d8;border-radius:2px;display:inline-block"></span>Actief</span>'
+    + '<span style="width:14px;height:10px;background:#e8f4f5;border:1px solid #1A6B72;border-radius:2px;display:inline-block"></span>Actief</span>'
     + '<span style="display:inline-flex;align-items:center;gap:4px">'
-    + '<span style="width:14px;height:10px;background:#fef3c7;border:1px solid #fde68a;border-radius:2px;display:inline-block"></span>'
+    + '<span style="width:14px;height:10px;background:#fef3c7;border:1px solid #d97706;border-radius:2px;display:inline-block"></span>'
     + 'Nachtrun (' + startHm + '\u2013' + endHm + ' Amsterdam)</span>'
     + '<span style="display:inline-flex;align-items:center;gap:4px">'
     + '<span style="width:2px;height:12px;background:#dc2626;display:inline-block;border-radius:1px"></span>Nu</span>';
   outer.appendChild(leg);
 
-  // Start live nu-line update
   updateNuLine();
   if (_nuTimer) clearInterval(_nuTimer);
   _nuTimer = setInterval(updateNuLine, 60000);
@@ -3597,63 +3621,91 @@ function updateNuLine() {
 
 // ─── B. Boekimport pipeline ────────────────────────────────
 function renderImportFlow(d) {
-  const pt = (d.pdf_type_detection || {}).engines || {};
-  const thr_native = (d.pdf_type_detection || {}).threshold_words_per_page_native || 50;
-  const thr_low    = (d.pdf_type_detection || {}).threshold_words_per_page_low    || 15;
+  const pt      = d.pdf_type_detection || {};
+  const thrNat  = pt.threshold_words_native || pt.threshold_words_per_page_native || 50;
+  const thrLow  = pt.threshold_words_low    || pt.threshold_words_per_page_low    || 15;
+  const paths   = pt.paths || [];
 
   const wrap = document.createElement('div');
   wrap.style.cssText = 'overflow-x:auto';
 
-  // Main flow: horizontal steps
-  const steps = [
-    { label: 'Upload PDF', sub: 'via /library/ingest', color: '#e8f4f5', border: '#1A6B72' },
-    { label: 'Detectie', sub: '\u2265'+thr_native+' w/p \u2192 native\n\u2265'+thr_low+' w/p \u2192 mixed\n< '+thr_low+' w/p \u2192 scanned',
-      color: '#f3f4f6', border: '#9ca3af' },
-    { label: 'Parse', sub: 'PyMuPDF / pdfplumber+OCR / cascade',
-      color: '#f3f4f6', border: '#9ca3af' },
-    { label: 'Chunking', sub: '~450 woorden / chunk', color: '#e8f4f5', border: '#1A6B72' },
-    { label: 'Embedding', sub: 'BAAI/bge-large-en-v1.5\n1024 dims', color: '#e8f4f5', border: '#1A6B72' },
-    { label: 'Audit', sub: 'Claude \u2192 K/A/I + tags\n(Ollama fallback)',
-      color: '#EEEDFE', border: '#3C3489' },
-    { label: 'Qdrant', sub: 'medical_library', color: '#dcfce7', border: '#16a34a' },
-  ];
-
   const flow = document.createElement('div');
-  flow.style.cssText = 'display:flex;align-items:center;gap:0;flex-wrap:nowrap;min-width:600px';
+  flow.style.cssText = 'display:flex;align-items:stretch;gap:0;flex-wrap:nowrap;min-width:660px';
 
-  steps.forEach((s, i) => {
+  function stepBox(label, sub, colorKey) {
+    const C = COLORS[colorKey] || COLORS.gray;
     const box = document.createElement('div');
-    box.style.cssText = 'flex:1;min-width:80px;padding:10px 8px;text-align:center;'
-      + 'border-radius:8px;border:1.5px solid ' + s.border + ';background:' + s.color + ';'
-      + 'position:relative';
-
-    const name = document.createElement('div');
-    name.textContent = s.label;
-    name.style.cssText = 'font-size:12px;font-weight:600;color:#111;margin-bottom:4px';
-    box.appendChild(name);
-
-    const sub = document.createElement('div');
-    sub.style.cssText = 'font-size:10px;color:#6b7280;white-space:pre-line;line-height:1.4';
-    sub.textContent = s.sub;
-    box.appendChild(sub);
-
-    flow.appendChild(box);
-
-    if (i < steps.length - 1) {
-      const arrow = document.createElement('div');
-      arrow.textContent = '\u2192';
-      arrow.style.cssText = 'color:#9ca3af;font-size:16px;padding:0 4px;flex-shrink:0';
-      flow.appendChild(arrow);
+    box.style.cssText = 'flex:1;min-width:76px;padding:10px 8px;text-align:center;'
+      + 'border-radius:8px;border:1.5px solid ' + C.bd + ';background:' + C.bg + ';'
+      + 'display:flex;flex-direction:column;justify-content:center';
+    const nm = document.createElement('div');
+    nm.textContent = label;
+    nm.style.cssText = 'font-size:12px;font-weight:600;color:#111;margin-bottom:4px';
+    box.appendChild(nm);
+    if (sub) {
+      const s = document.createElement('div');
+      s.style.cssText = 'font-size:10px;color:#6b7280;white-space:pre-line;line-height:1.4';
+      s.textContent = sub;
+      box.appendChild(s);
     }
-  });
+    return box;
+  }
+
+  function arrowEl() {
+    const a = document.createElement('div');
+    a.textContent = '\u2192';
+    a.style.cssText = 'color:#9ca3af;font-size:16px;padding:0 3px;flex-shrink:0;display:flex;align-items:center';
+    return a;
+  }
+
+  // Parse box: 3 stacked variants from JSON paths
+  function parseBox() {
+    const outer = document.createElement('div');
+    outer.style.cssText = 'flex:1.5;min-width:116px;display:flex;flex-direction:column;'
+      + 'gap:3px;justify-content:center;padding:4px 0';
+    const hdr = document.createElement('div');
+    hdr.textContent = 'Parse';
+    hdr.style.cssText = 'font-size:11px;font-weight:700;color:#6b7280;text-align:center;margin-bottom:3px';
+    outer.appendChild(hdr);
+    const variants = paths.length > 0 ? paths : [
+      { label:'Native',  condition:'\u2265'+thrNat+' w/p', engine:'PyMuPDF',        color:'teal'  },
+      { label:'Mixed',   condition:'\u2265'+thrLow+' w/p', engine:'pdfplumber+OCR', color:'teal'  },
+      { label:'Scanned', condition:'< '+thrLow+' w/p',     engine:'OCR cascade',    color:'amber' },
+    ];
+    variants.forEach(v => {
+      const C2 = COLORS[v.color] || COLORS.gray;
+      const row = document.createElement('div');
+      row.style.cssText = 'padding:3px 7px;border-radius:5px;border:1px solid '
+        + C2.bd + ';background:' + C2.bg;
+      row.innerHTML = '<div style="font-size:10px;font-weight:600;color:' + C2.tx + '">'
+        + v.label + ' <span style="font-weight:400;color:#6b7280">(' + v.condition + ')</span></div>'
+        + '<div style="font-size:9px;color:#6b7280;margin-top:1px">' + v.engine + '</div>';
+      outer.appendChild(row);
+    });
+    return outer;
+  }
+
+  flow.appendChild(stepBox('Upload', 'PDF/EPUB\n/ingest', 'teal'));
+  flow.appendChild(arrowEl());
+  flow.appendChild(stepBox('Detectie', 'steekproef\n5 pagina\'s', 'gray'));
+  flow.appendChild(arrowEl());
+  flow.appendChild(parseBox());
+  flow.appendChild(arrowEl());
+  flow.appendChild(stepBox('Chunking', '~450 w\nper chunk', 'teal'));
+  flow.appendChild(arrowEl());
+  flow.appendChild(stepBox('Audit', 'Claude/Ollama\nK/A/I+tags', 'purple'));
+  flow.appendChild(arrowEl());
+  flow.appendChild(stepBox('Embedding', 'BGE-large\n1024 dims', 'teal'));
+  flow.appendChild(arrowEl());
+  flow.appendChild(stepBox('Qdrant', 'medical_\nlibrary', 'green'));
 
   wrap.appendChild(flow);
   return wrap;
 }
 
-// ─── C. OCR cascade ────────────────────────────────────────
+// ─── C. OCR cascade (HYBRID: CSS list + SVG succes-lijn) ───
 function renderOcrCascade(d) {
-  const engines = ((d.ocr_cascade || {}).engines || []).slice().sort((a,b) => a.order - b.order);
+  const engines  = ((d.ocr_cascade || {}).engines || []).slice().sort((a,b) => a.order - b.order);
   const minWords = (d.ocr_cascade || {}).min_words_threshold || 10;
 
   const wrap = document.createElement('div');
@@ -3661,120 +3713,217 @@ function renderOcrCascade(d) {
   const note = document.createElement('div');
   note.style.cssText = 'font-size:12px;color:#6b7280;margin-bottom:14px';
   note.textContent = 'Elke engine wordt geprobeerd totdat \u2265' + minWords + ' woorden herkend zijn. '
-    + 'Bij succes: resultaat gebruikt, cascade stopt.';
+    + 'Bij succes stopt de cascade.';
   wrap.appendChild(note);
 
+  const container = document.createElement('div');
+  container.style.cssText = 'display:flex;gap:0;align-items:stretch';
+
+  // Left: CSS engine list
   const list = document.createElement('div');
-  list.style.cssText = 'display:flex;flex-direction:column;gap:0';
+  list.style.cssText = 'flex:1;display:flex;flex-direction:column;gap:0';
+
+  const ROW_H = 52;
 
   engines.forEach((eng, i) => {
-    const isCloud = eng.type === 'cloud';
+    const colorKey = eng.color || (eng.type === 'cloud' ? 'amber' : 'teal');
+    const C = COLORS[colorKey] || COLORS.teal;
+    const isFirst = i === 0;
     const isLast  = i === engines.length - 1;
-    const bg      = isCloud ? '#fef3c7' : (i === 0 ? '#e8f4f5' : '#f8fafc');
-    const border  = isCloud ? '#fde68a' : '#e5e7eb';
-    const numBg   = isCloud ? '#92400e' : '#1A6B72';
 
     const row = document.createElement('div');
     row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:10px 14px;'
-      + 'background:' + bg + ';border:1px solid ' + border + ';'
-      + (i === 0 ? 'border-radius:8px 8px 0 0;' : '')
-      + (isLast  ? 'border-radius:0 0 8px 8px;' : 'border-bottom:none;');
+      + 'height:' + ROW_H + 'px;box-sizing:border-box;'
+      + 'background:' + C.bg + ';border:1px solid ' + C.bd + ';'
+      + 'border-bottom:' + (isLast ? '1px' : '0px') + ' solid ' + C.bd + ';'
+      + 'border-radius:' + (isFirst ? '8px 8px 0 0' : isLast ? '0 0 8px 8px' : '0');
 
     const num = document.createElement('div');
     num.textContent = eng.order;
-    num.style.cssText = 'width:22px;height:22px;border-radius:50%;background:' + numBg
+    num.style.cssText = 'width:22px;height:22px;border-radius:50%;background:' + C.bd
       + ';color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;'
       + 'justify-content:center;flex-shrink:0';
     row.appendChild(num);
 
     const info = document.createElement('div');
     info.style.cssText = 'flex:1';
-    const name = document.createElement('div');
-    name.textContent = eng.name;
-    name.style.cssText = 'font-size:13px;font-weight:600;color:#111';
-    info.appendChild(name);
-    const speed = document.createElement('div');
-    speed.textContent = eng.speed;
-    speed.style.cssText = 'font-size:11px;color:#6b7280;margin-top:1px';
-    info.appendChild(speed);
+    info.innerHTML = '<div style="font-size:13px;font-weight:600;color:#111">' + eng.name + '</div>'
+      + '<div style="font-size:11px;color:#6b7280;margin-top:2px">'
+      + (eng.subtitle || eng.speed || '') + '</div>';
     row.appendChild(info);
 
     const badge = document.createElement('span');
-    badge.textContent = isCloud ? 'cloud' : 'local';
+    badge.textContent = eng.type === 'cloud' ? 'cloud' : 'local';
     badge.style.cssText = 'font-size:10px;font-weight:600;padding:2px 8px;border-radius:999px;'
-      + (isCloud ? 'background:#fde68a;color:#92400e' : 'background:#dcfce7;color:#166534');
+      + 'background:' + C.bg + ';color:' + C.tx + ';border:1px solid ' + C.bd;
     row.appendChild(badge);
 
     list.appendChild(row);
-
-    if (!isLast) {
-      const arrow = document.createElement('div');
-      arrow.textContent = '↓  resultaat < ' + minWords + ' woorden \u2192 volgende';
-      arrow.style.cssText = 'font-size:10px;color:#9ca3af;padding:3px 14px;'
-        + 'border-left:1px solid #e5e7eb;border-right:1px solid #e5e7eb;background:#fff';
-      list.appendChild(arrow);
-    }
   });
 
-  wrap.appendChild(list);
+  container.appendChild(list);
+
+  // Right: SVG dashed success line with arrows
+  const svgW = 72;
+  const totalH = engines.length * ROW_H;
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('width', svgW);
+  svg.setAttribute('height', totalH);
+  svg.style.cssText = 'flex-shrink:0;overflow:visible';
+
+  // arrowhead marker
+  const defs = document.createElementNS(NS, 'defs');
+  const mk = document.createElementNS(NS, 'marker');
+  mk.setAttribute('id', 'ag'); mk.setAttribute('markerWidth','6');
+  mk.setAttribute('markerHeight','6'); mk.setAttribute('refX','5');
+  mk.setAttribute('refY','3'); mk.setAttribute('orient','auto');
+  const poly = document.createElementNS(NS, 'polygon');
+  poly.setAttribute('points','0 0,6 3,0 6'); poly.setAttribute('fill','#16a34a');
+  mk.appendChild(poly); defs.appendChild(mk); svg.appendChild(defs);
+
+  // Vertical dashed green line
+  const vl = document.createElementNS(NS, 'line');
+  vl.setAttribute('x1',16); vl.setAttribute('y1', ROW_H/2);
+  vl.setAttribute('x2',16); vl.setAttribute('y2', totalH - ROW_H/2);
+  vl.setAttribute('stroke','#16a34a'); vl.setAttribute('stroke-width','1.5');
+  vl.setAttribute('stroke-dasharray','4 3');
+  svg.appendChild(vl);
+
+  engines.forEach((eng, i) => {
+    const cy = i * ROW_H + ROW_H / 2;
+    // horizontal entry tick
+    const hl = document.createElementNS(NS, 'line');
+    hl.setAttribute('x1',0); hl.setAttribute('y1',cy);
+    hl.setAttribute('x2',16); hl.setAttribute('y2',cy);
+    hl.setAttribute('stroke','#16a34a'); hl.setAttribute('stroke-width','1.5');
+    hl.setAttribute('stroke-dasharray','4 3');
+    svg.appendChild(hl);
+    // arrow exit
+    const al = document.createElementNS(NS, 'line');
+    al.setAttribute('x1',16); al.setAttribute('y1',cy);
+    al.setAttribute('x2',44); al.setAttribute('y2',cy);
+    al.setAttribute('stroke','#16a34a'); al.setAttribute('stroke-width','1.5');
+    al.setAttribute('marker-end','url(#ag)');
+    svg.appendChild(al);
+    // label
+    const lbl = document.createElementNS(NS, 'text');
+    lbl.setAttribute('x',48); lbl.setAttribute('y', cy+4);
+    lbl.setAttribute('font-size','9'); lbl.setAttribute('fill','#16a34a');
+    lbl.setAttribute('font-weight','600');
+    lbl.textContent = 'ok';
+    svg.appendChild(lbl);
+  });
+
+  container.appendChild(svg);
+  wrap.appendChild(container);
+
+  const fnote = document.createElement('div');
+  fnote.style.cssText = 'font-size:11px;color:#6b7280;margin-top:10px;padding:8px 12px;'
+    + 'background:#f8fafc;border:1px solid #e5e7eb;border-radius:6px';
+  fnote.textContent = 'Als alle ' + engines.length + ' engines < ' + minWords
+    + ' woorden opleveren: chunk opgeslagen met lege tekst + fout-flag.';
+  wrap.appendChild(fnote);
+
   return wrap;
 }
 
-// ─── D. Audit engine selectie ──────────────────────────────
+// ─── D. Audit engine selectie (HYBRID: CSS + SVG Y-branch) ─
 function renderAuditSelection(d) {
-  const pri  = (d.audit || {}).primary   || {};
-  const fall = (d.audit || {}).fallback  || {};
-  const retro= (d.audit || {}).retroaudit|| {};
-  const claudeEnabled = pri.enabled;
+  const pri   = (d.audit || {}).primary    || {};
+  const fall  = (d.audit || {}).fallback   || {};
+  const retro = (d.audit || {}).retroaudit || {};
+  const claudeOn = (d.audit || {}).enabled !== undefined
+    ? (d.audit || {}).enabled : (pri.enabled || false);
 
   const wrap = document.createElement('div');
 
-  // Decision node
+  // Decision box
   const dec = document.createElement('div');
   dec.style.cssText = 'text-align:center;padding:10px 20px;background:#f3f4f6;border-radius:8px;'
-    + 'border:2px solid #e5e7eb;font-size:13px;font-weight:600;color:#374151;margin-bottom:16px';
-  dec.innerHTML = 'claude_api.enabled = <span style="font-family:monospace;color:' + (claudeEnabled ? '#16a34a' : '#dc2626') + '">'
-    + (claudeEnabled ? 'true' : 'false') + '</span>';
+    + 'border:2px solid #e5e7eb;font-size:13px;font-weight:600;color:#374151;'
+    + 'max-width:300px;margin:0 auto';
+  dec.innerHTML = 'claude_api.enabled = <span style="font-family:monospace;color:'
+    + (claudeOn ? '#16a34a' : '#dc2626') + '">' + (claudeOn ? 'true' : 'false') + '</span>';
   wrap.appendChild(dec);
 
+  // SVG Y-branch connector
+  const NS = 'http://www.w3.org/2000/svg';
+  const SVG_W = 400; const SVG_H = 58;
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('viewBox', '0 0 ' + SVG_W + ' ' + SVG_H);
+  svg.setAttribute('width', '100%'); svg.setAttribute('height', SVG_H);
+  svg.style.cssText = 'display:block;overflow:visible';
+
+  const cx = SVG_W / 2;
+  const lx = SVG_W * 0.2;
+  const rx = SVG_W * 0.8;
+  const mid = SVG_H * 0.55;
+
+  function svgLine(x1,y1,x2,y2,color,w,dash) {
+    const l = document.createElementNS(NS,'line');
+    l.setAttribute('x1',x1); l.setAttribute('y1',y1);
+    l.setAttribute('x2',x2); l.setAttribute('y2',y2);
+    l.setAttribute('stroke',color); l.setAttribute('stroke-width',w||2);
+    if(dash) l.setAttribute('stroke-dasharray','5 3');
+    return l;
+  }
+  function svgTxt(x,y,txt,color,fw) {
+    const t = document.createElementNS(NS,'text');
+    t.setAttribute('x',x); t.setAttribute('y',y);
+    t.setAttribute('text-anchor','middle'); t.setAttribute('font-size','11');
+    t.setAttribute('fill',color||'#6b7280');
+    if(fw) t.setAttribute('font-weight',fw);
+    t.textContent = txt; return t;
+  }
+
+  // stem
+  svg.appendChild(svgLine(cx,2, cx,mid, '#9ca3af',2));
+  // left branch (ja = Claude)
+  const lColor = claudeOn ? '#534AB7' : '#9ca3af';
+  const rColor = claudeOn ? '#9ca3af' : '#1A6B72';
+  svg.appendChild(svgLine(cx,mid, lx,SVG_H-2, lColor, claudeOn?2.5:1.5, !claudeOn));
+  svg.appendChild(svgLine(cx,mid, rx,SVG_H-2, rColor, claudeOn?1.5:2.5, claudeOn));
+  svg.appendChild(svgTxt(lx-28, mid+8, 'ja',  '#16a34a','700'));
+  svg.appendChild(svgTxt(rx+28, mid+8, 'nee', '#dc2626','700'));
+  wrap.appendChild(svg);
+
+  // Two columns
   const cols = document.createElement('div');
   cols.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px';
 
-  // Left: Claude
-  const leftActive = claudeEnabled;
+  const Cp = COLORS[pri.color  || 'purple'];
+  const Cf = COLORS[fall.color || 'gray'];
+
   const left = document.createElement('div');
   left.style.cssText = 'padding:16px;border-radius:8px;border:2px solid '
-    + (leftActive ? '#3C3489' : '#e5e7eb') + ';background:' + (leftActive ? '#EEEDFE' : '#f9f9ff');
-  left.innerHTML = '<div style="font-size:12px;font-weight:700;color:' + (leftActive ? '#3C3489' : '#9ca3af') + ';margin-bottom:8px">'
-    + (leftActive ? '\u2713 ACTIEF' : 'INACTIEF') + ' \u2014 Claude API</div>'
+    + (claudeOn ? Cp.bd : '#e5e7eb') + ';background:' + (claudeOn ? Cp.bg : '#fafafa');
+  left.innerHTML = '<div style="font-size:12px;font-weight:700;color:' + (claudeOn ? Cp.tx : '#9ca3af') + ';margin-bottom:8px">'
+    + (claudeOn ? '\u2713 ACTIEF' : 'INACTIEF') + ' \u2014 Claude API</div>'
     + '<div style="font-size:13px;font-weight:600;color:#111;margin-bottom:4px">' + (pri.name || 'Claude Haiku') + '</div>'
-    + '<div style="font-size:11px;color:#6b7280;font-family:monospace;margin-bottom:6px">' + (pri.model || '') + '</div>'
-    + '<div style="font-size:11px;color:#6b7280">' + (pri.workers || 10) + ' parallelle workers</div>'
-    + '<div style="font-size:11px;color:#6b7280;margin-top:4px">K/A/I + tags + summary</div>';
+    + '<div style="font-size:11px;color:#6b7280;font-family:monospace;margin-bottom:5px">' + (pri.model || '') + '</div>'
+    + '<div style="font-size:11px;color:#6b7280">' + (pri.subtitle || (pri.workers||10) + ' workers parallel') + '</div>'
+    + '<div style="font-size:11px;color:#6b7280;margin-top:3px">K/A/I + tags + summary</div>';
   cols.appendChild(left);
 
-  // Right: Ollama
-  const rightActive = !claudeEnabled;
   const right = document.createElement('div');
   right.style.cssText = 'padding:16px;border-radius:8px;border:2px solid '
-    + (rightActive ? '#1A6B72' : '#e5e7eb') + ';background:' + (rightActive ? '#e8f4f5' : '#f9fafb');
-  right.innerHTML = '<div style="font-size:12px;font-weight:700;color:' + (rightActive ? '#1A6B72' : '#9ca3af') + ';margin-bottom:8px">'
-    + (rightActive ? '\u2713 ACTIEF' : 'FALLBACK') + ' \u2014 Ollama</div>'
+    + (!claudeOn ? Cf.bd : '#e5e7eb') + ';background:' + (!claudeOn ? Cf.bg : '#fafafa');
+  right.innerHTML = '<div style="font-size:12px;font-weight:700;color:' + (!claudeOn ? Cf.tx : '#9ca3af') + ';margin-bottom:8px">'
+    + (!claudeOn ? '\u2713 ACTIEF' : 'FALLBACK') + ' \u2014 Ollama</div>'
     + '<div style="font-size:13px;font-weight:600;color:#111;margin-bottom:4px">' + (fall.name || 'Ollama llama3.1:8b') + '</div>'
-    + '<div style="font-size:11px;color:#6b7280;margin-bottom:6px">Sequentieel · lokaal</div>'
-    + '<div style="font-size:11px;color:#6b7280">Stopt na ' + (fall.timeout_failures || 3) + ' opeenvolgende timeouts</div>'
-    + '<div style="font-size:11px;color:#6b7280;margin-top:4px">usability_tags + protocol_relevance</div>';
+    + '<div style="font-size:11px;color:#6b7280;margin-bottom:5px">' + (fall.subtitle || 'Sequentieel \u00b7 lokaal') + '</div>'
+    + '<div style="font-size:11px;color:#6b7280">Stopt na ' + (fall.timeout_failures||3) + ' opeenvolgende timeouts</div>';
   cols.appendChild(right);
-
   wrap.appendChild(cols);
 
-  // Retroaudit box
+  // Retroaudit amber box
   const retBox = document.createElement('div');
-  retBox.style.cssText = 'padding:12px 16px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;font-size:12px';
-  retBox.innerHTML = '<div style="font-weight:600;color:#374151;margin-bottom:6px">Retroaudit (skipped chunks)</div>'
-    + '<div style="color:#6b7280;line-height:1.6">'
-    + '<span style="color:#3C3489;font-weight:600">Claude:</span> ' + (retro.claude_limit || 'geen limiet') + '<br>'
-    + '<span style="color:#1A6B72;font-weight:600">Ollama:</span> ' + (retro.ollama_window || '') + '<br>'
+  retBox.style.cssText = 'padding:12px 16px;background:#fef3c7;border:1px solid #d97706;border-radius:8px;font-size:12px';
+  retBox.innerHTML = '<div style="font-weight:600;color:#78350f;margin-bottom:6px">Retroaudit — skipped chunks</div>'
+    + '<div style="color:#6b7280;line-height:1.7">'
+    + '<span style="color:#534AB7;font-weight:600">Claude:</span> ' + (retro.claude_note || retro.claude_limit || 'geen limiet') + '<br>'
+    + '<span style="color:#1A6B72;font-weight:600">Ollama:</span> ' + (retro.ollama_note || retro.ollama_window || '') + '<br>'
     + '<span style="color:#6b7280">Trigger:</span> <code style="font-size:10px">' + (retro.trigger || '') + '</code>'
     + '</div>';
   wrap.appendChild(retBox);
@@ -3786,10 +3935,10 @@ function renderAuditSelection(d) {
 function renderNightlyPhases(d) {
   const n = d.nightly || {};
   const phases = (n.phases || []).slice().sort((a,b) => a.order - b.order);
-  const claudeEnabled = ((d.audit || {}).primary || {}).enabled;
-  const startHm = n.start_time || '02:00';
-  const endHm   = n.end_time   || '05:00';
-  const limit   = n.image_screen_limit || 200;
+  const claudeOn = (d.audit || {}).enabled || ((d.audit||{}).primary||{}).enabled || false;
+  const startHm  = n.start_time || '00:00';
+  const endHm    = n.end_time   || '07:00';
+  const limit    = n.image_screen_limit || 200;
 
   const wrap = document.createElement('div');
 
@@ -3797,30 +3946,43 @@ function renderNightlyPhases(d) {
   meta.style.cssText = 'display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;font-size:12px;color:#6b7280';
   meta.innerHTML = '<span>\u23F0 Tijdvenster: <strong>' + startHm + '\u2013' + endHm + ' Amsterdam</strong></span>'
     + '<span>Afbeeldingen: max <strong>' + limit + '/nacht</strong></span>'
-    + '<span>Timezone: Europe/Amsterdam</span>';
+    + '<span>Europe/Amsterdam</span>';
   wrap.appendChild(meta);
+
+  // Outer wrapper: left padding for connector line + number badges
+  const listWrap = document.createElement('div');
+  listWrap.style.cssText = 'position:relative;padding-left:38px';
+
+  // CSS vertical connector line
+  const connector = document.createElement('div');
+  connector.style.cssText = 'position:absolute;left:11px;top:18px;bottom:18px;width:2px;'
+    + 'background:#e5e7eb;border-radius:1px';
+  listWrap.appendChild(connector);
 
   const list = document.createElement('div');
   list.style.cssText = 'display:flex;flex-direction:column;gap:6px';
 
   phases.forEach(ph => {
-    const isRetro = ph.order === 4;
-    const isEdge  = ph.order === 0 || ph.order === 8;
-    const bg      = isEdge  ? '#f0fdf4' :
-                    isRetro ? (claudeEnabled ? '#EEEDFE' : '#e8f4f5') : '#f8fafc';
-    const numBg   = isEdge  ? '#16a34a' :
-                    isRetro ? (claudeEnabled ? '#3C3489' : '#1A6B72') : '#6b7280';
+    const colorKey = ph.color || (ph.order === 0 || ph.order === 8 ? 'green'
+                    : ph.order === 4 ? (claudeOn ? 'purple' : 'teal') : 'gray');
+    const C = COLORS[colorKey] || COLORS.gray;
+
+    // Wrapper: relative so number badge can overlap connector
+    const rowWrap = document.createElement('div');
+    rowWrap.style.cssText = 'position:relative';
+
+    // Number badge — absolutely positioned to sit on connector
+    const numBadge = document.createElement('div');
+    numBadge.textContent = ph.order;
+    numBadge.style.cssText = 'position:absolute;left:-38px;top:50%;transform:translateY(-50%);'
+      + 'width:24px;height:24px;border-radius:50%;background:' + C.bd
+      + ';color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;'
+      + 'justify-content:center;z-index:1';
+    rowWrap.appendChild(numBadge);
 
     const row = document.createElement('div');
-    row.style.cssText = 'display:flex;align-items:flex-start;gap:12px;padding:10px 14px;'
-      + 'background:' + bg + ';border-radius:8px;border:1px solid #e5e7eb';
-
-    const num = document.createElement('div');
-    num.textContent = ph.order;
-    num.style.cssText = 'width:24px;height:24px;border-radius:50%;background:' + numBg
-      + ';color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;'
-      + 'justify-content:center;flex-shrink:0;margin-top:1px';
-    row.appendChild(num);
+    row.style.cssText = 'display:flex;align-items:flex-start;gap:10px;padding:10px 14px;'
+      + 'background:' + C.bg + ';border-radius:8px;border:1px solid ' + C.bd;
 
     const info = document.createElement('div');
     const name = document.createElement('div');
@@ -3829,32 +3991,33 @@ function renderNightlyPhases(d) {
     info.appendChild(name);
 
     let desc = ph.description;
-    if (isRetro) {
-      desc += ' \u00b7 venster ' + startHm + '\u2013' + endHm;
-    }
-    if (ph.order === 5) {
-      desc = 'Max ' + limit + '/nacht via Ollama';
-    }
+    if (ph.order === 4) desc += ' \u00b7 ' + startHm + '\u2013' + endHm;
+    if (ph.order === 5) desc = 'Max ' + limit + '/nacht via Ollama';
     const sub = document.createElement('div');
     sub.textContent = desc;
     sub.style.cssText = 'font-size:11px;color:#6b7280;margin-top:2px';
     info.appendChild(sub);
 
     if (ph.engine) {
+      const Ce = ph.engine === 'claude_or_ollama' ? COLORS.purple
+               : ph.engine === 'ollama'           ? COLORS.teal
+               : ph.engine === 'qdrant'           ? COLORS.teal
+               : COLORS.gray;
       const eng = document.createElement('span');
       eng.textContent = ph.engine;
-      eng.style.cssText = 'font-size:10px;font-weight:600;padding:1px 6px;border-radius:999px;margin-top:4px;display:inline-block;'
-        + (ph.engine === 'claude_or_ollama' ? 'background:#EEEDFE;color:#3C3489'
-          : ph.engine === 'ollama'          ? 'background:#e8f4f5;color:#1A6B72'
-          : 'background:#f3f4f6;color:#6b7280');
+      eng.style.cssText = 'font-size:10px;font-weight:600;padding:1px 6px;border-radius:999px;'
+        + 'margin-top:4px;display:inline-block;background:' + Ce.bg
+        + ';color:' + Ce.tx + ';border:1px solid ' + Ce.bd;
       info.appendChild(eng);
     }
 
     row.appendChild(info);
-    list.appendChild(row);
+    rowWrap.appendChild(row);
+    list.appendChild(rowWrap);
   });
 
-  wrap.appendChild(list);
+  listWrap.appendChild(list);
+  wrap.appendChild(listWrap);
   return wrap;
 }
 
