@@ -145,7 +145,7 @@ Currently: 20 NRT + 15 QAT videos queued, PAUSED (CPU voor boeken)
 
 ## Test status
 
-**Laatste run:** 16-04-2026 09:46 (54.9s)  
+**Laatste run:** 16-04-2026 09:46 (57.7s)  
 **Uitslag:** ✅ GESLAAGD — 33/33 geslaagd, 0 overgeslagen
 
 ---
