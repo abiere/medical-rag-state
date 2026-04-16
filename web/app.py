@@ -1816,6 +1816,7 @@ def _library_section_html(section_key: str) -> str:
                 books.append({"name": f.name, "size": _fmt_bytes(f.stat().st_size),
                                "usability_scores": usability_scores, **st})
 
+    cls = _load_classifications()
     rows = ""
     if books:
         for b in books:
@@ -1827,11 +1828,19 @@ def _library_section_html(section_key: str) -> str:
                 f'class="btn btn-secondary" style="font-size:12px;margin-left:4px">Heraudit</button>'
                 f'<span id="ra-{safe_id}" style="font-size:11px;color:#6b7280;margin-left:4px"></span>'
             ) if is_done else ""
+            disp_title, disp_authors, disp_file = _book_display(b["name"], cls)
+            has_meta = disp_title != b["name"]
+            if has_meta:
+                name_cell = (
+                    f'<span style="font-size:14px;font-weight:500;color:#111">{disp_title}</span>'
+                    + (f'<br><span style="font-size:11px;color:#6b7280">{disp_authors}</span>' if disp_authors else "")
+                    + f'<br><span style="font-size:11px;color:#9ca3af;font-family:monospace">{disp_file}</span>'
+                )
+            else:
+                name_cell = f'<span style="font-weight:600">{b["name"]}</span>'
             rows += f"""
 <tr>
-  <td>
-    <span style="font-weight:600">{b['name']}</span>
-  </td>
+  <td>{name_cell}</td>
   <td class="hide-sm">{b.get('size','')}</td>
   <td><span style="background:{badge_bg};color:{b['color']};padding:3px 10px;
       border-radius:999px;font-size:12px;font-weight:600">{b['label']}</span></td>
@@ -1854,7 +1863,7 @@ def _library_section_html(section_key: str) -> str:
   </div>
   <table>
     <thead><tr>
-      <th>Bestand</th><th class="hide-sm">Grootte</th>
+      <th>Boek</th><th class="hide-sm">Grootte</th>
       <th>Status</th><th>Chunks</th><th></th>
     </tr></thead>
     <tbody>{rows}</tbody>
@@ -1875,6 +1884,32 @@ def _library_section_html(section_key: str) -> str:
 # ── Catalog helpers ───────────────────────────────────────────────────────────
 
 CLASSIFICATIONS_PATH = BASE / "config" / "book_classifications.json"
+
+
+def _load_classifications() -> dict:
+    """Load book_classifications.json → classifications sub-dict."""
+    try:
+        return json.loads(CLASSIFICATIONS_PATH.read_text()).get("classifications", {})
+    except Exception:
+        return {}
+
+
+def _book_display(filename: str, classifications: dict) -> tuple:
+    """Return (title, authors, filename) for a given filename.
+    Looks up by server_filename first, then filename_patterns.
+    Falls back to (filename, '', filename) if no match found.
+    """
+    stem = filename.lower().replace(".pdf", "").replace(".epub", "")
+    for meta in classifications.values():
+        if not isinstance(meta, dict):
+            continue
+        if meta.get("server_filename") == filename:
+            return meta.get("full_title", filename), meta.get("authors", ""), filename
+        for pat in meta.get("filename_patterns", []):
+            if pat.lower() in stem or stem in pat.lower().replace(".pdf","").replace(".epub",""):
+                return meta.get("full_title", filename), meta.get("authors", ""), filename
+    return filename, "", filename
+
 
 _CAT_LABELS = {
     "medical_literature": "Medische Literatuur",
@@ -2658,7 +2693,10 @@ async def library_ingest_page():
           <span id="ra-found"  style="display:none">Gevonden: <b id="ra-found-n">0</b></span>
           <span id="ra-done"   style="display:none">Getagd: <b id="ra-done-n">0</b></span>
           <span id="ra-errors" style="display:none">Fouten: <b id="ra-errors-n">0</b></span>
-          <span id="ra-book"   style="display:none;color:#6b7280">Bezig: <span id="ra-book-name"></span></span>
+          <span id="ra-book"   style="display:none;color:#6b7280">Bezig:
+            <span id="ra-book-title" style="font-weight:500;color:#374151"></span>
+            <span id="ra-book-name"  style="font-size:11px;color:#9ca3af;font-family:monospace;margin-left:4px"></span>
+          </span>
         </div>
         <!-- progress bar -->
         <div id="ra-progress-wrap" style="display:none;margin-bottom:12px">
@@ -2852,7 +2890,8 @@ function renderRetroauditState(d) {{
   document.getElementById('ra-found-n').textContent  = total;
   document.getElementById('ra-done-n').textContent   = done;
   document.getElementById('ra-errors-n').textContent = d.total_errors || 0;
-  document.getElementById('ra-book-name').textContent = d.current_book || '';
+  document.getElementById('ra-book-title').textContent = d.current_book_title || d.current_book || '';
+  document.getElementById('ra-book-name').textContent  = (d.current_book_title && d.current_book_title !== d.current_book) ? d.current_book : '';
 
   // progress bar
   const pctWrap = document.getElementById('ra-progress-wrap');
@@ -2872,7 +2911,12 @@ function renderRetroauditState(d) {{
     bwrap.style.display = 'block';
     tbody.innerHTML = books.map(b =>
       '<tr style="border-bottom:1px solid #f3f4f6">'
-      + '<td style="padding:5px 10px">' + escHtml(b.book) + '</td>'
+      + '<td style="padding:5px 10px">'
+      + '<span style="font-weight:500;color:#111">' + escHtml(b.book_title || b.book) + '</span>'
+      + ((b.book_title && b.book_title !== b.book)
+          ? '<br><span style="font-size:10px;color:#9ca3af;font-family:monospace">' + escHtml(b.book) + '</span>'
+          : '')
+      + '</td>'
       + '<td style="padding:5px 10px;text-align:right;color:#059669">' + b.scored + '</td>'
       + '<td style="padding:5px 10px;text-align:right;color:' + (b.errors ? '#dc2626' : '#6b7280') + '">' + b.errors + '</td>'
       + '</tr>'
@@ -5043,7 +5087,7 @@ def _run_reaudit_job(job_id: str, filename: str) -> None:
 _retroaudit_state: dict = {
     "running": False, "started_at": None, "finished_at": None,
     "total_found": 0, "total_done": 0, "total_errors": 0,
-    "current_book": "", "books_done": [], "error": None,
+    "current_book": "", "current_book_title": "", "books_done": [], "error": None,
 }
 _retroaudit_lock = threading.Lock()
 
@@ -5060,6 +5104,7 @@ def _run_retroaudit() -> None:
             "total_done": 0,
             "total_errors": 0,
             "current_book": "",
+            "current_book_title": "",
             "books_done": [],
             "error": None,
         })
@@ -5074,6 +5119,7 @@ def _run_retroaudit() -> None:
         from qdrant_client.models import Filter, FieldCondition, MatchAny
         client = QdrantClient(host="localhost", port=6333, timeout=60)
         COLLECTION = "medical_library"
+        _cls = _load_classifications()
 
         results, _ = client.scroll(
             collection_name=COLLECTION,
@@ -5100,7 +5146,9 @@ def _run_retroaudit() -> None:
         books_done: list[dict] = []
 
         for book_name, book_points in by_book.items():
-            _retroaudit_state["current_book"] = book_name
+            _bdisp = _book_display(book_name, _cls)
+            _retroaudit_state["current_book"]       = book_name
+            _retroaudit_state["current_book_title"] = _bdisp[0]
             chunks_only = [bp[1] for bp in book_points]
             for c in chunks_only:
                 c.pop("audit_status", None)
@@ -5130,15 +5178,22 @@ def _run_retroaudit() -> None:
                 book_scored += 1
                 done += 1
 
-            books_done.append({"book": book_name, "scored": book_scored, "errors": book_errors})
+            books_done.append({
+                "book":         book_name,
+                "book_title":   _bdisp[0],
+                "book_authors": _bdisp[1],
+                "scored":       book_scored,
+                "errors":       book_errors,
+            })
             _retroaudit_state["total_done"]   = done
             _retroaudit_state["total_errors"] = errors
             _retroaudit_state["books_done"]   = books_done
 
         _retroaudit_state.update({
-            "running":     False,
-            "current_book": "",
-            "finished_at": datetime.now(timezone.utc).isoformat(),
+            "running":            False,
+            "current_book":       "",
+            "current_book_title": "",
+            "finished_at":        datetime.now(timezone.utc).isoformat(),
         })
     except Exception as exc:
         _retroaudit_state.update({"running": False, "error": str(exc)[:400]})
