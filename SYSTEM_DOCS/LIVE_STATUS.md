@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-16 15:47:22 UTC**
+> Last update: **2026-04-16 15:47:55 UTC**
 
 ## Services
 | Service | Status |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` (971 min) |
+| Current job | `1.Upper_Body_Techniques.mp4` (972 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 3.37 GB / 32.86 GB (10%) |
-| CPU | 98.5% |
+| RAM used | 3.95 GB / 32.86 GB (12%) |
+| CPU | 8.7% |
 | Disk used | 56.0 GB / 322.3 GB (18%) |
-| Uptime | up 2 days, 6 hours, 4 minutes |
+| Uptime | up 2 days, 6 hours, 5 minutes |
 
 ## Recent markers
 - `2026-04-16T05:20:54.750223+00:00` **watchdog_restart** — book-ingest-queue hung (41 min stale) — restarted successfully
@@ -59,7 +59,6 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-16 15:42:46,992  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 15:43:16,993  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 15:43:46,994  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 15:44:16,999  INFO      Queue paused (pause flag set) — waiting 30s
@@ -69,4 +68,5 @@
 2026-04-16 15:46:17,004  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 15:46:47,007  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 15:47:17,007  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 15:47:47,013  INFO      Queue paused (pause flag set) — waiting 30s
 ```
