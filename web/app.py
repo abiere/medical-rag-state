@@ -1,6 +1,6 @@
 from fastapi import FastAPI, BackgroundTasks, Request, UploadFile, File, Form
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse, StreamingResponse
-import asyncio, httpx, psutil, subprocess, json, os, re, shutil, sys, time
+import asyncio, httpx, psutil, subprocess, json, os, re, shutil, sys, threading, time
 from pathlib import Path
 from datetime import datetime, timezone
 
@@ -2639,6 +2639,51 @@ async def library_ingest_page():
     </div>
   </div>
   <div id="book-progress" style="margin-bottom:16px"></div>
+
+  <!-- Claude Retroaudit widget -->
+  <div id="retroaudit-widget" style="margin-bottom:20px;display:none">
+    <div class="section">
+      <div class="section-head" style="display:flex;align-items:center;justify-content:space-between">
+        <span class="section-title">Claude Retroaudit</span>
+        <button id="ra-start-btn" onclick="retroauditStart()"
+          style="padding:7px 16px;background:#1A6B72;color:#fff;border:none;
+                 border-radius:7px;font-size:13px;font-weight:600;cursor:pointer">
+          Nu uitvoeren
+        </button>
+      </div>
+      <div style="padding:16px 20px">
+        <!-- summary bar -->
+        <div id="ra-summary" style="display:flex;gap:24px;flex-wrap:wrap;font-size:13px;color:#374151;margin-bottom:12px">
+          <span id="ra-status-label" style="font-weight:600;color:#6b7280">Gereed</span>
+          <span id="ra-found"  style="display:none">Gevonden: <b id="ra-found-n">0</b></span>
+          <span id="ra-done"   style="display:none">Getagd: <b id="ra-done-n">0</b></span>
+          <span id="ra-errors" style="display:none">Fouten: <b id="ra-errors-n">0</b></span>
+          <span id="ra-book"   style="display:none;color:#6b7280">Bezig: <span id="ra-book-name"></span></span>
+        </div>
+        <!-- progress bar -->
+        <div id="ra-progress-wrap" style="display:none;margin-bottom:12px">
+          <div style="height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden">
+            <div id="ra-progress-bar"
+              style="height:100%;background:#1A6B72;border-radius:4px;width:0%;transition:width .4s"></div>
+          </div>
+        </div>
+        <!-- per-book table -->
+        <div id="ra-books-wrap" style="display:none">
+          <table style="width:100%;font-size:12px;border-collapse:collapse">
+            <thead>
+              <tr style="background:#ddf2f3;color:#085041">
+                <th style="padding:6px 10px;text-align:left;background:#1A6B72;color:#fff;border-radius:4px 0 0 0">Boek</th>
+                <th style="padding:6px 10px;text-align:right;background:#1A6B72;color:#fff">Getagd</th>
+                <th style="padding:6px 10px;text-align:right;background:#1A6B72;color:#fff;border-radius:0 4px 0 0">Fouten</th>
+              </tr>
+            </thead>
+            <tbody id="ra-books-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
   {sections}
 </div>
 <script>
@@ -2716,6 +2761,155 @@ async function pollReaudit(filename) {{
     }}
   }} catch(e) {{ /* ignore poll errors */ }}
 }}
+
+// ── Global Claude Retroaudit widget ──────────────────────────────────────────
+let _raGlobalPoller = null;
+let _raFinishedAt   = null;
+
+async function retroauditStart() {{
+  const btn = document.getElementById('ra-start-btn');
+  btn.disabled = true;
+  btn.textContent = 'Starten\u2026';
+  try {{
+    const r = await fetch('/api/retroaudit/start', {{method:'POST'}});
+    const d = await r.json();
+    if (!d.ok) {{
+      alert('Kan niet starten: ' + (d.error || 'onbekend'));
+      btn.disabled = false;
+      btn.textContent = 'Nu uitvoeren';
+      return;
+    }}
+  }} catch(e) {{
+    alert('Netwerkfout: ' + e);
+    btn.disabled = false;
+    btn.textContent = 'Nu uitvoeren';
+    return;
+  }}
+  startRetroauditPolling();
+}}
+
+function startRetroauditPolling() {{
+  if (_raGlobalPoller) clearInterval(_raGlobalPoller);
+  _raGlobalPoller = setInterval(pollRetroaudit, 5000);
+  pollRetroaudit();
+}}
+
+async function pollRetroaudit() {{
+  try {{
+    const r = await fetch('/api/retroaudit/status');
+    const d = await r.json();
+    renderRetroauditState(d);
+  }} catch(e) {{ /* ignore */ }}
+}}
+
+function renderRetroauditState(d) {{
+  const widget = document.getElementById('retroaudit-widget');
+  widget.style.display = 'block';
+
+  const btn   = document.getElementById('ra-start-btn');
+  const label = document.getElementById('ra-status-label');
+
+  if (d.running) {{
+    btn.disabled = true;
+    btn.textContent = 'Bezig\u2026';
+    label.textContent = 'Bezig\u2026';
+    label.style.color = '#1A6B72';
+  }} else if (d.error) {{
+    btn.disabled = false;
+    btn.textContent = 'Nu uitvoeren';
+    label.textContent = '\u2717 Fout: ' + d.error;
+    label.style.color = '#dc2626';
+    if (_raGlobalPoller) {{ clearInterval(_raGlobalPoller); _raGlobalPoller = null; }}
+  }} else if (d.finished_at) {{
+    btn.disabled = false;
+    btn.textContent = 'Nu uitvoeren';
+    label.textContent = '\u2713 Klaar';
+    label.style.color = '#059669';
+    if (_raGlobalPoller) {{ clearInterval(_raGlobalPoller); _raGlobalPoller = null; }}
+    // hide widget after 60s if no new run
+    if (d.finished_at !== _raFinishedAt) {{
+      _raFinishedAt = d.finished_at;
+      setTimeout(() => {{
+        if (!_retroauditRunning()) widget.style.display = 'none';
+      }}, 60000);
+    }}
+  }} else {{
+    label.textContent = 'Gereed';
+    label.style.color = '#6b7280';
+    btn.disabled = false;
+    btn.textContent = 'Nu uitvoeren';
+  }}
+
+  // found / done / errors
+  const total = d.total_found || 0;
+  const done  = d.total_done  || 0;
+
+  _setVis('ra-found',  total > 0);
+  _setVis('ra-done',   total > 0);
+  _setVis('ra-errors', (d.total_errors || 0) > 0);
+  _setVis('ra-book',   d.running && d.current_book);
+
+  document.getElementById('ra-found-n').textContent  = total;
+  document.getElementById('ra-done-n').textContent   = done;
+  document.getElementById('ra-errors-n').textContent = d.total_errors || 0;
+  document.getElementById('ra-book-name').textContent = d.current_book || '';
+
+  // progress bar
+  const pctWrap = document.getElementById('ra-progress-wrap');
+  const bar     = document.getElementById('ra-progress-bar');
+  if (total > 0) {{
+    pctWrap.style.display = 'block';
+    bar.style.width = Math.round(done / total * 100) + '%';
+  }} else {{
+    pctWrap.style.display = 'none';
+  }}
+
+  // per-book table
+  const books = d.books_done || [];
+  const tbody = document.getElementById('ra-books-tbody');
+  const bwrap = document.getElementById('ra-books-wrap');
+  if (books.length) {{
+    bwrap.style.display = 'block';
+    tbody.innerHTML = books.map(b =>
+      '<tr style="border-bottom:1px solid #f3f4f6">'
+      + '<td style="padding:5px 10px">' + escHtml(b.book) + '</td>'
+      + '<td style="padding:5px 10px;text-align:right;color:#059669">' + b.scored + '</td>'
+      + '<td style="padding:5px 10px;text-align:right;color:' + (b.errors ? '#dc2626' : '#6b7280') + '">' + b.errors + '</td>'
+      + '</tr>'
+    ).join('');
+  }} else {{
+    bwrap.style.display = 'none';
+  }}
+}}
+
+function _retroauditRunning() {{
+  return document.getElementById('ra-start-btn').textContent.startsWith('Bezig');
+}}
+
+function _setVis(id, show) {{
+  document.getElementById(id).style.display = show ? '' : 'none';
+}}
+
+function escHtml(s) {{
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}}
+
+// On load: fetch status once to check if Claude is enabled and show widget
+(async function() {{
+  try {{
+    const r = await fetch('/api/retroaudit/status');
+    const d = await r.json();
+    // Show widget if Claude is enabled (no error about disabled)
+    const settR = await fetch('/api/settings');
+    const sett  = await settR.json();
+    const caEnabled = (sett.claude_api || {{}}).enabled;
+    if (caEnabled) {{
+      document.getElementById('retroaudit-widget').style.display = 'block';
+    }}
+    if (d.running) startRetroauditPolling();
+    else if (d.total_found > 0 || d.finished_at) renderRetroauditState(d);
+  }} catch(e) {{ /* ignore */ }}
+}})();
 </script>""" + _BOOK_PROGRESS_SCRIPT
     return _page_shell("Importeer", "/library/ingest", body)
 
@@ -2947,9 +3141,16 @@ async def settings_page():
     <div style="padding:20px 24px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
       <div>
         <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">
-          Retroaudit limiet/nacht <span style="font-weight:400;color:#6b7280">(Ollama)</span>
+          Nachtrun start
         </label>
-        <input id="retro-limit" type="number" min="50" max="2000" value="200"
+        <input id="nightly-start" type="time" value="02:00"
+          style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px">
+      </div>
+      <div>
+        <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">
+          Nachtrun einde
+        </label>
+        <input id="nightly-end" type="time" value="05:00"
           style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px">
       </div>
       <div>
@@ -3005,7 +3206,8 @@ async function loadSettings() {
     if (ca.max_workers) document.getElementById('workers-input').value = ca.max_workers;
 
     // Nightly
-    if (n.retroaudit_limit) document.getElementById('retro-limit').value = n.retroaudit_limit;
+    if (n.start_time) document.getElementById('nightly-start').value = n.start_time;
+    if (n.end_time)   document.getElementById('nightly-end').value   = n.end_time;
     if (n.image_screen_limit) document.getElementById('image-limit').value = n.image_screen_limit;
   } catch(e) {
     console.error('loadSettings failed:', e);
@@ -3091,7 +3293,8 @@ async function saveSettings() {
 async function saveNightly() {
   const payload = {
     nightly: {
-      retroaudit_limit:   parseInt(document.getElementById('retro-limit').value)  || 200,
+      start_time:         document.getElementById('nightly-start').value || '02:00',
+      end_time:           document.getElementById('nightly-end').value   || '05:00',
       image_screen_limit: parseInt(document.getElementById('image-limit').value) || 200,
     }
   };
@@ -4833,6 +5036,138 @@ def _run_reaudit_job(job_id: str, filename: str) -> None:
         })
     except Exception as exc:
         _REAUDIT_JOBS[job_id].update({"status": "error", "error": str(exc)[:300]})
+
+
+# ─── GLOBAL RETROAUDIT (Claude API, all books) ────────────────────────────────
+
+_retroaudit_state: dict = {
+    "running": False, "started_at": None, "finished_at": None,
+    "total_found": 0, "total_done": 0, "total_errors": 0,
+    "current_book": "", "books_done": [], "error": None,
+}
+_retroaudit_lock = threading.Lock()
+
+
+def _run_retroaudit() -> None:
+    """Background thread: tag ALL skipped chunks across medical_library via Claude API."""
+    global _retroaudit_state
+    with _retroaudit_lock:
+        _retroaudit_state.update({
+            "running": True,
+            "started_at": datetime.now(timezone.utc).isoformat(),
+            "finished_at": None,
+            "total_found": 0,
+            "total_done": 0,
+            "total_errors": 0,
+            "current_book": "",
+            "books_done": [],
+            "error": None,
+        })
+    try:
+        sys.path.insert(0, str(BASE / "scripts"))
+        from claude_audit import is_enabled as _ca_enabled, audit_chunks_parallel
+        if not _ca_enabled():
+            _retroaudit_state.update({"running": False, "error": "Claude API niet ingeschakeld"})
+            return
+
+        from qdrant_client import QdrantClient
+        from qdrant_client.models import Filter, FieldCondition, MatchAny
+        client = QdrantClient(host="localhost", port=6333, timeout=60)
+        COLLECTION = "medical_library"
+
+        results, _ = client.scroll(
+            collection_name=COLLECTION,
+            scroll_filter=Filter(should=[
+                FieldCondition(key="audit_status", match=MatchAny(any=["skipped_ollama_timeout", "skipped_claude_error"])),
+            ]),
+            limit=10_000, with_payload=True, with_vector=False,
+        )
+        points = [(p.id, p.payload) for p in results if p.payload]
+        _retroaudit_state["total_found"] = len(points)
+
+        if not points:
+            _retroaudit_state.update({"running": False, "finished_at": datetime.now(timezone.utc).isoformat()})
+            return
+
+        # Group by source_file for progress reporting
+        by_book: dict[str, list] = {}
+        for pid, payload in points:
+            src = payload.get("source_file", "onbekend")
+            by_book.setdefault(src, []).append((pid, payload))
+
+        done = 0
+        errors = 0
+        books_done: list[dict] = []
+
+        for book_name, book_points in by_book.items():
+            _retroaudit_state["current_book"] = book_name
+            chunks_only = [bp[1] for bp in book_points]
+            for c in chunks_only:
+                c.pop("audit_status", None)
+
+            tagged_list = audit_chunks_parallel(chunks_only)
+
+            book_scored = 0
+            book_errors = 0
+            for (pid, _), chunk in zip(book_points, tagged_list):
+                if (chunk.get("audit_status") or "").startswith("skipped"):
+                    book_errors += 1
+                    errors += 1
+                    continue
+                client.set_payload(
+                    collection_name=COLLECTION,
+                    payload={
+                        "kai_k":        chunk.get("kai_k", 3),
+                        "kai_a":        chunk.get("kai_a", 3),
+                        "kai_i":        chunk.get("kai_i", 3),
+                        "tags":         chunk.get("tags", []),
+                        "summary":      chunk.get("summary", ""),
+                        "audit_status": "tagged_claude",
+                        "audit_engine": "claude_api",
+                    },
+                    points=[pid],
+                )
+                book_scored += 1
+                done += 1
+
+            books_done.append({"book": book_name, "scored": book_scored, "errors": book_errors})
+            _retroaudit_state["total_done"]   = done
+            _retroaudit_state["total_errors"] = errors
+            _retroaudit_state["books_done"]   = books_done
+
+        _retroaudit_state.update({
+            "running":     False,
+            "current_book": "",
+            "finished_at": datetime.now(timezone.utc).isoformat(),
+        })
+    except Exception as exc:
+        _retroaudit_state.update({"running": False, "error": str(exc)[:400]})
+
+
+@app.post("/api/retroaudit/start")
+async def api_retroaudit_start():
+    """Start global Claude retroaudit for all skipped chunks."""
+    import sys as _sys
+    _sys.path.insert(0, str(BASE / "scripts"))
+    try:
+        from claude_audit import is_enabled as _ca_enabled
+        if not _ca_enabled():
+            return JSONResponse({"ok": False, "error": "Claude API niet ingeschakeld"}, status_code=400)
+    except ImportError:
+        return JSONResponse({"ok": False, "error": "claude_audit module niet gevonden"}, status_code=500)
+
+    if _retroaudit_state.get("running"):
+        return JSONResponse({"ok": False, "error": "Al bezig"}, status_code=409)
+
+    t = threading.Thread(target=_run_retroaudit, daemon=True)
+    t.start()
+    return {"ok": True}
+
+
+@app.get("/api/retroaudit/status")
+async def api_retroaudit_status():
+    """Current state of the global retroaudit job."""
+    return JSONResponse(_retroaudit_state)
 
 
 def _run_generate_job(job_id: str, klacht: str) -> None:

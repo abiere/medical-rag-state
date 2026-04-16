@@ -17,7 +17,7 @@ import time
 import traceback
 import urllib.error
 import urllib.request
-from datetime import datetime
+from datetime import datetime, time as dtime
 from pathlib import Path
 from typing import Any
 
@@ -83,6 +83,49 @@ def http_delete(url: str, timeout: int = 15) -> tuple[int, Any]:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Nightly helpers
+# ─────────────────────────────────────────────────────────────────────────────
+
+WEB_BASE = "http://localhost:8000"
+
+
+def _in_window(start_hm: str, end_hm: str) -> bool:
+    """Return True if current local time is within [start_hm, end_hm) (HH:MM).
+    Handles midnight crossing (e.g. '23:00'–'03:00')."""
+    try:
+        sh, sm = (int(x) for x in start_hm.split(":"))
+        eh, em = (int(x) for x in end_hm.split(":"))
+        now    = datetime.now()
+        t_now   = dtime(now.hour, now.minute)
+        t_start = dtime(sh, sm)
+        t_end   = dtime(eh, em)
+    except (ValueError, AttributeError):
+        return True  # malformed → don't restrict
+    if t_start <= t_end:
+        return t_start <= t_now < t_end
+    # midnight crossing
+    return t_now >= t_start or t_now < t_end
+
+
+def _pause_queues() -> None:
+    """Pause book-ingest and transcription queues via the web API."""
+    for path in ("/library/pause", "/videos/pause"):
+        try:
+            http_post(f"{WEB_BASE}{path}")
+        except Exception:
+            pass
+
+
+def _resume_queues() -> None:
+    """Resume book-ingest and transcription queues."""
+    for path in ("/library/resume", "/videos/resume"):
+        try:
+            http_post(f"{WEB_BASE}{path}")
+        except Exception:
+            pass
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # MaintenanceRunner
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -101,20 +144,27 @@ class MaintenanceRunner:
 
         self.disk_before = psutil.disk_usage("/")
 
-        # Run the five measurement phases first so the report can be complete
-        phases = [
-            ("pre_check",      "Pre-checks",              self._phase_pre_check),
-            ("qdrant",         "Qdrant maintenance",      self._phase_qdrant),
-            ("consistency",    "Data consistentie",       self._phase_consistency),
-            ("retro_audit",    "Retroaudit chunks",       self._phase_retro_audit),
-            ("image_screen",   "Afbeelding screening",    self._phase_image_screening),
-            ("state_integrity","State integriteit",       self._phase_state_integrity),
-            ("software",       "Software check",          self._phase_software),
-            ("cleanup",        "Opruimen",                self._phase_cleanup),
-        ]
+        # Pause ingestion queues for the duration of the maintenance run
+        _pause_queues()
+
         results: dict[str, dict] = {}
-        for key, label, fn in phases:
-            results[key] = self._run_phase(label, fn)
+        try:
+            # Run the five measurement phases first so the report can be complete
+            phases = [
+                ("pre_check",      "Pre-checks",              self._phase_pre_check),
+                ("qdrant",         "Qdrant maintenance",      self._phase_qdrant),
+                ("consistency",    "Data consistentie",       self._phase_consistency),
+                ("retro_audit",    "Retroaudit chunks",       self._phase_retro_audit),
+                ("image_screen",   "Afbeelding screening",    self._phase_image_screening),
+                ("state_integrity","State integriteit",       self._phase_state_integrity),
+                ("software",       "Software check",          self._phase_software),
+                ("cleanup",        "Opruimen",                self._phase_cleanup),
+            ]
+            for key, label, fn in phases:
+                results[key] = self._run_phase(label, fn)
+        finally:
+            # Always resume queues, even if a phase throws
+            _resume_queues()
 
         self.disk_after = psutil.disk_usage("/")
         total = time.monotonic() - t0
@@ -738,18 +788,27 @@ class MaintenanceRunner:
         except ImportError:
             use_claude = False
 
+        try:
+            from claude_audit import load_settings as _ls_ca
+            _cfg_nm = _ls_ca().get("nightly", {})
+        except Exception:
+            _cfg_nm = {}
+        win_start = _cfg_nm.get("start_time", "02:00")
+        win_end   = _cfg_nm.get("end_time",   "05:00")
+
+        if not _in_window(win_start, win_end):
+            findings.append(
+                f"Buiten tijdvenster ({win_start}–{win_end}) — retroaudit overgeslagen"
+            )
+            return "OK", {"findings": findings}
+
         if use_claude:
             # Claude: no per-night limit — process everything
             MAX_CHUNKS = 10_000
-            findings.append("Engine: Claude API (geen nachtlimiet)")
+            findings.append(f"Engine: Claude API · venster {win_start}–{win_end}")
         else:
-            try:
-                from claude_audit import load_settings as _ls_ca
-                _cfg_nm = _ls_ca().get("nightly", {})
-            except Exception:
-                _cfg_nm = {}
-            MAX_CHUNKS = _cfg_nm.get("retroaudit_limit", 200)
-            findings.append(f"Engine: Ollama (limiet: {MAX_CHUNKS}/nacht)")
+            MAX_CHUNKS = 200
+            findings.append(f"Engine: Ollama · venster {win_start}–{win_end}")
 
         # 1. Check Qdrant availability first
         code, _ = http_get(f"{QDRANT_BASE}/healthz", timeout=5)
