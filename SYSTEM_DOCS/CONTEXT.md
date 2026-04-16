@@ -157,3 +157,10 @@ After every task:
   cd /root/medical-rag && git add -A && \
   git commit -m "state: [description]" && git push
   python3 /root/medical-rag/scripts/sync_status.py
+
+---
+
+## Test status
+
+**Laatste run:** 16-04-2026 10:32 (55.1s)  
+**Uitslag:** ✅ GESLAAGD — 33/33 geslaagd, 0 overgeslagen  
