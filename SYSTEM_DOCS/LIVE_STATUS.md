@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-16 17:12:26 UTC**
+> Last update: **2026-04-16 17:16:09 UTC**
 
 ## Services
 | Service | Status |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` (1057 min) |
+| Current job | `1.Upper_Body_Techniques.mp4` (1060 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 10.48 GB / 32.86 GB (32%) |
-| CPU | 50.1% |
+| RAM used | 10.83 GB / 32.86 GB (33%) |
+| CPU | 48.8% |
 | Disk used | 58.5 GB / 322.3 GB (19%) |
-| Uptime | up 2 days, 7 hours, 29 minutes |
+| Uptime | up 2 days, 7 hours, 33 minutes |
 
 ## Recent markers
 - `2026-04-16T17:08:48.701647+00:00` **book_ingested** — 01_deadman_manual_of_acupuncture.pdf → medical_library: 1013 chunks
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-16 17:07:47,346  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 17:08:17,347  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 17:08:47,348  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 17:09:17,349  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 17:09:47,350  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 17:10:17,351  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 17:10:47,352  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 17:11:17,354  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 17:11:47,355  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 17:12:17,356  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 17:12:47,357  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 17:13:17,358  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 17:13:47,359  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 17:14:17,360  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 17:14:47,362  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 17:15:17,364  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 17:15:47,368  INFO      Queue paused (pause flag set) — waiting 30s
 ```
