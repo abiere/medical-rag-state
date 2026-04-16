@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-16 09:27:14 UTC**
+> Last update: **2026-04-16 09:27:47 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `pdfcoffee.com_a-manual-of-acupuncture-peter-deadmanpdf-4-pdf-free.pdf` (148 min) |
+| Current job | `pdfcoffee.com_a-manual-of-acupuncture-peter-deadmanpdf-4-pdf-free.pdf` (149 min) |
 | Queued | 0 |
 | Total books | 3 |
 | Ingested | 1 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` (591 min) |
+| Current job | `1.Upper_Body_Techniques.mp4` (592 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 16.52 GB / 32.86 GB (50%) |
-| CPU | 52.8% |
+| RAM used | 16.55 GB / 32.86 GB (50%) |
+| CPU | 53.9% |
 | Disk used | 56.5 GB / 322.3 GB (18%) |
-| Uptime | up 1 day, 23 hours, 44 minutes |
+| Uptime | up 1 day, 23 hours, 45 minutes |
 
 ## Recent markers
 - `2026-04-16T05:20:54.750223+00:00` **watchdog_restart** — book-ingest-queue hung (41 min stale) — restarted successfully
@@ -59,7 +59,6 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-16 09:22:42,023  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 09:23:12,024  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 09:23:42,026  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 09:24:12,026  INFO      Queue paused (pause flag set) — waiting 30s
@@ -69,4 +68,5 @@
 2026-04-16 09:26:12,038  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 09:26:42,039  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-16 09:27:12,041  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 09:27:42,045  INFO      Queue paused (pause flag set) — waiting 30s
 ```
