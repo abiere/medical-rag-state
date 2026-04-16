@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-16 20:57:32 UTC**
+> Last update: **2026-04-16 21:02:32 UTC**
 
 ## Services
 | Service | Status |
@@ -14,10 +14,10 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `White-Paper-FlexBeam-Targeted-Red-Light-Device.pdf` (6 min) |
-| Queued | 9 |
+| Current job | `flexbeam-wellness-ifu-2024-v2-19.pdf` (4 min) |
+| Queued | 8 |
 | Total books | 43 |
-| Ingested | 26 |
+| Ingested | 27 |
 | Vectors in medical_library | 2773 |
 | Images pending approval | 0 |
 | Images approved | 0 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` (1282 min) |
+| Current job | `1.Upper_Body_Techniques.mp4` (1287 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 10.82 GB / 32.86 GB (33%) |
-| CPU | 48.0% |
+| RAM used | 10.83 GB / 32.86 GB (33%) |
+| CPU | 44.5% |
 | Disk used | 59.2 GB / 322.3 GB (19%) |
-| Uptime | up 2 days, 11 hours, 14 minutes |
+| Uptime | up 2 days, 11 hours, 19 minutes |
 
 ## Recent markers
+- `2026-04-16T20:58:04.937409+00:00` **book_ingested** — White-Paper-FlexBeam-Targeted-Red-Light-Device.pdf → device_documentation: 16 chunks
 - `2026-04-16T20:51:14.422569+00:00` **book_ingested** — FlexBeam Applications and Usage Guide - Recharge Health.pdf → device_documentation: 3 chunks
 - `2026-04-16T20:48:22.205435+00:00` **book_ingested** — How to Use FlexBeam to Boost Your Energy - Recharge Health.pdf → device_documentation: 4 chunks
 - `2026-04-16T20:45:44.656419+00:00` **book_ingested** — How to Use FlexBeam to Sleep Better - Recharge Health.pdf → device_documentation: 4 chunks
 - `2026-04-16T20:42:40.524444+00:00` **book_ingested** — How to Use FlexBeam to Improve Your Breathing - Recharge Health.pdf → device_documentation: 4 chunks
-- `2026-04-16T20:39:27.855853+00:00` **book_ingested** — How to Use FlexBeam to Boost Your Immunity - Recharge Health.pdf → device_documentation: 4 chunks
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-16 20:52:47,776  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 20:53:17,776  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 20:53:47,776  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 20:54:17,777  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 20:54:47,777  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 20:55:17,778  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 20:55:47,778  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 20:56:17,779  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 20:56:47,779  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 20:57:17,780  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 20:57:47,780  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 20:58:17,781  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 20:58:47,781  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 20:59:17,782  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 20:59:47,782  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 21:00:17,783  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 21:00:47,783  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 21:01:17,784  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 21:01:47,784  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 21:02:17,785  INFO      Queue paused (pause flag set) — waiting 30s
 ```
