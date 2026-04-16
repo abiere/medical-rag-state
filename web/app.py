@@ -1546,17 +1546,433 @@ def _library_section_html(section_key: str) -> str:
 </div>"""
 
 
+# ── Catalog helpers ───────────────────────────────────────────────────────────
+
+CLASSIFICATIONS_PATH = BASE / "config" / "book_classifications.json"
+
+_CAT_LABELS = {
+    "medical_literature": "Medische Literatuur",
+    "acupuncture":        "Acupunctuur",
+    "nrt_kinesiology":    "NRT/Kinesiologie",
+    "qat_curriculum":     "QAT Curriculum",
+    "device":             "Apparatuur",
+    "videos":             "Video's",
+}
+_CAT_ORDER = list(_CAT_LABELS.keys())
+
+_CAT_COLLECTION = {
+    "medical_literature": "medical_library",
+    "acupuncture":        "medical_library",
+    "nrt_kinesiology":    "nrt_qat_curriculum",
+    "qat_curriculum":     "nrt_qat_curriculum",
+    "device":             "device_documentation",
+    "videos":             "video_transcripts",
+}
+
+_KAI_COLORS = {1: "#16a34a", 2: "#d97706", 3: "#9ca3af"}
+_KAI_LABELS = {1: "Primair", 2: "Ondersteunend", 3: "Achtergrond"}
+
+
+async def _qdrant_count_source(collection: str, source_file: str) -> int:
+    """Count Qdrant points where source_file == source_file in the given collection."""
+    try:
+        async with httpx.AsyncClient(timeout=5) as client:
+            r = await client.post(
+                f"http://localhost:6333/collections/{collection}/points/count",
+                json={"filter": {"must": [{"key": "source_file", "match": {"value": source_file}}]}},
+            )
+            if r.status_code == 200:
+                return r.json().get("result", {}).get("count", 0)
+    except Exception:
+        pass
+    return 0
+
+
 # ── GET /library ───────────────────────────────────────────────────────────────
 
 @app.get("/library", response_class=HTMLResponse)
 async def library_page():
+    body = """
+<div class="wrap">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+    <h1 style="font-size:22px;font-weight:700">Bibliotheek — Catalogus</h1>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <a href="/library/ingest" class="btn btn-secondary">Upload / Ingest</a>
+      <a href="/library/overview" class="btn btn-secondary">Literatuuroverzicht</a>
+    </div>
+  </div>
+
+  <!-- Search + sort bar -->
+  <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+    <input id="search-input" type="text" placeholder="Zoek op titel of auteur…"
+      oninput="filterItems()"
+      style="flex:1;min-width:200px;padding:8px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:14px">
+    <label style="font-size:13px;color:#6b7280">Sorteer:
+      <select id="sort-select" onchange="renderItems()"
+        style="margin-left:4px;padding:6px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px">
+        <option value="title">Titel</option>
+        <option value="chunks_desc">Chunks ↓</option>
+        <option value="chunks_asc">Chunks ↑</option>
+        <option value="k">K-waarde</option>
+      </select>
+    </label>
+  </div>
+
+  <!-- Category tabs -->
+  <div id="cat-tabs" style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:16px"></div>
+
+  <!-- Item list -->
+  <div id="item-list" style="display:flex;flex-direction:column;gap:8px">
+    <div style="color:#6b7280;font-size:14px;text-align:center;padding:40px">Laden…</div>
+  </div>
+</div>
+
+<!-- Delete confirmation modal -->
+<div id="del-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:12px;padding:28px;max-width:440px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.18)">
+    <h3 style="font-size:16px;font-weight:700;margin-bottom:12px;color:#111">Verwijder uit Qdrant</h3>
+    <p id="del-msg" style="font-size:14px;color:#374151;margin-bottom:20px"></p>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button onclick="closeDelModal()" class="btn btn-secondary">Annuleren</button>
+      <button id="del-confirm-btn" onclick="confirmDelete()"
+        style="background:#dc2626;color:#fff;border:none;padding:8px 18px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600">
+        Verwijder
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+let _allItems = [];
+let _filtered = [];
+let _activeTab = 'all';
+let _pendingDelete = null;
+
+const CAT_LABELS = {
+  all:              'Alles',
+  medical_literature: 'Medische Literatuur',
+  acupuncture:      'Acupunctuur',
+  nrt_kinesiology:  'NRT/Kinesiologie',
+  qat_curriculum:   'QAT Curriculum',
+  device:           'Apparatuur',
+  videos:           "Video's",
+};
+const CAT_ORDER = ['all','medical_literature','acupuncture','nrt_kinesiology','qat_curriculum','device','videos'];
+const KAI_COLORS = {1:'#16a34a', 2:'#d97706', 3:'#9ca3af'};
+const STATUS_CFG = {
+  ingested:     {bg:'#dcfce7', fg:'#166534', label:'✅ Ingested'},
+  processing:   {bg:'#fef3c7', fg:'#92400e', label:'⏳ Bezig'},
+  queued:       {bg:'#e0e7ff', fg:'#3730a3', label:'🕐 Wachtrij'},
+  not_ingested: {bg:'#f3f4f6', fg:'#6b7280', label:'⬜ Nog niet'},
+};
+
+async function loadItems() {
+  try {
+    const r = await fetch('/api/library/items');
+    const d = await r.json();
+    _allItems = d.items || [];
+    filterItems();
+    renderTabs();
+  } catch(e) {
+    document.getElementById('item-list').innerHTML =
+      '<div style="color:#dc2626;font-size:14px;text-align:center;padding:40px">Fout bij laden: ' + e + '</div>';
+  }
+}
+
+function renderTabs() {
+  const counts = {};
+  counts['all'] = _allItems.length;
+  for (const item of _allItems) {
+    counts[item.library_category] = (counts[item.library_category] || 0) + 1;
+  }
+  const el = document.getElementById('cat-tabs');
+  el.innerHTML = CAT_ORDER
+    .filter(k => counts[k] > 0)
+    .map(k => {
+      const active = k === _activeTab;
+      const cnt = counts[k] || 0;
+      return `<button onclick="setTab('${k}')"
+        style="padding:6px 14px;border-radius:20px;border:1px solid ${active?'#2563eb':'#d1d5db'};
+               background:${active?'#2563eb':'#fff'};color:${active?'#fff':'#374151'};
+               font-size:13px;cursor:pointer;font-weight:${active?'600':'400'}">
+        ${CAT_LABELS[k] || k} <span style="opacity:.7">(${cnt})</span>
+      </button>`;
+    }).join('');
+}
+
+function setTab(tab) {
+  _activeTab = tab;
+  filterItems();
+  renderTabs();
+}
+
+function filterItems() {
+  const q = (document.getElementById('search-input').value || '').toLowerCase();
+  _filtered = _allItems.filter(item => {
+    if (_activeTab !== 'all' && item.library_category !== _activeTab) return false;
+    if (q) {
+      const hay = (item.title + ' ' + item.authors).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+  renderItems();
+}
+
+function renderItems() {
+  const sort = document.getElementById('sort-select').value;
+  const items = [..._filtered];
+  items.sort((a, b) => {
+    if (sort === 'title')       return a.title.localeCompare(b.title);
+    if (sort === 'chunks_desc') return (b.chunk_count || 0) - (a.chunk_count || 0);
+    if (sort === 'chunks_asc')  return (a.chunk_count || 0) - (b.chunk_count || 0);
+    if (sort === 'k')           return (a.k || 9) - (b.k || 9);
+    return 0;
+  });
+
+  if (!items.length) {
+    document.getElementById('item-list').innerHTML =
+      '<div style="color:#6b7280;font-size:14px;text-align:center;padding:40px">Geen items gevonden</div>';
+    return;
+  }
+
+  document.getElementById('item-list').innerHTML = items.map(item => renderCard(item)).join('');
+}
+
+function kaiPill(letter, val) {
+  if (!val) return '';
+  const c = KAI_COLORS[val] || '#9ca3af';
+  const labels = {1:'Primair',2:'Ondersteunend',3:'Achtergrond'};
+  return `<span title="${letter}: ${labels[val]||val}"
+    style="background:${c}22;color:${c};border:1px solid ${c}55;
+           border-radius:999px;padding:1px 7px;font-size:11px;font-weight:700">${letter}${val}</span>`;
+}
+
+function statusPill(status) {
+  const cfg = STATUS_CFG[status] || STATUS_CFG['not_ingested'];
+  return `<span style="background:${cfg.bg};color:${cfg.fg};border-radius:999px;
+                padding:2px 10px;font-size:12px;font-weight:600">${cfg.label}</span>`;
+}
+
+function renderCard(item) {
+  const canDelete = item.chunk_count > 0;
+  const delBtn = canDelete
+    ? `<button onclick="openDelModal('${escJs(item.id)}','${escJs(item.title)}',${item.chunk_count},'${escJs(item.collection)}')"
+         style="background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;border-radius:6px;
+                padding:4px 10px;font-size:12px;cursor:pointer;font-weight:600;white-space:nowrap">
+         Verwijder uit Qdrant
+       </button>`
+    : '';
+
+  return `<div style="background:#fff;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.07);
+                      padding:14px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+    <div style="flex:1;min-width:200px">
+      <div style="font-weight:600;font-size:15px;color:#111">${escHtml(item.title)}</div>
+      <div style="font-size:12px;color:#6b7280;margin-top:2px">${escHtml(item.authors || '')}</div>
+    </div>
+    <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">
+      ${kaiPill('K', item.k)} ${kaiPill('A', item.a)} ${kaiPill('I', item.i)}
+    </div>
+    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+      ${statusPill(item.status)}
+      <span style="font-size:12px;color:#6b7280">${item.chunk_count !== null ? item.chunk_count.toLocaleString() + ' chunks' : '…'}</span>
+    </div>
+    ${delBtn}
+  </div>`;
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function escJs(s) {
+  return String(s).replace(/\\\\/g,'\\\\\\\\').replace(/'/g,"\\\\'");
+}
+
+let _delItem = null;
+function openDelModal(id, title, chunks, collection) {
+  _delItem = {id, title, chunks, collection};
+  document.getElementById('del-msg').textContent =
+    `Verwijder ${chunks.toLocaleString()} chunks voor "${title}" uit Qdrant? Dit kan niet ongedaan worden gemaakt.`;
+  const modal = document.getElementById('del-modal');
+  modal.style.display = 'flex';
+}
+function closeDelModal() {
+  document.getElementById('del-modal').style.display = 'none';
+  _delItem = null;
+}
+async function confirmDelete() {
+  if (!_delItem) return;
+  const btn = document.getElementById('del-confirm-btn');
+  btn.disabled = true;
+  btn.textContent = 'Bezig…';
+  try {
+    const r = await fetch(`/api/library/items/${encodeURIComponent(_delItem.id)}?dry_run=false`, {method:'DELETE'});
+    const d = await r.json();
+    closeDelModal();
+    if (d.deleted !== undefined) {
+      await loadItems();
+    } else {
+      alert('Fout: ' + (d.error || JSON.stringify(d)));
+    }
+  } catch(e) {
+    alert('Fout: ' + e);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Verwijder';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', loadItems);
+</script>"""
+    return _page_shell("Bibliotheek", "/library", body)
+
+
+# ── GET /api/library/items ─────────────────────────────────────────────────────
+
+@app.get("/api/library/items")
+async def api_library_items():
+    """Return all catalog items with metadata + live Qdrant chunk counts."""
+    try:
+        cfg = json.loads(CLASSIFICATIONS_PATH.read_text())
+    except Exception as e:
+        return JSONResponse({"error": str(e), "items": []}, status_code=500)
+
+    classifications: dict = cfg.get("classifications", {})
+
+    # Determine currently processing / queued books
+    processing_file = ""
+    queued_files: set[str] = set()
+    try:
+        if BOOK_CURRENT_FILE.exists():
+            cur = json.loads(BOOK_CURRENT_FILE.read_text())
+            processing_file = cur.get("filename", "") or cur.get("file", "")
+    except Exception:
+        pass
+    try:
+        if BOOK_QUEUE_FILE.exists():
+            q = json.loads(BOOK_QUEUE_FILE.read_text())
+            for entry in q:
+                fn = entry.get("filename", "") or entry.get("file", "")
+                if fn:
+                    queued_files.add(fn)
+    except Exception:
+        pass
+
+    # Build item list and collect async Qdrant queries
+    items_meta: list[dict] = []
+    count_coros = []
+
+    for book_id, info in classifications.items():
+        category = info.get("library_category", "")
+        collection = _CAT_COLLECTION.get(category, "medical_library")
+        patterns = info.get("filename_patterns", [])
+
+        items_meta.append({
+            "id":               book_id,
+            "title":            info.get("full_title", book_id),
+            "authors":          info.get("authors", ""),
+            "k":                info.get("k"),
+            "a":                info.get("a"),
+            "i":                info.get("i"),
+            "library_category": category,
+            "collection":       collection,
+            "patterns":         patterns,
+            "format":           info.get("format", ""),
+        })
+        # Count using first pattern; if no patterns use book_id
+        source_key = patterns[0] if patterns else book_id
+        count_coros.append(_qdrant_count_source(collection, source_key))
+
+    # Run all Qdrant count queries in parallel
+    counts = await asyncio.gather(*count_coros, return_exceptions=True)
+
+    items_out = []
+    for meta, count in zip(items_meta, counts):
+        chunk_count = count if isinstance(count, int) else 0
+        patterns    = meta.pop("patterns")
+        source_key  = patterns[0] if patterns else meta["id"]
+
+        # Determine status — check all patterns against processing/queue filenames
+        def _matches_file(fname: str) -> bool:
+            if not fname:
+                return False
+            fl = fname.lower()
+            return any(p.lower() in fl or fl in p.lower() for p in patterns) if patterns else (meta["id"].lower() in fl)
+
+        if _matches_file(processing_file):
+            status = "processing"
+        elif any(_matches_file(qf) for qf in queued_files):
+            status = "queued"
+        elif chunk_count > 0:
+            status = "ingested"
+        else:
+            status = "not_ingested"
+
+        items_out.append({**meta, "chunk_count": chunk_count, "status": status})
+
+    return {"items": items_out}
+
+
+# ── DELETE /api/library/items/{item_id} ────────────────────────────────────────
+
+@app.delete("/api/library/items/{item_id}")
+async def api_library_delete(item_id: str, dry_run: bool = True):
+    """Delete all Qdrant points for a book by item_id. dry_run=true returns count only."""
+    # Sanitise
+    safe_id = re.sub(r"[^a-zA-Z0-9_\-]", "", item_id)
+    try:
+        cfg = json.loads(CLASSIFICATIONS_PATH.read_text())
+    except Exception as e:
+        return JSONResponse({"error": f"Cannot read classifications: {e}"}, status_code=500)
+
+    info = cfg.get("classifications", {}).get(safe_id)
+    if not info:
+        return JSONResponse({"error": f"Unknown item: {safe_id}"}, status_code=404)
+
+    category   = info.get("library_category", "")
+    collection = _CAT_COLLECTION.get(category, "medical_library")
+    patterns   = info.get("filename_patterns", [])
+    source_key = patterns[0] if patterns else safe_id
+
+    # Count first (always)
+    count = await _qdrant_count_source(collection, source_key)
+
+    if dry_run:
+        return {"item_id": safe_id, "collection": collection, "source_key": source_key, "count": count}
+
+    if count == 0:
+        return {"deleted": 0, "message": "Geen chunks gevonden"}
+
+    # Delete points
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            r = await client.post(
+                f"http://localhost:6333/collections/{collection}/points/delete",
+                json={"filter": {"must": [{"key": "source_file", "match": {"value": source_key}}]}},
+            )
+            if r.status_code == 200:
+                return {"deleted": count, "collection": collection, "source_key": source_key}
+            else:
+                return JSONResponse(
+                    {"error": f"Qdrant returned {r.status_code}: {r.text[:200]}"},
+                    status_code=500,
+                )
+    except Exception as e:
+        return JSONResponse({"error": str(e)[:300]}, status_code=500)
+
+
+# ── GET /library/ingest ────────────────────────────────────────────────────────
+
+@app.get("/library/ingest", response_class=HTMLResponse)
+async def library_ingest_page():
     sections = "".join(_library_section_html(sec) for sec in SECTION_MAP)
 
     body = f"""
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px">
-    <h1 style="font-size:22px;font-weight:700">Bibliotheek</h1>
+    <h1 style="font-size:22px;font-weight:700">Bibliotheek — Upload</h1>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <a href="/library" class="btn btn-secondary">← Catalogus</a>
       <a href="/library/overview" class="btn btn-secondary">Literatuuroverzicht</a>
       <span style="font-size:13px;color:#6b7280">→ alle boeken in <code>medical_library</code></span>
     </div>

@@ -1,11 +1,12 @@
 {
-  "version": "1.0",
+  "version": "1.1",
   "last_updated": "2026-04-16",
-  "description": "K/A/I classification for all books. K=Clinical/Tissue, A=Acupuncture, I=Images. 1=Primary, 2=Supporting, 3=Background.",
+  "description": "K/A/I classification for all books. K=Clinical/Tissue, A=Acupuncture, I=Images. 1=Primary, 2=Supporting, 3=Background. library_category maps to /library page tabs.",
   "classifications": {
 
     "sobotta_vol1": {
       "k": 1, "a": 3, "i": 1,
+      "library_category": "medical_literature",
       "role": "primary_anatomy_images",
       "full_title": "Sobotta Atlas of Anatomy Vol 1 17th edition",
       "authors": "Paulsen, Waschke",
@@ -15,6 +16,7 @@
     },
     "sobotta_vol2": {
       "k": 1, "a": 3, "i": 1,
+      "library_category": "medical_literature",
       "role": "primary_anatomy_images",
       "full_title": "Sobotta Atlas of Anatomy Vol 2 17th edition",
       "authors": "Paulsen, Waschke",
@@ -24,6 +26,7 @@
     },
     "sobotta_vol3": {
       "k": 1, "a": 3, "i": 1,
+      "library_category": "medical_literature",
       "role": "primary_anatomy_images",
       "full_title": "Sobotta Atlas of Anatomy Vol 3 17th edition",
       "authors": "Paulsen, Waschke",
@@ -33,6 +36,7 @@
     },
     "sobotta_textbook": {
       "k": 1, "a": 3, "i": 2,
+      "library_category": "medical_literature",
       "role": "anatomy_text",
       "full_title": "Sobotta Anatomy Textbook",
       "authors": "Paulsen, Böckers, Waschke",
@@ -42,6 +46,7 @@
     },
     "sobotta_tables": {
       "k": 1, "a": 2, "i": 2,
+      "library_category": "medical_literature",
       "role": "anatomy_reference",
       "full_title": "Sobotta Tables of Muscles Joints and Nerves",
       "authors": "Paulsen, Waschke",
@@ -51,6 +56,7 @@
     },
     "sobotta_classic": {
       "k": 3, "a": 3, "i": 2,
+      "library_category": "medical_literature",
       "role": "historical_fallback",
       "full_title": "Sobotta Atlas of Anatomy Classic",
       "authors": "Sobotta, McMurrich",
@@ -60,6 +66,7 @@
     },
     "deadman": {
       "k": 2, "a": 1, "i": 3,
+      "library_category": "acupuncture",
       "role": "primary_acupuncture",
       "full_title": "A Manual of Acupuncture",
       "authors": "Deadman, Al-Khafaji, Baker",
@@ -69,6 +76,7 @@
     },
     "deadman_combinations": {
       "k": 2, "a": 1, "i": 3,
+      "library_category": "acupuncture",
       "role": "acupuncture_combinations",
       "full_title": "Acupuncture Point Combinations",
       "authors": "Deadman",
@@ -78,6 +86,7 @@
     },
     "cecil_sterman": {
       "k": 2, "a": 1, "i": 3,
+      "library_category": "acupuncture",
       "role": "clinical_acupuncture",
       "full_title": "Advanced Acupuncture",
       "authors": "Cecil-Sterman",
@@ -87,6 +96,7 @@
     },
     "campbell": {
       "k": 1, "a": 2, "i": 3,
+      "library_category": "acupuncture",
       "role": "anatomy_acupuncture_bridge",
       "full_title": "Acupuncture in Practice",
       "authors": "Campbell",
@@ -96,6 +106,7 @@
     },
     "acupoint_book": {
       "k": 2, "a": 1, "i": 3,
+      "library_category": "acupuncture",
       "role": "acupuncture_reference",
       "full_title": "The Acupuncture Point Book",
       "authors": "DeLaney, Leonard",
@@ -105,6 +116,7 @@
     },
     "atlas_acupuncture": {
       "k": 2, "a": 1, "i": 2,
+      "library_category": "acupuncture",
       "role": "acupuncture_atlas",
       "full_title": "Atlas of Acupuncture",
       "authors": "Unknown",
@@ -114,6 +126,7 @@
     },
     "maciocia_foundations": {
       "k": 1, "a": 1, "i": 3,
+      "library_category": "acupuncture",
       "role": "tcm_complete",
       "full_title": "The Foundations of Chinese Medicine 3rd edition",
       "authors": "Maciocia",
@@ -123,6 +136,7 @@
     },
     "maciocia_practice": {
       "k": 1, "a": 1, "i": 3,
+      "library_category": "acupuncture",
       "role": "tcm_clinical",
       "full_title": "The Practice of Chinese Medicine",
       "authors": "Maciocia",
@@ -132,6 +146,7 @@
     },
     "maciocia_diagnosis": {
       "k": 1, "a": 1, "i": 3,
+      "library_category": "acupuncture",
       "role": "tcm_diagnosis",
       "full_title": "Diagnosis in Chinese Medicine",
       "authors": "Maciocia",
@@ -141,6 +156,7 @@
     },
     "anatomy_trains": {
       "k": 1, "a": 2, "i": 1,
+      "library_category": "medical_literature",
       "role": "fascia_images",
       "full_title": "Anatomy Trains 3rd edition",
       "authors": "Myers",
@@ -150,6 +166,7 @@
     },
     "guyton": {
       "k": 1, "a": 3, "i": 3,
+      "library_category": "medical_literature",
       "role": "physiology",
       "full_title": "Medical Physiology",
       "authors": "Guyton, Hall",
@@ -159,6 +176,7 @@
     },
     "magee": {
       "k": 1, "a": 3, "i": 2,
+      "library_category": "medical_literature",
       "role": "orthopedic_assessment",
       "full_title": "Orthopedic Physical Assessment 7th edition",
       "authors": "Magee, Manske",
@@ -168,6 +186,7 @@
     },
     "travell_simons": {
       "k": 1, "a": 3, "i": 1,
+      "library_category": "medical_literature",
       "role": "trigger_points",
       "full_title": "Myofascial Pain and Dysfunction Vol 1",
       "authors": "Travell, Simons",
@@ -177,6 +196,7 @@
     },
     "trail_guide": {
       "k": 1, "a": 3, "i": 1,
+      "library_category": "medical_literature",
       "role": "anatomy_palpation",
       "full_title": "Trail Guide to the Body 6th edition",
       "authors": "Biel",
@@ -186,6 +206,7 @@
     },
     "thieme_atlas": {
       "k": 1, "a": 3, "i": 1,
+      "library_category": "medical_literature",
       "role": "anatomy_atlas",
       "full_title": "Thieme Atlas of Anatomy",
       "authors": "Schünke",
@@ -195,6 +216,7 @@
     },
     "thieme_internal": {
       "k": 1, "a": 3, "i": 1,
+      "library_category": "medical_literature",
       "role": "internal_anatomy",
       "full_title": "Thieme Atlas of Anatomy Internal Organs",
       "authors": "Schünke",
@@ -204,6 +226,7 @@
     },
     "patten": {
       "k": 1, "a": 3, "i": 3,
+      "library_category": "medical_literature",
       "role": "neuroanatomy",
       "full_title": "Neurological Differential Diagnosis",
       "authors": "Patten",
@@ -213,6 +236,7 @@
     },
     "pocket_atlas_1": {
       "k": 1, "a": 3, "i": 1,
+      "library_category": "medical_literature",
       "role": "sectional_anatomy",
       "full_title": "Pocket Atlas of Sectional Anatomy Vol I",
       "authors": "Moeller, Reif",
@@ -222,6 +246,7 @@
     },
     "pocket_atlas_2": {
       "k": 1, "a": 3, "i": 1,
+      "library_category": "medical_literature",
       "role": "sectional_anatomy",
       "full_title": "Pocket Atlas of Sectional Anatomy Vol II",
       "authors": "Moeller, Reif",
@@ -231,6 +256,7 @@
     },
     "pocket_atlas_3": {
       "k": 1, "a": 3, "i": 1,
+      "library_category": "medical_literature",
       "role": "sectional_anatomy",
       "full_title": "Pocket Atlas of Sectional Anatomy Vol III",
       "authors": "Moeller, Reif",
@@ -238,17 +264,9 @@
       "filename_patterns": ["Pocket Atlas of Sectional Anatomy Vol III"],
       "notes": "Cross-sectional anatomy — spine and extremities"
     },
-    "keown": {
-      "k": 2, "a": 2, "i": 3,
-      "role": "acupuncture_science",
-      "full_title": "The Spark in the Machine",
-      "authors": "Keown",
-      "format": "pdf",
-      "filename_patterns": ["Spark in the Machine", "keown"],
-      "notes": "Scientific basis of acupuncture — bridges Western and TCM"
-    },
     "bates": {
       "k": 1, "a": 3, "i": 2,
+      "library_category": "medical_literature",
       "role": "clinical_assessment",
       "full_title": "Bates Guide to Physical Examination 14th edition",
       "authors": "Bickley",
@@ -256,8 +274,89 @@
       "filename_patterns": ["Bates Guide"],
       "notes": "Physical examination — clinical assessment"
     },
+    "explain_pain": {
+      "k": 2, "a": 3, "i": 2,
+      "library_category": "medical_literature",
+      "role": "pain_science",
+      "full_title": "Explain Pain",
+      "authors": "Butler, Moseley",
+      "format": "pdf",
+      "filename_patterns": ["Explain Pain"],
+      "notes": "Pain neuroscience — central sensitisation, pain education"
+    },
+    "keown": {
+      "k": 2, "a": 2, "i": 3,
+      "library_category": "nrt_kinesiology",
+      "role": "acupuncture_science",
+      "full_title": "The Spark in the Machine",
+      "authors": "Keown",
+      "format": "pdf",
+      "filename_patterns": ["Spark in the Machine", "keown"],
+      "notes": "Scientific basis of acupuncture — bridges Western and TCM"
+    },
+    "polyvagal_theory": {
+      "k": 2, "a": 3, "i": 3,
+      "library_category": "nrt_kinesiology",
+      "role": "nervous_system",
+      "full_title": "The Polyvagal Theory",
+      "authors": "Porges",
+      "format": "pdf",
+      "filename_patterns": ["Polyvagal Theory", "Polyvagal"],
+      "notes": "Autonomic nervous system — vagus nerve, safety and threat responses"
+    },
+    "body_keeps_score": {
+      "k": 2, "a": 3, "i": 3,
+      "library_category": "nrt_kinesiology",
+      "role": "trauma_somatics",
+      "full_title": "The Body Keeps the Score",
+      "authors": "van der Kolk",
+      "format": "pdf",
+      "filename_patterns": ["Body Keeps the Score", "BodyKeepsScore"],
+      "notes": "Trauma stored in body — somatic healing, NRT context"
+    },
+    "emotion_code": {
+      "k": 3, "a": 3, "i": 3,
+      "library_category": "nrt_kinesiology",
+      "role": "energy_medicine",
+      "full_title": "The Emotion Code",
+      "authors": "Nelson",
+      "format": "pdf",
+      "filename_patterns": ["Emotion Code"],
+      "notes": "Trapped emotions — muscle testing framework, QAT ETT context"
+    },
+    "body_code": {
+      "k": 3, "a": 3, "i": 3,
+      "library_category": "nrt_kinesiology",
+      "role": "energy_medicine",
+      "full_title": "The Body Code",
+      "authors": "Nelson",
+      "format": "pdf",
+      "filename_patterns": ["Body Code"],
+      "notes": "Expanded Emotion Code — comprehensive imbalance map"
+    },
+    "applied_kinesiology": {
+      "k": 2, "a": 2, "i": 3,
+      "library_category": "nrt_kinesiology",
+      "role": "kinesiology_manual",
+      "full_title": "Applied Kinesiology",
+      "authors": "Walther",
+      "format": "pdf",
+      "filename_patterns": ["Applied Kinesiology"],
+      "notes": "Manual muscle testing system — NRT foundation"
+    },
+    "touch_for_health": {
+      "k": 2, "a": 2, "i": 2,
+      "library_category": "nrt_kinesiology",
+      "role": "kinesiology_manual",
+      "full_title": "Touch for Health",
+      "authors": "Thie",
+      "format": "pdf",
+      "filename_patterns": ["Touch for Health", "TouchForHealth"],
+      "notes": "Muscle balancing system — accessible kinesiology"
+    },
     "flexbeam": {
       "k": 3, "a": 3, "i": 3,
+      "library_category": "device",
       "role": "device_documentation",
       "full_title": "FlexBeam RLT Documentation",
       "authors": "Recharge Health",

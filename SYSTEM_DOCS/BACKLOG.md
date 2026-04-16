@@ -1,6 +1,6 @@
 # BACKLOG — Medical RAG
 > Auto-updated by Claude Code after each session.
-> Last updated: 2026-04-16 — session handover
+> Last updated: 2026-04-16 — /library catalogus pagina gebouwd
 
 ## 🔴 Prioriteit — volgende sessie
 
@@ -11,7 +11,7 @@
 - [ ] Deadman valideren na herverwerking
       987 chunks aangemaakt maar niet in Qdrant door audit timeout
       Audit fix toegepast — Deadman opnieuw in queue
-      Check: source_file="pdfcoffee" chunks in medical_library
+      Check: source_file="deadman" chunks in medical_library
       Verwacht: 987 chunks correct embedded
 
 - [ ] Eerste protocol genereren via /protocols pagina
@@ -19,15 +19,6 @@
       Vereiste: Deadman chunks in Qdrant (kai_a=1)
       Test: python3 /root/medical-rag/scripts/generate_protocol.py "Etalagebenen"
       Vergelijk output met /data/protocols/gold_standard referentie
-
-- [ ] Retroactive audit bouwen in nightly_maintenance.py
-      Chunks met audit_status="skipped_ollama_timeout" alsnog auditoren
-      Max 200 chunks per nacht (Deadman heeft 987 → ~5 nachten)
-      Trigger: 's nachts als Ollama vrij is
-
-- [ ] Heraudit knop in /library per boek
-      POST /library/reaudit/{filename}
-      Progress via polling widget
 
 ## 🟡 Backlog — gepland
 
@@ -142,6 +133,14 @@
 - [x] Earmarking bij nieuwe literatuur (needs_review badge)
 - [x] Dashboard oranje banner bij verouderde protocollen
 - [x] 8 gold standard protocol metadata records
+
+### Bibliotheek Catalogus
+- [x] /library cataloguspagina — 6 categorie-tabs, zoekbalk, sortering
+- [x] /api/library/items — JSON met K/A/I, chunk count, status (35 boeken)
+- [x] DELETE /api/library/items/{id} — Qdrant-verwijdering met dry-run
+- [x] book_classifications.json v1.1 — library_category voor alle 35 boeken
+- [x] Retroaudit nightly phase in nightly_maintenance.py
+- [x] Heraudit knop per boek in /library/ingest (POST /library/reaudit/{filename})
 
 ### Eerder afgerond
 - [x] FastAPI web interface + dashboard
