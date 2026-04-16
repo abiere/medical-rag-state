@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-16 18:57:29 UTC**
+> Last update: **2026-04-16 19:02:30 UTC**
 
 ## Services
 | Service | Status |
@@ -14,8 +14,8 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `NRT Lower Body.pdf` (34 min) |
-| Queued | 34 |
+| Current job | `NRT Upper Body.pdf` (4 min) |
+| Queued | 33 |
 | Total books | 43 |
 | Ingested | 6 |
 | Vectors in medical_library | 2773 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` (1162 min) |
+| Current job | `1.Upper_Body_Techniques.mp4` (1167 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 11.23 GB / 32.86 GB (34%) |
-| CPU | 89.2% |
-| Disk used | 58.8 GB / 322.3 GB (19%) |
-| Uptime | up 2 days, 9 hours, 14 minutes |
+| RAM used | 11.08 GB / 32.86 GB (34%) |
+| CPU | 50.3% |
+| Disk used | 59.1 GB / 322.3 GB (19%) |
+| Uptime | up 2 days, 9 hours, 19 minutes |
 
 ## Recent markers
+- `2026-04-16T18:57:31.237178+00:00` **book_ingested** — NRT Lower Body.pdf → nrt_qat_curriculum: 132 chunks
 - `2026-04-16T18:23:07.585962+00:00` **book_ingested** — The QAT Life Pendant eu.pdf → nrt_qat_curriculum: 2 chunks
 - `2026-04-16T18:20:33.462183+00:00` **book_ingested** — The QAT Connect to the Brain eu.pdf → nrt_qat_curriculum: 2 chunks
 - `2026-04-16T18:17:52.390512+00:00` **book_ingested** — The Acupuncture Pendant eu.pdf → nrt_qat_curriculum: 2 chunks
 - `2026-04-16T18:15:14.315474+00:00` **book_ingested** — Quantum Alignment Technique - Home Study  2025 01092025.pdf → nrt_qat_curriculum: 47 chunks
-- `2026-04-16T18:04:40.726696+00:00` **book_ingested** — QAT_2025_overgenomen.pdf → nrt_qat_curriculum: 72 chunks
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-16 18:52:47,622  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 18:53:17,624  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 18:53:47,624  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 18:54:17,625  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 18:54:47,627  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 18:55:17,628  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 18:55:47,629  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 18:56:17,630  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 18:56:47,631  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 18:57:17,632  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 18:57:47,633  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 18:58:17,634  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 18:58:47,634  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 18:59:17,635  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 18:59:47,636  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 19:00:17,637  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 19:00:47,639  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 19:01:17,640  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 19:01:47,641  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 19:02:17,641  INFO      Queue paused (pause flag set) — waiting 30s
 ```
