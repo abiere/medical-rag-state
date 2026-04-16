@@ -78,17 +78,33 @@ FULL_REFERENCES = {
 
 # ─── RAG + LLM HELPERS ───────────────────────────────────────────────────────
 
+def _get_embedding(text: str) -> list[float]:
+    """
+    Embed text using BAAI/bge-large-en-v1.5 via SentenceTransformers.
+    This is the same model used by book_ingest_queue.py for ingest.
+    Falls back to empty list on failure.
+    """
+    try:
+        from sentence_transformers import SentenceTransformer
+        # Cache model at module level to avoid reloading for each call
+        global _EMBED_MODEL
+        if _EMBED_MODEL is None:
+            log.info("Loading BAAI/bge-large-en-v1.5 embedding model...")
+            _EMBED_MODEL = SentenceTransformer("BAAI/bge-large-en-v1.5")
+        return _EMBED_MODEL.encode(text).tolist()
+    except Exception as e:
+        log.warning("Embedding failed: %s", e)
+        return []
+
+_EMBED_MODEL = None  # module-level cache
+
+
 def qdrant_search(query: str, kai_filter: dict, limit: int = 8) -> list:
     """RAG search with K/A/I filtering. Falls back to empty list on any error."""
     try:
-        emb_resp = requests.post(
-            f"{OLLAMA_URL}/api/embeddings",
-            json={"model": "nomic-embed-text", "prompt": query},
-            timeout=30,
-        )
-        embedding = emb_resp.json().get("embedding", [])
+        embedding = _get_embedding(query)
         if not embedding:
-            log.warning("Empty embedding returned — skipping RAG for this query")
+            log.warning("Empty embedding — skipping RAG for this query")
             return []
 
         must_conditions = [

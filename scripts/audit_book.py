@@ -50,7 +50,7 @@ def _load_ai_instruction(filename: str) -> str:
 
 # ── Ollama helper ─────────────────────────────────────────────────────────────
 
-def _ollama(prompt: str, timeout: int = 120) -> dict | None:
+def _ollama(prompt: str, timeout: int = 30) -> dict | None:
     body = json.dumps({
         "model":  OLLAMA_MODEL,
         "prompt": prompt,
@@ -173,7 +173,7 @@ def llm_audit(chunks: list[dict]) -> dict:
             "Give one specific improvement suggestion if any score < 4, else 'none'.\n"
             'Respond in JSON only: {"coherence":N,"completeness":N,"terminology":N,"translation":N,"suggestion":"..."}'
         )
-        result = _ollama(prompt, timeout=60)
+        result = _ollama(prompt, timeout=30)
         if result and all(k in result for k in ("coherence", "completeness", "terminology", "translation")):
             scores.append(result)
             if any(result.get(k, 5) < 3 for k in ("coherence", "completeness", "terminology", "translation")):
@@ -236,7 +236,7 @@ def auto_classify(chunks: list[dict]) -> dict:
         "Respond in JSON only.\n\n"
         f"Chunks:\n{combined}"
     )
-    result = _ollama(prompt, timeout=90)
+    result = _ollama(prompt, timeout=30)
     if not result:
         return {"error": "classification failed"}
 
@@ -293,10 +293,20 @@ def tag_chunks_with_ollama(chunks: list[dict]) -> list[dict]:
 
     tagged = 0
     failed = 0
+    consecutive_failures = 0
+    MAX_CONSECUTIVE_FAILURES = 3
 
     for i in range(0, len(chunks), TAG_BATCH):
         batch = chunks[i: i + TAG_BATCH]
         for chunk in batch:
+            # Early-exit: Ollama is not responding — skip remaining chunks
+            if consecutive_failures >= MAX_CONSECUTIVE_FAILURES:
+                chunk.setdefault("usability_tags", [])
+                chunk.setdefault("protocol_relevance", 0.0)
+                chunk["audit_status"] = "skipped_ollama_timeout"
+                failed += 1
+                continue
+
             text = chunk.get("text", "")[:800]
             prompt = (
                 f"{system_context}\n\n"
@@ -309,7 +319,7 @@ def tag_chunks_with_ollama(chunks: list[dict]) -> list[dict]:
                 '"primary_use":"one sentence"}\n\n'
                 f"Chunk:\n{text}"
             )
-            result = _ollama(prompt, timeout=60)
+            result = _ollama(prompt, timeout=30)
             if result:
                 valid_tags = [t for t in result.get("usability_tags", []) if t in tag_names]
                 chunk["usability_tags"]     = valid_tags
@@ -318,12 +328,22 @@ def tag_chunks_with_ollama(chunks: list[dict]) -> list[dict]:
                 chunk["has_figure_refs"]    = bool(result.get("has_figure_refs", False))
                 chunk["primary_use"]        = str(result.get("primary_use", ""))
                 tagged += 1
+                consecutive_failures = 0  # reset on success
             else:
                 chunk.setdefault("usability_tags", [])
                 chunk.setdefault("protocol_relevance", 0.0)
+                consecutive_failures += 1
                 failed += 1
 
-    logger.info("Tagged %d/%d chunks (%d failed)", tagged, len(chunks), failed)
+    if consecutive_failures >= MAX_CONSECUTIVE_FAILURES:
+        skipped = sum(1 for c in chunks if c.get("audit_status") == "skipped_ollama_timeout")
+        logger.warning(
+            "Audit skipped — Ollama unavailable after %d consecutive timeouts. "
+            "%d chunks skipped, proceeding to embed.",
+            MAX_CONSECUTIVE_FAILURES, skipped,
+        )
+
+    logger.info("Tagged %d/%d chunks (%d failed/skipped)", tagged, len(chunks), failed)
     return chunks
 
 
