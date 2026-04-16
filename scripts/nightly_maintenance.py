@@ -126,6 +126,40 @@ def _resume_queues() -> None:
             pass
 
 
+def _count_skipped_chunks() -> int:
+    """Count total skipped chunks across all books (from state.json)."""
+    total = 0
+    cache = BASE / "data" / "ingest_cache"
+    if not cache.exists():
+        return 0
+    for sp in cache.glob("*/state.json"):
+        try:
+            state = json.loads(sp.read_text())
+            skipped = (state.get("phases", {}).get("audit", {})
+                       .get("chunks_skipped", 0)) or 0
+            total += int(skipped)
+        except Exception:
+            pass
+    return total
+
+
+def _count_pending_images() -> int:
+    """Count images without ai_suggestion across all books."""
+    total = 0
+    cache = BASE / "data" / "ingest_cache"
+    if not cache.exists():
+        return 0
+    for ap in cache.glob("*/image_approvals.json"):
+        try:
+            approvals = json.loads(ap.read_text())
+            pending = sum(1 for v in approvals.values()
+                          if not v.get("ai_suggestion"))
+            total += pending
+        except Exception:
+            pass
+    return total
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # MaintenanceRunner
 # ─────────────────────────────────────────────────────────────────────────────
@@ -148,18 +182,47 @@ class MaintenanceRunner:
         # Pause ingestion queues for the duration of the maintenance run
         _pause_queues()
 
+        # ── Compute smart time-window allocation ─────────────────────────
+        allocation: dict = {"retroaudit_seconds": None, "image_seconds": None}
+        try:
+            sys.path.insert(0, str(BASE / "scripts"))
+            from nightly_stats import allocate_window as _alloc_win
+            from claude_audit import load_settings as _ls_alloc, \
+                is_enabled as _claude_enabled_alloc
+            _cfg_alloc  = _ls_alloc().get("nightly", {})
+            _start_hm   = _cfg_alloc.get("start_time", "00:00")
+            _end_hm     = _cfg_alloc.get("end_time",   "07:00")
+            _sh, _sm    = map(int, _start_hm.split(":"))
+            _eh, _em    = map(int, _end_hm.split(":"))
+            _window_sec = max(0, (_eh * 60 + _em) - (_sh * 60 + _sm)) * 60
+            allocation  = _alloc_win(
+                window_seconds    = _window_sec,
+                n_chunks_skipped  = _count_skipped_chunks(),
+                n_images_pending  = _count_pending_images(),
+                claude_api_enabled= _claude_enabled_alloc(),
+            )
+            print(f"  Tijdverdeling: {allocation.get('note','')}")
+            print(f"  Retroaudit budget: {allocation['retroaudit_seconds']}s  "
+                  f"Image budget: {allocation['image_seconds']}s")
+        except Exception as _alloc_err:
+            print(f"  ⚠ Tijdverdeling berekening mislukt: {_alloc_err} — geen limiet")
+        # ─────────────────────────────────────────────────────────────────
+
         results: dict[str, dict] = {}
         try:
-            # Run the five measurement phases first so the report can be complete
             phases = [
-                ("pre_check",      "Pre-checks",              self._phase_pre_check),
-                ("qdrant",         "Qdrant maintenance",      self._phase_qdrant),
-                ("consistency",    "Data consistentie",       self._phase_consistency),
-                ("retro_audit",    "Retroaudit chunks",       self._phase_retro_audit),
-                ("image_screen",   "Afbeelding screening",    self._phase_image_screening),
-                ("state_integrity","State integriteit",       self._phase_state_integrity),
-                ("software",       "Software check",          self._phase_software),
-                ("cleanup",        "Opruimen",                self._phase_cleanup),
+                ("pre_check",      "Pre-checks",           self._phase_pre_check),
+                ("qdrant",         "Qdrant maintenance",   self._phase_qdrant),
+                ("consistency",    "Data consistentie",    self._phase_consistency),
+                ("retro_audit",    "Retroaudit chunks",
+                 lambda: self._phase_retro_audit(
+                     time_budget_seconds=allocation["retroaudit_seconds"])),
+                ("image_screen",   "Afbeelding screening",
+                 lambda: self._phase_image_screening(
+                     time_budget_seconds=allocation["image_seconds"])),
+                ("state_integrity","State integriteit",    self._phase_state_integrity),
+                ("software",       "Software check",       self._phase_software),
+                ("cleanup",        "Opruimen",             self._phase_cleanup),
             ]
             for key, label, fn in phases:
                 results[key] = self._run_phase(label, fn)
@@ -773,14 +836,24 @@ class MaintenanceRunner:
     # PHASE 4b — RETROACTIVE AUDIT
     # ─────────────────────────────────────────────────────────────────────────
 
-    def _phase_retro_audit(self) -> tuple[str, dict]:
+    def _phase_retro_audit(self,
+                           time_budget_seconds: float | None = None,
+                           ) -> tuple[str, dict]:
         """Retry tagging for chunks skipped by Ollama. Claude API primary, Ollama fallback."""
         findings   = []
         status     = "OK"
         COLLECTION = "medical_library"
+        t_phase_start = time.monotonic()
 
         import sys as _sys
         _sys.path.insert(0, str(BASE / "scripts"))
+
+        # Budget = 0 means skipped this run (e.g. Claude on-demand mode)
+        if time_budget_seconds is not None and time_budget_seconds <= 0:
+            findings.append(
+                "Claude API actief — retroaudit wordt op aanvraag uitgevoerd via UI"
+            )
+            return "OK", {"findings": findings}
 
         # Determine engine and chunk limit
         try:
@@ -794,8 +867,8 @@ class MaintenanceRunner:
             _cfg_nm = _ls_ca().get("nightly", {})
         except Exception:
             _cfg_nm = {}
-        win_start = _cfg_nm.get("start_time", "02:00")
-        win_end   = _cfg_nm.get("end_time",   "05:00")
+        win_start = _cfg_nm.get("start_time", "00:00")
+        win_end   = _cfg_nm.get("end_time",   "07:00")
 
         if not _in_window(win_start, win_end):
             findings.append(
@@ -803,12 +876,27 @@ class MaintenanceRunner:
             )
             return "OK", {"findings": findings}
 
-        if use_claude:
-            # Claude: no per-night limit — process everything
+        # Chunk limit: time-budget driven if available, else fallback defaults
+        if time_budget_seconds:
+            try:
+                from nightly_stats import load_stats as _load_ns
+                _ns = _load_ns()
+                _spc = _ns["retroaudit"]["avg_sec_per_chunk"]
+                MAX_CHUNKS = max(1, int(time_budget_seconds / _spc))
+                findings.append(
+                    f"Tijdsbudget: {time_budget_seconds}s  "
+                    f"({_spc:.1f}s/chunk → max {MAX_CHUNKS} chunks)"
+                )
+            except Exception:
+                MAX_CHUNKS = 10_000 if use_claude else 200
+        elif use_claude:
             MAX_CHUNKS = 10_000
-            findings.append(f"Engine: Claude API · venster {win_start}–{win_end}")
         else:
             MAX_CHUNKS = 200
+
+        if use_claude:
+            findings.append(f"Engine: Claude API · venster {win_start}–{win_end}")
+        else:
             findings.append(f"Engine: Ollama · venster {win_start}–{win_end}")
 
         # 1. Check Qdrant availability first
@@ -919,6 +1007,7 @@ class MaintenanceRunner:
                 )
                 scored += 1
 
+        elapsed_phase = time.monotonic() - t_phase_start
         findings.append(
             f"Retroaudit: {len(id_chunk_pairs)} geprobeerd, "
             f"{scored} gescoord, {still_pending} nog uitstaand"
@@ -926,13 +1015,22 @@ class MaintenanceRunner:
         if scored == 0 and still_pending > 0:
             status = "WARNING"
 
+        # Record timing stats for future allocation
+        try:
+            from nightly_stats import record_retroaudit as _rec_ra
+            _rec_ra(scored, elapsed_phase)
+        except Exception:
+            pass
+
         return status, {"findings": findings}
 
     # ─────────────────────────────────────────────────────────────────────────
     # PHASE 4b — IMAGE SCREENING BACKGROUND
     # ─────────────────────────────────────────────────────────────────────────
 
-    def _phase_image_screening(self) -> tuple[str, dict]:
+    def _phase_image_screening(self,
+                               time_budget_seconds: float | None = None,
+                               ) -> tuple[str, dict]:
         """
         For each book whose qdrant phase is done but image_screen != done,
         call screen_images_background() for up to 200 images.
@@ -940,6 +1038,7 @@ class MaintenanceRunner:
         findings = []
         status   = "OK"
         CACHE_DIR = BASE / "data" / "ingest_cache"
+        t_screen_start = time.monotonic()
 
         if not CACHE_DIR.exists():
             findings.append("ingest_cache map niet gevonden — overgeslagen")
@@ -952,6 +1051,9 @@ class MaintenanceRunner:
             findings.append(f"Import audit_book mislukt: {exc} — overgeslagen")
             return "WARNING", {"findings": findings}
 
+        if time_budget_seconds is not None:
+            findings.append(f"Tijdsbudget afbeelding screening: {time_budget_seconds}s")
+
         screened_books = 0
         total_processed = 0
 
@@ -960,6 +1062,16 @@ class MaintenanceRunner:
                 state = json.loads(state_file.read_text())
             except Exception:
                 continue
+
+            # Check time budget before starting each book
+            if time_budget_seconds is not None:
+                elapsed = time.monotonic() - t_screen_start
+                if elapsed >= time_budget_seconds:
+                    findings.append(
+                        f"Tijdsbudget bereikt ({elapsed:.0f}s / "
+                        f"{time_budget_seconds}s) — gestopt"
+                    )
+                    break
 
             phases = state.get("phases", {})
             qdrant_done = (phases.get("qdrant") or {}).get("status") == "done"
@@ -990,6 +1102,8 @@ class MaintenanceRunner:
                 findings.append(f"{book_name}: screening mislukt: {exc}")
                 if status == "OK": status = "WARNING"
 
+        elapsed_screen = time.monotonic() - t_screen_start
+
         if screened_books == 0:
             findings.append("Geen boeken gevonden voor afbeelding screening")
         else:
@@ -997,6 +1111,13 @@ class MaintenanceRunner:
                 f"Totaal: {screened_books} boek(en) gescreend, "
                 f"{total_processed} afbeeldingen verwerkt"
             )
+
+        # Record timing stats for future allocation
+        try:
+            from nightly_stats import record_image_screening as _rec_im
+            _rec_im(total_processed, elapsed_screen)
+        except Exception:
+            pass
 
         return status, {"findings": findings}
 

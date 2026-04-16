@@ -1,0 +1,12 @@
+{
+  "retroaudit": {
+    "avg_sec_per_chunk": 6.0,
+    "n_samples": 0,
+    "samples": []
+  },
+  "image_screening": {
+    "avg_sec_per_image": 8.0,
+    "n_samples": 0,
+    "samples": []
+  }
+}

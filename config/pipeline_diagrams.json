@@ -169,5 +169,11 @@
         "color": "green"
       }
     ]
+  },
+  "nightly_stats": {
+    "sec_per_chunk": 6.0,
+    "sec_per_image": 8.0,
+    "retroaudit_samples": 0,
+    "image_samples": 0
   }
 }

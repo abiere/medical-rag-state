@@ -3134,6 +3134,20 @@ def _load_pipeline_diagrams() -> dict:
     data["audit"]["retroaudit"]["ollama_note"]   = f"{start}\u2013{end} Amsterdam"
     data["audit"]["retroaudit"]["ollama_window"] = f"{start}\u2013{end} Amsterdam"  # backward compat
 
+    # Overlay live nightly stats (sec/chunk, sec/image)
+    try:
+        import sys as _sys
+        _sys.path.insert(0, str(BASE / "scripts"))
+        from nightly_stats import get_stats_summary as _gss
+        data["nightly_stats"] = _gss()
+    except Exception:
+        data["nightly_stats"] = {
+            "sec_per_chunk":      6.0,
+            "sec_per_image":      8.0,
+            "retroaudit_samples": 0,
+            "image_samples":      0,
+        }
+
     return data
 
 
@@ -4027,6 +4041,32 @@ function renderNightlyPhases(d) {
 
   listWrap.appendChild(list);
   wrap.appendChild(listWrap);
+
+  // Timing stats footer
+  const ns = d.nightly_stats || {};
+  const statsRow = document.createElement('div');
+  statsRow.style.cssText = 'margin-top:14px;padding:10px 14px;background:#f8fafc;'
+    + 'border:1px solid #e5e7eb;border-radius:8px;font-size:11px;color:#6b7280;'
+    + 'display:flex;gap:20px;flex-wrap:wrap;align-items:center';
+  const nRA = ns.retroaudit_samples || 0;
+  const nIM = ns.image_samples || 0;
+  const spc = (ns.sec_per_chunk || 6.0).toFixed(1);
+  const spi = (ns.sec_per_image || 8.0).toFixed(1);
+  const raLabel = nRA > 0
+    ? '<strong>' + spc + '</strong> sec/chunk'
+    : '<strong>' + spc + '</strong> sec/chunk <em>(standaard)</em>';
+  const imLabel = nIM > 0
+    ? '<strong>' + spi + '</strong> sec/afbeelding'
+    : '<strong>' + spi + '</strong> sec/afbeelding <em>(standaard)</em>';
+  const nLabel = (nRA === 0 && nIM === 0)
+    ? 'Nog geen metingen — standaardwaarden gebruikt'
+    : 'Gebaseerd op ' + Math.max(nRA, nIM) + ' meting' + (Math.max(nRA, nIM) !== 1 ? 'en' : '');
+  statsRow.innerHTML = '<span style="color:#374151;font-weight:600">Timing:</span>'
+    + '<span>Retroaudit: ' + raLabel + '</span>'
+    + '<span>Afbeelding: ' + imLabel + '</span>'
+    + '<span style="margin-left:auto;font-style:italic">' + nLabel + '</span>';
+  wrap.appendChild(statsRow);
+
   return wrap;
 }
 
