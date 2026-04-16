@@ -1921,6 +1921,12 @@ async def _qdrant_count_source(collection: str, source_file: str) -> int:
 @app.get("/library", response_class=HTMLResponse)
 async def library_page():
     body = """
+<style>
+.book-row { transition: background 0.12s; }
+.book-row:hover { background: #f0faf8 !important; }
+.book-row.active-row { background: #e8f4f5 !important;
+  border-radius: 10px 10px 0 0 !important; box-shadow: 0 0 0 2px #1A6B72 !important; }
+</style>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px">
     <h1 style="font-size:22px;font-weight:700">Bibliotheek — Catalogus</h1>
@@ -2092,14 +2098,18 @@ function ocrBadge(engine) {
 function renderCard(item) {
   const canDelete = item.chunk_count > 0;
   const delBtn = canDelete
-    ? `<button onclick="openDelModal('${escJs(item.id)}','${escJs(item.title)}',${item.chunk_count},'${escJs(item.collection)}')"
+    ? `<button onclick="event.stopPropagation();openDelModal('${escJs(item.id)}','${escJs(item.title)}',${item.chunk_count},'${escJs(item.collection)}')"
          style="background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;border-radius:6px;
                 padding:4px 10px;font-size:12px;cursor:pointer;font-weight:600;white-space:nowrap">
          Verwijder uit Qdrant
        </button>`
     : '';
 
-  return `<div style="background:#fff;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.07);
+  const clickable = item.book_hash
+    ? `class="book-row" onclick="toggleBookDetail(this,'${escJs(item.book_hash)}')" style="cursor:pointer;`
+    : 'style="';
+
+  return `<div ${clickable}background:#fff;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.07);
                       padding:14px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
     <div style="flex:1;min-width:200px">
       <div style="font-weight:600;font-size:15px;color:#111">${escHtml(item.title)}</div>
@@ -2110,10 +2120,156 @@ function renderCard(item) {
     </div>
     <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
       ${statusPill(item.status)}${ocrBadge(item.ocr_engine)}
-      <span style="font-size:12px;color:#6b7280">${item.chunk_count !== null ? item.chunk_count.toLocaleString() + ' chunks' : '…'}</span>
+      <span style="font-size:12px;color:#6b7280">${item.chunk_count !== null ? item.chunk_count.toLocaleString() + ' chunks' : '\u2026'}</span>
     </div>
     ${delBtn}
   </div>`;
+}
+
+async function toggleBookDetail(row, bookHash) {
+  const existingDetail = document.getElementById('detail-' + bookHash);
+  if (existingDetail) {
+    existingDetail.remove();
+    row.classList.remove('active-row');
+    return;
+  }
+  row.classList.add('active-row');
+
+  // Insert loading placeholder immediately
+  const placeholder = document.createElement('div');
+  placeholder.id = 'detail-' + bookHash;
+  placeholder.style.cssText = 'background:#f8fffe;border-left:3px solid #1A6B72;'
+    + 'border-radius:0 0 10px 10px;padding:10px 16px;margin-top:-4px;'
+    + 'box-shadow:0 2px 4px rgba(0,0,0,.06)';
+  placeholder.innerHTML = '<div style="font-size:12px;color:#6b7280;padding:6px 0">\u23F3 Laden\u2026</div>';
+  row.insertAdjacentElement('afterend', placeholder);
+
+  try {
+    const resp = await fetch('/api/library/book/' + bookHash + '/detail');
+    if (!resp.ok) {
+      placeholder.innerHTML = '<div style="font-size:12px;color:#dc2626;padding:6px 0">Geen ingest data beschikbaar voor dit boek.</div>';
+      return;
+    }
+    const d = await resp.json();
+    placeholder.innerHTML = buildPhaseTable(d);
+  } catch(e) {
+    placeholder.innerHTML = '<div style="font-size:12px;color:#dc2626;padding:6px 0">Fout: ' + e + '</div>';
+  }
+}
+
+function buildPhaseTable(d) {
+  const parseTs = s => s ? new Date(s) : null;
+  const fmtTime = dt => dt
+    ? dt.toLocaleTimeString('nl-NL', {hour:'2-digit', minute:'2-digit'})
+    : '\u2014';
+  const elapsed = (start, end) => {
+    if (!start) return '\u2014';
+    const ms  = (end || new Date()) - start;
+    const tot = Math.floor(ms / 60000);
+    return Math.floor(tot / 60) + ':' + String(tot % 60).padStart(2, '0');
+  };
+  const fmt = n => (n == null) ? '\u2014' : Number(n).toLocaleString('nl-NL');
+
+  const phaseOrder = ['parse','audit','embed','qdrant'];
+  const phaseNames = {
+    parse:'Parsing', audit:'Audit & Tagging',
+    embed:'Embedding', qdrant:'Qdrant upload'
+  };
+  const circleColor = {done:'#059669', running:'#1A6B72', failed:'#dc2626', pending:'#d1d5db'};
+  const circleIcon  = {done:'\u2713', running:'\u25B6', failed:'\u2717', pending:'\u2022'};
+  const pillStyles  = {
+    done:'background:#dcfce7;color:#16a34a',
+    running:'background:#e8f4f5;color:#1A6B72',
+    failed:'background:#fee2e2;color:#dc2626',
+    pending:'background:#f3f4f6;color:#6b7280'
+  };
+  const pillLabels  = {done:'Klaar', running:'Bezig', failed:'Fout', pending:'Wacht'};
+
+  // Book-level summary bar
+  const bkStart = parseTs(d.started_at);
+  const bkEnd   = parseTs(d.completed_at);
+  let html = `<div style="background:#ddf2f3;border-radius:6px;padding:3px 10px;`
+    + `font-size:12px;font-family:monospace;color:#085041;margin-bottom:10px">`
+    + `Start ${bkStart
+        ? bkStart.toLocaleDateString('nl-NL',{day:'2-digit',month:'2-digit'}).replace('/','-')
+          + ' ' + fmtTime(bkStart)
+        : '\u2014'}`
+    + ` &nbsp;\u00b7&nbsp; Eind ${fmtTime(bkEnd)}`
+    + ` &nbsp;\u00b7&nbsp; Verstreken ${elapsed(bkStart, bkEnd)}`
+    + `</div>`;
+
+  const thS = 'text-align:left;padding:5px 6px 7px;font-weight:500;font-size:12px;'
+    + 'border-bottom:1.5px solid #1A6B72;white-space:nowrap;background:#ddf2f3;color:#085041';
+
+  html += `<table style="width:100%;border-collapse:collapse;table-layout:fixed;font-size:13px">`
+    + `<colgroup><col style="width:32%"><col style="width:14%">`
+    + `<col style="width:18%"><col style="width:18%"><col style="width:18%"></colgroup>`
+    + `<thead><tr>`
+    + `<th style="${thS};padding-left:0">Fase</th>`
+    + `<th style="${thS}">Status</th>`
+    + `<th style="${thS}">Start</th>`
+    + `<th style="${thS}">Eind</th>`
+    + `<th style="${thS}">Totaal</th>`
+    + `</tr></thead><tbody>`;
+
+  for (let pi = 0; pi < phaseOrder.length; pi++) {
+    const ph   = phaseOrder[pi];
+    const info = (d.phases && d.phases[ph]) || {};
+    const st   = info.status || 'pending';
+    const isDone    = st === 'done';
+    const isRunning = st === 'running';
+    const ccol = circleColor[st] || '#d1d5db';
+    const icon = circleIcon[st]  || '\u2022';
+
+    let detail = '';
+    if (ph === 'parse' && isDone) {
+      detail = fmt(info.pages_total) + " pagina\u2019s";
+      if (info.chunks_extracted) detail += ' \u00b7 ' + fmt(info.chunks_extracted) + ' chunks';
+      if (info.ocr_engine && info.ocr_engine !== 'native' && info.ocr_engine !== 'pymupdf')
+        detail += ' \u00b7 <span style="color:#6b7280">' + info.ocr_engine + '</span>';
+    } else if (ph === 'audit' && isDone) {
+      detail = fmt(info.chunks_total) + ' chunks';
+      if (info.chunks_tagged)  detail += ' \u00b7 ' + fmt(info.chunks_tagged) + ' getagd';
+      if (info.chunks_skipped) detail += ' \u00b7 ' + fmt(info.chunks_skipped) + ' overgeslagen';
+    } else if (ph === 'embed' && isDone) {
+      detail = fmt(info.chunks_done || info.chunks_total) + ' vectors';
+    } else if (ph === 'qdrant' && isDone) {
+      detail = fmt(info.chunks_inserted) + ' vectors';
+      if (info.collection) detail += ' \u2192 ' + info.collection;
+    } else if (st === 'failed' && info.error) {
+      detail = '<span style="color:#dc2626">' + String(info.error).slice(0, 80) + '</span>';
+    }
+
+    const phStart  = parseTs(info.started_at);
+    const phEnd    = parseTs(info.completed_at);
+    const pill     = `<span style="${pillStyles[st]||pillStyles.pending};border-radius:999px;`
+      + `padding:2px 8px;font-size:11px;font-weight:600">${pillLabels[st]||'Wacht'}</span>`;
+    const rowBg    = isRunning ? 'background:#f0faf8;' : '';
+
+    html += `<tr style="${rowBg}border-bottom:0.5px solid #e2e8f0">`
+      + `<td style="padding:7px 0;vertical-align:top">`
+        + `<div style="display:flex;align-items:flex-start;gap:6px">`
+          + `<span style="margin-top:2px;width:16px;height:16px;border-radius:50%;`
+            + `background:${ccol};color:#fff;font-size:9px;font-weight:700;display:flex;`
+            + `align-items:center;justify-content:center;flex-shrink:0">${icon}</span>`
+          + `<div>`
+            + `<span style="font-size:13px;color:${isRunning?'#1A6B72':'#374151'};`
+              + `font-weight:${isRunning?600:400}">${pi+1}. ${phaseNames[ph]}</span>`
+            + (detail ? `<div style="font-size:11px;color:#6b7280;margin-top:1px">${detail}</div>` : '')
+          + `</div>`
+        + `</div>`
+      + `</td>`
+      + `<td style="padding:7px 6px;vertical-align:top">${pill}</td>`
+      + `<td style="padding:7px 6px;font-size:12px;color:#4a5568;vertical-align:top">${fmtTime(phStart)}</td>`
+      + `<td style="padding:7px 6px;font-size:12px;color:${isRunning?'#1A6B72':'#4a5568'};vertical-align:top">`
+        + `${isDone ? fmtTime(phEnd) : (isRunning ? 'bezig' : '\u2014')}</td>`
+      + `<td style="padding:7px 6px;font-size:12px;color:#4a5568;vertical-align:top">`
+        + `${(isDone||isRunning) ? elapsed(phStart, phEnd) : '\u2014'}</td>`
+      + `</tr>`;
+  }
+
+  html += '</tbody></table>';
+  return html;
 }
 
 function escHtml(s) {
@@ -2221,16 +2377,18 @@ async def api_library_items():
     # Run all Qdrant count queries in parallel
     counts = await asyncio.gather(*count_coros, return_exceptions=True)
 
-    # Build map of filename → ocr_engine from state.json cache
-    ocr_engine_map: dict[str, str] = {}
+    # Build map of filename.lower() → {book_hash, ocr_engine} from state.json cache
+    state_map: dict[str, dict] = {}
     try:
         for sf in CACHE_DIR.glob("*/state.json"):
             try:
-                s = json.loads(sf.read_text())
-                fn     = (s.get("filename") or "").lower()
-                engine = (s.get("phases") or {}).get("parse", {}).get("ocr_engine") or ""
-                if fn and engine:
-                    ocr_engine_map[fn] = engine
+                s  = json.loads(sf.read_text())
+                fn = (s.get("filename") or "").lower()
+                if fn:
+                    state_map[fn] = {
+                        "book_hash":  s.get("book_hash", ""),
+                        "ocr_engine": (s.get("phases") or {}).get("parse", {}).get("ocr_engine") or "",
+                    }
             except Exception:
                 pass
     except Exception:
@@ -2258,21 +2416,36 @@ async def api_library_items():
         else:
             status = "not_ingested"
 
-        # Find OCR engine by matching patterns against state.json filenames
+        # Find book_hash + ocr_engine by matching patterns against state.json filenames
         ocr_engine = ""
+        book_hash  = ""
         for p in (patterns or [meta["id"]]):
             pl = p.lower()
-            for fn_key, eng in ocr_engine_map.items():
+            for fn_key, sm in state_map.items():
                 if pl in fn_key or fn_key in pl:
-                    ocr_engine = eng
+                    ocr_engine = sm.get("ocr_engine", "")
+                    book_hash  = sm.get("book_hash", "")
                     break
-            if ocr_engine:
+            if book_hash:
                 break
 
         items_out.append({**meta, "chunk_count": chunk_count, "status": status,
-                          "ocr_engine": ocr_engine})
+                          "ocr_engine": ocr_engine, "book_hash": book_hash})
 
     return {"items": items_out}
+
+
+# ── GET /api/library/book/{book_hash}/detail ───────────────────────────────────
+
+@app.get("/api/library/book/{book_hash}/detail")
+async def api_library_book_detail(book_hash: str):
+    """Return state.json for a specific book — used by the library detail drawer."""
+    safe = re.sub(r"[^a-f0-9]", "", book_hash)[:16]
+    sf   = CACHE_DIR / safe / "state.json"
+    state = _load_state(sf)
+    if state is None:
+        return JSONResponse({"error": "not found"}, status_code=404)
+    return state
 
 
 # ── DELETE /api/library/items/{item_id} ────────────────────────────────────────
