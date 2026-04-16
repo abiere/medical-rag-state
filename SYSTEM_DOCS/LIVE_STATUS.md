@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-16 21:17:32 UTC**
+> Last update: **2026-04-16 21:22:32 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Why FlexBeam - Recharge Health.pdf` (1 min) |
+| Current job | `Why FlexBeam - Recharge Health.pdf` (6 min) |
 | Queued | 4 |
 | Total books | 43 |
 | Ingested | 31 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` (1302 min) |
+| Current job | `1.Upper_Body_Techniques.mp4` (1307 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 10.82 GB / 32.86 GB (33%) |
-| CPU | 40.8% |
+| RAM used | 10.83 GB / 32.86 GB (33%) |
+| CPU | 44.3% |
 | Disk used | 59.2 GB / 322.3 GB (19%) |
-| Uptime | up 2 days, 11 hours, 34 minutes |
+| Uptime | up 2 days, 11 hours, 39 minutes |
 
 ## Recent markers
 - `2026-04-16T21:16:11.722420+00:00` **book_ingested** — How FlexBeam Works Using Red Light Therapy Principles – Recharge.pdf → device_documentation: 4 chunks
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-16 21:12:47,796  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 21:13:17,796  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 21:13:47,797  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 21:14:17,798  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 21:14:47,798  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 21:15:17,799  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 21:15:47,799  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 21:16:17,800  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 21:16:47,800  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-16 21:17:17,801  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 21:17:47,801  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 21:18:17,802  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 21:18:47,802  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 21:19:17,803  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 21:19:47,803  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 21:20:17,804  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 21:20:47,804  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 21:21:17,805  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 21:21:47,805  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-16 21:22:17,806  INFO      Queue paused (pause flag set) — waiting 30s
 ```
