@@ -2349,6 +2349,41 @@ async def api_library_items():
     except Exception:
         pass
 
+    # Build map of filename.lower() → {book_hash, ocr_engine, state} from state.json cache
+    # MUST be built before count_coros so we can use the real filename as Qdrant source_key
+    state_map: dict[str, dict] = {}
+    try:
+        for sf in CACHE_DIR.glob("*/state.json"):
+            try:
+                s  = json.loads(sf.read_text())
+                fn = (s.get("filename") or "").lower()
+                if fn:
+                    phases = s.get("phases") or {}
+                    all_done = all(
+                        phases.get(ph, {}).get("status") == "done"
+                        for ph in ("parse", "audit", "embed", "qdrant")
+                    )
+                    state_map[fn] = {
+                        "book_hash":    s.get("book_hash", ""),
+                        "ocr_engine":   phases.get("parse", {}).get("ocr_engine") or "",
+                        "completed_at": s.get("completed_at") or "",
+                        "all_done":     all_done,
+                        "chunks_inserted": phases.get("qdrant", {}).get("chunks_inserted") or 0,
+                    }
+            except Exception:
+                pass
+    except Exception:
+        pass
+
+    def _resolve_state_entry(patterns: list[str], book_id: str) -> tuple[str, dict]:
+        """Return (actual_filename, state_map_entry) for the best pattern match."""
+        for p in (patterns or [book_id]):
+            pl = p.lower()
+            for fn_key, sm in state_map.items():
+                if pl in fn_key or fn_key in pl:
+                    return fn_key, sm
+        return "", {}
+
     # Build item list and collect async Qdrant queries
     items_meta: list[dict] = []
     count_coros = []
@@ -2370,42 +2405,30 @@ async def api_library_items():
             "patterns":         patterns,
             "format":           info.get("format", ""),
         })
-        # Count using first pattern; if no patterns use book_id
-        source_key = patterns[0] if patterns else book_id
+        # Use actual filename from state.json as Qdrant source_key (exact match)
+        # Fall back to first pattern if no state.json entry found
+        actual_fn, _sm = _resolve_state_entry(patterns, book_id)
+        source_key = actual_fn if actual_fn else (patterns[0] if patterns else book_id)
         count_coros.append(_qdrant_count_source(collection, source_key))
 
     # Run all Qdrant count queries in parallel
     counts = await asyncio.gather(*count_coros, return_exceptions=True)
 
-    # Build map of filename.lower() → {book_hash, ocr_engine} from state.json cache
-    state_map: dict[str, dict] = {}
-    try:
-        for sf in CACHE_DIR.glob("*/state.json"):
-            try:
-                s  = json.loads(sf.read_text())
-                fn = (s.get("filename") or "").lower()
-                if fn:
-                    state_map[fn] = {
-                        "book_hash":  s.get("book_hash", ""),
-                        "ocr_engine": (s.get("phases") or {}).get("parse", {}).get("ocr_engine") or "",
-                    }
-            except Exception:
-                pass
-    except Exception:
-        pass
-
     items_out = []
     for meta, count in zip(items_meta, counts):
         chunk_count = count if isinstance(count, int) else 0
         patterns    = meta.pop("patterns")
-        source_key  = patterns[0] if patterns else meta["id"]
+
+        actual_fn, sm = _resolve_state_entry(patterns, meta["id"])
+        ocr_engine    = sm.get("ocr_engine", "")
+        book_hash     = sm.get("book_hash", "")
 
         # Determine status — check all patterns against processing/queue filenames
-        def _matches_file(fname: str) -> bool:
+        def _matches_file(fname: str, _pats=patterns, _id=meta["id"]) -> bool:
             if not fname:
                 return False
             fl = fname.lower()
-            return any(p.lower() in fl or fl in p.lower() for p in patterns) if patterns else (meta["id"].lower() in fl)
+            return any(p.lower() in fl or fl in p.lower() for p in _pats) if _pats else (_id.lower() in fl)
 
         if _matches_file(processing_file):
             status = "processing"
@@ -2413,21 +2436,12 @@ async def api_library_items():
             status = "queued"
         elif chunk_count > 0:
             status = "ingested"
+        elif sm.get("all_done"):
+            # state.json says all 4 phases completed — trust it even if Qdrant count is cached 0
+            status = "ingested"
+            chunk_count = sm.get("chunks_inserted", 0)
         else:
             status = "not_ingested"
-
-        # Find book_hash + ocr_engine by matching patterns against state.json filenames
-        ocr_engine = ""
-        book_hash  = ""
-        for p in (patterns or [meta["id"]]):
-            pl = p.lower()
-            for fn_key, sm in state_map.items():
-                if pl in fn_key or fn_key in pl:
-                    ocr_engine = sm.get("ocr_engine", "")
-                    book_hash  = sm.get("book_hash", "")
-                    break
-            if book_hash:
-                break
 
         items_out.append({**meta, "chunk_count": chunk_count, "status": status,
                           "ocr_engine": ocr_engine, "book_hash": book_hash})
