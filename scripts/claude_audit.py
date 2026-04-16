@@ -11,6 +11,7 @@ import logging
 import os
 import tempfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime, timezone
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -141,10 +142,57 @@ def audit_chunks_parallel(chunks: list, progress_fn=None) -> list:
     return results
 
 
+def _update_state_after_retroaudit(phase2_path: Path,
+                                    tagged: int, errors: int) -> None:
+    """
+    Update state.json after retroaudit using phase2 file as ground truth.
+    Atomic write — same pattern as book_ingest_queue._write_state.
+    """
+    state_path = phase2_path.parent / "state.json"
+    if not state_path.exists():
+        logger.warning("state.json not found at %s — skipping update", state_path)
+        return
+    try:
+        state = json.loads(state_path.read_text())
+
+        # Ground truth: recount directly from the updated phase2 file
+        chunks = json.loads(phase2_path.read_text())
+        total         = len(chunks)
+        now_tagged    = sum(1 for c in chunks
+                            if str(c.get("audit_status", "")).startswith("tagged"))
+        still_skipped = sum(1 for c in chunks
+                            if str(c.get("audit_status", "")).startswith("skipped"))
+
+        audit = state.setdefault("phases", {}).setdefault("audit", {})
+        audit["chunks_tagged"]  = now_tagged
+        audit["chunks_skipped"] = still_skipped
+        audit["chunks_total"]   = total
+
+        if still_skipped == 0:
+            audit["status"] = "done"
+            audit["retroaudit_completed_at"] = datetime.now(timezone.utc).isoformat()
+            logger.info("Audit phase fully complete after retroaudit: %s", phase2_path.name)
+        else:
+            logger.info("Retroaudit partial for %s: %d tagged, %d still skipped",
+                        phase2_path.name, now_tagged, still_skipped)
+
+        state["updated_at"] = datetime.now(timezone.utc).isoformat()
+
+        # Atomic write
+        tmp = state_path.with_suffix(".tmp")
+        tmp.write_text(json.dumps(state, ensure_ascii=False, indent=2))
+        os.replace(tmp, state_path)
+
+        logger.info("state.json updated: %d tagged, %d skipped, %d total — %s",
+                    now_tagged, still_skipped, total, state_path.parent.name)
+    except Exception as e:
+        logger.error("Failed to update state.json after retroaudit: %s", e)
+
+
 def retroaudit_skipped(phase2_path: Path, progress_fn=None) -> tuple[int, int]:
     """
     Re-audit all chunks with audit_status starting with 'skipped' using Claude API.
-    Updates phase2_path in-place (atomic write).
+    Updates phase2_path in-place (atomic write) and syncs state.json.
     Returns (tagged_count, error_count).
     """
     if not phase2_path.exists():
@@ -167,11 +215,15 @@ def retroaudit_skipped(phase2_path: Path, progress_fn=None) -> tuple[int, int]:
         if cid and cid in id_to_updated:
             chunks[i] = id_to_updated[cid]
 
-    # Atomic write
+    # Atomic write of phase2 file
     tmp = phase2_path.with_suffix(".tmp")
     tmp.write_text(json.dumps(chunks, ensure_ascii=False, indent=2))
     tmp.replace(phase2_path)
 
     tagged = sum(1 for c in updated if c.get("audit_status") == "tagged_claude")
     errors = len(updated) - tagged
+
+    # Sync state.json with ground-truth counts from updated phase2 file
+    _update_state_after_retroaudit(phase2_path, tagged, errors)
+
     return tagged, errors
