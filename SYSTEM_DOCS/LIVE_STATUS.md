@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 20:02:13 UTC**
+> Last update: **2026-04-17 20:07:13 UTC**
 
 ## Services
 | Service | Status |
@@ -14,10 +14,10 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Touch for Health_ The Complete Edition_ A Practical Guide to Natural Health With Acupressure Touch.epub` (8 min) |
+| Current job | `Touch for Health_ The Complete Edition_ A Practical Guide to Natural Health With Acupressure Touch.epub` (13 min) |
 | Queued | 1 |
 | Total books | 18 |
-| Ingested | 53 |
+| Ingested | 54 |
 | Vectors in medical_library | 10115 |
 | Images pending approval | 2026 |
 | Images approved | 0 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (21 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (26 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in video_transcripts | ? |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 14.96 GB / 32.86 GB (46%) |
-| CPU | 99.8% |
+| RAM used | 15.8 GB / 32.86 GB (48%) |
+| CPU | 100.0% |
 | Disk used | 67.7 GB / 322.3 GB (22%) |
-| Uptime | up 14 hours, 26 minutes |
+| Uptime | up 14 hours, 31 minutes |
 
 ## Recent markers
 - `2026-04-17T19:53:36.558093+00:00` **book_ingested** — Touch for Health_ The Complete Edition_ A Practical Guide to Natural Health With Acupressure Touch_nodrm.pdf → medical_library: 482 chunks
