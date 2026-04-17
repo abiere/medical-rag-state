@@ -178,6 +178,14 @@ After every task:
 
 ---
 
+## Maintenance status
+
+**Laatste run:** 17-04-2026 00:30 (186.9s)  
+**Uitslag:** ⚠️ WARNING — 2 waarschuwing(en), 6 OK  
+
+
+---
+
 ## Test status
 
 **Laatste run:** 17-04-2026 00:00 (18.4s)  
