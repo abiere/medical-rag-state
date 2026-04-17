@@ -67,6 +67,19 @@
 
 ---
 
+## ✅ Afgerond — sessie 2026-04-17 (/images 7 UI verbeteringen)
+
+- [x] **7 UI fixes voor `/images` pagina toegepast**
+      1. Geen auto-expand bij laden — pagina start met alle boeken collapsed
+      2. Boektitel + auteurs ipv bestandsnaam — toont `full_title` (vet), `authors` (grijs), bestandsnaam (monospace klein)
+      3. Prioriteit dropdown verplaatst naar drawer action bar (rechts uitgelijnd via `margin-left:auto`)
+      4. Badge volgorde omgedraaid — eval badge eerst, dan prioriteit badge
+      5. Sorteer dropdown toegevoegd — Afbeeldingen / Titel / Prioriteit / Beoordeeld; URL-state bewaard
+      6. API limit 50 → 500 per boek (laden van alle thumbnails in één keer)
+      7. Thumbnail klik = lightbox; zoom-knop verwijderd; `wrap.onclick` met checkbox-uitzondering
+
+---
+
 ## ✅ Afgerond — sessie 2026-04-17 (EPUB re-extractie met figcaption)
 
 - [x] **Re-extractie gestart voor alle EPUBs zonder captions** — 5 boeken

@@ -5287,7 +5287,7 @@ def _eval_badge(evaluated: bool) -> str:
 # ── GET /images ────────────────────────────────────────────────────────────────
 
 @app.get("/images", response_class=HTMLResponse)
-async def images_page(filter: str = "all"):
+async def images_page(filter: str = "all", sort: str = "images"):
     kai = _load_kai_cache()
 
     books_data: list[dict] = []
@@ -5317,16 +5317,21 @@ async def images_page(filter: str = "all"):
         priority_override = cls_entry.get("image_priority_override") or None
         effective         = priority_override or priority
         evaluated         = bool(cls_entry.get("image_evaluated", False))
+        display_title     = (cls_entry.get("full_title")
+                             or Path(filename).stem.replace("_nodrm", ""))
+        display_authors   = cls_entry.get("authors", "")
 
         books_data.append({
-            "book_hash":   book_hash,
-            "filename":    filename,
-            "image_count": len(images),
-            "priority":    priority,
-            "override":    priority_override,
-            "effective":   effective,
-            "evaluated":   evaluated,
-            "cls_key":     cls_key,
+            "book_hash":       book_hash,
+            "filename":        filename,
+            "image_count":     len(images),
+            "priority":        priority,
+            "override":        priority_override,
+            "effective":       effective,
+            "evaluated":       evaluated,
+            "cls_key":         cls_key,
+            "display_title":   display_title,
+            "display_authors": display_authors,
         })
 
     filter_map = {
@@ -5339,7 +5344,15 @@ async def images_page(filter: str = "all"):
     if filter != "all" and filter in filter_map:
         books_data = [b for b in books_data if filter_map[filter](b)]
 
-    books_data.sort(key=lambda b: -b["image_count"])
+    _prio_order = {"high": 0, "normal": 1, "low": 2, "skip": 3}
+    if sort == "title":
+        books_data.sort(key=lambda b: b["display_title"].lower())
+    elif sort == "priority":
+        books_data.sort(key=lambda b: _prio_order.get(b["effective"], 9))
+    elif sort == "evaluated":
+        books_data.sort(key=lambda b: (b["evaluated"], -b["image_count"]))
+    else:
+        books_data.sort(key=lambda b: -b["image_count"])
     total_images = sum(b["image_count"] for b in books_data)
 
     book_rows = ""
@@ -5347,6 +5360,9 @@ async def images_page(filter: str = "all"):
         bh  = bd["book_hash"]
         ck  = bd["cls_key"]
         cur = bd["override"] or bd["priority"]
+        authors_html = (f'<div style="font-size:12px;color:#6b7280;margin-top:1px">'
+                        f'{bd["display_authors"]}</div>'
+                        if bd["display_authors"] else "")
         book_rows += f"""
 <div class="book-row-img" id="brow-{bh}"
      style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;
@@ -5355,26 +5371,14 @@ async def images_page(filter: str = "all"):
        style="padding:14px 18px;display:flex;align-items:center;
               gap:12px;cursor:pointer;flex-wrap:wrap">
     <div style="flex:1;min-width:160px">
-      <div style="font-weight:600;font-size:15px">{bd['filename']}</div>
+      <div style="font-weight:600;font-size:15px">{bd['display_title']}</div>
+      {authors_html}
+      <div style="font-size:11px;color:#9ca3af;font-family:monospace;margin-top:2px">{bd['filename']}</div>
       <div style="font-size:12px;color:#6b7280;margin-top:2px">{bd['image_count']} afbeelding(en)</div>
     </div>
-    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"
-         onclick="event.stopPropagation()">
-      {_priority_badge(bd['priority'], bd['override'])}
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
       {_eval_badge(bd['evaluated'])}
-      <div style="position:relative">
-        <button onclick="togglePrioMenu('{bh}')"
-                class="btn btn-secondary" style="font-size:12px;padding:4px 10px">
-          Prioriteit ▾
-        </button>
-        <div id="prio-{bh}"
-             style="display:none;position:absolute;right:0;top:110%;
-                    background:#fff;border:1px solid #e2e8f0;border-radius:8px;
-                    padding:4px;min-width:140px;z-index:100;
-                    box-shadow:0 4px 12px rgba(0,0,0,.1)">
-          {_prio_dropdown_items(bh, ck, cur)}
-        </div>
-      </div>
+      {_priority_badge(bd['priority'], bd['override'])}
     </div>
     <span id="chev-{bh}"
           style="font-size:18px;color:#9ca3af;transition:transform 0.2s">&#9658;</span>
@@ -5400,6 +5404,19 @@ async def images_page(filter: str = "all"):
                      font-size:12px;cursor:pointer">
         Verwijder geselecteerde
       </button>
+      <div style="position:relative;margin-left:auto">
+        <button onclick="togglePrioMenu('{bh}')"
+                class="btn btn-secondary" style="font-size:12px;padding:4px 10px">
+          Prioriteit ▾
+        </button>
+        <div id="prio-{bh}"
+             style="display:none;position:absolute;right:0;top:110%;
+                    background:#fff;border:1px solid #e2e8f0;border-radius:8px;
+                    padding:4px;min-width:140px;z-index:100;
+                    box-shadow:0 4px 12px rgba(0,0,0,.1)">
+          {_prio_dropdown_items(bh, ck, cur)}
+        </div>
+      </div>
     </div>
     <div id="imgs-{bh}"
          style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
@@ -5418,7 +5435,7 @@ async def images_page(filter: str = "all"):
                          ("low", "Laag"), ("skip", "Overslaan"),
                          ("unreviewed", "Niet beoordeeld")]:
         active = "background:#1A6B72;color:#fff;" if filter == fkey else ""
-        filter_links += (f'<a href="/images?filter={fkey}" class="btn btn-secondary" '
+        filter_links += (f'<a href="/images?filter={fkey}&sort={sort}" class="btn btn-secondary" '
                          f'style="font-size:13px;{active}">{flabel}</a>')
 
     _img_css = """<style>
@@ -5482,7 +5499,7 @@ async function loadImgs(hash, reset) {
   try {
     const r = await fetch(
       '/api/images/book/' + hash +
-      '?offset=' + st.offset + '&limit=50&filter=' + st.filter
+      '?offset=' + st.offset + '&limit=500&filter=' + st.filter
     );
     const d = await r.json();
     st.total = d.total;
@@ -5564,18 +5581,6 @@ function _makeThumb(hash, img) {
     wrap.appendChild(alt);
   }
 
-  const zoom = document.createElement('div');
-  zoom.textContent = '\U0001f50d';
-  zoom.style.cssText =
-    'position:absolute;bottom:4px;right:4px;background:rgba(0,0,0,0.55);' +
-    'color:#fff;font-size:13px;width:22px;height:22px;border-radius:50%;' +
-    'display:flex;align-items:center;justify-content:center;cursor:pointer';
-  zoom.onclick = function(e) {
-    e.stopPropagation();
-    _openLightbox(img.url, img.alt_text, img.filename);
-  };
-  wrap.appendChild(zoom);
-
   const cb = document.createElement('input');
   cb.type = 'checkbox';
   cb.style.cssText =
@@ -5593,6 +5598,10 @@ function _makeThumb(hash, img) {
     _updateDelBtn(hash);
   };
   wrap.appendChild(cb);
+  wrap.onclick = function(e) {
+    if (e.target.type === 'checkbox') return;
+    _openLightbox(img.url, img.alt_text, img.filename);
+  };
   return wrap;
 }
 
@@ -5668,13 +5677,6 @@ function setPriority(bookHash, clsKey, priority) {
   .catch(e => alert('Fout: ' + e));
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-  const firstRow = document.querySelector('.book-row-img');
-  if (firstRow) {
-    const hash = firstRow.id.replace('brow-', '');
-    toggleImgBook(hash, firstRow.querySelector('div'));
-  }
-});
 </script>"""
 
     no_results = ('<div style="color:#9ca3af;padding:24px">Geen afbeeldingen gevonden. '
@@ -5689,8 +5691,16 @@ document.addEventListener('DOMContentLoaded', function() {
       {len(books_data)} boek(en) &middot; {total_images} afbeeldingen
     </span>
   </div>
-  <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
     {filter_links}
+    <select onchange="location='/images?filter={filter}&sort='+this.value"
+            style="margin-left:auto;padding:5px 10px;border-radius:6px;
+                   border:1px solid #e2e8f0;font-size:13px;cursor:pointer">
+      <option value="images" {"selected" if sort=="images" else ""}>Sorteren: Afbeeldingen</option>
+      <option value="title" {"selected" if sort=="title" else ""}>Sorteren: Titel</option>
+      <option value="priority" {"selected" if sort=="priority" else ""}>Sorteren: Prioriteit</option>
+      <option value="evaluated" {"selected" if sort=="evaluated" else ""}>Sorteren: Beoordeeld</option>
+    </select>
   </div>
   {book_rows if book_rows else no_results}
 </div>
