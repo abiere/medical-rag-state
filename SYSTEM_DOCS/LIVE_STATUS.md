@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 12:21:49 UTC**
+> Last update: **2026-04-17 12:26:50 UTC**
 
 ## Services
 | Service | Status |
@@ -25,25 +25,25 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | idle |
+| Current job | `2.Upper_Body_Fundamentals.mp4` (4 min) |
 | Queued | 17 |
 | Done | 18 / 35 |
-| Vectors in video_transcripts | 170 |
+| Vectors in video_transcripts | 189 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 3.51 GB / 32.86 GB (11%) |
-| CPU | 76.9% |
-| Disk used | 59.4 GB / 322.3 GB (19%) |
-| Uptime | up 6 hours, 46 minutes |
+| RAM used | 6.76 GB / 32.86 GB (21%) |
+| CPU | 95.7% |
+| Disk used | 59.5 GB / 322.3 GB (19%) |
+| Uptime | up 6 hours, 51 minutes |
 
 ## Recent markers
+- `2026-04-17T12:21:57` **transcription_done** — 2.Lower_Body_Fundamentals.mp4 complete (18/19)
+- `2026-04-17T12:21:57` **transcript_ingested** — 2.Lower_Body_Fundamentals.mp4 ingested into Qdrant
 - `2026-04-17T12:04:36` **transcription_done** — 16_Expanded__Revised__and_New_Techniques.mp4 complete (17/19)
 - `2026-04-17T12:04:36` **transcript_ingested** — 16_Expanded__Revised__and_New_Techniques.mp4 ingested into Qdrant
 - `2026-04-17T11:50:45.413111+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
-- `2026-04-17T11:46:51.672898+00:00` **book_ingested** — QRS 101 Operating Manual.pdf → device_documentation: 3 chunks
-- `2026-04-17T11:44:44.248640+00:00` **book_ingested** — QRS 101 Indication Settings English.pdf → device_documentation: 9 chunks
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-17 12:04:21,017  INFO      Stats updated: 16_Expanded__Revised__and_New_Techniques.mp4 — 2.1s/MB  rate=2.1s/MB (1 samples)
-2026-04-17 12:04:21,018  INFO      INGEST nrt/16_Expanded__Revised__and_New_Techniques.mp4
-2026-04-17 12:04:36,559  INFO        [ingest] 16_Expanded__Revised__and_New_Techniques.json: 241 segments → 12 chunks
-2026-04-17 12:04:36,559  INFO        [ingest] Loading embedding model …
-2026-04-17 12:04:36,559  INFO        [ingest]   Ingested chunk 12/12 for 16_Expanded__Revised__and_New_Techniques.mp4
 2026-04-17 12:04:36,559  INFO        [ingest] Done: 12 chunks ingested, 0 skipped (already exists)
 2026-04-17 12:04:36,690  INFO      START  nrt/2.Lower_Body_Fundamentals.mp4
 2026-04-17 12:21:39,618  INFO      DONE   nrt/2.Lower_Body_Fundamentals.mp4  (1023s)
 2026-04-17 12:21:39,619  INFO      Stats updated: 2.Lower_Body_Fundamentals.mp4 — 3.7s/MB  rate=2.9s/MB (2 samples)
 2026-04-17 12:21:39,620  INFO      INGEST nrt/2.Lower_Body_Fundamentals.mp4
+2026-04-17 12:21:57,263  INFO        [ingest] 2.Lower_Body_Fundamentals.json: 621 segments → 19 chunks
+2026-04-17 12:21:57,263  INFO        [ingest] Loading embedding model …
+2026-04-17 12:21:57,263  INFO        [ingest]   Ingested chunk 19/19 for 2.Lower_Body_Fundamentals.mp4
+2026-04-17 12:21:57,264  INFO        [ingest] Done: 19 chunks ingested, 0 skipped (already exists)
+2026-04-17 12:21:57,360  INFO      START  nrt/2.Upper_Body_Fundamentals.mp4
 ```
