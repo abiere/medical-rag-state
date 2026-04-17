@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 12:46:53 UTC**
+> Last update: **2026-04-17 12:51:53 UTC**
 
 ## Services
 | Service | Status |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `3.Why_People_Hurt.mp4` (4 min) |
+| Current job | `3.Why_People_Hurt.mp4` (9 min) |
 | Queued | 15 |
 | Done | 19 / 35 |
 | Vectors in video_transcripts | 208 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 6.71 GB / 32.86 GB (20%) |
-| CPU | 98.9% |
+| RAM used | 6.72 GB / 32.86 GB (20%) |
+| CPU | 96.1% |
 | Disk used | 59.5 GB / 322.3 GB (19%) |
-| Uptime | up 7 hours, 11 minutes |
+| Uptime | up 7 hours, 16 minutes |
 
 ## Recent markers
 - `2026-04-17T12:42:00` **transcription_failed** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 FAILED (19/19)
