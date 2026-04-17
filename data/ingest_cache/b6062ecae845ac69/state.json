@@ -27,7 +27,7 @@
       "completed_at": "2026-04-16T20:33:43.049016+00:00",
       "chunks_total": 5,
       "chunks_tagged": 0,
-      "chunks_skipped": 2,
+      "chunks_skipped": 0,
       "ollama_available": false,
       "consecutive_failures_hit": true,
       "output_file": "phase2_audited.json"

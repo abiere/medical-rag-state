@@ -6637,13 +6637,17 @@ def _run_reaudit_job(job_id: str, filename: str) -> None:
         _REAUDIT_JOBS[job_id]["progress"] = "Skipped chunks ophalen…"
 
         from qdrant_client import QdrantClient
-        from qdrant_client.models import Filter, FieldCondition, MatchValue
+        from qdrant_client.models import Filter, FieldCondition, MatchValue, MatchAny
         from audit_book import tag_chunks_with_ollama
 
         client = QdrantClient(host="localhost", port=6333, timeout=60)
 
+        # Resolve the book's collection from state.json (not hardcoded)
+        _book_state = _find_state_for_file(filename)
+        collection = _book_state.get("collection", "medical_library") if _book_state else "medical_library"
+
         results, _ = client.scroll(
-            collection_name="medical_library",
+            collection_name=collection,
             scroll_filter=Filter(must=[
                 FieldCondition(key="source_file",  match=MatchValue(value=filename)),
                 FieldCondition(key="audit_status", match=MatchValue(value="skipped_ollama_timeout")),
@@ -6671,7 +6675,7 @@ def _run_reaudit_job(job_id: str, filename: str) -> None:
                 still_pending += 1
                 continue
             client.set_payload(
-                collection_name="medical_library",
+                collection_name=collection,
                 payload={
                     "usability_tags":     chunk.get("usability_tags", []),
                     "protocol_relevance": chunk.get("protocol_relevance", 0.0),
@@ -6688,11 +6692,70 @@ def _run_reaudit_job(job_id: str, filename: str) -> None:
             "status": "done",
             "result": f"{scored} gescoord, {still_pending} nog uitstaand",
         })
+        # Reset chunks_skipped in state.json if all chunks are now tagged
+        _clear_skipped_in_state(collection, client, filename_filter=filename)
     except Exception as exc:
         _REAUDIT_JOBS[job_id].update({"status": "error", "error": str(exc)[:300]})
 
 
 # ─── GLOBAL RETROAUDIT (Claude API, all books) ────────────────────────────────
+
+# Collections that contain chunked text requiring KAI tagging.
+# video_transcripts is excluded — transcriptions use a different schema.
+_AUDIT_COLLECTIONS = ["medical_library", "nrt_qat_curriculum", "device_documentation"]
+
+
+def _clear_skipped_in_state(
+    collection: str,
+    client,
+    filename_filter: str | None = None,
+) -> None:
+    """Reset chunks_skipped=0 in state.json for books whose skipped chunks are gone from Qdrant.
+
+    Called after retroaudit (or per-book reaudit) to allow _compute_book_status()
+    to advance past audit_lopend.  filename_filter restricts to one book.
+    """
+    import logging as _log
+    from qdrant_client.models import Filter, FieldCondition, MatchValue, MatchAny
+
+    if not CACHE_DIR.exists():
+        return
+
+    for sf in CACHE_DIR.glob("*/state.json"):
+        try:
+            state = json.loads(sf.read_text())
+            if state.get("collection") != collection:
+                continue
+            audit = state.get("phases", {}).get("audit", {})
+            if (audit.get("chunks_skipped", 0) or 0) == 0:
+                continue
+            filename = state.get("filename", "")
+            if not filename:
+                continue
+            if filename_filter and filename != filename_filter:
+                continue
+
+            # Check how many skipped chunks remain in Qdrant
+            remaining, _ = client.scroll(
+                collection_name=collection,
+                scroll_filter=Filter(must=[
+                    FieldCondition(key="source_file", match=MatchValue(value=filename)),
+                    FieldCondition(key="audit_status", match=MatchAny(
+                        any=["skipped_ollama_timeout", "skipped_claude_error"])),
+                ]),
+                limit=1, with_payload=False, with_vectors=False,
+            )
+            if remaining:
+                continue  # Still has skipped chunks — leave state as-is
+
+            state["phases"]["audit"]["chunks_skipped"] = 0
+            tmp = sf.with_suffix(".tmp")
+            tmp.write_text(json.dumps(state, indent=2, ensure_ascii=False))
+            tmp.replace(sf)
+            _log.getLogger(__name__).info("Cleared chunks_skipped for %s (%s)", filename, collection)
+        except Exception as exc:
+            _log.getLogger(__name__).warning("_clear_skipped_in_state: %s", exc)
+
 
 _retroaudit_state: dict = {
     "running": False, "started_at": None, "finished_at": None,
@@ -6703,7 +6766,7 @@ _retroaudit_lock = threading.Lock()
 
 
 def _run_retroaudit() -> None:
-    """Background thread: tag ALL skipped chunks across medical_library via Claude API."""
+    """Background thread: tag ALL skipped chunks across all text collections via Claude API."""
     global _retroaudit_state
     with _retroaudit_lock:
         _retroaudit_state.update({
@@ -6728,28 +6791,40 @@ def _run_retroaudit() -> None:
         from qdrant_client import QdrantClient
         from qdrant_client.models import Filter, FieldCondition, MatchAny
         client = QdrantClient(host="localhost", port=6333, timeout=60)
-        COLLECTION = "medical_library"
         _cls = _load_classifications()
 
-        results, _ = client.scroll(
-            collection_name=COLLECTION,
-            scroll_filter=Filter(should=[
-                FieldCondition(key="audit_status", match=MatchAny(any=["skipped_ollama_timeout", "skipped_claude_error"])),
-            ]),
-            limit=10_000, with_payload=True, with_vectors=False,
-        )
-        points = [(p.id, p.payload) for p in results if p.payload]
-        _retroaudit_state["total_found"] = len(points)
+        # Gather skipped chunks from ALL text collections.
+        # Each point tracks its own collection so set_payload writes to the right one.
+        # (pid, payload_dict, collection_name)
+        all_points: list[tuple] = []
+        import logging as _log
+        for coll in _AUDIT_COLLECTIONS:
+            results, _ = client.scroll(
+                collection_name=coll,
+                scroll_filter=Filter(should=[
+                    FieldCondition(key="audit_status", match=MatchAny(
+                        any=["skipped_ollama_timeout", "skipped_claude_error"])),
+                ]),
+                limit=10_000, with_payload=True, with_vectors=False,
+            )
+            for p in results:
+                if p.payload:
+                    all_points.append((p.id, p.payload, coll))
+            _log.getLogger(__name__).info("Retroaudit: %s — %d skipped chunks", coll,
+                        sum(1 for x in all_points if x[2] == coll))
 
-        if not points:
+        _retroaudit_state["total_found"] = len(all_points)
+
+        if not all_points:
             _retroaudit_state.update({"running": False, "finished_at": datetime.now(timezone.utc).isoformat()})
             return
 
-        # Group by source_file for progress reporting
-        by_book: dict[str, list] = {}
-        for pid, payload in points:
+        # Group by source_file for book-level progress display.
+        # All points for one book should belong to the same collection.
+        by_book: dict[str, list[tuple]] = {}
+        for pid, payload, coll in all_points:
             src = payload.get("source_file", "onbekend")
-            by_book.setdefault(src, []).append((pid, payload))
+            by_book.setdefault(src, []).append((pid, payload, coll))
 
         done = 0
         errors = 0
@@ -6767,13 +6842,13 @@ def _run_retroaudit() -> None:
 
             book_scored = 0
             book_errors = 0
-            for (pid, _), chunk in zip(book_points, tagged_list):
+            for (pid, _, pt_coll), chunk in zip(book_points, tagged_list):
                 if (chunk.get("audit_status") or "").startswith("skipped"):
                     book_errors += 1
                     errors += 1
                     continue
                 client.set_payload(
-                    collection_name=COLLECTION,
+                    collection_name=pt_coll,   # write to the point's own collection
                     payload={
                         "kai_k":        chunk.get("kai_k", 3),
                         "kai_a":        chunk.get("kai_a", 3),
@@ -6798,6 +6873,10 @@ def _run_retroaudit() -> None:
             _retroaudit_state["total_done"]   = done
             _retroaudit_state["total_errors"] = errors
             _retroaudit_state["books_done"]   = books_done
+
+        # Reset chunks_skipped=0 in state.json for books now fully tagged
+        for coll in _AUDIT_COLLECTIONS:
+            _clear_skipped_in_state(coll, client)
 
         _retroaudit_state.update({
             "running":            False,

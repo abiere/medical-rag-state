@@ -69,6 +69,21 @@
 
 ---
 
+## ✅ Afgerond — sessie 2026-04-17 (retroaudit multi-collection fix)
+
+- [x] **`_run_retroaudit()` fix** — hardcoded `COLLECTION = "medical_library"` vervangen door
+      loop over `_AUDIT_COLLECTIONS = ["medical_library", "nrt_qat_curriculum", "device_documentation"]`
+      Elke point traceert zijn eigen collectie zodat `set_payload` naar de juiste collection schrijft
+- [x] **`_run_reaudit_job()` fix** — `collection` gelezen uit `state.get("collection")` via `_find_state_for_file()`
+      i.p.v. hardcoded `"medical_library"` in zowel `scroll` als `set_payload`
+- [x] **`_clear_skipped_in_state()` nieuwe functie** — reset `chunks_skipped=0` in state.json
+      na retroaudit (of per-boek reaudit) voor boeken waar Qdrant geen skipped chunks meer heeft
+      Zorgt dat `audit_lopend` status verdwijnt na succesvolle tagging
+- [x] **VERIFIED** — retroaudit vond 458 chunks (was 0), 458/458 getagd in ~3 min, 0 errors
+      `audit_lopend: 5 → 0`, `chunks_skipped` gereset in alle state.json bestanden
+
+---
+
 ## ✅ Afgerond — sessie 2026-04-17 (vision bbox image extraction rewrite)
 
 - [x] **`image_extractor.py` volledig herschreven** — vision bbox approach:

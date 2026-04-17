@@ -1,0 +1,44 @@
+{
+  "completed": [
+    {
+      "filename": "16_Expanded__Revised__and_New_Techniques.mp4",
+      "file_size_mb": 391.61,
+      "duration_seconds": 815.6,
+      "seconds_per_mb": 2.08,
+      "completed_at": "2026-04-17T12:04:21.017191+00:00"
+    },
+    {
+      "filename": "2.Lower_Body_Fundamentals.mp4",
+      "file_size_mb": 274.67,
+      "duration_seconds": 1022.9,
+      "seconds_per_mb": 3.72,
+      "completed_at": "2026-04-17T12:21:39.618643+00:00"
+    },
+    {
+      "filename": "2.Upper_Body_Fundamentals.mp4",
+      "file_size_mb": 318.75,
+      "duration_seconds": 1184.9,
+      "seconds_per_mb": 3.72,
+      "completed_at": "2026-04-17T12:41:42.253583+00:00"
+    },
+    {
+      "filename": "3.Why_People_Hurt.mp4",
+      "file_size_mb": 185.44,
+      "duration_seconds": 1189.2,
+      "seconds_per_mb": 6.41,
+      "completed_at": "2026-04-17T13:01:49.771049+00:00"
+    },
+    {
+      "filename": "Healing_Organs_with_NRT.mp4",
+      "file_size_mb": 388.31,
+      "duration_seconds": 417.7,
+      "seconds_per_mb": 1.08,
+      "completed_at": "2026-04-17T13:09:07.251114+00:00"
+    }
+  ],
+  "model_rate": {
+    "seconds_per_mb": 3.41,
+    "n_samples": 5,
+    "updated_at": "2026-04-17T13:09:07.251114+00:00"
+  }
+}

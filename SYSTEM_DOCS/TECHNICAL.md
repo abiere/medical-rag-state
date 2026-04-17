@@ -92,7 +92,11 @@ State machine per boek: `data/ingest_cache/{book_hash}/state.json`
 ### 1.4 Audit Mechanisme
 - **Primair:** Claude Haiku API (instelbaar — `settings.json claude_api.enabled`)
 - **Fallback:** Ollama llama3.1:8b — non-blocking: 3× timeout → `audit_status="skipped_ollama_timeout"` → chunk toch geëmbed
-- **Retroaudit:** `nightly_maintenance.py` — verwerkt overgeslagen chunks on-demand via UI widget
+- **Retroaudit:** `/api/retroaudit/start` widget op /library/ingest — verwerkt overgeslagen chunks via Claude API
+  - Doorzoekt ALLE 3 text-collecties: `medical_library`, `nrt_qat_curriculum`, `device_documentation`
+  - `video_transcripts` uitgesloten (andere schema — geen KAI-tagging nodig)
+  - Na succesvolle run: `chunks_skipped` in state.json gereset naar 0 → `audit_lopend` status verdwijnt
+  - Per-boek reaudit (Heraudit-knop): leest `state.collection` uit state.json — niet hardcoded
 - **Permanente fallback:** Chunks met lege tekst (<10 chars) → `tagged_claude_default` (k=3,a=3,i=3) zonder API-aanroep
   Chunks die 3× falen → `tagged_claude_default` automatisch. Geen chunk blijft permanent in skipped status.
 - **retroaudit_skipped()** verwerkt ook chunks zonder `audit_status` (bijv. `<none>`) en gebruikt index-gebaseerde merge voor chunks zonder `chunk_id`

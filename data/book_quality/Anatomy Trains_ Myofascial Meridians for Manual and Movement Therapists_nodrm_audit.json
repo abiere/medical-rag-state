@@ -1,0 +1,47 @@
+{
+  "book": "Anatomy Trains_ Myofascial Meridians for Manual and Movement Therapists_nodrm.epub",
+  "collection": "medical_library",
+  "audited_at": "2026-04-17T14:34:56.143095+00:00",
+  "total_chunks": 432,
+  "structural": {
+    "total_chunks": 432,
+    "avg_chunk_words": 451.6,
+    "short_chunks": 0,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 641,
+    "images_extracted": 7344,
+    "translation_applied": false,
+    "epub_strategy": "ebooklib",
+    "pdf_type": null
+  },
+  "llm_audit": {
+    "sample_size": 15,
+    "avg_coherence": 4.5,
+    "avg_completeness": 4.21,
+    "avg_terminology": 5.0,
+    "avg_translation": 5.0,
+    "quality_score": 4.68,
+    "flagged_chunks": 1,
+    "suggestion": "The completeness score could be improved if the concept of 'identifying one event does not preclude the others' was further clarified or expanded upon to show how these multiple events are related in a more explicit way."
+  },
+  "auto_classification": {
+    "primary_use": "anatomy",
+    "secondary_use": [],
+    "image_quality": "high",
+    "image_type": "diagrams and illustrations of myofascial connections in the body",
+    "recommended_collection": "anatomy_atlas",
+    "confidence": 0.9
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}
