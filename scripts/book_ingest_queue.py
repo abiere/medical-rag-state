@@ -397,6 +397,10 @@ def _phase_parse(state: dict, filepath: Path, fmt: str, collection: str, categor
     out_file  = cache / "phase1_chunks.json"
     phase     = state["phases"]["parse"]
 
+    # Increment retry counter before starting (for failed-parse tracking in startup_scan)
+    state["parse_retry_count"] = state.get("parse_retry_count", 0) + 1
+    _write_state(state)
+
     _set_phase_running(state, "parse")
     logger.info("Phase 1 — Parsing %s (format=%s)", filepath.name, fmt)
 
@@ -445,6 +449,8 @@ def _phase_parse(state: dict, filepath: Path, fmt: str, collection: str, categor
                     pages_total=state["phases"]["parse"].get("pages_total") or len(chunks),
                     pages_done=state["phases"]["parse"].get("pages_total") or len(chunks))
 
+    state["parse_retry_count"] = 0  # reset on success
+    _write_state(state)
     logger.info("Parse done: %d chunks, %d images", len(chunks), images_total)
     return True
 
@@ -745,6 +751,30 @@ def startup_scan() -> int:
             if state and state.get("completed_at"):
                 logger.debug("Skip (completed): %s", f.name)
                 continue
+
+            if state:
+                # Skip permanently failed books (exhausted retries)
+                if state.get("status") == "permanently_failed":
+                    logger.warning("Skip (permanently failed — manual intervention required): %s", f.name)
+                    continue
+
+                # Track parse failures — permanently fail after MAX_RETRIES
+                parse_phase = state.get("phases", {}).get("parse", {})
+                if parse_phase.get("status") == "failed":
+                    retry_count = state.get("parse_retry_count", 0)
+                    MAX_RETRIES = 3
+                    if retry_count >= MAX_RETRIES:
+                        state["status"] = "permanently_failed"
+                        state["permanently_failed_at"] = datetime.now(timezone.utc).isoformat()
+                        state["permanently_failed_reason"] = (
+                            f"Parse failed {retry_count} times — manual intervention required"
+                        )
+                        _write_state(state)
+                        logger.error(
+                            "PERMANENTLY FAILED after %d retries: %s — not re-queuing",
+                            retry_count, f.name,
+                        )
+                        continue
 
             # Also check legacy audit file (backward compat)
             audit_path = QUALITY_DIR / f"{f.stem}_audit.json"

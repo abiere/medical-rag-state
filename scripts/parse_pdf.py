@@ -529,7 +529,8 @@ def _ocr_google_vision(pil_image) -> tuple[str, float]:
     buf      = io.BytesIO()
     pil_image.save(buf, format="PNG")
     image    = gv.Image(content=buf.getvalue())
-    response = client.document_text_detection(image=image)
+    image_context = gv.ImageContext(language_hints=["en"])
+    response = client.document_text_detection(image=image, image_context=image_context)
     if response.error.message:
         raise RuntimeError(f"Vision API error: {response.error.message}")
     full_text = response.full_text_annotation
@@ -759,10 +760,10 @@ def _parse_scanned_parallel_vision(
     n_pages = len(doc)
     _report_progress(progress_fn, "parsing", 0, n_pages, 0)
 
-    # Render all pages to PIL images first (local, fast, 150 DPI for smaller payload)
+    # Render all pages at 300 DPI — necessary for atlas-style books with small labels
     pil_images: list = []
     for i in range(n_pages):
-        mat = fitz.Matrix(150 / 72, 150 / 72)
+        mat = fitz.Matrix(300 / 72, 300 / 72)
         pix = doc[i].get_pixmap(matrix=mat, colorspace=fitz.csRGB)
         pil_images.append(PilImage.frombytes("RGB", [pix.width, pix.height], pix.samples))
     doc.close()
@@ -792,7 +793,7 @@ def _parse_scanned_parallel_vision(
         if result is None:
             continue
         text, conf = result
-        if not text or len(text.split()) < 3:
+        if not text or not text.strip():
             continue
         paras  = [p.strip() for p in text.split("\n\n") if p.strip()]
         ch, sec = _detect_chapter_section(paras)
@@ -805,7 +806,7 @@ def _parse_scanned_parallel_vision(
             "ocr_confidence": conf,
         })
 
-    good = [r for r in results if r and r[0] and len(r[0].split()) >= 3]
+    good = [r for r in results if r and r[0] and r[0].strip()]
     avg_conf = round(sum(c for _, c in good) / len(good), 3) if good else 0.9
     ocr_stats = {
         "total_pages":      n_pages,
@@ -872,8 +873,10 @@ def _parse_scanned(pdf_path: Path, book_stem: str, progress_fn=None, force_engin
         try:
             pil_image = _render_page(doc, page_num)
 
-            # Skip OCR on pure diagram/image pages
-            if _is_mostly_image(pil_image):
+            # Skip OCR on pure diagram/image pages — UNLESS force_engine is set.
+            # force_engine means admin explicitly wants OCR regardless of page type
+            # (e.g. atlas-style books where is_mostly_image() incorrectly skips all pages).
+            if not force_engine and _is_mostly_image(pil_image):
                 logger.debug("Page %d appears image-only — saving render, skipping OCR",
                              page_num + 1)
                 img_path = _save_page_render(pil_image, book_stem, page_num + 1)

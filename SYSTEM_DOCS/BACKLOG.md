@@ -1,18 +1,19 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-17 — audit_score + category_scores Deadman/Travell gefixed
+> Laatste update: 2026-04-17 — Trail Guide loop fix + Vision parameters
 
 ---
 
 ## 🔴 Prioriteit — volgende sessie
 
-- [ ] **Trail Guide ingest valideren** — Google Vision resultaat controleren
+- [ ] **Trail Guide ingest valideren** — RapidOCR run actief (gestart 08:32)
       ```bash
       curl localhost:6333/collections/medical_library | python3 -c \
         "import json,sys; d=json.load(sys.stdin); print(d['result']['points_count'])"
       journalctl -u book-ingest-queue --no-pager -n 50 | grep -E "trail|Produced|chunks"
       ```
-      Verwacht: 500+ chunks (460 pagina's, atlas-stijl)
+      Verwacht: 500+ chunks (460 pagina's, RapidOCR 151-404 words/pagina in test)
+      Vision credentials: `config/google_vision_key.json` ontbreekt — handmatig herstellen voor Vision path
 
 - [ ] **Deadman + Travell chunk counts valideren in Qdrant**
       Verwacht: Deadman 1000+ chunks (673p), Travell 800+ chunks (838p)
@@ -65,6 +66,22 @@
 - [ ] Officiële Deadman digitale versie aanschaffen (DRM-vrij via Eastland Press)
 - [ ] Consistentie guardian cross-collectie
 - [ ] Protocol pre-validatie (Ollama checkt dekking voor generatie)
+
+---
+
+## ✅ Afgerond — sessie 2026-04-17 (Trail Guide loop fix + Vision parameters)
+
+- [x] **Infinite loop diagnose** — root cause: `startup_scan()` re-enqueuet failed books (geen completed_at)
+      `Restart=on-failure` triggert bij service exit; 234 log mentions → ~39 runs × 460 pages = ~$27 Vision kosten
+- [x] **FIX A — max retries** — `parse_retry_count` in state.json; na 3 pogingen → `permanently_failed`
+      `startup_scan()` slaat permanently_failed books over; counter reset bij succesvolle parse
+- [x] **FIX B — Vision parameters** — 300 DPI (was 150), `language_hints=["en"]`, lege-filter ipv `< 3 words`
+      Actief zodra `config/google_vision_key.json` hersteld is (gitignored, handmatig)
+- [x] **FIX D — is_mostly_image() bypass** — werkelijke root cause 0 chunks: atlas-detector vlagde alle pagina's
+      `force_ocr_engine` bypast nu `_is_mostly_image()` in `_parse_scanned()` — RapidOCR werkt als fallback
+      Test bevestigd: 151-404 words/pagina, 3 chunks uit 3 testpagina's via RapidOCR
+- [x] **Trail Guide state reset** — `parse_retry_count=0`, parse phase pending, frisse start
+- [x] **Queue herstart** — 08:32 gestart, Trail Guide 460 pagina's via RapidOCR cascade
 
 ---
 

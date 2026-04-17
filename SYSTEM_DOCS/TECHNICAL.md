@@ -39,8 +39,13 @@ Ollama bepaalt de beste engine per boek via 5 steekproefpagina's. Resultaat geca
 "trail_guide": { "force_ocr_engine": "google_vision" }
 ```
 In `parse_pdf()` wordt dit gelezen vóór `detect_pdf_type()` — kalibratie volledig overgeslagen.
+**Bijwerking:** `force_ocr_engine` bypast ook `_is_mostly_image()` check — atlas pagina's worden anders allemaal overgeslagen (diagnose 2026-04-17). RapidOCR werkt als fallback wanneer Vision credentials ontbreken.
 
 **Google Vision parallel:** Wanneer google_vision de eerste engine is, worden alle pagina's parallel verwerkt (8 workers via ThreadPoolExecutor) — `_parse_scanned_parallel_vision()`.
+Verbeteringen (2026-04-17): 300 DPI (was 150), `language_hints=["en"]`, lege-pagina filter ipv `< 3 words`.
+**Vereiste:** `config/google_vision_key.json` moet aanwezig zijn — wordt gitignored maar niet meegeleverd.
+
+**startup_scan() max retries:** Na 3 parse-mislukkingen → `status="permanently_failed"` in state.json → nooit meer ge-enqueuet. Counter `parse_retry_count` in state.json; reset bij succes.
 
 ### 1.3 Pipeline Fasen
 State machine per boek: `data/ingest_cache/{book_hash}/state.json`
@@ -214,7 +219,8 @@ Gebruik alleen: `systemctl restart medical-rag-web` voor web-only wijzigingen.
 
 | Issue | Oorzaak | Oplossing |
 |---|---|---|
-| Trail Guide 0 chunks | Atlas-stijl, EasyOCR faalt | `force_ocr_engine: "google_vision"` in book_classifications.json |
+| Trail Guide 0 chunks (opgelost) | `_is_mostly_image()` vlagde alle atlas-pagina's als image-only → OCR overgeslagen; Vision credentials ook ontbrekend | FIX: `force_ocr_engine` bypast nu `_is_mostly_image()`; RapidOCR werkt als fallback. Vision vereist `config/google_vision_key.json` (gitignored, handmatig te herstellen) |
+| Infinite loop bij 0 chunks (opgelost) | `startup_scan()` slaat failed-parse boeken opnieuw in de queue | FIX: `parse_retry_count` in state.json; na 3 pogingen `permanently_failed` |
 | Upper_Body 525MB hangt | Te groot voor Whisper in één pass | `transcription.skip_files` in settings.json |
 | Audit overgeslagen | Ollama timeout / Claude API uit | Claude API retroaudit on-demand via /library/ingest widget |
 | GitHub push geblokkeerd | Secrets in git history | git filter-branch + --force push (zie eerdere sessie) |
