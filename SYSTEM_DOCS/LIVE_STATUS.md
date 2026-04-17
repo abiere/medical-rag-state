@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 05:07:41 UTC**
+> Last update: **2026-04-17 05:12:41 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `03_trail_guide_to_the_body_6th.pdf` (801 min) |
+| Current job | `03_trail_guide_to_the_body_6th.pdf` (806 min) |
 | Queued | 4 |
 | Total books | 43 |
 | Ingested | 35 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` (27 min) |
+| Current job | `1.Upper_Body_Techniques.mp4` (2 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 7.63 GB / 32.86 GB (23%) |
-| CPU | 98.5% |
-| Disk used | 60.6 GB / 322.3 GB (20%) |
-| Uptime | up 2 days, 19 hours, 24 minutes |
+| RAM used | 7.38 GB / 32.86 GB (22%) |
+| CPU | 100.0% |
+| Disk used | 60.7 GB / 322.3 GB (20%) |
+| Uptime | up 2 days, 19 hours, 29 minutes |
 
 ## Recent markers
+- `2026-04-17T05:10:41.112457+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-17T04:40:40.581705+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-17T04:10:40.086977+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-17T03:40:39.748279+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-17T03:10:39.008697+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
-- `2026-04-17T02:40:38.516593+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-17 03:40:39,796  INFO      Startup scan: 19 untranscribed video(s) found, 0 new entry/entries added to queue
-2026-04-17 03:40:39,797  INFO      START  nrt/1.Upper_Body_Techniques.mp4
-2026-04-17 04:10:40,127  INFO      ────────────────────────────────────────────────────────────
-2026-04-17 04:10:40,128  INFO      Transcription queue manager started
 2026-04-17 04:10:40,129  INFO      Startup scan: 19 untranscribed video(s) found, 0 new entry/entries added to queue
 2026-04-17 04:10:40,129  INFO      START  nrt/1.Upper_Body_Techniques.mp4
 2026-04-17 04:40:40,625  INFO      ────────────────────────────────────────────────────────────
 2026-04-17 04:40:40,625  INFO      Transcription queue manager started
 2026-04-17 04:40:40,626  INFO      Startup scan: 19 untranscribed video(s) found, 0 new entry/entries added to queue
 2026-04-17 04:40:40,627  INFO      START  nrt/1.Upper_Body_Techniques.mp4
+2026-04-17 05:10:41,151  INFO      ────────────────────────────────────────────────────────────
+2026-04-17 05:10:41,151  INFO      Transcription queue manager started
+2026-04-17 05:10:41,152  INFO      Startup scan: 19 untranscribed video(s) found, 0 new entry/entries added to queue
+2026-04-17 05:10:41,153  INFO      START  nrt/1.Upper_Body_Techniques.mp4
 ```
