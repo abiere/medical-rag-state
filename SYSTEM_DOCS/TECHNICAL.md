@@ -68,7 +68,7 @@ State machine per boek: `data/ingest_cache/{book_hash}/state.json`
 **Output:** `data/extracted_images/{book_hash}/fig_PPPP_NN.png` + `images_metadata.json`
 **Prioriteitssysteem:** `book_classifications.json` veld `image_priority` (high/normal/low/skip)
 **Override:** `image_priority_override` — handmatig via /images pagina → "Prioriteit wijzigen"
-**Nachtrun:** `_phase_image_extract()` verwerkt boeken zonder `images_metadata.json` binnen tijdsbudget
+**Extractie timing:** Draait als background thread direct na qdrant fase (overdag). Nachtrun verwerkt dit NIET meer.
 
 ### 1.4 Audit Mechanisme
 - **Primair:** Claude Haiku API (instelbaar — `settings.json claude_api.enabled`)
@@ -113,7 +113,6 @@ Tijdvenster: `settings.json nightly.start_time/end_time` (Amsterdam tijd — ser
 | Qdrant maintenance | Optimizer check, lege collecties |
 | Data consistentie | Qdrant vs state.json vergelijken |
 | Retroaudit | Overgeslagen chunks verwerken (budget proportioneel) |
-| Afbeelding screening | `data/image_screen_limit` per nacht |
 | State integriteit | Fase-bestanden vs state.json valideren |
 | Cleanup | `/tmp` oudere dan 7 dagen, fase-bestanden >30 dagen |
 | Hervat queues | Pauze opgeheven |

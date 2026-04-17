@@ -1,6 +1,6 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-17 — image pipeline refactor: Vision API + prioriteitssysteem
+> Laatste update: 2026-04-17 — image extractie verplaatst uit nachtrun naar dagtijd pipeline
 
 ---
 
@@ -65,6 +65,14 @@
 - [ ] Officiële Deadman digitale versie aanschaffen (DRM-vrij via Eastland Press)
 - [ ] Consistentie guardian cross-collectie
 - [ ] Protocol pre-validatie (Ollama checkt dekking voor generatie)
+
+---
+
+## ✅ Afgerond — sessie 2026-04-17 (extractie uit nachtrun)
+
+- [x] **_phase_image_extract() verwijderd uit nightly_maintenance.py** — `_count_books_needing_extraction()`, alloc dict entry, fase-tuple en de volledige method weg
+      Reden: extractie draait al als background thread direct na qdrant fase; nachtrun is overbodig
+- [x] **Backfill gestart** — bestaande boeken met qdrant=done maar nog geen images_metadata.json worden nu bijgewerkt
 
 ---
 
