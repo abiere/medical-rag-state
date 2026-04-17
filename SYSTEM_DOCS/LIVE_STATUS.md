@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 11:26:44 UTC**
+> Last update: **2026-04-17 11:31:45 UTC**
 
 ## Services
 | Service | Status |
@@ -14,8 +14,8 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `QRS-101-Home-System-Brochure.pdf` (19 min) |
-| Queued | 4 |
+| Current job | `QRS-101 Manual Englisch.pdf` (3 min) |
+| Queued | 3 |
 | Total books | 49 |
 | Ingested | 37 |
 | Vectors in medical_library | 3248 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `16_Expanded__Revised__and_New_Techniques.mp4` (6 min) |
+| Current job | `16_Expanded__Revised__and_New_Techniques.mp4` (11 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 14.55 GB / 32.86 GB (44%) |
+| RAM used | 15.22 GB / 32.86 GB (46%) |
 | CPU | 100.0% |
 | Disk used | 59.4 GB / 322.3 GB (19%) |
-| Uptime | up 5 hours, 51 minutes |
+| Uptime | up 5 hours, 56 minutes |
 
 ## Recent markers
+- `2026-04-17T11:28:27.465578+00:00` **book_ingested** — QRS-101-Home-System-Brochure.pdf → device_documentation: 1 chunks
 - `2026-04-17T11:20:45.066077+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-17T11:07:03.654184+00:00` **book_ingested** — QRS Quantron Resonance 101 Home System.pdf → device_documentation: 9 chunks
 - `2026-04-17T10:50:44.521401+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-17T10:49:54.673786+00:00` **book_ingested** — 03_trail_guide_to_the_body_6th.pdf → medical_library: 473 chunks
-- `2026-04-17T10:20:43.823985+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 
 ## Nightly Consistency
 ```
