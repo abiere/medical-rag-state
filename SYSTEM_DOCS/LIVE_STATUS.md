@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 23:07:16 UTC**
+> Last update: **2026-04-17 23:12:16 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `CranioSacral Therapy Study Guide - Upledger.pdf` (18 min) |
+| Current job | `CranioSacral Therapy Study Guide - Upledger.pdf` (23 min) |
 | Queued | 10 |
 | Total books | 37 |
 | Ingested | 63 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (26 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (1 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 11.76 GB / 32.86 GB (36%) |
-| CPU | 97.4% |
-| Disk used | 69.9 GB / 322.3 GB (23%) |
-| Uptime | up 17 hours, 31 minutes |
+| RAM used | 11.88 GB / 32.86 GB (36%) |
+| CPU | 99.6% |
+| Disk used | 70.0 GB / 322.3 GB (23%) |
+| Uptime | up 17 hours, 36 minutes |
 
 ## Recent markers
+- `2026-04-17T23:11:16.719229+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-17T22:48:20.513980+00:00` **book_ingested** — Bates Guide to Physical Examination 14e editie - Bickley.epub → medical_library: 1251 chunks
 - `2026-04-17T22:41:16.080646+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-17T22:11:15.512026+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-17T22:09:11.097173+00:00` **book_ingested** — Applied Kinesiology - Frost.pdf → medical_library: 409 chunks
-- `2026-04-17T21:41:15.153527+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-17 22:11:15,552  INFO      Startup scan: 14 untranscribed video(s) found, 0 new entry/entries added to queue
-2026-04-17 22:11:15,552  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
-2026-04-17 22:11:15,552  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
-2026-04-17 22:11:15,553  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
-2026-04-17 22:41:16,145  INFO      ────────────────────────────────────────────────────────────
-2026-04-17 22:41:16,146  INFO      Transcription queue manager started
 2026-04-17 22:41:16,148  INFO      Startup scan: 14 untranscribed video(s) found, 0 new entry/entries added to queue
 2026-04-17 22:41:16,149  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
 2026-04-17 22:41:16,150  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
 2026-04-17 22:41:16,150  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
+2026-04-17 23:11:16,774  INFO      ────────────────────────────────────────────────────────────
+2026-04-17 23:11:16,775  INFO      Transcription queue manager started
+2026-04-17 23:11:16,776  INFO      Startup scan: 14 untranscribed video(s) found, 0 new entry/entries added to queue
+2026-04-17 23:11:16,777  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
+2026-04-17 23:11:16,778  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
+2026-04-17 23:11:16,778  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
 ```
