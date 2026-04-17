@@ -1,6 +1,6 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-17 — Google Vision Settings UI
+> Laatste update: 2026-04-17 — Google Vision credentials hersteld
 
 ---
 
@@ -13,7 +13,7 @@
       journalctl -u book-ingest-queue --no-pager -n 50 | grep -E "trail|Produced|chunks"
       ```
       Verwacht: 500+ chunks (460 pagina's, RapidOCR 151-404 words/pagina in test)
-      Vision credentials: `config/google_vision_key.json` ontbreekt — handmatig herstellen voor Vision path
+      Vision credentials: `config/google_vision_key.json` aanwezig ✅ — Vision actief na volgende parse-run
 
 - [ ] **Deadman + Travell chunk counts valideren in Qdrant**
       Verwacht: Deadman 1000+ chunks (673p), Travell 800+ chunks (838p)
@@ -66,6 +66,15 @@
 - [ ] Officiële Deadman digitale versie aanschaffen (DRM-vrij via Eastland Press)
 - [ ] Consistentie guardian cross-collectie
 - [ ] Protocol pre-validatie (Ollama checkt dekking voor generatie)
+
+---
+
+## ✅ Afgerond — sessie 2026-04-17 (Google Vision credentials hersteld)
+
+- [x] **Google Vision credentials hersteld** — `config/google_vision_key.json` aanwezig (2361 bytes)
+      Service account: `nrt-vision-api@nrt-amsterdam.iam.gserviceaccount.com` | project: `nrt-amsterdam`
+      Vision client aangemaakt: OK | `/settings` amber banner verdwijnt: JA
+      Trail Guide volgende parse-run gebruikt nu Google Vision (parallel, 300 DPI, 8 workers)
 
 ---
 
