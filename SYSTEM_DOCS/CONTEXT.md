@@ -110,3 +110,10 @@ HE=HE-5   | LIV=LIV-5
 3. **Kleur:** `#1A6B72` teal — nooit `#2563eb` voor primaire knoppen/headers
 4. **Destructief:** Altijd confirmation dialog met chunk count eerst
 5. **UI taken:** Lees eerst `.claude/skills/nrt-ui-standards/SKILL.md` via Read tool
+
+---
+
+## Test status
+
+**Laatste run:** 17-04-2026 15:57 (21.6s)  
+**Uitslag:** ✅ GESLAAGD — 33/33 geslaagd, 0 overgeslagen  
