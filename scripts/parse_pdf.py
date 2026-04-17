@@ -820,7 +820,7 @@ def _parse_scanned_parallel_vision(
 
 # ── scanned PDF parser ────────────────────────────────────────────────────────
 
-def _parse_scanned(pdf_path: Path, book_stem: str, progress_fn=None) -> tuple[list[dict], dict]:
+def _parse_scanned(pdf_path: Path, book_stem: str, progress_fn=None, force_engine: str | None = None) -> tuple[list[dict], dict]:
     """
     Parse fully scanned PDF using cascade OCR on every page.
     Returns (pages, ocr_stats).
@@ -847,11 +847,16 @@ def _parse_scanned(pdf_path: Path, book_stem: str, progress_fn=None) -> tuple[li
 
     # Per-book calibration: find the best OCR engine for this specific PDF
     engines = _get_engines()
-    preferred = _calibrate_book(pdf_path, engines)
-    if preferred:
-        # Move preferred engine to front of the list for this run
-        engines = sorted(engines, key=lambda e: 0 if e[0] == preferred else 1)
-        logger.info("Using calibrated engine order: %s", [e[0] for e in engines])
+    if force_engine:
+        # Force override: skip calibration, put forced engine first
+        logger.info("Force OCR engine override: %s (skipping calibration)", force_engine)
+        engines = sorted(engines, key=lambda e: 0 if e[0] == force_engine else 1)
+    else:
+        preferred = _calibrate_book(pdf_path, engines)
+        if preferred:
+            # Move preferred engine to front of the list for this run
+            engines = sorted(engines, key=lambda e: 0 if e[0] == preferred else 1)
+            logger.info("Using calibrated engine order: %s", [e[0] for e in engines])
 
     # Google Vision parallel shortcut — skip sequential page loop entirely
     if engines and engines[0][0] == "google_vision":
@@ -934,7 +939,7 @@ def _parse_scanned(pdf_path: Path, book_stem: str, progress_fn=None) -> tuple[li
 
 # ── mixed PDF parser ──────────────────────────────────────────────────────────
 
-def _parse_mixed(pdf_path: Path, book_stem: str, progress_fn=None) -> tuple[list[dict], dict]:
+def _parse_mixed(pdf_path: Path, book_stem: str, progress_fn=None, force_engine: str | None = None) -> tuple[list[dict], dict]:
     """
     Mixed PDF: pdfplumber extracts text per page; pages with < NATIVE_THRESHOLD
     words are re-processed with cascade OCR.
@@ -957,7 +962,7 @@ def _parse_mixed(pdf_path: Path, book_stem: str, progress_fn=None) -> tuple[list
         plumber = pdfplumber.open(str(pdf_path))
     except Exception as e:
         logger.warning("pdfplumber unavailable (%s) — full cascade OCR", e)
-        return _parse_scanned(pdf_path, book_stem, progress_fn=progress_fn)
+        return _parse_scanned(pdf_path, book_stem, progress_fn=progress_fn, force_engine=force_engine)
 
     try:
         doc = fitz.open(str(pdf_path))
@@ -1062,6 +1067,24 @@ def parse_pdf(
     book_stem = pdf_path.stem
     logger.info("Parsing %s (collection=%s)", pdf_path.name, collection_type)
 
+    # Check for force_ocr_engine override in book classifications
+    force_engine: str | None = None
+    try:
+        global _KAI_CACHE
+        if _KAI_CACHE is None:
+            cfg_path = BASE / "config" / "book_classifications.json"
+            _KAI_CACHE = json.loads(cfg_path.read_text())
+        for entry in _KAI_CACHE.get("classifications", {}).values():
+            patterns = entry.get("filename_patterns", [])
+            if any(p.lower() in pdf_path.name.lower() for p in patterns):
+                forced = entry.get("force_ocr_engine")
+                if forced:
+                    force_engine = forced
+                    logger.info("Force OCR engine from book_classifications.json: %s", force_engine)
+                break
+    except Exception as e:
+        logger.warning("Could not check force_ocr_engine: %s", e)
+
     # 1. Detect PDF type
     pdf_type = detect_pdf_type(pdf_path)
     logger.info("PDF type: %s", pdf_type)
@@ -1083,9 +1106,9 @@ def parse_pdf(
         # Docling kept as opt-in fallback for complex layouts (tables, multi-column) if needed.
         pages = _parse_pymupdf(pdf_path, progress_fn=progress_fn)
     elif pdf_type == "scanned":
-        pages, ocr_stats = _parse_scanned(pdf_path, book_stem, progress_fn=progress_fn)
+        pages, ocr_stats = _parse_scanned(pdf_path, book_stem, progress_fn=progress_fn, force_engine=force_engine)
     else:
-        pages, ocr_stats = _parse_mixed(pdf_path, book_stem, progress_fn=progress_fn)
+        pages, ocr_stats = _parse_mixed(pdf_path, book_stem, progress_fn=progress_fn, force_engine=force_engine)
 
     if not pages:
         logger.error("No pages extracted from %s", pdf_path.name)

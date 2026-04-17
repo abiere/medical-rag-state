@@ -33,6 +33,7 @@ NOTIFY      = BASE / "scripts" / "notify.sh"
 INGEST      = BASE / "scripts" / "ingest_transcript.py"
 PAUSE_FILE  = Path("/tmp/transcription_pause")
 STATS_FILE  = BASE / "data" / "transcription_stats.json"
+SETTINGS_FILE = BASE / "config" / "settings.json"
 VIDEO_TYPES = ["nrt", "qat", "pemf", "rlt"]
 VIDEO_EXTS  = {".mp4", ".mov", ".mkv", ".m4v"}
 CONTENT_TYPE_MAP = {
@@ -41,6 +42,14 @@ CONTENT_TYPE_MAP = {
     "pemf": "device_pemf",
     "rlt":  "device_rlt",
 }
+
+
+def _load_transcription_settings() -> dict:
+    try:
+        data = json.loads(SETTINGS_FILE.read_text())
+        return data.get("transcription", {})
+    except Exception:
+        return {}
 
 # ── logging ───────────────────────────────────────────────────────────────────
 logging.basicConfig(
@@ -221,6 +230,22 @@ def _transcribe_one(item: dict) -> bool:
 
     if not video_path.exists():
         log.warning(f"Video not found, skipping: {vtype}/{filename}")
+        return False
+
+    # Skip/size-limit checks from config/settings.json
+    ts = _load_transcription_settings()
+    skip_files = ts.get("skip_files", [])
+    max_mb = ts.get("max_file_size_mb", 9999)
+    file_mb = os.path.getsize(video_path) / 1024 / 1024
+
+    if filename in skip_files:
+        log.warning(f"Skipping {vtype}/{filename} (in skip_files list)")
+        return False
+
+    if file_mb > max_mb:
+        log.warning(
+            f"Skipping {vtype}/{filename} ({file_mb:.0f} MB > limit {max_mb:.0f} MB)"
+        )
         return False
 
     stem = Path(filename).stem

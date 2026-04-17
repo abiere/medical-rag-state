@@ -285,18 +285,23 @@
     },
     "trail_guide": {
       "k": 1,
-      "a": 3,
+      "a": 2,
       "i": 1,
       "library_category": "medical_literature",
+      "collection": "medical_library",
       "role": "anatomy_palpation",
       "full_title": "Trail Guide to the Body 6th edition",
-      "authors": "Biel",
+      "authors": "Biel, Dorn",
       "format": "pdf",
       "filename_patterns": [
         "Trail Guide",
-        "Trail-Guide"
+        "Trail-Guide",
+        "03_trail_guide"
       ],
-      "notes": "Palpation anatomy \u2014 practical tissue location"
+      "force_ocr_engine": "google_vision",
+      "notes": "Palpation anatomy \u2014 practical tissue location. Atlas-style book: EasyOCR/RapidOCR fail silently, Google Vision required.",
+      "server_path": "/root/medical-rag/books/medical_literature/03_trail_guide_to_the_body_6th.pdf",
+      "server_filename": "03_trail_guide_to_the_body_6th.pdf"
     },
     "thieme_atlas": {
       "k": 1,
