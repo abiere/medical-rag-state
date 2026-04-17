@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 20:47:14 UTC**
+> Last update: **2026-04-17 20:52:14 UTC**
 
 ## Services
 | Service | Status |
@@ -14,18 +14,18 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `354229827-daniel-keown-the-spark-in-the-machine-how-the-science-of-acupuncture-explains-the-mysteries-of-western-medicine-singi.pdf` (15 min) |
-| Queued | 17 |
+| Current job | `Acupuncture in Practice - Campbell.pdf` (4 min) |
+| Queued | 16 |
 | Total books | 37 |
 | Ingested | 57 |
-| Vectors in medical_library | 10713 |
+| Vectors in medical_library | 11027 |
 | Images pending approval | 2026 |
 | Images approved | 0 |
 
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (6 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (11 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 9.19 GB / 32.86 GB (28%) |
-| CPU | 99.9% |
+| RAM used | 14.83 GB / 32.86 GB (45%) |
+| CPU | 100.0% |
 | Disk used | 68.6 GB / 322.3 GB (22%) |
-| Uptime | up 15 hours, 11 minutes |
+| Uptime | up 15 hours, 16 minutes |
 
 ## Recent markers
+- `2026-04-17T20:47:29.731822+00:00` **book_ingested** — 354229827-daniel-keown-the-spark-in-the-machine-how-the-science-of-acupuncture-explains-the-mysteries-of-western-medicine-singi.pdf → medical_library: 314 chunks
 - `2026-04-17T20:41:14.117489+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-17T20:31:11.813083+00:00` **book_ingested** — 756201384-The-Foundations-of-Chinese-Medicine-A-Comprehensive-Text-3rd-Edition-ISBN-0702052167-978-0702052163.pdf → medical_library: 33 chunks
 - `2026-04-17T20:23:13.478521+00:00` **book_ingested** — Whole Brain Living_ The Anatomy of Choice and the Four Characters That Drive Our Life_nodrm.epub → medical_library: 252 chunks
 - `2026-04-17T20:11:13.440274+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
-- `2026-04-17T20:10:50.740046+00:00` **book_ingested** — Touch for Health_ The Complete Edition_ A Practical Guide to Natural Health With Acupressure Touch.epub → medical_library: 313 chunks
 
 ## Nightly Consistency
 ```
