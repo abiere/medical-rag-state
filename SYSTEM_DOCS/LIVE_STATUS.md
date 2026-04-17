@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 15:58:18 UTC**
+> Last update: **2026-04-17 16:02:08 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Sobotta Anatomy Textbook_nodrm.epub` (34 min) |
+| Current job | `Sobotta Anatomy Textbook_nodrm.epub` (38 min) |
 | Queued | 9 |
 | Total books | 64 |
 | Ingested | 45 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (17 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (21 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in video_transcripts | 241 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 14.26 GB / 32.86 GB (43%) |
-| CPU | 99.6% |
+| RAM used | 14.18 GB / 32.86 GB (43%) |
+| CPU | 99.5% |
 | Disk used | 63.1 GB / 322.3 GB (20%) |
-| Uptime | up 10 hours, 22 minutes |
+| Uptime | up 10 hours, 26 minutes |
 
 ## Recent markers
 - `2026-04-17T15:41:08.612443+00:00` **watchdog_restart** — transcription-queue hung (34 min stale) — restarted successfully
