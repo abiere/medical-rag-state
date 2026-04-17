@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 11:01:44 UTC**
+> Last update: **2026-04-17 11:06:44 UTC**
 
 ## Services
 | Service | Status |
@@ -14,8 +14,8 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Levels Mat, Pillow, Pen.pdf` (810 min) |
-| Queued | 6 |
+| Current job | `QRS Quantron Resonance 101 Home System.pdf` (4 min) |
+| Queued | 5 |
 | Total books | 49 |
 | Ingested | 36 |
 | Vectors in medical_library | 3248 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `16_Expanded__Revised__and_New_Techniques.mp4` (11 min) |
+| Current job | `16_Expanded__Revised__and_New_Techniques.mp4` (16 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 6.05 GB / 32.86 GB (18%) |
-| CPU | 99.3% |
+| RAM used | 13.38 GB / 32.86 GB (41%) |
+| CPU | 100.0% |
 | Disk used | 59.3 GB / 322.3 GB (19%) |
-| Uptime | up 5 hours, 26 minutes |
+| Uptime | up 5 hours, 31 minutes |
 
 ## Recent markers
 - `2026-04-17T10:50:44.521401+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
