@@ -1,6 +1,6 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-17 — image screening pipeline fix + /images page werkend
+> Laatste update: 2026-04-17 — image pipeline refactor: Vision API + prioriteitssysteem
 
 ---
 
@@ -31,7 +31,8 @@
 
 - [ ] **Playwright regressietests** — 8 nav-items + kritieke pagina's automatisch testen
 - [ ] **QAT curriculum valideren** — 546 vectors in nrt_qat_curriculum — zijn dit de juiste chunks?
-- [ ] **Afbeelding screening Travell+Simons** — ~12 nachten resterend bij 200/nacht limiet
+- [ ] **EPUB image extractie testen** — Sobotta/AnatomyTrains nog niet geïngesteerd; na upload nachtrun testen
+- [ ] **PDF Vision API extractie valideren** — Deadman + Travell na nachtrun: verwacht 400+ figuren per boek
 - [ ] **Video transcriptie 19 NRT video's** — queue actief, 1.Upper_Body overgeslagen
 - [ ] **Meer boeken uploaden:**
       - Sobotta Vol 1/2/3 (EPUB) — kai_k=1 kai_i=1 primaire anatomie
@@ -67,14 +68,21 @@
 
 ---
 
-## ✅ Afgerond — sessie 2026-04-17 (image screening fix)
+## ✅ Afgerond — sessie 2026-04-17 (image pipeline refactor)
 
-- [x] **Image screening pipeline gerepareerd** — prescreeen_images() nu aangeroepen na qdrant fase
-      `book_ingest_queue.py` roept prescreeen_images() aan na elke succesvolle qdrant upload
-      Nightly-bug gerepareerd: image_screen=done alleen als processed > 0
-      Backfill script uitgevoerd: 38 bestaande boeken gepopuleerd in image_approvals.json
-- [x] **/images pagina werkend** — img_src pad gecorrigeerd naar `/images/file/{filename}` route
-      15+ afbeeldingen zichtbaar, 200 OK bij serveren
+- [x] **Goedkeuringslogica verwijderd** — image_approvals.json, prescreeen_images(), screen_images_background() volledig weg
+      `audit_book.py`, `book_ingest_queue.py`, `nightly_maintenance.py`, `web/app.py` opgeschoond
+- [x] **Prioriteitssysteem** — `image_source`, `image_priority`, `image_priority_override`, `image_evaluated` in alle 54 boekentries
+      epub → high | pdf → normal | override via /images UI → POST /api/images/priority
+- [x] **image_extractor.py** — nieuw script: Vision API PICTURE blocks + PyMuPDF crop (PDF) + ebooklib (EPUB)
+      `extract_figures_from_pdf()` + `extract_images_from_epub()` — parallel (8 workers)
+      Output: `data/extracted_images/{book_hash}/images_metadata.json`
+- [x] **Pipeline integratie** — background thread na qdrant fase start extractie automatisch
+- [x] **Nachtrun fase vervangen** — `_phase_image_screening` → `_phase_image_extract()`
+      Verwerkt boeken zonder images_metadata.json binnen tijdsbudget
+- [x] **/images pagina herschreven** — prioriteitsbadges (Hoog/Normaal/Laag/Overslaan), evaluatie status, "Prioriteit wijzigen" dropdown
+      Filters: Alle / Hoog / Normaal / Laag / Niet beoordeeld
+      GET /api/images/library + POST /api/images/priority API endpoints
 
 ---
 

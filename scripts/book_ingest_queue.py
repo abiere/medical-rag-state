@@ -139,14 +139,6 @@ def _blank_state(filename: str, filepath: Path, collection: str, category: str) 
                 "chunks_inserted": 0,
                 "collection":      collection,
             },
-            "image_screen": {
-                "status":        "queued_background",
-                "images_total":  0,
-                "images_done":   0,
-                "images_useful": 0,
-                "last_run":      None,
-                "note":          "Nightly job — does not block main pipeline",
-            },
         },
     }
 
@@ -446,9 +438,6 @@ def _phase_parse(state: dict, filepath: Path, fmt: str, collection: str, categor
     # Save output
     out_file.write_text(json.dumps(chunks, ensure_ascii=False))
 
-    # Update image_screen with total count (background phase)
-    state["phases"]["image_screen"]["images_total"] = images_total
-
     _set_phase_done(state, "parse",
                     chunks_extracted=len(chunks),
                     images_extracted=images_total,
@@ -497,7 +486,6 @@ def _phase_audit(state: dict) -> bool:
     classification = auto_classify(chunks)
 
     # AI usability tagging — Claude API primary, Ollama fallback
-    # NOTE: prescreeen_images is NOT called here — it runs in background/nightly
     try:
         from claude_audit import is_enabled as _claude_enabled, audit_chunks_parallel as _claude_tag
     except ImportError:
@@ -709,16 +697,26 @@ def _phase_qdrant(state: dict) -> bool:
     logger.info("Qdrant done: %d vectors upserted to %s", n_upserted, collection)
     _set_phase_done(state, "qdrant", chunks_inserted=n_upserted)
 
-    # Populate image approvals for newly ingested book (non-fatal)
-    try:
-        sys.path.insert(0, str(BASE / "scripts"))
-        from audit_book import prescreeen_images  # noqa: three e's — typo in original
-        book_stem = Path(state.get("filename", "")).stem
-        if chunks and book_stem:
-            prescreeen_images(chunks, book_stem)
-            logger.info("Image approvals populated for %s", book_stem)
-    except Exception as e:
-        logger.warning("prescreeen_images failed (non-fatal): %s", e)
+    # Start image extraction in background thread (non-blocking)
+    book_filepath = state.get("filepath", "")
+    if book_filepath:
+        book_path = Path(book_filepath)
+        suffix = book_path.suffix.lower()
+        import threading
+        from image_extractor import extract_figures_from_pdf, extract_images_from_epub
+        from image_extractor import IMAGES_OUT as _IMAGES_OUT
+
+        def _run_extraction():
+            try:
+                if suffix == ".pdf":
+                    extract_figures_from_pdf(book_path, bh, _IMAGES_OUT)
+                elif suffix in (".epub",):
+                    extract_images_from_epub(book_path, bh, _IMAGES_OUT)
+                logger.info("Image extraction complete for %s", book_path.name)
+            except Exception as exc:
+                logger.warning("Image extraction failed (non-fatal): %s", exc)
+
+        threading.Thread(target=_run_extraction, daemon=True).start()
 
     return True
 

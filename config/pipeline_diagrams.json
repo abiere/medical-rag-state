@@ -1,7 +1,7 @@
 {
   "version": "2.0",
-  "updated_at": "2026-04-16T20:00:00.000000+00:00",
-  "updated_by": "Claude Code — hybrid redesign",
+  "updated_at": "2026-04-17T07:07:51.210600+00:00",
+  "updated_by": "Claude Code — auto-refresh",
   "pdf_type_detection": {
     "threshold_words_native": 50,
     "threshold_words_low": 15,
@@ -9,14 +9,14 @@
     "paths": [
       {
         "label": "Native",
-        "condition": "\u226550 w/p",
+        "condition": "≥50 w/p",
         "engine": "PyMuPDF",
         "speed": "< 10 sec / boek",
         "color": "teal"
       },
       {
         "label": "Mixed",
-        "condition": "\u226515 w/p",
+        "condition": "≥15 w/p",
         "engine": "pdfplumber + OCR",
         "speed": "minuten",
         "color": "teal"
@@ -25,10 +25,12 @@
         "label": "Scanned",
         "condition": "< 15 w/p",
         "engine": "OCR cascade",
-        "speed": "minuten \u2013 uren",
+        "speed": "minuten – uren",
         "color": "amber"
       }
-    ]
+    ],
+    "threshold_words_per_page_native": 50,
+    "threshold_words_per_page_low": 15
   },
   "ocr_cascade": {
     "min_words_threshold": 10,
@@ -36,7 +38,7 @@
       {
         "order": 1,
         "name": "RapidOCR (ONNX)",
-        "subtitle": "0.6\u20131.2 sec/pag",
+        "subtitle": "0.6–1.2 sec/pag",
         "type": "local",
         "color": "teal",
         "available": true
@@ -44,7 +46,7 @@
       {
         "order": 2,
         "name": "EasyOCR",
-        "subtitle": "2\u20135 sec/pag",
+        "subtitle": "2–5 sec/pag",
         "type": "local",
         "color": "teal",
         "available": true
@@ -52,7 +54,7 @@
       {
         "order": 3,
         "name": "Surya",
-        "subtitle": "3\u20138 sec/pag",
+        "subtitle": "3–8 sec/pag",
         "type": "local",
         "color": "teal",
         "available": true
@@ -60,7 +62,7 @@
       {
         "order": 4,
         "name": "Tesseract",
-        "subtitle": "1\u20133 sec/pag",
+        "subtitle": "1–3 sec/pag",
         "type": "local",
         "color": "teal",
         "available": true
@@ -88,14 +90,14 @@
     },
     "fallback": {
       "name": "Ollama llama3.1:8b",
-      "subtitle": "Sequentieel \u00b7 lokaal",
+      "subtitle": "Sequentieel · lokaal",
       "color": "gray",
       "timeout_failures": 3,
       "type": "local_sequential"
     },
     "retroaudit": {
-      "claude_note": "geen limiet (alle skipped in \u00e9\u00e9n keer)",
-      "ollama_note": "00:00\u201307:00 Amsterdam",
+      "claude_note": "geen limiet (alle skipped in één keer)",
+      "ollama_note": "00:00–07:00 Amsterdam",
       "trigger": "audit_status starts with skipped_"
     }
   },
@@ -108,7 +110,7 @@
       {
         "order": 0,
         "name": "Pauzeer queues",
-        "description": "Boeken + video\u2019s gepauzeerd via API",
+        "description": "Boeken + video’s gepauzeerd via API",
         "engine": null,
         "color": "green"
       },

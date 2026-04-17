@@ -143,18 +143,23 @@ def _count_skipped_chunks() -> int:
     return total
 
 
-def _count_pending_images() -> int:
-    """Count images without ai_suggestion across all books."""
+def _count_books_needing_extraction() -> int:
+    """Count books with qdrant=done but no images_metadata.json yet."""
     total = 0
     cache = BASE / "data" / "ingest_cache"
+    images_out = BASE / "data" / "extracted_images"
     if not cache.exists():
         return 0
-    for ap in cache.glob("*/image_approvals.json"):
+    for state_file in cache.glob("*/state.json"):
         try:
-            approvals = json.loads(ap.read_text())
-            pending = sum(1 for v in approvals.values()
-                          if not v.get("ai_suggestion"))
-            total += pending
+            state = json.loads(state_file.read_text())
+            phases = state.get("phases", {})
+            if (phases.get("qdrant") or {}).get("status") != "done":
+                continue
+            bh = state.get("book_hash", state_file.parent.name)
+            meta = images_out / bh / "images_metadata.json"
+            if not meta.exists():
+                total += 1
         except Exception:
             pass
     return total
@@ -183,7 +188,7 @@ class MaintenanceRunner:
         _pause_queues()
 
         # ── Compute smart time-window allocation ─────────────────────────
-        allocation: dict = {"retroaudit_seconds": None, "image_seconds": None}
+        allocation: dict = {"retroaudit_seconds": None, "image_extract_seconds": None}
         try:
             sys.path.insert(0, str(BASE / "scripts"))
             from nightly_stats import allocate_window as _alloc_win
@@ -195,15 +200,19 @@ class MaintenanceRunner:
             _sh, _sm    = map(int, _start_hm.split(":"))
             _eh, _em    = map(int, _end_hm.split(":"))
             _window_sec = max(0, (_eh * 60 + _em) - (_sh * 60 + _sm)) * 60
-            allocation  = _alloc_win(
+            _raw_alloc  = _alloc_win(
                 window_seconds    = _window_sec,
                 n_chunks_skipped  = _count_skipped_chunks(),
-                n_images_pending  = _count_pending_images(),
+                n_images_pending  = _count_books_needing_extraction(),
                 claude_api_enabled= _claude_enabled_alloc(),
             )
-            print(f"  Tijdverdeling: {allocation.get('note','')}")
+            allocation = {
+                "retroaudit_seconds":    _raw_alloc.get("retroaudit_seconds"),
+                "image_extract_seconds": _raw_alloc.get("image_seconds"),
+            }
+            print(f"  Tijdverdeling: {_raw_alloc.get('note','')}")
             print(f"  Retroaudit budget: {allocation['retroaudit_seconds']}s  "
-                  f"Image budget: {allocation['image_seconds']}s")
+                  f"Image extractie budget: {allocation['image_extract_seconds']}s")
         except Exception as _alloc_err:
             print(f"  ⚠ Tijdverdeling berekening mislukt: {_alloc_err} — geen limiet")
         # ─────────────────────────────────────────────────────────────────
@@ -217,9 +226,9 @@ class MaintenanceRunner:
                 ("retro_audit",    "Retroaudit chunks",
                  lambda: self._phase_retro_audit(
                      time_budget_seconds=allocation["retroaudit_seconds"])),
-                ("image_screen",   "Afbeelding screening",
-                 lambda: self._phase_image_screening(
-                     time_budget_seconds=allocation["image_seconds"])),
+                ("image_extract",   "Afbeelding extractie",
+                 lambda: self._phase_image_extract(
+                     time_budget_seconds=allocation["image_extract_seconds"])),
                 ("state_integrity","State integriteit",    self._phase_state_integrity),
                 ("software",       "Software check",       self._phase_software),
                 ("cleanup",        "Opruimen",             self._phase_cleanup),
@@ -1025,20 +1034,21 @@ class MaintenanceRunner:
         return status, {"findings": findings}
 
     # ─────────────────────────────────────────────────────────────────────────
-    # PHASE 4b — IMAGE SCREENING BACKGROUND
+    # PHASE 4b — IMAGE EXTRACTION
     # ─────────────────────────────────────────────────────────────────────────
 
-    def _phase_image_screening(self,
-                               time_budget_seconds: float | None = None,
-                               ) -> tuple[str, dict]:
+    def _phase_image_extract(self,
+                             time_budget_seconds: float | None = None,
+                             ) -> tuple[str, dict]:
         """
-        For each book whose qdrant phase is done but image_screen != done,
-        call screen_images_background() for up to 200 images.
+        For each book with qdrant=done and pdf_cropped/epub image_source but no
+        images_metadata.json yet, run extract_figures_from_pdf / extract_images_from_epub.
         """
         findings = []
         status   = "OK"
-        CACHE_DIR = BASE / "data" / "ingest_cache"
-        t_screen_start = time.monotonic()
+        CACHE_DIR  = BASE / "data" / "ingest_cache"
+        IMAGES_OUT = BASE / "data" / "extracted_images"
+        t_start = time.monotonic()
 
         if not CACHE_DIR.exists():
             findings.append("ingest_cache map niet gevonden — overgeslagen")
@@ -1046,26 +1056,39 @@ class MaintenanceRunner:
 
         sys.path.insert(0, str(BASE / "scripts"))
         try:
-            from audit_book import screen_images_background
+            from image_extractor import extract_figures_from_pdf, extract_images_from_epub
         except ImportError as exc:
-            findings.append(f"Import audit_book mislukt: {exc} — overgeslagen")
+            findings.append(f"Import image_extractor mislukt: {exc} — overgeslagen")
             return "WARNING", {"findings": findings}
 
-        if time_budget_seconds is not None:
-            findings.append(f"Tijdsbudget afbeelding screening: {time_budget_seconds}s")
+        # Load book_classifications.json for image_source per book
+        kai_cache: dict = {}
+        try:
+            cfg_path = BASE / "config" / "book_classifications.json"
+            kai_cache = json.loads(cfg_path.read_text()).get("classifications", {})
+        except Exception:
+            pass
 
-        screened_books = 0
-        total_processed = 0
+        def _get_image_source(filepath: str) -> str:
+            """Determine image_source from book_classifications or filename extension."""
+            for entry in kai_cache.values():
+                for pat in entry.get("filename_patterns", []):
+                    if pat.lower() in Path(filepath).name.lower():
+                        src = entry.get("image_source", "")
+                        if src:
+                            return src
+            ext = Path(filepath).suffix.lower()
+            return "epub" if ext == ".epub" else "pdf_cropped" if ext == ".pdf" else "none"
+
+        if time_budget_seconds is not None:
+            findings.append(f"Tijdsbudget afbeelding extractie: {time_budget_seconds}s")
+
+        extracted_books = 0
+        total_figures   = 0
 
         for state_file in CACHE_DIR.glob("*/state.json"):
-            try:
-                state = json.loads(state_file.read_text())
-            except Exception:
-                continue
-
-            # Check time budget before starting each book
             if time_budget_seconds is not None:
-                elapsed = time.monotonic() - t_screen_start
+                elapsed = time.monotonic() - t_start
                 if elapsed >= time_budget_seconds:
                     findings.append(
                         f"Tijdsbudget bereikt ({elapsed:.0f}s / "
@@ -1073,49 +1096,61 @@ class MaintenanceRunner:
                     )
                     break
 
-            phases = state.get("phases", {})
-            qdrant_done = (phases.get("qdrant") or {}).get("status") == "done"
-            image_screen = (phases.get("image_screen") or {}).get("status", "")
-
-            if not qdrant_done:
+            try:
+                state = json.loads(state_file.read_text())
+            except Exception:
                 continue
-            if image_screen == "done":
+
+            phases = state.get("phases", {})
+            if (phases.get("qdrant") or {}).get("status") != "done":
                 continue
 
             book_hash = state.get("book_hash", state_file.parent.name)
-            book_name = state.get("filename", book_hash)
+            meta_path = IMAGES_OUT / book_hash / "images_metadata.json"
+            if meta_path.exists():
+                continue  # already extracted
+
+            filepath = state.get("filepath", "")
+            if not filepath:
+                continue
+
+            book_path = Path(filepath)
+            if not book_path.exists():
+                findings.append(f"{book_path.name}: bestand niet gevonden — overgeslagen")
+                continue
+
+            image_source = _get_image_source(filepath)
+            if image_source == "none":
+                continue
+
+            book_name = state.get("filename", book_path.name)
             try:
-                result = screen_images_background(book_hash, max_images=200)
-                processed = result.get("processed", 0)
-                findings.append(
-                    f"{book_name}: {processed} afbeeldingen gescreend "
-                    f"(skip={result.get('skipped',0)} err={result.get('errors',0)})"
-                )
-                total_processed += processed
-                screened_books += 1
-
-                # Mark image_screen done only when images were actually processed
-                if processed > 0 and result.get("errors", 0) == 0:
-                    state.setdefault("phases", {})["image_screen"] = {"status": "done"}
-                    state_file.write_text(json.dumps(state, indent=2))
+                if image_source == "pdf_cropped":
+                    imgs = extract_figures_from_pdf(book_path, book_hash, IMAGES_OUT)
+                else:
+                    imgs = extract_images_from_epub(book_path, book_hash, IMAGES_OUT)
+                n = len(imgs)
+                findings.append(f"{book_name}: {n} afbeeldingen geëxtraheerd")
+                total_figures   += n
+                extracted_books += 1
             except Exception as exc:
-                findings.append(f"{book_name}: screening mislukt: {exc}")
-                if status == "OK": status = "WARNING"
+                findings.append(f"{book_name}: extractie mislukt: {exc}")
+                if status == "OK":
+                    status = "WARNING"
 
-        elapsed_screen = time.monotonic() - t_screen_start
+        elapsed_total = time.monotonic() - t_start
 
-        if screened_books == 0:
-            findings.append("Geen boeken gevonden voor afbeelding screening")
+        if extracted_books == 0:
+            findings.append("Geen boeken gevonden voor afbeelding extractie")
         else:
             findings.append(
-                f"Totaal: {screened_books} boek(en) gescreend, "
-                f"{total_processed} afbeeldingen verwerkt"
+                f"Totaal: {extracted_books} boek(en), "
+                f"{total_figures} afbeeldingen in {elapsed_total:.0f}s"
             )
 
-        # Record timing stats for future allocation
         try:
             from nightly_stats import record_image_screening as _rec_im
-            _rec_im(total_processed, elapsed_screen)
+            _rec_im(total_figures, elapsed_total)
         except Exception:
             pass
 

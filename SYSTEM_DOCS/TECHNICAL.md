@@ -51,9 +51,24 @@ State machine per boek: `data/ingest_cache/{book_hash}/state.json`
 | 2 Audit | `audit_book.py` + `claude_audit.py` | `phase2_audited.json` |
 | 3 Embedding | `book_ingest_queue.py` (BAAI/bge) | `phase3_vectors.npy` |
 | 4 Qdrant upload | `book_ingest_queue.py` | Qdrant collectie |
+| 5 Afbeelding extractie | `image_extractor.py` (background thread) | `data/extracted_images/{hash}/` |
 
 **State resume:** Bij herstart pikt de queue op bij de laatste voltooide fase.
 **Heartbeat:** state.json bijgewerkt elke pagina — queue-watchdog detecteert vastgelopen runs (BOOK_STALE=120min).
+
+### 1.6 Afbeelding Pipeline
+`scripts/image_extractor.py`
+
+| Bron | Methode | Kwaliteit |
+|---|---|---|
+| PDF (pdf_cropped) | Google Vision PICTURE blocks → PyMuPDF crop 300 DPI | Normaal |
+| EPUB | ebooklib directe extractie + figcaption metadata | Hoog |
+| Geen | — | Overgeslagen |
+
+**Output:** `data/extracted_images/{book_hash}/fig_PPPP_NN.png` + `images_metadata.json`
+**Prioriteitssysteem:** `book_classifications.json` veld `image_priority` (high/normal/low/skip)
+**Override:** `image_priority_override` — handmatig via /images pagina → "Prioriteit wijzigen"
+**Nachtrun:** `_phase_image_extract()` verwerkt boeken zonder `images_metadata.json` binnen tijdsbudget
 
 ### 1.4 Audit Mechanisme
 - **Primair:** Claude Haiku API (instelbaar — `settings.json claude_api.enabled`)
@@ -200,7 +215,7 @@ Gebruik alleen: `systemctl restart medical-rag-web` voor web-only wijzigingen.
 | Audit overgeslagen | Ollama timeout / Claude API uit | Claude API retroaudit on-demand via /library/ingest widget |
 | GitHub push geblokkeerd | Secrets in git history | git filter-branch + --force push (zie eerdere sessie) |
 | 0 RAG resultaten | Verkeerde embedding model | Controleer: altijd BAAI/bge-large-en-v1.5 |
-| /images leeg | prescreeen_images() nooit aangeroepen na qdrant fase | Backfill script uitgevoerd 2026-04-17; nieuwe boeken: auto via _phase_qdrant() |
+| /images leeg | Nog geen images_metadata.json (nachtrun vult aan) | Nachtrun verwerkt automatisch: `_phase_image_extract()` |
 
 ---
 

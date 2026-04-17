@@ -46,7 +46,6 @@ SECTION_MAP = {
     },
 }
 USABILITY_TAGS_FILE  = BASE / "config" / "usability_tags.json"
-IMAGE_APPROVALS_FILE = BASE / "data" / "image_approvals.json"
 IMAGES_DIR           = BASE / "data" / "extracted_images"
 BOOK_EXTS = {".pdf", ".epub"}
 
@@ -1763,6 +1762,21 @@ def _enqueue_book(filename: str, filepath: str, collection: str, category: str, 
     if filename not in existing:
         q.append(entry)
         BOOK_QUEUE_FILE.write_text(json.dumps(q, indent=2))
+
+
+def _book_hash_for_file(filepath: Path) -> str:
+    """Lookup book_hash from ingest_cache by matching filename."""
+    cache = BASE / "data" / "ingest_cache"
+    if not cache.exists():
+        return ""
+    for sf in cache.glob("*/state.json"):
+        try:
+            s = json.loads(sf.read_text())
+            if Path(s.get("filepath", "")).name == filepath.name:
+                return s.get("book_hash", sf.parent.name)
+        except Exception:
+            pass
+    return ""
 
 
 def _usability_dots(scores: dict, tags: list[str]) -> str:
@@ -4103,7 +4117,7 @@ async def library_overview():
     for sec_key, f in all_books:
         sec_label = SECTION_MAP[sec_key]["label"]
         audit_path = QUALITY_DIR / f"{f.stem}_audit.json"
-        chunks_n = imgs_approved = imgs_pending = imgs_total = 0
+        chunks_n = imgs_total = 0
         qs = score_html = dots_html = ""
         if audit_path.exists():
             try:
@@ -4115,16 +4129,14 @@ async def library_overview():
                 dots_html = _usability_dots(up, []) if up else ""
             except Exception:
                 pass
+        # Count extracted images from images_metadata.json if available
+        bh_meta = None
         try:
-            if IMAGE_APPROVALS_FILE.exists():
-                appr = json.loads(IMAGE_APPROVALS_FILE.read_text())
-                for e in appr.get("approved", []):
-                    if isinstance(e, dict) and e.get("book") == f.name:
-                        imgs_approved += 1
-                for e in appr.get("pending", []):
-                    if isinstance(e, dict) and e.get("book") == f.name:
-                        imgs_pending += 1
-                imgs_total = imgs_approved + imgs_pending
+            bh = _book_hash_for_file(f)
+            meta_path = IMAGES_DIR / bh / "images_metadata.json"
+            if meta_path.exists():
+                meta = json.loads(meta_path.read_text())
+                imgs_total = len(meta.get("images", []))
         except Exception:
             pass
         rows += f"""
@@ -4132,7 +4144,7 @@ async def library_overview():
   <td><span style="font-weight:600">{f.name}</span><br>
       <span style="font-size:12px;color:#6b7280">{sec_label}</span></td>
   <td style="text-align:right">{chunks_n or '—'}</td>
-  <td style="text-align:right">{imgs_approved}/{imgs_total}</td>
+  <td style="text-align:right">{imgs_total or '—'}</td>
   <td>{dots_html}</td>
   <td style="text-align:center">{qs}</td>
   <td style="white-space:nowrap">
@@ -4493,139 +4505,198 @@ async def videos_paused():
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# IMAGES — approval system
+# IMAGES — priority-based browser (no approval gating)
 # ═══════════════════════════════════════════════════════════════════════════════
 
-def _load_approvals() -> dict:
+def _load_kai_cache() -> dict:
+    """Load book_classifications.json, cached per request."""
     try:
-        if IMAGE_APPROVALS_FILE.exists():
-            d = json.loads(IMAGE_APPROVALS_FILE.read_text())
-            if isinstance(d, dict):
-                return d
+        return json.loads((BASE / "config" / "book_classifications.json").read_text()).get("classifications", {})
     except Exception:
-        pass
-    return {"approved": [], "rejected": [], "pending": []}
+        return {}
 
 
-def _save_approvals(data: dict) -> None:
-    IMAGE_APPROVALS_FILE.parent.mkdir(parents=True, exist_ok=True)
-    IMAGE_APPROVALS_FILE.write_text(json.dumps(data, indent=2))
+def _priority_badge(priority: str, override: str | None = None) -> str:
+    effective = override or priority
+    cfg = {
+        "high":   ("#dcfce7", "#16a34a", "Hoog"),
+        "normal": ("#e8f4f5", "#1A6B72", "Normaal"),
+        "low":    ("#f3f4f6", "#6b7280", "Laag"),
+        "skip":   ("#fee2e2", "#991b1b", "Overslaan"),
+    }.get(effective, ("#f3f4f6", "#6b7280", effective))
+    marker = " ★" if override else ""
+    return (f'<span style="background:{cfg[0]};color:{cfg[1]};padding:2px 8px;'
+            f'border-radius:999px;font-size:11px;font-weight:600">{cfg[2]}{marker}</span>')
+
+
+def _prio_dropdown_items(book_hash: str, cls_key: str, current: str) -> str:
+    items = ""
+    for p, lbl in [("high", "Hoog"), ("normal", "Normaal"), ("low", "Laag"), ("skip", "Overslaan")]:
+        fw = "700" if current == p else "400"
+        items += (f'<button onclick="setPriority(\'{book_hash}\',\'{cls_key}\',\'{p}\')" '
+                  f'style="display:block;width:100%;text-align:left;padding:6px 10px;'
+                  f'border:none;background:none;cursor:pointer;font-size:13px;'
+                  f'border-radius:4px;font-weight:{fw}">{lbl}</button>')
+    return items
+
+
+def _eval_badge(evaluated: bool) -> str:
+    if evaluated:
+        return ('<span style="background:#dcfce7;color:#16a34a;padding:2px 8px;'
+                'border-radius:999px;font-size:11px;font-weight:600">Beoordeeld</span>')
+    return ('<span style="background:#fef3c7;color:#b45309;padding:2px 8px;'
+            'border-radius:999px;font-size:11px;font-weight:600">Niet beoordeeld</span>')
 
 
 # ── GET /images ────────────────────────────────────────────────────────────────
 
 @app.get("/images", response_class=HTMLResponse)
-async def images_page(book: str = "", filter: str = "all"):
-    approvals = _load_approvals()
-    all_entries: list[dict] = []
-    for status_key in ("pending", "approved", "rejected"):
-        for e in approvals.get(status_key, []):
-            if isinstance(e, dict):
-                all_entries.append({**e, "_status": status_key})
+async def images_page(filter: str = "all"):
+    kai = _load_kai_cache()
 
-    # Filter
-    if filter != "all":
-        all_entries = [e for e in all_entries if e["_status"] == filter]
-    if book:
-        all_entries = [e for e in all_entries if e.get("book") == book]
+    # Collect all books with images_metadata.json
+    books_data: list[dict] = []
+    for meta_file in sorted(IMAGES_DIR.glob("*/images_metadata.json")):
+        try:
+            meta = json.loads(meta_file.read_text())
+        except Exception:
+            continue
+        book_hash = meta.get("book_hash", meta_file.parent.name)
+        filename  = meta.get("filename", "")
+        images    = meta.get("images", [])
+        if not images:
+            continue
 
-    # Group by book
-    by_book: dict[str, list[dict]] = {}
-    for e in all_entries:
-        by_book.setdefault(e.get("book", "unknown"), []).append(e)
+        # Find matching classification entry
+        cls_entry: dict = {}
+        for entry in kai.values():
+            for pat in entry.get("filename_patterns", []):
+                if pat.lower() in filename.lower():
+                    cls_entry = entry
+                    break
+            if cls_entry:
+                break
 
-    def _status_badge(s: str) -> str:
-        cfg = {
-            "pending":  ("#fef3c7", "#b45309", "Wachten"),
-            "approved": ("#dcfce7", "#166534", "Goedgekeurd"),
-            "rejected": ("#fee2e2", "#991b1b", "Afgewezen"),
-        }.get(s, ("#f3f4f6", "#374151", s))
-        return (f'<span style="background:{cfg[0]};color:{cfg[1]};padding:2px 8px;'
-                f'border-radius:999px;font-size:11px;font-weight:600">{cfg[2]}</span>')
+        priority          = cls_entry.get("image_priority", "normal")
+        priority_override = cls_entry.get("image_priority_override") or None
+        effective         = priority_override or priority
+        evaluated         = bool(cls_entry.get("image_evaluated", False))
 
-    def _confidence_bar(c) -> str:
-        if c is None:
-            return ""
-        pct = int(float(c) * 100)
-        color = "#059669" if pct >= 70 else ("#d97706" if pct >= 40 else "#dc2626")
-        return (f'<div style="display:flex;align-items:center;gap:6px;font-size:11px">'
-                f'<div style="background:#e5e7eb;border-radius:4px;height:6px;width:60px;overflow:hidden">'
-                f'<div style="background:{color};height:6px;width:{pct}%"></div></div>'
-                f'{pct}%</div>')
+        books_data.append({
+            "book_hash":   book_hash,
+            "filename":    filename,
+            "images":      images,
+            "priority":    priority,
+            "override":    priority_override,
+            "effective":   effective,
+            "evaluated":   evaluated,
+            "cls_key":     next((k for k, v in kai.items()
+                                 if v is cls_entry), ""),
+        })
+
+    # Apply filter
+    filter_map = {
+        "high":   lambda b: b["effective"] == "high",
+        "normal": lambda b: b["effective"] == "normal",
+        "low":    lambda b: b["effective"] == "low",
+        "skip":   lambda b: b["effective"] == "skip",
+        "unreviewed": lambda b: not b["evaluated"],
+    }
+    if filter != "all" and filter in filter_map:
+        books_data = [b for b in books_data if filter_map[filter](b)]
+
+    # Sort: unreviewed first, then by priority level, then by filename
+    prio_order = {"high": 0, "normal": 1, "low": 2, "skip": 3}
+    books_data.sort(key=lambda b: (b["evaluated"], prio_order.get(b["effective"], 9), b["filename"]))
 
     sections = ""
-    for bname, entries in sorted(by_book.items()):
+    for bd in books_data:
         cards = ""
-        for e in entries:
-            path = e.get("path", "")
-            img_src = f"/images/file/{Path(path).name}" if path else ""
-            ai_sug = e.get("ai_suggestion")
-            ai_label = ("✓ Nuttig" if ai_sug else "✗ Niet nuttig") if ai_sug is not None else "—"
-            ai_color = "#059669" if ai_sug else ("#dc2626" if ai_sug is False else "#6b7280")
-            s = e.get("_status", "pending")
+        for img in bd["images"][:20]:  # cap at 20 per book for performance
+            fname   = img.get("file", "")
+            img_src = f"/images/file/{bd['book_hash']}/{fname}" if fname else ""
+            caption = img.get("caption", "") or img.get("alt_text", "")
             cards += f"""
-<div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:12px;
-            width:200px;flex-shrink:0">
-  <div style="height:120px;background:#f9fafb;border-radius:4px;overflow:hidden;
-              display:flex;align-items:center;justify-content:center;margin-bottom:8px">
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:10px;
+            width:180px;flex-shrink:0">
+  <div style="height:110px;background:#f8fafc;border-radius:6px;overflow:hidden;
+              display:flex;align-items:center;justify-content:center;margin-bottom:6px">
     <img src="{img_src}" style="max-width:100%;max-height:100%;object-fit:contain"
-         onerror="this.style.display='none';this.nextSibling.style.display='block'">
-    <span style="display:none;color:#9ca3af;font-size:12px">Afbeelding niet gevonden</span>
+         onerror="this.style.display='none';this.nextSibling.style.display='flex'"
+         loading="lazy">
+    <div style="display:none;color:#9ca3af;font-size:11px;text-align:center;padding:8px">
+      Niet gevonden
+    </div>
   </div>
   <div style="font-size:11px;color:#6b7280;overflow:hidden;text-overflow:ellipsis;
-              white-space:nowrap;margin-bottom:4px" title="{path}">{Path(path).name}</div>
-  <div style="margin-bottom:4px">{_status_badge(s)}</div>
-  <div style="font-size:11px;color:{ai_color};margin-bottom:4px">AI: {ai_label}</div>
-  {_confidence_bar(e.get('ai_confidence'))}
-  <div style="font-size:11px;color:#6b7280;margin-top:4px;overflow:hidden;
-              display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">
-    {e.get('surrounding_text','')[:80]}</div>
-  <div style="display:flex;gap:4px;margin-top:8px">
-    <button onclick="approve('{path}',true)" class="btn btn-green"
-            style="font-size:11px;padding:3px 8px;flex:1"
-            {'disabled style="opacity:.4"' if s=='approved' else ''}>✓</button>
-    <button onclick="approve('{path}',false)" class="btn btn-secondary"
-            style="font-size:11px;padding:3px 8px;flex:1;background:#fee2e2;color:#991b1b"
-            {'disabled style="opacity:.4"' if s=='rejected' else ''}>✗</button>
-  </div>
+              white-space:nowrap;margin-bottom:4px" title="{fname}">{fname}</div>
+  {f'<div style="font-size:11px;color:#4a5568;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">{caption[:80]}</div>' if caption else ''}
 </div>"""
 
-        n = len(entries)
+        more = len(bd["images"]) - 20
+        if more > 0:
+            cards += f'<div style="display:flex;align-items:center;justify-content:center;width:180px;color:#6b7280;font-size:13px">+{more} meer</div>'
+
+        n = len(bd["images"])
         sections += f"""
 <div class="section" style="margin-bottom:20px">
-  <div class="section-head">
-    <span class="section-title">{bname}</span>
-    <span style="font-size:13px;color:#6b7280">{n} afbeelding(en)</span>
+  <div class="section-head" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <span class="section-title" style="font-size:15px">{bd['filename']}</span>
+      {_priority_badge(bd['priority'], bd['override'])}
+      {_eval_badge(bd['evaluated'])}
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font-size:13px;color:#6b7280">{n} afbeelding(en)</span>
+      <div style="position:relative">
+        <button onclick="togglePrioMenu('{bd['book_hash']}')"
+                class="btn btn-secondary" style="font-size:12px;padding:4px 10px">
+          Prioriteit ▾
+        </button>
+        <div id="prio-{bd['book_hash']}"
+             style="display:none;position:absolute;right:0;top:110%;background:#fff;
+                    border:1px solid #e2e8f0;border-radius:8px;padding:4px;
+                    min-width:140px;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1)">
+          {_prio_dropdown_items(bd['book_hash'], bd['cls_key'], bd['override'] or bd['priority'])}
+        </div>
+      </div>
+    </div>
   </div>
-  <div style="display:flex;flex-wrap:wrap;gap:12px;padding:16px 20px">{cards}</div>
+  <div style="display:flex;flex-wrap:wrap;gap:10px;padding:14px 20px">{cards}</div>
 </div>"""
 
-    total_pending  = len([e for e in all_entries if e["_status"] == "pending"])
-    total_approved = len([e for e in all_entries if e["_status"] == "approved"])
-    total_rejected = len([e for e in all_entries if e["_status"] == "rejected"])
-
     filter_links = ""
-    for fkey, flabel in [("all","Alle"),("pending","Wachten"),("approved","Goedgekeurd"),("rejected","Afgewezen")]:
+    for fkey, flabel in [("all","Alle"),("high","Hoog"),("normal","Normaal"),
+                         ("low","Laag"),("skip","Overslaan"),("unreviewed","Niet beoordeeld")]:
         active = "background:#1A6B72;color:#fff;" if filter == fkey else ""
-        filter_links += f'<a href="/images?filter={fkey}" class="btn btn-secondary" style="font-size:13px;{active}">{flabel}</a>'
+        filter_links += (f'<a href="/images?filter={fkey}" class="btn btn-secondary" '
+                         f'style="font-size:13px;{active}">{flabel}</a>')
 
+    total = sum(len(b["images"]) for b in books_data)
     body = f"""
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
     <h1 style="font-size:22px;font-weight:700">Afbeeldingen</h1>
-    <div style="font-size:13px;color:#6b7280">
-      Wachten: {total_pending} &nbsp;|&nbsp; Goedgekeurd: {total_approved} &nbsp;|&nbsp; Afgewezen: {total_rejected}
-    </div>
+    <span style="font-size:13px;color:#6b7280">{len(books_data)} boek(en) · {total} afbeeldingen</span>
   </div>
   <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">{filter_links}</div>
-  {sections if sections else '<div style="color:#9ca3af;padding:24px">Geen afbeeldingen gevonden.</div>'}
+  {sections if sections else
+   '<div style="color:#9ca3af;padding:24px">Geen afbeeldingen gevonden. Nachtrun verwerkt nieuwe boeken automatisch.</div>'}
 </div>
 <script>
-function approve(path, approved) {{
-  fetch('/images/approve', {{
+function togglePrioMenu(bh) {{
+  const el = document.getElementById('prio-' + bh);
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}}
+document.addEventListener('click', function(e) {{
+  if (!e.target.closest('[id^=prio-]') && !e.target.textContent.includes('▾'))
+    document.querySelectorAll('[id^=prio-]').forEach(el => el.style.display = 'none');
+}});
+function setPriority(bookHash, clsKey, priority) {{
+  fetch('/api/images/priority', {{
     method: 'POST',
     headers: {{'Content-Type': 'application/json'}},
-    body: JSON.stringify({{path: path, approved: approved}})
+    body: JSON.stringify({{book_hash: bookHash, cls_key: clsKey, priority_override: priority}})
   }})
   .then(r => r.json())
   .then(d => {{ if (d.status === 'ok') location.reload(); else alert(JSON.stringify(d)); }})
@@ -4635,45 +4706,69 @@ function approve(path, approved) {{
     return _page_shell("Afbeeldingen", "/images", body)
 
 
-# ── POST /images/approve ───────────────────────────────────────────────────────
+# ── GET /api/images/library ────────────────────────────────────────────────────
 
-@app.post("/images/approve")
-async def images_approve(request_data: dict):
-    path     = request_data.get("path", "")
-    approved = request_data.get("approved")
-    if not path:
-        return JSONResponse({"error": "path required"}, status_code=400)
+@app.get("/api/images/library")
+async def api_images_library():
+    kai = _load_kai_cache()
+    books: list[dict] = []
+    for meta_file in sorted(IMAGES_DIR.glob("*/images_metadata.json")):
+        try:
+            meta = json.loads(meta_file.read_text())
+        except Exception:
+            continue
+        book_hash = meta.get("book_hash", meta_file.parent.name)
+        filename  = meta.get("filename", "")
+        images    = meta.get("images", [])
 
-    data = _load_approvals()
-    target_status = "approved" if approved else "rejected"
-
-    # Find and move the entry
-    moved = False
-    for src_key in ("pending", "approved", "rejected"):
-        for i, e in enumerate(data.get(src_key, [])):
-            if isinstance(e, dict) and e.get("path") == path:
-                entry = data[src_key].pop(i)
-                entry["approved"]    = approved
-                entry["approved_at"] = datetime.now().isoformat()
-                data[target_status].append(entry)
-                moved = True
+        cls_entry: dict = {}
+        cls_key = ""
+        for k, entry in kai.items():
+            for pat in entry.get("filename_patterns", []):
+                if pat.lower() in filename.lower():
+                    cls_entry = entry
+                    cls_key = k
+                    break
+            if cls_entry:
                 break
-        if moved:
-            break
 
-    if not moved:
-        return JSONResponse({"error": "Image not found"}, status_code=404)
+        books.append({
+            "book_hash":        book_hash,
+            "filename":         filename,
+            "image_count":      len(images),
+            "image_source":     meta.get("image_source", ""),
+            "priority":         cls_entry.get("image_priority", "normal"),
+            "priority_override":cls_entry.get("image_priority_override"),
+            "image_evaluated":  bool(cls_entry.get("image_evaluated", False)),
+            "cls_key":          cls_key,
+        })
+    return books
 
-    _save_approvals(data)
-    return {"status": "ok", "path": path, "approved": approved}
 
+# ── POST /api/images/priority ──────────────────────────────────────────────────
 
-# ── GET /images/approve ────────────────────────────────────────────────────────
+@app.post("/api/images/priority")
+async def api_images_priority(request_data: dict):
+    cls_key          = request_data.get("cls_key", "")
+    priority_override = request_data.get("priority_override")
 
-@app.get("/images/approved")
-async def images_approved_list():
-    data = _load_approvals()
-    return [e.get("path") for e in data.get("approved", []) if isinstance(e, dict)]
+    cfg_path = BASE / "config" / "book_classifications.json"
+    try:
+        cfg = json.loads(cfg_path.read_text())
+    except Exception as exc:
+        return JSONResponse({"error": str(exc)}, status_code=500)
+
+    classifications = cfg.get("classifications", {})
+
+    # Find by cls_key or by book_hash match
+    if cls_key and cls_key in classifications:
+        classifications[cls_key]["image_priority_override"] = priority_override
+        classifications[cls_key]["image_evaluated"] = True
+    else:
+        return JSONResponse({"error": f"cls_key '{cls_key}' not found"}, status_code=404)
+
+    cfg_path.write_text(json.dumps(cfg, indent=2, ensure_ascii=False))
+    return {"status": "ok", "cls_key": cls_key, "priority_override": priority_override}
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # SEARCH — /search  /search/query  /search/images  /search/suggest
@@ -6017,16 +6112,20 @@ async def protocols_download(filename: str):
     )
 
 
-# ── GET /images/file/{filename} ───────────────────────────────────────────────
+# ── GET /images/file/{path:path} ──────────────────────────────────────────────
+# Serves both flat files (old) and subdir/{book_hash}/{fname} (new extraction)
 
-@app.get("/images/file/{filename}")
-async def serve_image(filename: str):
-    # Sanitise — strip path traversal
-    safe = Path(filename).name
-    path = IMAGES_DIR / safe
-    if not path.exists():
+@app.get("/images/file/{file_path:path}")
+async def serve_image(file_path: str):
+    # Resolve against IMAGES_DIR, prevent traversal outside it
+    try:
+        candidate = (IMAGES_DIR / file_path).resolve()
+        candidate.relative_to(IMAGES_DIR.resolve())  # raises if outside
+    except (ValueError, Exception):
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    if not candidate.exists():
         return JSONResponse({"error": "Not found"}, status_code=404)
-    suffix = safe.rsplit(".", 1)[-1].lower()
+    suffix = candidate.suffix.lstrip(".").lower()
     media  = {"png": "image/png", "jpg": "image/jpeg", "jpeg": "image/jpeg",
                "gif": "image/gif", "webp": "image/webp"}.get(suffix, "image/png")
-    return FileResponse(str(path), media_type=media)
+    return FileResponse(str(candidate), media_type=media)

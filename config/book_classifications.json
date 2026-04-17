@@ -15,7 +15,11 @@
       "filename_patterns": [
         "Sobotta Atlas of Anatomy Vol 1"
       ],
-      "notes": "Primary source for upper body anatomy + high quality images"
+      "notes": "Primary source for upper body anatomy + high quality images",
+      "image_source": "epub",
+      "image_priority": "high",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "sobotta_vol2": {
       "k": 1,
@@ -29,7 +33,11 @@
       "filename_patterns": [
         "Sobotta Atlas of Anatomy Vol 2"
       ],
-      "notes": "Primary source for lower body anatomy + high quality images"
+      "notes": "Primary source for lower body anatomy + high quality images",
+      "image_source": "epub",
+      "image_priority": "high",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "sobotta_vol3": {
       "k": 1,
@@ -43,7 +51,11 @@
       "filename_patterns": [
         "Sobotta Atlas of Anatomy Vol 3"
       ],
-      "notes": "Primary source for head/neck/neuroanatomy + images"
+      "notes": "Primary source for head/neck/neuroanatomy + images",
+      "image_source": "epub",
+      "image_priority": "high",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "sobotta_textbook": {
       "k": 1,
@@ -52,12 +64,16 @@
       "library_category": "medical_literature",
       "role": "anatomy_text",
       "full_title": "Sobotta Anatomy Textbook",
-      "authors": "Paulsen, B\u00f6ckers, Waschke",
+      "authors": "Paulsen, Böckers, Waschke",
       "format": "epub",
       "filename_patterns": [
         "Sobotta Anatomy Textbook"
       ],
-      "notes": "Textbook companion to atlas \u2014 more explanatory text"
+      "notes": "Textbook companion to atlas — more explanatory text",
+      "image_source": "epub",
+      "image_priority": "high",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "sobotta_tables": {
       "k": 1,
@@ -71,7 +87,11 @@
       "filename_patterns": [
         "Sobotta Tables"
       ],
-      "notes": "Origin/insertion/innervation tables \u2014 excellent for QAT channel mapping"
+      "notes": "Origin/insertion/innervation tables — excellent for QAT channel mapping",
+      "image_source": "epub",
+      "image_priority": "high",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "sobotta_classic": {
       "k": 3,
@@ -85,7 +105,11 @@
       "filename_patterns": [
         "Sobotta Atlas of Anatomy Classic"
       ],
-      "notes": "Historical plates \u2014 fallback when modern volumes insufficient"
+      "notes": "Historical plates — fallback when modern volumes insufficient",
+      "image_source": "epub",
+      "image_priority": "high",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "deadman": {
       "k": 2,
@@ -100,11 +124,15 @@
         "deadman",
         "Manual of Acupuncture"
       ],
-      "notes": "THE authority for acupuncture points \u2014 all protocols start here",
+      "notes": "THE authority for acupuncture points — all protocols start here",
       "server_path": "/root/medical-rag/books/medical_literature/01_deadman_manual_of_acupuncture.pdf",
       "server_filename": "01_deadman_manual_of_acupuncture.pdf",
       "ingested": true,
-      "ingested_at": "2026-04-16T17:08:48.700320+00:00"
+      "ingested_at": "2026-04-16T17:08:48.700320+00:00",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "deadman_combinations": {
       "k": 2,
@@ -118,7 +146,11 @@
       "filename_patterns": [
         "Acupuncture Point Combinations"
       ],
-      "notes": "Classical point combinations \u2014 supplement to main Deadman"
+      "notes": "Classical point combinations — supplement to main Deadman",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "cecil_sterman": {
       "k": 2,
@@ -133,7 +165,11 @@
         "Advanced Acupuncture",
         "Cecil-Sterman"
       ],
-      "notes": "Sinew channels, clinical applications \u2014 complements Deadman"
+      "notes": "Sinew channels, clinical applications — complements Deadman",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "campbell": {
       "k": 1,
@@ -148,7 +184,11 @@
         "Acupuncture in Practice",
         "Campbell"
       ],
-      "notes": "Bridges anatomy and acupuncture \u2014 maps tissue to points"
+      "notes": "Bridges anatomy and acupuncture — maps tissue to points",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "acupoint_book": {
       "k": 2,
@@ -162,7 +202,11 @@
       "filename_patterns": [
         "Acupuncture Point Book"
       ],
-      "notes": "Additional point reference \u2014 use when Deadman insufficient"
+      "notes": "Additional point reference — use when Deadman insufficient",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "atlas_acupuncture": {
       "k": 2,
@@ -176,7 +220,11 @@
       "filename_patterns": [
         "atlas-of-acupuncture"
       ],
-      "notes": "Visual acupuncture atlas \u2014 images of point locations"
+      "notes": "Visual acupuncture atlas — images of point locations",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "maciocia_foundations": {
       "k": 1,
@@ -190,7 +238,11 @@
       "filename_patterns": [
         "Foundations of Chinese Medicine"
       ],
-      "notes": "TCM theory + points + pathology \u2014 most complete TCM source"
+      "notes": "TCM theory + points + pathology — most complete TCM source",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "maciocia_practice": {
       "k": 1,
@@ -204,7 +256,11 @@
       "filename_patterns": [
         "practice-of-chinese-medicine"
       ],
-      "notes": "TCM disease treatment \u2014 maps patterns to point prescriptions"
+      "notes": "TCM disease treatment — maps patterns to point prescriptions",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "maciocia_diagnosis": {
       "k": 1,
@@ -219,7 +275,11 @@
         "Diagnosis in Chinese Medicine",
         "maciocia-diagnosis"
       ],
-      "notes": "TCM diagnostic criteria \u2014 pattern identification"
+      "notes": "TCM diagnostic criteria — pattern identification",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "anatomy_trains": {
       "k": 1,
@@ -233,7 +293,11 @@
       "filename_patterns": [
         "Anatomy Trains"
       ],
-      "notes": "Myofascial chains \u2014 essential for QAT tissue mapping"
+      "notes": "Myofascial chains — essential for QAT tissue mapping",
+      "image_source": "epub",
+      "image_priority": "high",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "guyton": {
       "k": 1,
@@ -248,7 +312,11 @@
         "Medical Physiology",
         "Guyton"
       ],
-      "notes": "Physiology foundation \u2014 explains WHY tissues are involved"
+      "notes": "Physiology foundation — explains WHY tissues are involved",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "magee": {
       "k": 1,
@@ -262,7 +330,11 @@
       "filename_patterns": [
         "Orthopedic Physical Assessment"
       ],
-      "notes": "Clinical tests, diagnostics, joint assessment"
+      "notes": "Clinical tests, diagnostics, joint assessment",
+      "image_source": "epub",
+      "image_priority": "high",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "travell_simons": {
       "k": 1,
@@ -277,11 +349,15 @@
         "Travell",
         "Myofascial Pain"
       ],
-      "notes": "Trigger point maps \u2014 excellent tissue + image source",
+      "notes": "Trigger point maps — excellent tissue + image source",
       "server_path": "/root/medical-rag/books/medical_literature/02_travell_simons_myofascial_pain_vol1.pdf",
       "server_filename": "02_travell_simons_myofascial_pain_vol1.pdf",
       "ingested": true,
-      "ingested_at": "2026-04-16T17:54:00.667189+00:00"
+      "ingested_at": "2026-04-16T17:54:00.667189+00:00",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "trail_guide": {
       "k": 1,
@@ -299,9 +375,13 @@
         "03_trail_guide"
       ],
       "force_ocr_engine": "google_vision",
-      "notes": "Palpation anatomy \u2014 practical tissue location. Atlas-style book: EasyOCR/RapidOCR fail silently, Google Vision required.",
+      "notes": "Palpation anatomy — practical tissue location. Atlas-style book: EasyOCR/RapidOCR fail silently, Google Vision required.",
       "server_path": "/root/medical-rag/books/medical_literature/03_trail_guide_to_the_body_6th.pdf",
-      "server_filename": "03_trail_guide_to_the_body_6th.pdf"
+      "server_filename": "03_trail_guide_to_the_body_6th.pdf",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "thieme_atlas": {
       "k": 1,
@@ -310,12 +390,16 @@
       "library_category": "medical_literature",
       "role": "anatomy_atlas",
       "full_title": "Thieme Atlas of Anatomy",
-      "authors": "Sch\u00fcnke",
+      "authors": "Schünke",
       "format": "pdf",
       "filename_patterns": [
         "Thieme Atlas of Anatomy Deel"
       ],
-      "notes": "Alternative anatomy atlas \u2014 supplement to Sobotta"
+      "notes": "Alternative anatomy atlas — supplement to Sobotta",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "thieme_internal": {
       "k": 1,
@@ -324,12 +408,16 @@
       "library_category": "medical_literature",
       "role": "internal_anatomy",
       "full_title": "Thieme Atlas of Anatomy Internal Organs",
-      "authors": "Sch\u00fcnke",
+      "authors": "Schünke",
       "format": "pdf",
       "filename_patterns": [
         "Thieme Atlas of Anatomy Internal"
       ],
-      "notes": "Internal organ anatomy \u2014 useful for visceral conditions"
+      "notes": "Internal organ anatomy — useful for visceral conditions",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "patten": {
       "k": 1,
@@ -343,7 +431,11 @@
       "filename_patterns": [
         "Neurological Differential"
       ],
-      "notes": "Neuroanatomy + differential diagnosis"
+      "notes": "Neuroanatomy + differential diagnosis",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "pocket_atlas_1": {
       "k": 1,
@@ -357,7 +449,11 @@
       "filename_patterns": [
         "Pocket Atlas of Sectional Anatomy Vol I"
       ],
-      "notes": "Cross-sectional anatomy \u2014 head and neck"
+      "notes": "Cross-sectional anatomy — head and neck",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "pocket_atlas_2": {
       "k": 1,
@@ -371,7 +467,11 @@
       "filename_patterns": [
         "Pocket Atlas of Sectional Anatomy Vol II"
       ],
-      "notes": "Cross-sectional anatomy \u2014 thorax and abdomen"
+      "notes": "Cross-sectional anatomy — thorax and abdomen",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "pocket_atlas_3": {
       "k": 1,
@@ -385,7 +485,11 @@
       "filename_patterns": [
         "Pocket Atlas of Sectional Anatomy Vol III"
       ],
-      "notes": "Cross-sectional anatomy \u2014 spine and extremities"
+      "notes": "Cross-sectional anatomy — spine and extremities",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "bates": {
       "k": 1,
@@ -399,7 +503,11 @@
       "filename_patterns": [
         "Bates Guide"
       ],
-      "notes": "Physical examination \u2014 clinical assessment"
+      "notes": "Physical examination — clinical assessment",
+      "image_source": "epub",
+      "image_priority": "high",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "explain_pain": {
       "k": 2,
@@ -413,7 +521,11 @@
       "filename_patterns": [
         "Explain Pain"
       ],
-      "notes": "Pain neuroscience \u2014 central sensitisation, pain education"
+      "notes": "Pain neuroscience — central sensitisation, pain education",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "keown": {
       "k": 2,
@@ -428,7 +540,11 @@
         "Spark in the Machine",
         "keown"
       ],
-      "notes": "Scientific basis of acupuncture \u2014 bridges Western and TCM"
+      "notes": "Scientific basis of acupuncture — bridges Western and TCM",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "polyvagal_theory": {
       "k": 2,
@@ -443,7 +559,11 @@
         "Polyvagal Theory",
         "Polyvagal"
       ],
-      "notes": "Autonomic nervous system \u2014 vagus nerve, safety and threat responses"
+      "notes": "Autonomic nervous system — vagus nerve, safety and threat responses",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "body_keeps_score": {
       "k": 2,
@@ -458,7 +578,11 @@
         "Body Keeps the Score",
         "BodyKeepsScore"
       ],
-      "notes": "Trauma stored in body \u2014 somatic healing, NRT context"
+      "notes": "Trauma stored in body — somatic healing, NRT context",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "emotion_code": {
       "k": 3,
@@ -472,7 +596,11 @@
       "filename_patterns": [
         "Emotion Code"
       ],
-      "notes": "Trapped emotions \u2014 muscle testing framework, QAT ETT context"
+      "notes": "Trapped emotions — muscle testing framework, QAT ETT context",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "body_code": {
       "k": 3,
@@ -486,7 +614,11 @@
       "filename_patterns": [
         "Body Code"
       ],
-      "notes": "Expanded Emotion Code \u2014 comprehensive imbalance map"
+      "notes": "Expanded Emotion Code — comprehensive imbalance map",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "applied_kinesiology": {
       "k": 2,
@@ -500,7 +632,11 @@
       "filename_patterns": [
         "Applied Kinesiology"
       ],
-      "notes": "Manual muscle testing system \u2014 NRT foundation"
+      "notes": "Manual muscle testing system — NRT foundation",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "touch_for_health": {
       "k": 2,
@@ -515,7 +651,11 @@
         "Touch for Health",
         "TouchForHealth"
       ],
-      "notes": "Muscle balancing system \u2014 accessible kinesiology"
+      "notes": "Muscle balancing system — accessible kinesiology",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "flexbeam": {
       "k": 3,
@@ -533,7 +673,11 @@
       "server_path": "/root/medical-rag/books/device/how-flexbeam-works-for-your-body.pdf",
       "server_filename": "how-flexbeam-works-for-your-body.pdf",
       "ingested": true,
-      "ingested_at": "2026-04-16T21:30:47.965360+00:00"
+      "ingested_at": "2026-04-16T21:30:47.965360+00:00",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "unclassified_QAT_2025_overgenomen": {
       "k": 2,
@@ -547,7 +691,11 @@
       "filename_patterns": [
         "QAT_2025_overgenomen.pdf"
       ],
-      "notes": "Auto-added \u2014 needs manual K/A/I classification"
+      "notes": "Auto-added — needs manual K/A/I classification",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "unclassified_Quantum Alignment Technique - ": {
       "k": 2,
@@ -561,7 +709,11 @@
       "filename_patterns": [
         "Quantum Alignment Technique - Home Study  2025 01092025.pdf"
       ],
-      "notes": "Auto-added \u2014 needs manual K/A/I classification"
+      "notes": "Auto-added — needs manual K/A/I classification",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "unclassified_The Acupuncture Pendant eu": {
       "k": 2,
@@ -575,7 +727,11 @@
       "filename_patterns": [
         "The Acupuncture Pendant eu.pdf"
       ],
-      "notes": "Auto-added \u2014 needs manual K/A/I classification"
+      "notes": "Auto-added — needs manual K/A/I classification",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "unclassified_The QAT Connect to the Brain e": {
       "k": 2,
@@ -589,7 +745,11 @@
       "filename_patterns": [
         "The QAT Connect to the Brain eu.pdf"
       ],
-      "notes": "Auto-added \u2014 needs manual K/A/I classification"
+      "notes": "Auto-added — needs manual K/A/I classification",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "unclassified_The QAT Life Pendant eu": {
       "k": 2,
@@ -603,7 +763,11 @@
       "filename_patterns": [
         "The QAT Life Pendant eu.pdf"
       ],
-      "notes": "Auto-added \u2014 needs manual K/A/I classification"
+      "notes": "Auto-added — needs manual K/A/I classification",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "unclassified_NRT Lower Body": {
       "k": 2,
@@ -617,7 +781,11 @@
       "filename_patterns": [
         "NRT Lower Body.pdf"
       ],
-      "notes": "Auto-added \u2014 needs manual K/A/I classification"
+      "notes": "Auto-added — needs manual K/A/I classification",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "unclassified_NRT Upper Body": {
       "k": 2,
@@ -631,7 +799,11 @@
       "filename_patterns": [
         "NRT Upper Body.pdf"
       ],
-      "notes": "Auto-added \u2014 needs manual K/A/I classification"
+      "notes": "Auto-added — needs manual K/A/I classification",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "unclassified_Miraculous Sequence - Times": {
       "k": 2,
@@ -645,7 +817,11 @@
       "filename_patterns": [
         "Miraculous Sequence - Times.pdf"
       ],
-      "notes": "Auto-added \u2014 needs manual K/A/I classification"
+      "notes": "Auto-added — needs manual K/A/I classification",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "unclassified_How to Reset 23 More Muscles -": {
       "k": 2,
@@ -659,7 +835,11 @@
       "filename_patterns": [
         "How to Reset 23 More Muscles - Times.pdf"
       ],
-      "notes": "Auto-added \u2014 needs manual K/A/I classification"
+      "notes": "Auto-added — needs manual K/A/I classification",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "unclassified_Everything Reset Sequence - Ti": {
       "k": 2,
@@ -673,7 +853,11 @@
       "filename_patterns": [
         "Everything Reset Sequence - Times.pdf"
       ],
-      "notes": "Auto-added \u2014 needs manual K/A/I classification"
+      "notes": "Auto-added — needs manual K/A/I classification",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "unclassified_Advanced Seminar Manual- HS 08": {
       "k": 2,
@@ -687,7 +871,11 @@
       "filename_patterns": [
         "Advanced Seminar Manual- HS 08272022.pdf"
       ],
-      "notes": "Auto-added \u2014 needs manual K/A/I classification"
+      "notes": "Auto-added — needs manual K/A/I classification",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "unclassified_16 Expanded Revised and New Te": {
       "k": 2,
@@ -701,7 +889,11 @@
       "filename_patterns": [
         "16 Expanded Revised and New Techniques - Times.pdf"
       ],
-      "notes": "Auto-added \u2014 needs manual K/A/I classification"
+      "notes": "Auto-added — needs manual K/A/I classification",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "unclassified_Warnings and Cautions - Rechar": {
       "k": 2,
@@ -715,35 +907,47 @@
       "filename_patterns": [
         "Warnings and Cautions - Recharge Health.pdf"
       ],
-      "notes": "Auto-added \u2014 needs manual K/A/I classification"
+      "notes": "Auto-added — needs manual K/A/I classification",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
-    "unclassified_Warnings and Cautions \u2013 Rechar": {
+    "unclassified_Warnings and Cautions – Rechar": {
       "k": 2,
       "a": 2,
       "i": 2,
       "role": "unclassified",
-      "server_path": "/root/medical-rag/books/device/Warnings and Cautions \u2013 Recharge.pdf",
-      "server_filename": "Warnings and Cautions \u2013 Recharge.pdf",
+      "server_path": "/root/medical-rag/books/device/Warnings and Cautions – Recharge.pdf",
+      "server_filename": "Warnings and Cautions – Recharge.pdf",
       "ingested": true,
       "ingested_at": "2026-04-16T21:09:23.538688+00:00",
       "filename_patterns": [
-        "Warnings and Cautions \u2013 Recharge.pdf"
+        "Warnings and Cautions – Recharge.pdf"
       ],
-      "notes": "Auto-added \u2014 needs manual K/A/I classification"
+      "notes": "Auto-added — needs manual K/A/I classification",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "unclassified_How Does Red Light Therapy Wor": {
       "k": 2,
       "a": 2,
       "i": 2,
       "role": "unclassified",
-      "server_path": "/root/medical-rag/books/device/How Does Red Light Therapy Work_ \u2013 Recharge.pdf",
-      "server_filename": "How Does Red Light Therapy Work_ \u2013 Recharge.pdf",
+      "server_path": "/root/medical-rag/books/device/How Does Red Light Therapy Work_ – Recharge.pdf",
+      "server_filename": "How Does Red Light Therapy Work_ – Recharge.pdf",
       "ingested": true,
       "ingested_at": "2026-04-16T21:13:30.557591+00:00",
       "filename_patterns": [
-        "How Does Red Light Therapy Work_ \u2013 Recharge.pdf"
+        "How Does Red Light Therapy Work_ – Recharge.pdf"
       ],
-      "notes": "Auto-added \u2014 needs manual K/A/I classification"
+      "notes": "Auto-added — needs manual K/A/I classification",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "unclassified_NRT LB Techniques and Fundamen": {
       "k": 2,
@@ -757,7 +961,11 @@
       "filename_patterns": [
         "NRT LB Techniques and Fundamentals - Times.pdf"
       ],
-      "notes": "Auto-added \u2014 needs manual K/A/I classification"
+      "notes": "Auto-added — needs manual K/A/I classification",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "unclassified_NRT UB Techniques and Fundamen": {
       "k": 2,
@@ -771,7 +979,11 @@
       "filename_patterns": [
         "NRT UB Techniques and Fundamentals - Times.pdf"
       ],
-      "notes": "Auto-added \u2014 needs manual K/A/I classification"
+      "notes": "Auto-added — needs manual K/A/I classification",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     },
     "unclassified_test_acupuncture": {
       "k": 2,
@@ -785,12 +997,16 @@
       "filename_patterns": [
         "test_acupuncture.pdf"
       ],
-      "notes": "Auto-added \u2014 needs manual K/A/I classification"
+      "notes": "Auto-added — needs manual K/A/I classification",
+      "image_source": "pdf_cropped",
+      "image_priority": "normal",
+      "image_priority_override": null,
+      "image_evaluated": false
     }
   },
   "query_profiles": {
     "tissue_identification": {
-      "description": "Section 2 \u2014 which tissues are involved",
+      "description": "Section 2 — which tissues are involved",
       "filter": {
         "kai_k": 1
       },
@@ -807,7 +1023,7 @@
       ]
     },
     "acupuncture_points": {
-      "description": "Section 3 \u2014 which points to use",
+      "description": "Section 3 — which points to use",
       "filter": {
         "kai_a": 1
       },
