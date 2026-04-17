@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 11:11:44 UTC**
+> Last update: **2026-04-17 11:16:44 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `QRS-101-Home-System-Brochure.pdf` (4 min) |
+| Current job | `QRS-101-Home-System-Brochure.pdf` (9 min) |
 | Queued | 4 |
 | Total books | 49 |
 | Ingested | 37 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `16_Expanded__Revised__and_New_Techniques.mp4` (21 min) |
+| Current job | `16_Expanded__Revised__and_New_Techniques.mp4` (26 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 13.95 GB / 32.86 GB (42%) |
-| CPU | 99.9% |
+| RAM used | 8.19 GB / 32.86 GB (25%) |
+| CPU | 100.0% |
 | Disk used | 59.3 GB / 322.3 GB (19%) |
-| Uptime | up 5 hours, 36 minutes |
+| Uptime | up 5 hours, 41 minutes |
 
 ## Recent markers
 - `2026-04-17T11:07:03.654184+00:00` **book_ingested** — QRS Quantron Resonance 101 Home System.pdf → device_documentation: 9 chunks
