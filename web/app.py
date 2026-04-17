@@ -2223,6 +2223,8 @@ async def library_page():
       </div>
     </div>
 
+  </div><!-- /legenda grid -->
+
   <!-- Verwerkingsstatus flow -->
   <div style="background:#f8fafc;border-radius:8px;padding:12px 16px;margin-bottom:16px">
     <div style="font-size:11px;font-weight:500;color:#6b7280;margin-bottom:10px">Verwerkingsstatus</div>
