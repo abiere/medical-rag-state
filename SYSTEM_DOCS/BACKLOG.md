@@ -1,12 +1,13 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-17 — Collectie-architectuur migratie (Opdracht A voltooid)
+> Laatste update: 2026-04-17 — Domain MDs kennissyntheselaag aangemaakt
 
 ---
 
 ## 🔴 Prioriteit — volgende sessie
 
 - [x] **OPDRACHT B (UI) voltooid** ✅ — zie Afgerond hieronder
+- [x] **Domain MDs aangemaakt** ✅ — zie Afgerond hieronder (Domain-QAT, NRT, RLT, PEMF, Klinisch skeleton)
 
 
 - [ ] **Trail Guide ingest valideren** — RapidOCR run actief (gestart 08:32)
