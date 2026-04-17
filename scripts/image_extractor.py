@@ -21,12 +21,37 @@ import fitz  # PyMuPDF
 
 logger = logging.getLogger(__name__)
 
-BASE       = Path(__file__).parent.parent
-IMAGES_OUT = BASE / "data" / "extracted_images"
-CREDS_FILE = BASE / "config" / "google_vision_key.json"
+BASE         = Path(__file__).parent.parent
+IMAGES_OUT   = BASE / "data" / "extracted_images"
+CREDS_FILE   = BASE / "config" / "google_vision_key.json"
+_PROGRESS_DIR = Path("/tmp")
 
 if CREDS_FILE.exists() and "GOOGLE_APPLICATION_CREDENTIALS" not in os.environ:
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = str(CREDS_FILE)
+
+
+def _write_extraction_progress(book_hash: str, pages_processed: int,
+                                pages_total: int, figures_found: int) -> None:
+    try:
+        pf = _PROGRESS_DIR / f"image_extraction_{book_hash}.json"
+        pf.write_text(json.dumps({
+            "book_hash":       book_hash,
+            "pages_processed": pages_processed,
+            "pages_total":     pages_total,
+            "figures_found":   figures_found,
+            "updated_at":      datetime.now(timezone.utc).isoformat(),
+        }))
+    except Exception:
+        pass
+
+
+def _clear_extraction_progress(book_hash: str) -> None:
+    try:
+        pf = _PROGRESS_DIR / f"image_extraction_{book_hash}.json"
+        if pf.exists():
+            pf.unlink()
+    except Exception:
+        pass
 
 
 def _lazy_vision_client():
@@ -161,17 +186,22 @@ def extract_figures_from_pdf(
             doc_local.close()
         return page_results
 
-    with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        futures = {executor.submit(process_page, p): p for p in range(total_pages)}
-        for future in as_completed(futures):
-            try:
-                page_results = future.result()
-                results.extend(page_results)
-            except Exception as exc:
-                logger.error("Page future failed: %s", exc)
-            done_count += 1
-            if progress_fn:
-                progress_fn(done_count, total_pages)
+    _write_extraction_progress(book_hash, 0, total_pages, 0)
+    try:
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = {executor.submit(process_page, p): p for p in range(total_pages)}
+            for future in as_completed(futures):
+                try:
+                    page_results = future.result()
+                    results.extend(page_results)
+                except Exception as exc:
+                    logger.error("Page future failed: %s", exc)
+                done_count += 1
+                _write_extraction_progress(book_hash, done_count, total_pages, len(results))
+                if progress_fn:
+                    progress_fn(done_count, total_pages)
+    finally:
+        _clear_extraction_progress(book_hash)
 
     results.sort(key=lambda x: (x["page"], x["id"]))
 
@@ -224,37 +254,43 @@ def extract_images_from_epub(
         except Exception:
             pass
 
+    IMAGE_TYPES = {"image/png", "image/jpeg", "image/jpg", "image/webp", "image/gif"}
+    all_image_items = [
+        item for item in book.get_items()
+        if item.media_type in IMAGE_TYPES
+        and item.get_content() and len(item.get_content()) >= 1000
+    ]
+    total_items = len(all_image_items)
+    _write_extraction_progress(book_hash, 0, total_items, 0)
+
     results: list[dict] = []
     idx = 0
-    IMAGE_TYPES = {"image/png", "image/jpeg", "image/jpg", "image/webp", "image/gif"}
+    try:
+        for item in all_image_items:
+            content = item.get_content()
+            ext_map = {"image/jpeg": "jpg", "image/jpg": "jpg",
+                       "image/png": "png", "image/webp": "webp", "image/gif": "gif"}
+            ext = ext_map.get(item.media_type, "png")
+            fname = f"epub_{idx:04d}.{ext}"
+            (out / fname).write_bytes(content)
 
-    for item in book.get_items():
-        if item.media_type not in IMAGE_TYPES:
-            continue
-        content = item.get_content()
-        if not content or len(content) < 1000:
-            continue  # skip tiny images (icons, decorators)
+            img_name = Path(item.get_name()).name
+            caption = caption_map.get(img_name, "")
 
-        ext_map = {"image/jpeg": "jpg", "image/jpg": "jpg",
-                   "image/png": "png", "image/webp": "webp", "image/gif": "gif"}
-        ext = ext_map.get(item.media_type, "png")
-        fname = f"epub_{idx:04d}.{ext}"
-        (out / fname).write_bytes(content)
-
-        img_name = Path(item.get_name()).name
-        caption = caption_map.get(img_name, "")
-
-        results.append({
-            "id":           f"epub_{idx:04d}",
-            "file":         fname,
-            "page":         None,
-            "caption":      caption,
-            "alt_text":     caption,
-            "confidence":   1.0,
-            "image_source": "epub",
-            "extracted_at": datetime.now(timezone.utc).isoformat(),
-        })
-        idx += 1
+            results.append({
+                "id":           f"epub_{idx:04d}",
+                "file":         fname,
+                "page":         None,
+                "caption":      caption,
+                "alt_text":     caption,
+                "confidence":   1.0,
+                "image_source": "epub",
+                "extracted_at": datetime.now(timezone.utc).isoformat(),
+            })
+            idx += 1
+            _write_extraction_progress(book_hash, idx, total_items, len(results))
+    finally:
+        _clear_extraction_progress(book_hash)
 
     meta = {
         "book_hash":    book_hash,

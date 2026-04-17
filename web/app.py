@@ -1166,6 +1166,51 @@ async function _refreshBookProgress() {
           html += '</tr>';
         }
 
+        // ── 5th row: Image extraction ────────────────────────────────────
+        const ie2    = active.image_extraction || {};
+        const ieSt2  = ie2.status || 'pending';
+        if (ieSt2 !== 'not_applicable') {
+          const ieRunning2 = ieSt2 === 'running';
+          const ieDone2    = ieSt2 === 'done';
+          const ieccol2    = ieDone2 ? '#059669' : (ieRunning2 ? '#1A6B72' : '#d1d5db');
+          const ieicon2    = ieDone2 ? '\u2713'  : (ieRunning2 ? '\u25B6'  : '\u2022');
+          let   ieDetail2  = '';
+          let   ieBar2     = '';
+          if (ieDone2) {
+            const nf = ie2.figures_found;
+            ieDetail2 = (nf == null ? '\u2014' : fmt(nf)) + ' figuren ge\u00ebxtraheerd';
+          } else if (ieRunning2) {
+            const pp = ie2.pages_processed, pt = ie2.pages_total, ff = ie2.figures_found;
+            if (pp != null && pt != null) {
+              ieDetail2 = `pagina ${fmt(pp)} / ${fmt(pt)}`;
+              if (ff) ieDetail2 += ` \u00b7 ${fmt(ff)} figuren`;
+              const pct2 = Math.min(Math.round(pp / pt * 100), 100);
+              ieBar2 = `<div style="margin-top:4px;background:#c7e8eb;border-radius:999px;height:4px">`
+                + `<div style="background:#1A6B72;border-radius:999px;height:4px;width:${pct2}%;transition:width 0.8s"></div></div>`;
+            }
+          }
+          const iePillStyles2 = {done:'background:#dcfce7;color:#16a34a',running:'background:#e8f4f5;color:#1A6B72',failed:'background:#fee2e2;color:#dc2626',pending:'background:#f3f4f6;color:#6b7280'};
+          const iePillLabels2 = {done:'Klaar',running:'Bezig',failed:'Fout',pending:'Wacht'};
+          const iePill2   = `<span style="${iePillStyles2[ieSt2]||iePillStyles2.pending};border-radius:999px;padding:2px 8px;font-size:11px;font-weight:600;white-space:nowrap">${iePillLabels2[ieSt2]||'Wacht'}</span>`;
+          const tdS2  = 'style="padding:7px 6px;vertical-align:top;border-bottom:1px solid #e2e8f0"';
+          const tdSF2 = 'style="padding:7px 0;vertical-align:top;border-bottom:1px solid #e2e8f0"';
+          const rowBg2 = ieRunning2 ? ' style="background:#f0faf8"' : '';
+          html += `<tr${rowBg2}>`;
+          html += `<td ${tdSF2}>`;
+          html += '<div style="display:flex;align-items:flex-start;gap:6px">';
+          html += `<span style="margin-top:2px;width:16px;height:16px;border-radius:50%;background:${ieccol2};color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${ieicon2}</span>`;
+          html += '<div>';
+          html += `<span style="font-size:13px;color:${ieRunning2?'#1A6B72':'#374151'};font-weight:${ieRunning2?600:400}">5. Afbeeldingen</span>`;
+          if (ieDetail2) html += `<div style="font-size:12px;color:#6b7280;margin-top:1px">${ieDetail2}</div>`;
+          if (ieBar2)    html += ieBar2;
+          html += '</div></div></td>';
+          html += `<td ${tdS2}>${iePill2}</td>`;
+          html += `<td ${tdS2} style="padding:7px 6px;vertical-align:top;border-bottom:1px solid #e2e8f0;font-size:12px;color:#4a5568">\u2014</td>`;
+          html += `<td ${tdS2} style="padding:7px 6px;vertical-align:top;border-bottom:1px solid #e2e8f0;font-size:12px;color:#4a5568">\u2014</td>`;
+          html += `<td ${tdS2} style="padding:7px 6px;vertical-align:top;border-bottom:1px solid #e2e8f0;font-size:12px;color:#4a5568">\u2014</td>`;
+          html += '</tr>';
+        }
+
         html += '</tbody></table></div>';
 
         // ── Book-level summary bar ────────────────────────────────────────
@@ -2375,6 +2420,54 @@ function buildPhaseTable(d, meta) {
       + `</tr>`;
   }
 
+  // ── 5th row: Image extraction (outside phase loop, background thread) ────────
+  const ie    = d.image_extraction || {};
+  const ieSt  = ie.status || 'pending';
+  if (ieSt !== 'not_applicable') {
+    const ieRunning = ieSt === 'running';
+    const ieDone    = ieSt === 'done';
+    const ieccol    = ieDone ? '#059669' : (ieRunning ? '#1A6B72' : '#d1d5db');
+    const ieicon    = ieDone ? '\u2713'  : (ieRunning ? '\u25B6'  : '\u2022');
+    let   ieDetail  = '';
+    let   ieBar     = '';
+    if (ieDone) {
+      const nf = ie.figures_found;
+      ieDetail = (nf == null ? '\u2014' : fmt(nf)) + ' figuren ge\u00ebxtraheerd';
+    } else if (ieRunning) {
+      const pp = ie.pages_processed, pt = ie.pages_total, ff = ie.figures_found;
+      if (pp != null && pt != null) {
+        ieDetail = `pagina ${fmt(pp)} / ${fmt(pt)}`;
+        if (ff) ieDetail += ` \u00b7 ${fmt(ff)} figuren`;
+        const pct = Math.min(Math.round(pp / pt * 100), 100);
+        ieBar = `<div style="margin-top:4px;background:#c7e8eb;border-radius:999px;height:4px">`
+          + `<div style="background:#1A6B72;border-radius:999px;height:4px;width:${pct}%;transition:width 0.5s"></div></div>`;
+      }
+    }
+    const iePillSt = pillStyles[ieSt] || pillStyles.pending;
+    const iePillLb = pillLabels[ieSt] || 'Wacht';
+    const iePill   = `<span style="${iePillSt};border-radius:999px;padding:2px 8px;font-size:11px;font-weight:600">${iePillLb}</span>`;
+    const ieRowBg  = ieRunning ? 'background:#f0faf8;' : '';
+    html += `<tr style="${ieRowBg}border-bottom:0.5px solid #e2e8f0">`
+      + `<td style="padding:7px 0;vertical-align:top">`
+        + `<div style="display:flex;align-items:flex-start;gap:6px">`
+          + `<span style="margin-top:2px;width:16px;height:16px;border-radius:50%;`
+            + `background:${ieccol};color:#fff;font-size:9px;font-weight:700;display:flex;`
+            + `align-items:center;justify-content:center;flex-shrink:0">${ieicon}</span>`
+          + `<div>`
+            + `<span style="font-size:13px;color:${ieRunning?'#1A6B72':'#374151'};`
+              + `font-weight:${ieRunning?600:400}">5. Afbeeldingen</span>`
+            + (ieDetail ? `<div style="font-size:11px;color:#6b7280;margin-top:1px">${ieDetail}</div>` : '')
+            + ieBar
+          + `</div>`
+        + `</div>`
+      + `</td>`
+      + `<td style="padding:7px 6px;vertical-align:top">${iePill}</td>`
+      + `<td style="padding:7px 6px;font-size:12px;color:#4a5568;vertical-align:top">\u2014</td>`
+      + `<td style="padding:7px 6px;font-size:12px;color:#4a5568;vertical-align:top">\u2014</td>`
+      + `<td style="padding:7px 6px;font-size:12px;color:#4a5568;vertical-align:top">\u2014</td>`
+      + `</tr>`;
+  }
+
   html += '</tbody></table>';
 
   // Delete button at drawer bottom — use data attributes to avoid quote escaping issues
@@ -2629,9 +2722,12 @@ async def api_library_book_detail(book_hash: str):
     except Exception:
         pass
 
+    image_extraction = _build_image_extraction_info(safe, state, filename)
+
     return {**state, "audit_score": audit_score,
             "category_scores": category_scores, "chunk_count": chunk_count,
-            "claude_api_enabled": claude_api_enabled}
+            "claude_api_enabled": claude_api_enabled,
+            "image_extraction": image_extraction}
 
 
 # ── DELETE /api/library/items/{item_id} ────────────────────────────────────────
@@ -4341,6 +4437,60 @@ def _load_state(state_file: Path) -> dict | None:
         return None
 
 
+def _build_image_extraction_info(book_hash: str, state: dict, filename: str) -> dict:
+    """Build image_extraction status dict for drawer and progress widget display."""
+    _none = {"status": "not_applicable", "source": "none",
+             "figures_found": None, "pages_processed": None, "pages_total": None}
+
+    # Determine image_source from book_classifications.json
+    image_source = "none"
+    try:
+        cls_data = json.loads(CLASSIFICATIONS_PATH.read_text()).get("classifications", {})
+        fn_lower = filename.lower()
+        for entry in cls_data.values():
+            for pat in entry.get("filename_patterns", []):
+                if pat.lower() in fn_lower:
+                    src = entry.get("image_source") or "none"
+                    image_source = src
+                    break
+            if image_source != "none":
+                break
+    except Exception:
+        pass
+
+    if image_source == "none":
+        return _none
+
+    # done — images_metadata.json exists
+    meta_path = BASE / "data" / "extracted_images" / book_hash / "images_metadata.json"
+    if meta_path.exists():
+        try:
+            m = json.loads(meta_path.read_text())
+            return {"status": "done", "source": image_source,
+                    "figures_found": len(m.get("images", [])),
+                    "pages_processed": None, "pages_total": None}
+        except Exception:
+            return {"status": "done", "source": image_source,
+                    "figures_found": 0, "pages_processed": None, "pages_total": None}
+
+    # running — temp progress file written by image_extractor
+    progress_file = Path("/tmp") / f"image_extraction_{book_hash}.json"
+    if progress_file.exists():
+        try:
+            prog = json.loads(progress_file.read_text())
+            return {"status": "running", "source": image_source,
+                    "figures_found":   prog.get("figures_found"),
+                    "pages_processed": prog.get("pages_processed"),
+                    "pages_total":     prog.get("pages_total")}
+        except Exception:
+            return {"status": "running", "source": image_source,
+                    "figures_found": None, "pages_processed": None, "pages_total": None}
+
+    # pending — waiting for qdrant phase (or qdrant done, extraction not yet started)
+    return {"status": "pending", "source": image_source,
+            "figures_found": None, "pages_processed": None, "pages_total": None}
+
+
 @app.get("/api/library/progress/all")
 async def api_library_progress_all():
     """Return list of state.json dicts for every book in ingest_cache/."""
@@ -4355,7 +4505,8 @@ async def api_library_progress_all():
 
 @app.get("/api/library/progress/active")
 async def api_library_progress_active():
-    """Return state.json for the currently-processing book, or null."""
+    """Return state.json for the currently-processing book, enriched with image_extraction."""
+    state = None
     # First check the fast /tmp/book_ingest_current.json for the book_hash
     try:
         if BOOK_CURRENT_FILE.exists():
@@ -4364,18 +4515,27 @@ async def api_library_progress_active():
             if book_hash:
                 sf = CACHE_DIR / book_hash / "state.json"
                 state = _load_state(sf)
-                if state:
-                    return state
     except Exception:
         pass
 
     # Fallback: scan for first state that has status=processing
-    if CACHE_DIR.exists():
+    if state is None and CACHE_DIR.exists():
         for sf in CACHE_DIR.glob("*/state.json"):
             s = _load_state(sf)
             if s and s.get("status") == "processing":
-                return s
-    return None
+                state = s
+                break
+
+    if state is None:
+        return None
+
+    # Enrich with image_extraction status
+    bh = state.get("book_hash", "")
+    fn = state.get("filename", "")
+    if bh and fn:
+        state = dict(state)  # shallow copy — don't mutate cached state
+        state["image_extraction"] = _build_image_extraction_info(bh, state, fn)
+    return state
 
 
 @app.get("/api/library/progress/{book_hash}")

@@ -69,6 +69,8 @@ State machine per boek: `data/ingest_cache/{book_hash}/state.json`
 **Prioriteitssysteem:** `book_classifications.json` veld `image_priority` (high/normal/low/skip)
 **Override:** `image_priority_override` — handmatig via /images pagina → "Prioriteit wijzigen"
 **Extractie timing:** Draait als background thread direct na qdrant fase (overdag). Nachtrun verwerkt dit NIET meer.
+**Live voortgang:** `/tmp/image_extraction_{book_hash}.json` tijdens extractie (geschreven door `_write_extraction_progress`, verwijderd bij voltooiing)
+  Getoond als 5e fase-rij in /library drawer en /library/ingest widget — status: pending/running/done/not_applicable
 
 ### 1.4 Audit Mechanisme
 - **Primair:** Claude Haiku API (instelbaar — `settings.json claude_api.enabled`)

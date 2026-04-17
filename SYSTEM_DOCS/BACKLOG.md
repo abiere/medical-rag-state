@@ -1,6 +1,6 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-17 — audit fallback + retroaudit fix: 2773 chunks getagd
+> Laatste update: 2026-04-17 — 5e fase-rij afbeeldingen + audit_score diagnose
 
 ---
 
@@ -65,6 +65,20 @@
 - [ ] Officiële Deadman digitale versie aanschaffen (DRM-vrij via Eastland Press)
 - [ ] Consistentie guardian cross-collectie
 - [ ] Protocol pre-validatie (Ollama checkt dekking voor generatie)
+
+---
+
+## ✅ Afgerond — sessie 2026-04-17 (5e fase + audit diagnose)
+
+- [x] **5e fase "Afbeeldingen" in phase table** — /library drawer (buildPhaseTable) + /library/ingest widget
+      `image_extraction_info` toegevoegd aan `/api/library/book/{hash}/detail` + `/api/library/progress/active`
+      Voortgang via `/tmp/image_extraction_{hash}.json` (live progress file per boek)
+      States: pending / running (+ progress bar) / done ({n} figuren geëxtraheerd) / not_applicable (skip rij)
+- [x] **audit_score diagnose**
+      - Deadman: `quality_score=None` in audit JSON — audit API-fout tijdens book audit run
+      - Travell: `quality_score=4.85` — werkt correct
+      - category_scores: `usability_profile.scores={}` voor beide — audit liep toen chunks nog `skipped_ollama_timeout` waren
+      - Fix: re-run `audit_book.py` voor beide boeken (nu chunks zijn getagd)
 
 ---
 
