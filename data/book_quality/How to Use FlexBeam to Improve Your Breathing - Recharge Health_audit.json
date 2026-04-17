@@ -1,0 +1,61 @@
+{
+  "book": "How to Use FlexBeam to Improve Your Breathing - Recharge Health.pdf",
+  "collection": "device_documentation",
+  "audited_at": "2026-04-16T20:42:35.494149+00:00",
+  "total_chunks": 4,
+  "structural": {
+    "total_chunks": 4,
+    "avg_chunk_words": 165.0,
+    "short_chunks": 0,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 0,
+    "images_extracted": 3,
+    "translation_applied": false,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 4
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 4,
+    "avg_coherence": 3.0,
+    "avg_completeness": 3.0,
+    "avg_terminology": 4.67,
+    "avg_translation": 5.0,
+    "quality_score": 3.92,
+    "flagged_chunks": 2,
+    "suggestion": "Start and end the chunk with a clear medical concept or topic instead of a company's support page."
+  },
+  "auto_classification": {
+    "primary_use": [
+      "nrt_treatment"
+    ],
+    "secondary_use": [],
+    "image_quality": "none",
+    "image_type": "text only, product information and usage guidelines",
+    "recommended_collection": "nrt_curriculum",
+    "confidence": 1.0
+  },
+  "usability_profile": {
+    "scores": {
+      "treatment_protocol": 5.0,
+      "device_settings": 5.0
+    },
+    "counts": {
+      "treatment_protocol": 1,
+      "device_settings": 1
+    },
+    "total_tagged": 1
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

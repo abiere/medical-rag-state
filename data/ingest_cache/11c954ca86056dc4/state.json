@@ -1,0 +1,62 @@
+{
+  "filename": "How to Use FlexBeam on Neck - Recharge Health.pdf",
+  "book_hash": "11c954ca86056dc4",
+  "filepath": "/root/medical-rag/books/device/How to Use FlexBeam on Neck - Recharge Health.pdf",
+  "collection": "device_documentation",
+  "library_category": "device",
+  "started_at": "2026-04-16T20:33:52.308031+00:00",
+  "updated_at": "2026-04-17T05:19:29.959152+00:00",
+  "completed_at": null,
+  "phases": {
+    "parse": {
+      "status": "failed",
+      "started_at": "2026-04-17T05:19:13.405884+00:00",
+      "completed_at": null,
+      "pages_total": 1,
+      "pages_done": 0,
+      "chunks_extracted": null,
+      "images_extracted": null,
+      "parse_method": null,
+      "output_file": "phase1_chunks.json",
+      "error": "No chunks produced",
+      "warnings": []
+    },
+    "audit": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "chunks_total": null,
+      "chunks_tagged": 0,
+      "chunks_skipped": 0,
+      "ollama_available": null,
+      "consecutive_failures_hit": false,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "chunks_total": null,
+      "chunks_done": 0,
+      "vectors_per_minute": null,
+      "eta_minutes": null,
+      "last_progress_at": null,
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "chunks_inserted": 0,
+      "collection": "device_documentation"
+    },
+    "image_screen": {
+      "status": "queued_background",
+      "images_total": 0,
+      "images_done": 0,
+      "images_useful": 0,
+      "last_run": null,
+      "note": "Nightly job — does not block main pipeline"
+    }
+  }
+}

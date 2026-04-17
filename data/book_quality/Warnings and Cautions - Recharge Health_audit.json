@@ -1,0 +1,60 @@
+{
+  "book": "Warnings and Cautions - Recharge Health.pdf",
+  "collection": "device_documentation",
+  "audited_at": "2026-04-16T20:12:32.717418+00:00",
+  "total_chunks": 3,
+  "structural": {
+    "total_chunks": 3,
+    "avg_chunk_words": 221.7,
+    "short_chunks": 0,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 0,
+    "images_extracted": 0,
+    "translation_applied": false,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 3
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 3,
+    "avg_coherence": 2.67,
+    "avg_completeness": 2.0,
+    "avg_terminology": 5.0,
+    "avg_translation": 5.0,
+    "quality_score": 3.67,
+    "flagged_chunks": 2,
+    "suggestion": "Reformat the text to start and end at natural boundaries, such as a paragraph or a section."
+  },
+  "auto_classification": {
+    "primary_use": [
+      "device_settings",
+      null
+    ],
+    "secondary_use": [],
+    "image_quality": "none",
+    "image_type": null,
+    "recommended_collection": null,
+    "confidence": 0
+  },
+  "usability_profile": {
+    "scores": {
+      "literature_reference": 5.0
+    },
+    "counts": {
+      "literature_reference": 1
+    },
+    "total_tagged": 1
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

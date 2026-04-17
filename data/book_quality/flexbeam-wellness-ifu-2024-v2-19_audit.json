@@ -1,0 +1,65 @@
+{
+  "book": "flexbeam-wellness-ifu-2024-v2-19.pdf",
+  "collection": "device_documentation",
+  "audited_at": "2026-04-16T21:06:08.533564+00:00",
+  "total_chunks": 14,
+  "structural": {
+    "total_chunks": 14,
+    "avg_chunk_words": 274.6,
+    "short_chunks": 1,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 0,
+    "images_extracted": 8,
+    "translation_applied": false,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 14
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 14,
+    "avg_coherence": 3.69,
+    "avg_completeness": 3.23,
+    "avg_terminology": 5.0,
+    "avg_translation": 5.0,
+    "quality_score": 4.23,
+    "flagged_chunks": 6,
+    "suggestion": "Separate the discussion of device functionality from the user instructions to improve clarity."
+  },
+  "auto_classification": {
+    "primary_use": [],
+    "secondary_use": [],
+    "image_quality": "unknown",
+    "image_type": "",
+    "recommended_collection": "",
+    "confidence": 0.0
+  },
+  "usability_profile": {
+    "scores": {
+      "device_settings": 5.0,
+      "treatment_protocol": 1.7,
+      "literature_reference": 0.8,
+      "anatomy": 1.7,
+      "western_diagnosis": 0.8
+    },
+    "counts": {
+      "device_settings": 6,
+      "treatment_protocol": 2,
+      "literature_reference": 1,
+      "anatomy": 2,
+      "western_diagnosis": 1
+    },
+    "total_tagged": 8
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

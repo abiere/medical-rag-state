@@ -1,0 +1,62 @@
+{
+  "book": "How to Reset 23 More Muscles - Times.pdf",
+  "collection": "nrt_qat_curriculum",
+  "audited_at": "2026-04-16T19:23:14.875460+00:00",
+  "total_chunks": 1,
+  "structural": {
+    "total_chunks": 1,
+    "avg_chunk_words": 39.0,
+    "short_chunks": 1,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 0,
+    "images_extracted": 0,
+    "translation_applied": false,
+    "epub_strategy": null,
+    "pdf_type": "mixed",
+    "ocr_statistics": {
+      "total_pages": 1,
+      "readable_pages": 1,
+      "unreadable_pages": 0,
+      "native_pages": 1,
+      "ocr_pages": 0,
+      "engine_usage": {},
+      "avg_confidence": 0.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 1,
+    "avg_coherence": 3.0,
+    "avg_completeness": 2.0,
+    "avg_terminology": 5.0,
+    "avg_translation": 5.0,
+    "quality_score": 3.75,
+    "flagged_chunks": 1,
+    "suggestion": "Break down the list into separate points to improve coherence and completeness."
+  },
+  "auto_classification": {
+    "primary_use": "anatomy",
+    "secondary_use": [],
+    "image_quality": "high",
+    "image_type": "muscle location or function",
+    "recommended_collection": "anatomy_atlas",
+    "confidence": 0.8
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [
+      "avg_chunk_words < 100",
+      "short_chunks > 20% (100%)"
+    ],
+    "suggestions": [
+      "retry with larger chunk target (600 words)",
+      "parsing strategy problem — check parser output"
+    ],
+    "remediation_needed": true
+  },
+  "status": "approved"
+}

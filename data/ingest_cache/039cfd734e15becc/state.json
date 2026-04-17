@@ -1,0 +1,57 @@
+{
+  "filename": "16 Expanded Revised and New Techniques - Times.pdf",
+  "book_hash": "039cfd734e15becc",
+  "filepath": "/root/medical-rag/books/nrt_qat/16 Expanded Revised and New Techniques - Times.pdf",
+  "collection": "nrt_qat_curriculum",
+  "library_category": "nrt_qat",
+  "started_at": "2026-04-16T20:04:54.653028+00:00",
+  "updated_at": "2026-04-16T20:06:50.532134+00:00",
+  "completed_at": "2026-04-16T20:06:50.532126+00:00",
+  "phases": {
+    "parse": {
+      "status": "done",
+      "started_at": "2026-04-16T20:04:54.653692+00:00",
+      "completed_at": "2026-04-16T20:04:54.826979+00:00",
+      "pages_total": 2,
+      "pages_done": 2,
+      "chunks_extracted": 2,
+      "images_extracted": 0,
+      "parse_method": null,
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": []
+    },
+    "audit": {
+      "status": "done",
+      "started_at": "2026-04-16T20:04:54.827626+00:00",
+      "completed_at": "2026-04-16T20:06:41.347803+00:00",
+      "chunks_total": 2,
+      "chunks_tagged": 0,
+      "chunks_skipped": 0,
+      "ollama_available": false,
+      "consecutive_failures_hit": false,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "done",
+      "started_at": "2026-04-16T20:06:41.348824+00:00",
+      "completed_at": "2026-04-16T20:06:50.475029+00:00",
+      "chunks_total": 2,
+      "chunks_done": 2,
+      "vectors_per_minute": 18.7,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-16T20:06:50.469369+00:00",
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "done",
+      "started_at": "2026-04-16T20:06:50.475741+00:00",
+      "completed_at": "2026-04-16T20:06:50.531175+00:00",
+      "chunks_inserted": 2,
+      "collection": "nrt_qat_curriculum"
+    },
+    "image_screen": {
+      "status": "done"
+    }
+  }
+}

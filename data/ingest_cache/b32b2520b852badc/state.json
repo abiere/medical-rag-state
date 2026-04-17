@@ -1,0 +1,61 @@
+{
+  "filename": "03_trail_guide_to_the_body_6th.pdf",
+  "book_hash": "b32b2520b852badc",
+  "filepath": "/root/medical-rag/books/medical_literature/03_trail_guide_to_the_body_6th.pdf",
+  "collection": "medical_library",
+  "library_category": "medical_literature",
+  "started_at": null,
+  "updated_at": "2026-04-17T05:34:13.082480+00:00",
+  "completed_at": null,
+  "phases": {
+    "parse": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "pages_total": null,
+      "pages_done": 0,
+      "chunks_extracted": null,
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": []
+    },
+    "audit": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "chunks_total": null,
+      "chunks_tagged": 0,
+      "chunks_skipped": 0,
+      "ollama_available": null,
+      "consecutive_failures_hit": false,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "chunks_total": null,
+      "chunks_done": 0,
+      "vectors_per_minute": null,
+      "eta_minutes": null,
+      "last_progress_at": null,
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "chunks_inserted": 0,
+      "collection": "medical_library"
+    },
+    "image_screen": {
+      "status": "queued_background",
+      "images_total": 0,
+      "images_done": 0,
+      "images_useful": 0,
+      "last_run": null,
+      "note": "Nightly job \u2014 does not block main pipeline"
+    }
+  },
+  "status": "pending"
+}

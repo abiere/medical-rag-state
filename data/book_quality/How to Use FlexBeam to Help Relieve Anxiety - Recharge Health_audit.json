@@ -1,0 +1,60 @@
+{
+  "book": "How to Use FlexBeam to Help Relieve Anxiety - Recharge Health.pdf",
+  "collection": "device_documentation",
+  "audited_at": "2026-04-16T20:15:34.676965+00:00",
+  "total_chunks": 4,
+  "structural": {
+    "total_chunks": 4,
+    "avg_chunk_words": 153.5,
+    "short_chunks": 0,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 0,
+    "images_extracted": 2,
+    "translation_applied": false,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 4
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 4,
+    "avg_coherence": 3.5,
+    "avg_completeness": 2.5,
+    "avg_terminology": 4.5,
+    "avg_translation": 5.0,
+    "quality_score": 3.88,
+    "flagged_chunks": 2,
+    "suggestion": "This chunk appears to be a marketing message for a product (FlexBeam) and has no medical concept or content. It should be separated from the main text."
+  },
+  "auto_classification": {
+    "primary_use": [
+      "nrt_treatment",
+      "qat_treatment"
+    ],
+    "secondary_use": [],
+    "image_quality": "none",
+    "image_type": "text",
+    "recommended_collection": "device_documentation",
+    "confidence": 0.8
+  },
+  "usability_profile": {
+    "scores": {
+      "treatment_protocol": 5.0
+    },
+    "counts": {
+      "treatment_protocol": 1
+    },
+    "total_tagged": 1
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

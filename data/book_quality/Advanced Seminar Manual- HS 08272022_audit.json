@@ -1,0 +1,75 @@
+{
+  "book": "Advanced Seminar Manual- HS 08272022.pdf",
+  "collection": "nrt_qat_curriculum",
+  "audited_at": "2026-04-16T20:04:03.587074+00:00",
+  "total_chunks": 126,
+  "structural": {
+    "total_chunks": 126,
+    "avg_chunk_words": 97.1,
+    "short_chunks": 43,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 0,
+    "images_extracted": 237,
+    "translation_applied": false,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 126
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 15,
+    "avg_coherence": 4.31,
+    "avg_completeness": 4.46,
+    "avg_terminology": 4.85,
+    "avg_translation": 5.0,
+    "quality_score": 4.65,
+    "flagged_chunks": 1,
+    "suggestion": "Consider adding a brief description or explanation of the 'Bilateral Twin Reset' and 'Unilateral Twin Reset Treatment Area For Position A 38' to provide context."
+  },
+  "auto_classification": {
+    "primary_use": [
+      "anatomy"
+    ],
+    "secondary_use": [],
+    "image_quality": null,
+    "image_type": "text",
+    "recommended_collection": "medical_literature",
+    "confidence": 0.5
+  },
+  "usability_profile": {
+    "scores": {
+      "anatomy": 5.0,
+      "treatment_protocol": 4.6,
+      "western_diagnosis": 0.7,
+      "acupuncture_point_indication": 0.1,
+      "acupuncture_point_location": 0.1,
+      "tcm_diagnosis": 0.1
+    },
+    "counts": {
+      "anatomy": 97,
+      "treatment_protocol": 90,
+      "western_diagnosis": 14,
+      "acupuncture_point_indication": 2,
+      "acupuncture_point_location": 1,
+      "tcm_diagnosis": 1
+    },
+    "total_tagged": 116
+  },
+  "remediation": {
+    "issues": [
+      "avg_chunk_words < 100",
+      "short_chunks > 20% (34%)"
+    ],
+    "suggestions": [
+      "retry with larger chunk target (600 words)",
+      "parsing strategy problem — check parser output"
+    ],
+    "remediation_needed": true
+  },
+  "status": "approved"
+}

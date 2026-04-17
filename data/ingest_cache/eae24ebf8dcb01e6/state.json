@@ -1,0 +1,57 @@
+{
+  "filename": "01_deadman_manual_of_acupuncture.pdf",
+  "book_hash": "eae24ebf8dcb01e6",
+  "filepath": "/root/medical-rag/books/medical_literature/01_deadman_manual_of_acupuncture.pdf",
+  "collection": "medical_library",
+  "library_category": "medical_literature",
+  "started_at": null,
+  "updated_at": "2026-04-16T20:14:56.516152+00:00",
+  "completed_at": "2026-04-16T17:08:48.698361+00:00",
+  "phases": {
+    "parse": {
+      "status": "done",
+      "started_at": "2026-04-16T16:21:11.565210+00:00",
+      "completed_at": "2026-04-16T16:37:47.845737+00:00",
+      "pages_total": 673,
+      "pages_done": 673,
+      "chunks_extracted": 1013,
+      "images_extracted": 1013,
+      "parse_method": null,
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": []
+    },
+    "audit": {
+      "status": "done",
+      "started_at": "2026-04-16T16:37:47.916284+00:00",
+      "completed_at": "2026-04-16T16:47:18.699037+00:00",
+      "chunks_total": 1013,
+      "chunks_tagged": 1010,
+      "chunks_skipped": 3,
+      "ollama_available": false,
+      "consecutive_failures_hit": true,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "done",
+      "started_at": "2026-04-16T16:47:18.755102+00:00",
+      "completed_at": "2026-04-16T17:08:46.149587+00:00",
+      "chunks_total": 1013,
+      "chunks_done": 1013,
+      "vectors_per_minute": 47.4,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-16T17:08:46.109622+00:00",
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "done",
+      "started_at": "2026-04-16T17:08:46.201490+00:00",
+      "completed_at": "2026-04-16T17:08:48.664968+00:00",
+      "chunks_inserted": 1013,
+      "collection": "medical_library"
+    },
+    "image_screen": {
+      "status": "done"
+    }
+  }
+}

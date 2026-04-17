@@ -27,7 +27,10 @@
     }
   ],
   "library_snapshot": [],
-  "needs_review": false,
-  "review_reasons": [],
+  "needs_review": true,
+  "review_reasons": [
+    "Nieuwe primaire acupunctuurbron: A Manual of Acupuncture",
+    "Nieuwe primaire anatomie/klinische bron: Myofascial Pain and Dysfunction Vol 1"
+  ],
   "reviewed_at": null
 }

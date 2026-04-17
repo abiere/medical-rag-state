@@ -1,0 +1,56 @@
+{
+  "book": "How to Use FlexBeam on Shoulders - Recharge Health.pdf",
+  "collection": "device_documentation",
+  "audited_at": "2026-04-16T20:33:43.048217+00:00",
+  "total_chunks": 5,
+  "structural": {
+    "total_chunks": 5,
+    "avg_chunk_words": 107.8,
+    "short_chunks": 1,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 0,
+    "images_extracted": 3,
+    "translation_applied": false,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 5
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 5,
+    "avg_coherence": 2.0,
+    "avg_completeness": 2.4,
+    "avg_terminology": 5.0,
+    "avg_translation": 5.0,
+    "quality_score": 3.6,
+    "flagged_chunks": 5,
+    "suggestion": "The chunk seems to start in the middle of a commercial, and it would be better if the introduction to FlexBeam and its application on shoulders was provided earlier."
+  },
+  "auto_classification": {
+    "primary_use": [
+      "device_settings",
+      "qat_treatment"
+    ],
+    "secondary_use": [],
+    "image_quality": null,
+    "image_type": null,
+    "recommended_collection": "nrt_curriculum",
+    "confidence": 0.0
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

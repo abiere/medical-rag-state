@@ -1,0 +1,56 @@
+{
+  "book": "FlexBeam_RLT_Documentation.pdf",
+  "collection": "device_documentation",
+  "audited_at": "2026-04-16T20:10:22.850244+00:00",
+  "total_chunks": 4,
+  "structural": {
+    "total_chunks": 4,
+    "avg_chunk_words": 242.8,
+    "short_chunks": 0,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 0,
+    "images_extracted": 0,
+    "translation_applied": false,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 4
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 4,
+    "avg_coherence": 5.0,
+    "avg_completeness": 4.5,
+    "avg_terminology": 5.0,
+    "avg_translation": 5.0,
+    "quality_score": 4.88,
+    "flagged_chunks": 0,
+    "suggestion": "Consider breaking up the contraindications section into a separate point or bullet points to make it easier to read and understand."
+  },
+  "auto_classification": {
+    "primary_use": [
+      "nrt_treatment",
+      "qat_treatment"
+    ],
+    "secondary_use": [],
+    "image_quality": "none",
+    "image_type": "text/plain",
+    "recommended_collection": "device_documentation",
+    "confidence": 0.95
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

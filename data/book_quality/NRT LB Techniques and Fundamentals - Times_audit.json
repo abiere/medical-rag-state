@@ -1,0 +1,61 @@
+{
+  "book": "NRT LB Techniques and Fundamentals - Times.pdf",
+  "collection": "device_documentation",
+  "audited_at": "2026-04-16T21:32:59.910916+00:00",
+  "total_chunks": 2,
+  "structural": {
+    "total_chunks": 2,
+    "avg_chunk_words": 226.0,
+    "short_chunks": 0,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 0,
+    "images_extracted": 0,
+    "translation_applied": false,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 2
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 2,
+    "avg_coherence": 3.5,
+    "avg_completeness": 5.0,
+    "avg_terminology": 5.0,
+    "avg_translation": 5.0,
+    "quality_score": 4.62,
+    "flagged_chunks": 0,
+    "suggestion": "Consider using a more descriptive title for the section, e.g., 'Quadriceps Muscle Reset Protocols' instead of just listing the protocols."
+  },
+  "auto_classification": {
+    "primary_use": [
+      "nrt_treatment"
+    ],
+    "secondary_use": [],
+    "image_quality": "high",
+    "image_type": "anatomy images of muscles and bones, possibly with arrows or lines indicating reset locations",
+    "recommended_collection": "anatomy_atlas",
+    "confidence": 0.9
+  },
+  "usability_profile": {
+    "scores": {
+      "anatomy": 5.0,
+      "treatment_protocol": 5.0
+    },
+    "counts": {
+      "anatomy": 1,
+      "treatment_protocol": 1
+    },
+    "total_tagged": 1
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

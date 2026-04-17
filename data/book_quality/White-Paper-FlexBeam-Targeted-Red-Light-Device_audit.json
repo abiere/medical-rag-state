@@ -1,0 +1,48 @@
+{
+  "book": "White-Paper-FlexBeam-Targeted-Red-Light-Device.pdf",
+  "collection": "device_documentation",
+  "audited_at": "2026-04-16T20:57:41.593413+00:00",
+  "total_chunks": 16,
+  "structural": {
+    "total_chunks": 16,
+    "avg_chunk_words": 300.4,
+    "short_chunks": 0,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 0,
+    "images_extracted": 3,
+    "translation_applied": false,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 16
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 15,
+    "avg_coherence": 4.5,
+    "avg_completeness": 4.5,
+    "avg_terminology": 4.86,
+    "avg_translation": 4.64,
+    "quality_score": 4.62,
+    "flagged_chunks": 1,
+    "suggestion": "Separate the product design description into a separate paragraph to improve coherence."
+  },
+  "auto_classification": {
+    "error": "classification failed"
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

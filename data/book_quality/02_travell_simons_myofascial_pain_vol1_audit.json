@@ -1,0 +1,48 @@
+{
+  "book": "02_travell_simons_myofascial_pain_vol1.pdf",
+  "collection": "medical_library",
+  "audited_at": "2026-04-16T17:21:11.440796+00:00",
+  "total_chunks": 1760,
+  "structural": {
+    "total_chunks": 1760,
+    "avg_chunk_words": 344.0,
+    "short_chunks": 12,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 1907,
+    "images_extracted": 785,
+    "translation_applied": false,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 1760
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 15,
+    "avg_coherence": 4.4,
+    "avg_completeness": 5.0,
+    "avg_terminology": 5.0,
+    "avg_translation": 5.0,
+    "quality_score": 4.85,
+    "flagged_chunks": 0,
+    "suggestion": "none"
+  },
+  "auto_classification": {
+    "error": "classification failed"
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

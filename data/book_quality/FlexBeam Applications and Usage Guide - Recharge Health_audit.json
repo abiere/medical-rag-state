@@ -1,0 +1,53 @@
+{
+  "book": "FlexBeam Applications and Usage Guide - Recharge Health.pdf",
+  "collection": "device_documentation",
+  "audited_at": "2026-04-16T20:51:04.503744+00:00",
+  "total_chunks": 3,
+  "structural": {
+    "total_chunks": 3,
+    "avg_chunk_words": 285.3,
+    "short_chunks": 0,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 0,
+    "images_extracted": 0,
+    "translation_applied": false,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 3
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 3,
+    "avg_coherence": 4.0,
+    "avg_completeness": 2.67,
+    "avg_terminology": 5.0,
+    "avg_translation": 5.0,
+    "quality_score": 4.17,
+    "flagged_chunks": 1,
+    "suggestion": "break the chunk into two parts to improve coherence and completeness"
+  },
+  "auto_classification": {
+    "primary_use": "qat_treatment",
+    "secondary_use": [],
+    "image_quality": "none",
+    "image_type": "text-only, possibly diagrams or illustrations of device placement on the body",
+    "recommended_collection": "device_documentation",
+    "confidence": 0.8
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

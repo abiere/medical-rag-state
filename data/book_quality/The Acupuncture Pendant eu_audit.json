@@ -1,0 +1,56 @@
+{
+  "book": "The Acupuncture Pendant eu.pdf",
+  "collection": "nrt_qat_curriculum",
+  "audited_at": "2026-04-16T18:17:41.417488+00:00",
+  "total_chunks": 2,
+  "structural": {
+    "total_chunks": 2,
+    "avg_chunk_words": 194.5,
+    "short_chunks": 0,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 0,
+    "images_extracted": 0,
+    "translation_applied": false,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 2
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 2,
+    "avg_coherence": 5.0,
+    "avg_completeness": 4.0,
+    "avg_terminology": 5.0,
+    "avg_translation": 5.0,
+    "quality_score": 4.75,
+    "flagged_chunks": 0,
+    "suggestion": "none"
+  },
+  "auto_classification": {
+    "primary_use": [
+      "acupuncture_points",
+      "qat_treatment"
+    ],
+    "secondary_use": [],
+    "image_quality": null,
+    "image_type": "product images and diagrams of the Acupuncture Pendant",
+    "recommended_collection": "acupuncture_points",
+    "confidence": 0.8
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

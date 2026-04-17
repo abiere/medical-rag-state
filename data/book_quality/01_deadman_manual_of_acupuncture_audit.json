@@ -1,0 +1,44 @@
+{
+  "book": "01_deadman_manual_of_acupuncture.pdf",
+  "collection": "medical_library",
+  "audited_at": "2026-04-16T16:47:18.636772+00:00",
+  "total_chunks": 1013,
+  "structural": {
+    "total_chunks": 1013,
+    "avg_chunk_words": 331.5,
+    "short_chunks": 26,
+    "long_chunks": 0,
+    "point_codes_found": 10645,
+    "figure_refs_found": 0,
+    "images_extracted": 1013,
+    "translation_applied": true,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 1013
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 15,
+    "quality_score": null,
+    "flagged_chunks": 0,
+    "error": "All LLM calls failed"
+  },
+  "auto_classification": {
+    "error": "classification failed"
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "low_quality"
+}

@@ -1,0 +1,48 @@
+{
+  "book": "QAT_2025_overgenomen.pdf",
+  "collection": "nrt_qat_curriculum",
+  "audited_at": "2026-04-16T18:03:06.913328+00:00",
+  "total_chunks": 72,
+  "structural": {
+    "total_chunks": 72,
+    "avg_chunk_words": 229.9,
+    "short_chunks": 5,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 0,
+    "images_extracted": 56,
+    "translation_applied": false,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 72
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 15,
+    "avg_coherence": 4.75,
+    "avg_completeness": 4.62,
+    "avg_terminology": 5.0,
+    "avg_translation": 5.0,
+    "quality_score": 4.84,
+    "flagged_chunks": 0,
+    "suggestion": "Break up the chunk into two or more smaller chunks, each focusing on a specific instruction (e.g., 'Use the tip of the pads...') to improve coherence and completeness."
+  },
+  "auto_classification": {
+    "error": "classification failed"
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

@@ -1,0 +1,56 @@
+{
+  "book": "How to Use FlexBeam on Hips - Recharge Health.pdf",
+  "collection": "device_documentation",
+  "audited_at": "2026-04-16T20:26:01.363571+00:00",
+  "total_chunks": 3,
+  "structural": {
+    "total_chunks": 3,
+    "avg_chunk_words": 182.0,
+    "short_chunks": 0,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 0,
+    "images_extracted": 2,
+    "translation_applied": false,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 3
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 3,
+    "avg_coherence": 2.5,
+    "avg_completeness": 2.5,
+    "avg_terminology": 5.0,
+    "avg_translation": 5.0,
+    "quality_score": 3.75,
+    "flagged_chunks": 2,
+    "suggestion": "The chunk appears to be a mix of marketing text and medical content. Consider breaking it up into separate chunks for a clear presentation of the product information and the medical use case."
+  },
+  "auto_classification": {
+    "primary_use": [
+      "device_settings",
+      "nrt_treatment"
+    ],
+    "secondary_use": [],
+    "image_quality": "none",
+    "image_type": "text/images of a device, possibly an instructional guide or application notes",
+    "recommended_collection": "device_documentation",
+    "confidence": 0.9
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

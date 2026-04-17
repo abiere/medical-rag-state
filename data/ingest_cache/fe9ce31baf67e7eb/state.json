@@ -1,0 +1,57 @@
+{
+  "filename": "NRT Upper Body.pdf",
+  "book_hash": "fe9ce31baf67e7eb",
+  "filepath": "/root/medical-rag/books/nrt_qat/NRT Upper Body.pdf",
+  "collection": "nrt_qat_curriculum",
+  "library_category": "nrt_qat",
+  "started_at": "2026-04-16T18:57:31.241010+00:00",
+  "updated_at": "2026-04-16T19:21:16.475111+00:00",
+  "completed_at": "2026-04-16T19:21:16.475101+00:00",
+  "phases": {
+    "parse": {
+      "status": "done",
+      "started_at": "2026-04-16T18:57:31.242776+00:00",
+      "completed_at": "2026-04-16T19:12:12.844593+00:00",
+      "pages_total": 160,
+      "pages_done": 160,
+      "chunks_extracted": 157,
+      "images_extracted": 157,
+      "parse_method": null,
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": []
+    },
+    "audit": {
+      "status": "done",
+      "started_at": "2026-04-16T19:12:12.846593+00:00",
+      "completed_at": "2026-04-16T19:19:11.004529+00:00",
+      "chunks_total": 157,
+      "chunks_tagged": 0,
+      "chunks_skipped": 154,
+      "ollama_available": false,
+      "consecutive_failures_hit": true,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "done",
+      "started_at": "2026-04-16T19:19:11.008701+00:00",
+      "completed_at": "2026-04-16T19:21:16.260506+00:00",
+      "chunks_total": 157,
+      "chunks_done": 157,
+      "vectors_per_minute": 76.9,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-16T19:21:16.252435+00:00",
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "done",
+      "started_at": "2026-04-16T19:21:16.263902+00:00",
+      "completed_at": "2026-04-16T19:21:16.471727+00:00",
+      "chunks_inserted": 157,
+      "collection": "nrt_qat_curriculum"
+    },
+    "image_screen": {
+      "status": "done"
+    }
+  }
+}

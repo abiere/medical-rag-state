@@ -1,0 +1,57 @@
+{
+  "filename": "The Acupuncture Pendant eu.pdf",
+  "book_hash": "afad19b4d8e14f64",
+  "filepath": "/root/medical-rag/books/nrt_qat/The Acupuncture Pendant eu.pdf",
+  "collection": "nrt_qat_curriculum",
+  "library_category": "nrt_qat",
+  "started_at": "2026-04-16T18:15:14.317913+00:00",
+  "updated_at": "2026-04-16T18:17:52.387775+00:00",
+  "completed_at": "2026-04-16T18:17:52.387760+00:00",
+  "phases": {
+    "parse": {
+      "status": "done",
+      "started_at": "2026-04-16T18:15:14.318829+00:00",
+      "completed_at": "2026-04-16T18:15:14.510503+00:00",
+      "pages_total": 2,
+      "pages_done": 2,
+      "chunks_extracted": 2,
+      "images_extracted": 0,
+      "parse_method": null,
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": []
+    },
+    "audit": {
+      "status": "done",
+      "started_at": "2026-04-16T18:15:14.511488+00:00",
+      "completed_at": "2026-04-16T18:17:41.418533+00:00",
+      "chunks_total": 2,
+      "chunks_tagged": 0,
+      "chunks_skipped": 0,
+      "ollama_available": false,
+      "consecutive_failures_hit": false,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "done",
+      "started_at": "2026-04-16T18:17:41.419624+00:00",
+      "completed_at": "2026-04-16T18:17:52.279923+00:00",
+      "chunks_total": 2,
+      "chunks_done": 2,
+      "vectors_per_minute": 15.3,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-16T18:17:52.277707+00:00",
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "done",
+      "started_at": "2026-04-16T18:17:52.281619+00:00",
+      "completed_at": "2026-04-16T18:17:52.385374+00:00",
+      "chunks_inserted": 2,
+      "collection": "nrt_qat_curriculum"
+    },
+    "image_screen": {
+      "status": "done"
+    }
+  }
+}

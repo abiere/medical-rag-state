@@ -1,0 +1,44 @@
+{
+  "book": "The QAT Connect to the Brain eu.pdf",
+  "collection": "nrt_qat_curriculum",
+  "audited_at": "2026-04-16T18:20:22.655564+00:00",
+  "total_chunks": 2,
+  "structural": {
+    "total_chunks": 2,
+    "avg_chunk_words": 203.0,
+    "short_chunks": 0,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 0,
+    "images_extracted": 0,
+    "translation_applied": false,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 2
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 2,
+    "quality_score": null,
+    "flagged_chunks": 0,
+    "error": "All LLM calls failed"
+  },
+  "auto_classification": {
+    "error": "classification failed"
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "low_quality"
+}

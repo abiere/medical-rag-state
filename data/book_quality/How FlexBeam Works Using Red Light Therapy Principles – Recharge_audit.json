@@ -1,0 +1,69 @@
+{
+  "book": "How FlexBeam Works Using Red Light Therapy Principles – Recharge.pdf",
+  "collection": "device_documentation",
+  "audited_at": "2026-04-16T21:16:07.589040+00:00",
+  "total_chunks": 4,
+  "structural": {
+    "total_chunks": 4,
+    "avg_chunk_words": 133.2,
+    "short_chunks": 1,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 0,
+    "images_extracted": 2,
+    "translation_applied": false,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 4
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 4,
+    "avg_coherence": 2.67,
+    "avg_completeness": 3.67,
+    "avg_terminology": 5.0,
+    "avg_translation": 5.0,
+    "quality_score": 4.08,
+    "flagged_chunks": 1,
+    "suggestion": "Consider adding a brief introduction or context to make it clear how this specific product (FlexBeam) relates to the broader topic of red light therapy."
+  },
+  "auto_classification": {
+    "primary_use": [
+      "red_light_therapy"
+    ],
+    "secondary_use": [],
+    "image_quality": "high",
+    "image_type": "anatomy_of_FlexBeam_device",
+    "recommended_collection": "device_documentation",
+    "confidence": 0.9
+  },
+  "usability_profile": {
+    "scores": {
+      "device_settings": 5.0,
+      "treatment_protocol": 1.7,
+      "anatomy": 3.3,
+      "western_diagnosis": 1.7
+    },
+    "counts": {
+      "device_settings": 3,
+      "treatment_protocol": 1,
+      "anatomy": 2,
+      "western_diagnosis": 1
+    },
+    "total_tagged": 4
+  },
+  "remediation": {
+    "issues": [
+      "short_chunks > 20% (25%)"
+    ],
+    "suggestions": [
+      "parsing strategy problem — check parser output"
+    ],
+    "remediation_needed": true
+  },
+  "status": "approved"
+}

@@ -1,0 +1,56 @@
+{
+  "book": "How to Use FlexBeam for Menstrual Cramps - Recharge Health.pdf",
+  "collection": "device_documentation",
+  "audited_at": "2026-04-16T20:17:37.619744+00:00",
+  "total_chunks": 2,
+  "structural": {
+    "total_chunks": 2,
+    "avg_chunk_words": 191.0,
+    "short_chunks": 0,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 0,
+    "images_extracted": 1,
+    "translation_applied": false,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 2
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 2,
+    "avg_coherence": 3.5,
+    "avg_completeness": 2.0,
+    "avg_terminology": 4.5,
+    "avg_translation": 5.0,
+    "quality_score": 3.75,
+    "flagged_chunks": 1,
+    "suggestion": "The chunk appears to be a marketing page for the FlexBeam device and should be removed or reworked to align with RAG quality. It does not demonstrate coherence as it is unrelated to acupuncture or medical concepts."
+  },
+  "auto_classification": {
+    "primary_use": [
+      "tcm_diagnosis",
+      "nrt_treatment"
+    ],
+    "secondary_use": [],
+    "image_quality": "none",
+    "image_type": "no images described",
+    "recommended_collection": "flexbeam_guide",
+    "confidence": 0.5
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

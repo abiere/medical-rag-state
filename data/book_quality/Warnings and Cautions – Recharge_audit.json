@@ -1,0 +1,65 @@
+{
+  "book": "Warnings and Cautions – Recharge.pdf",
+  "collection": "device_documentation",
+  "audited_at": "2026-04-16T21:09:19.340054+00:00",
+  "total_chunks": 4,
+  "structural": {
+    "total_chunks": 4,
+    "avg_chunk_words": 135.0,
+    "short_chunks": 1,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 0,
+    "images_extracted": 2,
+    "translation_applied": false,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 4
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 4,
+    "avg_coherence": 4.25,
+    "avg_completeness": 3.75,
+    "avg_terminology": 4.75,
+    "avg_translation": 5.0,
+    "quality_score": 4.44,
+    "flagged_chunks": 1,
+    "suggestion": "Consider breaking down the 'Warnings and Cautions' section into smaller, more focused chunks for better readability."
+  },
+  "auto_classification": {
+    "primary_use": [
+      "device_settings"
+    ],
+    "secondary_use": [],
+    "image_quality": "none",
+    "image_type": "text",
+    "recommended_collection": "device_documentation",
+    "confidence": 1.0
+  },
+  "usability_profile": {
+    "scores": {
+      "treatment_protocol": 5.0,
+      "western_diagnosis": 5.0
+    },
+    "counts": {
+      "treatment_protocol": 1,
+      "western_diagnosis": 1
+    },
+    "total_tagged": 1
+  },
+  "remediation": {
+    "issues": [
+      "short_chunks > 20% (25%)"
+    ],
+    "suggestions": [
+      "parsing strategy problem — check parser output"
+    ],
+    "remediation_needed": true
+  },
+  "status": "approved"
+}

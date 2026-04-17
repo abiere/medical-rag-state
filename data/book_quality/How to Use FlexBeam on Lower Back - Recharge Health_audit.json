@@ -1,0 +1,63 @@
+{
+  "book": "How to Use FlexBeam on Lower Back - Recharge Health.pdf",
+  "collection": "device_documentation",
+  "audited_at": "2026-04-16T20:36:13.378921+00:00",
+  "total_chunks": 3,
+  "structural": {
+    "total_chunks": 3,
+    "avg_chunk_words": 179.0,
+    "short_chunks": 0,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 0,
+    "images_extracted": 2,
+    "translation_applied": false,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 3
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 3,
+    "avg_coherence": 2.0,
+    "avg_completeness": 3.0,
+    "avg_terminology": 4.0,
+    "avg_translation": 5.0,
+    "quality_score": 3.5,
+    "flagged_chunks": 3,
+    "suggestion": "The chunk could be more coherent by removing the advertisement-like text at the beginning and ending."
+  },
+  "auto_classification": {
+    "primary_use": [
+      "anatomy_atlas"
+    ],
+    "secondary_use": [],
+    "image_quality": "none",
+    "image_type": "textual information and product documentation",
+    "recommended_collection": "device_documentation",
+    "confidence": 0.9
+  },
+  "usability_profile": {
+    "scores": {
+      "treatment_protocol": 5.0,
+      "anatomy": 5.0,
+      "device_settings": 5.0
+    },
+    "counts": {
+      "treatment_protocol": 1,
+      "anatomy": 1,
+      "device_settings": 1
+    },
+    "total_tagged": 2
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

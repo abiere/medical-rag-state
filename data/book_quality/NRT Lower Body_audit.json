@@ -1,0 +1,48 @@
+{
+  "book": "NRT Lower Body.pdf",
+  "collection": "nrt_qat_curriculum",
+  "audited_at": "2026-04-16T18:54:35.912972+00:00",
+  "total_chunks": 132,
+  "structural": {
+    "total_chunks": 132,
+    "avg_chunk_words": 281.8,
+    "short_chunks": 10,
+    "long_chunks": 0,
+    "point_codes_found": 9,
+    "figure_refs_found": 5,
+    "images_extracted": 132,
+    "translation_applied": true,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 132
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 15,
+    "avg_coherence": 4.2,
+    "avg_completeness": 5.0,
+    "avg_terminology": 4.8,
+    "avg_translation": 5.0,
+    "quality_score": 4.75,
+    "flagged_chunks": 0,
+    "suggestion": "Add a brief description or instructions on how to perform the Alternate Position for the right coccygeal area."
+  },
+  "auto_classification": {
+    "error": "classification failed"
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

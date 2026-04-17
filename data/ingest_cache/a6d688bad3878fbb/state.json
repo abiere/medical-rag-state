@@ -1,0 +1,57 @@
+{
+  "filename": "How to Use FlexBeam to Sleep Better - Recharge Health.pdf",
+  "book_hash": "a6d688bad3878fbb",
+  "filepath": "/root/medical-rag/books/device/How to Use FlexBeam to Sleep Better - Recharge Health.pdf",
+  "collection": "device_documentation",
+  "library_category": "device",
+  "started_at": "2026-04-16T20:42:40.527451+00:00",
+  "updated_at": "2026-04-16T20:45:44.654598+00:00",
+  "completed_at": "2026-04-16T20:45:44.654589+00:00",
+  "phases": {
+    "parse": {
+      "status": "done",
+      "started_at": "2026-04-16T20:42:40.529419+00:00",
+      "completed_at": "2026-04-16T20:42:41.849744+00:00",
+      "pages_total": 4,
+      "pages_done": 4,
+      "chunks_extracted": 4,
+      "images_extracted": 2,
+      "parse_method": null,
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": []
+    },
+    "audit": {
+      "status": "done",
+      "started_at": "2026-04-16T20:42:41.850417+00:00",
+      "completed_at": "2026-04-16T20:45:35.629714+00:00",
+      "chunks_total": 4,
+      "chunks_tagged": 0,
+      "chunks_skipped": 1,
+      "ollama_available": false,
+      "consecutive_failures_hit": true,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "done",
+      "started_at": "2026-04-16T20:45:35.630798+00:00",
+      "completed_at": "2026-04-16T20:45:44.572753+00:00",
+      "chunks_total": 4,
+      "chunks_done": 4,
+      "vectors_per_minute": 39.6,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-16T20:45:44.567297+00:00",
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "done",
+      "started_at": "2026-04-16T20:45:44.574189+00:00",
+      "completed_at": "2026-04-16T20:45:44.653275+00:00",
+      "chunks_inserted": 4,
+      "collection": "device_documentation"
+    },
+    "image_screen": {
+      "status": "done"
+    }
+  }
+}

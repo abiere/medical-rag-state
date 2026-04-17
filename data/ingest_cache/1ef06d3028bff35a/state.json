@@ -1,0 +1,57 @@
+{
+  "filename": "Miraculous Sequence - Times.pdf",
+  "book_hash": "1ef06d3028bff35a",
+  "filepath": "/root/medical-rag/books/nrt_qat/Miraculous Sequence - Times.pdf",
+  "collection": "nrt_qat_curriculum",
+  "library_category": "nrt_qat",
+  "started_at": "2026-04-16T19:21:16.478471+00:00",
+  "updated_at": "2026-04-16T19:22:20.204370+00:00",
+  "completed_at": "2026-04-16T19:22:20.204361+00:00",
+  "phases": {
+    "parse": {
+      "status": "done",
+      "started_at": "2026-04-16T19:21:16.479021+00:00",
+      "completed_at": "2026-04-16T19:21:16.659281+00:00",
+      "pages_total": 1,
+      "pages_done": 1,
+      "chunks_extracted": 1,
+      "images_extracted": 0,
+      "parse_method": null,
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": []
+    },
+    "audit": {
+      "status": "done",
+      "started_at": "2026-04-16T19:21:16.659965+00:00",
+      "completed_at": "2026-04-16T19:22:16.751308+00:00",
+      "chunks_total": 1,
+      "chunks_tagged": 0,
+      "chunks_skipped": 0,
+      "ollama_available": false,
+      "consecutive_failures_hit": false,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "done",
+      "started_at": "2026-04-16T19:22:16.751847+00:00",
+      "completed_at": "2026-04-16T19:22:20.145922+00:00",
+      "chunks_total": 1,
+      "chunks_done": 1,
+      "vectors_per_minute": 90.2,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-16T19:22:20.144245+00:00",
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "done",
+      "started_at": "2026-04-16T19:22:20.146564+00:00",
+      "completed_at": "2026-04-16T19:22:20.203358+00:00",
+      "chunks_inserted": 1,
+      "collection": "nrt_qat_curriculum"
+    },
+    "image_screen": {
+      "status": "done"
+    }
+  }
+}

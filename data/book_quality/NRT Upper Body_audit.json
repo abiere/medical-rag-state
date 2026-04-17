@@ -1,0 +1,48 @@
+{
+  "book": "NRT Upper Body.pdf",
+  "collection": "nrt_qat_curriculum",
+  "audited_at": "2026-04-16T19:19:10.998917+00:00",
+  "total_chunks": 157,
+  "structural": {
+    "total_chunks": 157,
+    "avg_chunk_words": 256.9,
+    "short_chunks": 18,
+    "long_chunks": 0,
+    "point_codes_found": 6,
+    "figure_refs_found": 4,
+    "images_extracted": 157,
+    "translation_applied": true,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 157
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 15,
+    "avg_coherence": 3.67,
+    "avg_completeness": 3.67,
+    "avg_terminology": 4.93,
+    "avg_translation": 5.0,
+    "quality_score": 4.32,
+    "flagged_chunks": 5,
+    "suggestion": "Consider breaking up the chunk into more focused sub-chunks to improve coherence and completeness."
+  },
+  "auto_classification": {
+    "error": "classification failed"
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

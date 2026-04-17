@@ -1,7 +1,7 @@
 {
   "book": "test_acupuncture.pdf",
   "collection": "medical_library",
-  "audited_at": "2026-04-15T10:22:45.483033+00:00",
+  "audited_at": "2026-04-17T00:36:21.834517+00:00",
   "total_chunks": 2,
   "structural": {
     "total_chunks": 2,
@@ -12,40 +12,42 @@
     "figure_refs_found": 1,
     "images_extracted": 0,
     "translation_applied": false,
-    "epub_strategy": null
+    "epub_strategy": null,
+    "pdf_type": "mixed",
+    "ocr_statistics": {
+      "total_pages": 2,
+      "readable_pages": 2,
+      "unreadable_pages": 0,
+      "native_pages": 2,
+      "ocr_pages": 0,
+      "engine_usage": {},
+      "avg_confidence": 0.0
+    }
   },
   "llm_audit": {
     "sample_size": 2,
-    "avg_coherence": 4.0,
-    "avg_completeness": 4.0,
+    "avg_coherence": 5.0,
+    "avg_completeness": 3.5,
     "avg_terminology": 5.0,
     "avg_translation": 5.0,
-    "quality_score": 4.5,
+    "quality_score": 4.62,
     "flagged_chunks": 0,
-    "suggestion": "Consider rephrasing the second sentence to provide a clearer explanation of what 'invigorates blood and dispels stasis' means in medical terms, e.g. 'stimulates hemopoiesis and promotes microcirculation'."
+    "suggestion": "Consider adding a brief description or context for the specific treatment protocol."
   },
   "auto_classification": {
     "primary_use": [
       "acupuncture_points"
     ],
     "secondary_use": [],
-    "image_quality": "none",
-    "image_type": "",
+    "image_quality": "medium",
+    "image_type": "anatomical images or diagrams of acupuncture points on the lower leg",
     "recommended_collection": "acupuncture_points",
-    "confidence": 0.5
+    "confidence": 0.8
   },
   "usability_profile": {
-    "scores": {
-      "acupuncture_point_location": 5.0,
-      "treatment_protocol": 5.0,
-      "literature_reference": 5.0
-    },
-    "counts": {
-      "acupuncture_point_location": 1,
-      "treatment_protocol": 1,
-      "literature_reference": 1
-    },
-    "total_tagged": 1
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
   },
   "remediation": {
     "issues": [
@@ -58,6 +60,5 @@
     ],
     "remediation_needed": true
   },
-  "remediation_applied": false,
   "status": "approved"
 }

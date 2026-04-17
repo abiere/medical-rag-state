@@ -1,0 +1,55 @@
+{
+  "book": "How to Use FlexBeam to Boost Your Immunity - Recharge Health.pdf",
+  "collection": "device_documentation",
+  "audited_at": "2026-04-16T20:39:23.639050+00:00",
+  "total_chunks": 4,
+  "structural": {
+    "total_chunks": 4,
+    "avg_chunk_words": 148.0,
+    "short_chunks": 0,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 0,
+    "images_extracted": 2,
+    "translation_applied": false,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 4
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 4,
+    "avg_coherence": 2.67,
+    "avg_completeness": 2.33,
+    "avg_terminology": 5.0,
+    "avg_translation": 5.0,
+    "quality_score": 3.75,
+    "flagged_chunks": 3,
+    "suggestion": "Split the chunk into two separate sections: one for introducing FlexBeam and its benefits, and another for providing a clear, step-by-step guide on how to use it."
+  },
+  "auto_classification": {
+    "primary_use": [
+      "nrt_treatment"
+    ],
+    "secondary_use": [],
+    "image_quality": "none",
+    "image_type": "text only",
+    "recommended_collection": "qat_curriculum",
+    "confidence": 0.8
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

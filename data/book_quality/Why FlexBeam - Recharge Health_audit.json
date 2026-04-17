@@ -1,0 +1,82 @@
+{
+  "book": "Why FlexBeam - Recharge Health.pdf",
+  "collection": "device_documentation",
+  "audited_at": "2026-04-16T21:24:41.461375+00:00",
+  "total_chunks": 18,
+  "structural": {
+    "total_chunks": 18,
+    "avg_chunk_words": 95.0,
+    "short_chunks": 5,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 0,
+    "images_extracted": 15,
+    "translation_applied": false,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 18
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 15,
+    "avg_coherence": 2.67,
+    "avg_completeness": 2.33,
+    "avg_terminology": 4.73,
+    "avg_translation": 5.0,
+    "quality_score": 3.68,
+    "flagged_chunks": 13,
+    "suggestion": "The text should be rewritten to focus on the medical concept of red light therapy and its effects, rather than being a promotional message for FlexBeam."
+  },
+  "auto_classification": {
+    "primary_use": [
+      {
+        "id": 0,
+        "text": "treatment"
+      },
+      {
+        "id": 1,
+        "text": "recovery"
+      }
+    ],
+    "secondary_use": [],
+    "image_quality": "none",
+    "image_type": "product information and marketing images",
+    "recommended_collection": [
+      "device_documentation"
+    ],
+    "confidence": 0.8
+  },
+  "usability_profile": {
+    "scores": {
+      "western_diagnosis": 4.0,
+      "treatment_protocol": 5.0,
+      "device_settings": 1.0,
+      "literature_reference": 1.0,
+      "anatomy": 1.0
+    },
+    "counts": {
+      "western_diagnosis": 4,
+      "treatment_protocol": 5,
+      "device_settings": 1,
+      "literature_reference": 1,
+      "anatomy": 1
+    },
+    "total_tagged": 9
+  },
+  "remediation": {
+    "issues": [
+      "avg_chunk_words < 100",
+      "short_chunks > 20% (28%)"
+    ],
+    "suggestions": [
+      "retry with larger chunk target (600 words)",
+      "parsing strategy problem — check parser output"
+    ],
+    "remediation_needed": true
+  },
+  "status": "approved"
+}

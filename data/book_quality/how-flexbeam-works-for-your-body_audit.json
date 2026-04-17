@@ -1,0 +1,59 @@
+{
+  "book": "how-flexbeam-works-for-your-body.pdf",
+  "collection": "device_documentation",
+  "audited_at": "2026-04-16T21:30:26.329472+00:00",
+  "total_chunks": 44,
+  "structural": {
+    "total_chunks": 44,
+    "avg_chunk_words": 109.8,
+    "short_chunks": 15,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 0,
+    "images_extracted": 28,
+    "translation_applied": false,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 44
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 15,
+    "avg_coherence": 3.2,
+    "avg_completeness": 2.67,
+    "avg_terminology": 4.93,
+    "avg_translation": 5.0,
+    "quality_score": 3.95,
+    "flagged_chunks": 9,
+    "suggestion": "Consider splitting this chunk into two or more chunks to provide a clearer timeline and avoid mixing historical information with the current status of red light therapy."
+  },
+  "auto_classification": {
+    "primary_use": [
+      "qat_treatment"
+    ],
+    "secondary_use": [],
+    "image_quality": "high",
+    "image_type": "illustrations, diagrams, and text explaining infrared light therapy and its benefits for the human body",
+    "recommended_collection": "infrared_light_therapy_manual",
+    "confidence": 0.8
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [
+      "short_chunks > 20% (34%)"
+    ],
+    "suggestions": [
+      "parsing strategy problem — check parser output"
+    ],
+    "remediation_needed": true
+  },
+  "status": "approved"
+}

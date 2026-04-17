@@ -1,0 +1,57 @@
+{
+  "filename": "How to Use FlexBeam on Shoulders - Recharge Health.pdf",
+  "book_hash": "b6062ecae845ac69",
+  "filepath": "/root/medical-rag/books/device/How to Use FlexBeam on Shoulders - Recharge Health.pdf",
+  "collection": "device_documentation",
+  "library_category": "device",
+  "started_at": "2026-04-16T20:30:20.868668+00:00",
+  "updated_at": "2026-04-16T20:33:52.302263+00:00",
+  "completed_at": "2026-04-16T20:33:52.302253+00:00",
+  "phases": {
+    "parse": {
+      "status": "done",
+      "started_at": "2026-04-16T20:30:20.869221+00:00",
+      "completed_at": "2026-04-16T20:30:22.168740+00:00",
+      "pages_total": 5,
+      "pages_done": 5,
+      "chunks_extracted": 5,
+      "images_extracted": 3,
+      "parse_method": null,
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": []
+    },
+    "audit": {
+      "status": "done",
+      "started_at": "2026-04-16T20:30:22.169620+00:00",
+      "completed_at": "2026-04-16T20:33:43.049016+00:00",
+      "chunks_total": 5,
+      "chunks_tagged": 0,
+      "chunks_skipped": 2,
+      "ollama_available": false,
+      "consecutive_failures_hit": true,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "done",
+      "started_at": "2026-04-16T20:33:43.050416+00:00",
+      "completed_at": "2026-04-16T20:33:52.237544+00:00",
+      "chunks_total": 5,
+      "chunks_done": 5,
+      "vectors_per_minute": 46.5,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-16T20:33:52.236308+00:00",
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "done",
+      "started_at": "2026-04-16T20:33:52.238186+00:00",
+      "completed_at": "2026-04-16T20:33:52.301095+00:00",
+      "chunks_inserted": 5,
+      "collection": "device_documentation"
+    },
+    "image_screen": {
+      "status": "done"
+    }
+  }
+}
