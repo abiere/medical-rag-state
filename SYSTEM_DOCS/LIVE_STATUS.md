@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 08:36:42 UTC**
+> Last update: **2026-04-17 08:41:42 UTC**
 
 ## Services
 | Service | Status |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `16_Expanded__Revised__and_New_Techniques.mp4` (16 min) |
+| Current job | `16_Expanded__Revised__and_New_Techniques.mp4` (21 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 7.93 GB / 32.86 GB (24%) |
-| CPU | 100.0% |
+| RAM used | 8.3 GB / 32.86 GB (25%) |
+| CPU | 99.1% |
 | Disk used | 59.1 GB / 322.3 GB (19%) |
-| Uptime | up 3 hours, 1 minute |
+| Uptime | up 3 hours, 6 minutes |
 
 ## Recent markers
 - `2026-04-17T08:20:41.806276+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
