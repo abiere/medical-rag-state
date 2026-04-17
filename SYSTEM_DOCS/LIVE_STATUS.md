@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 07:31:40 UTC**
+> Last update: **2026-04-17 07:36:41 UTC**
 
 ## Services
 | Service | Status |
@@ -19,13 +19,13 @@
 | Total books | 43 |
 | Ingested | 35 |
 | Vectors in medical_library | 2775 |
-| Images pending approval | 1110 |
+| Images pending approval | 1138 |
 | Images approved | 0 |
 
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `16_Expanded__Revised__and_New_Techniques.mp4` (11 min) |
+| Current job | `16_Expanded__Revised__and_New_Techniques.mp4` (16 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -34,9 +34,9 @@
 | Metric | Value |
 |---|---|
 | RAM used | 14.29 GB / 32.86 GB (44%) |
-| CPU | 99.4% |
+| CPU | 99.2% |
 | Disk used | 59.0 GB / 322.3 GB (19%) |
-| Uptime | up 1 hour, 56 minutes |
+| Uptime | up 2 hours, 1 minute |
 
 ## Recent markers
 - `2026-04-17T07:20:40.911856+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
