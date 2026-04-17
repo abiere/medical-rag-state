@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 20:08:27 UTC**
+> Last update: **2026-04-17 20:12:13 UTC**
 
 ## Services
 | Service | Status |
@@ -14,18 +14,18 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Touch for Health_ The Complete Edition_ A Practical Guide to Natural Health With Acupressure Touch.epub` (14 min) |
-| Queued | 1 |
+| Current job | `Whole Brain Living_ The Anatomy of Choice and the Four Characters That Drive Our Life_nodrm.epub` (1 min) |
+| Queued | 0 |
 | Total books | 18 |
 | Ingested | 54 |
-| Vectors in medical_library | 10115 |
+| Vectors in medical_library | 10428 |
 | Images pending approval | 2026 |
 | Images approved | 0 |
 
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (27 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (1 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in video_transcripts | ? |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 15.48 GB / 32.86 GB (47%) |
-| CPU | 100.0% |
-| Disk used | 67.7 GB / 322.3 GB (22%) |
-| Uptime | up 14 hours, 33 minutes |
+| RAM used | 14.6 GB / 32.86 GB (44%) |
+| CPU | 99.6% |
+| Disk used | 67.8 GB / 322.3 GB (22%) |
+| Uptime | up 14 hours, 36 minutes |
 
 ## Recent markers
+- `2026-04-17T20:11:13.440274+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
+- `2026-04-17T20:10:50.740046+00:00` **book_ingested** — Touch for Health_ The Complete Edition_ A Practical Guide to Natural Health With Acupressure Touch.epub → medical_library: 313 chunks
 - `2026-04-17T19:53:36.558093+00:00` **book_ingested** — Touch for Health_ The Complete Edition_ A Practical Guide to Natural Health With Acupressure Touch_nodrm.pdf → medical_library: 482 chunks
 - `2026-04-17T19:41:12.894300+00:00` **watchdog_restart** — transcription-queue hung (32 min stale) — restarted successfully
 - `2026-04-17T19:33:46.047756+00:00` **book_ingested** — Sobotta Tables of Muscles, Joints and Nerves, English_Latin_ Tables to 17th ed. of the Sobotta Atlas_nodrm.epub → medical_library: 35 chunks
-- `2026-04-17T19:17:21.581653+00:00` **book_ingested** — Sobotta Atlas of Anatomy, Vol.1, 17th ed., English_Latin_ General anatomy and Musculoskeletal System_nodrm.epub → medical_library: 372 chunks
-- `2026-04-17T18:45:38.452192+00:00` **book_ingested** — Sobotta Atlas of Anatomy, Vol. 3, 17th ed., English_Latin_ Head, Neck and Neuroanatomy_nodrm.epub → medical_library: 381 chunks
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-17 19:09:12,067  INFO      Startup scan: 14 untranscribed video(s) found, 0 new entry/entries added to queue
-2026-04-17 19:09:12,068  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
-2026-04-17 19:09:12,069  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
-2026-04-17 19:09:12,069  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
-2026-04-17 19:41:12,932  INFO      ────────────────────────────────────────────────────────────
-2026-04-17 19:41:12,932  INFO      Transcription queue manager started
 2026-04-17 19:41:12,933  INFO      Startup scan: 14 untranscribed video(s) found, 0 new entry/entries added to queue
 2026-04-17 19:41:12,934  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
 2026-04-17 19:41:12,934  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
 2026-04-17 19:41:12,935  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
+2026-04-17 20:11:13,485  INFO      ────────────────────────────────────────────────────────────
+2026-04-17 20:11:13,485  INFO      Transcription queue manager started
+2026-04-17 20:11:13,486  INFO      Startup scan: 14 untranscribed video(s) found, 0 new entry/entries added to queue
+2026-04-17 20:11:13,486  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
+2026-04-17 20:11:13,487  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
+2026-04-17 20:11:13,487  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
 ```
