@@ -1,12 +1,12 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 14:27:07 UTC**
+> Last update: **2026-04-17 14:32:07 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
 | transcription-queue | ❌ inactive |
-| book-ingest-queue | ❌ inactive |
+| book-ingest-queue | ✅ active |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
 | ollama | ✅ healthy |
@@ -14,9 +14,9 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | idle |
-| Queued | 0 |
-| Total books | 49 |
+| Current job | `Anatomy Trains_ Myofascial Meridians for Manual and Movement Therapists_nodrm.epub` (3 min) |
+| Queued | 7 |
+| Total books | 57 |
 | Ingested | 40 |
 | Vectors in medical_library | 3248 |
 | Images pending approval | 2026 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 2.63 GB / 32.86 GB (8%) |
-| CPU | 0.9% |
-| Disk used | 59.4 GB / 322.3 GB (19%) |
-| Uptime | up 8 hours, 51 minutes |
+| RAM used | 8.83 GB / 32.86 GB (27%) |
+| CPU | 51.3% |
+| Disk used | 60.3 GB / 322.3 GB (20%) |
+| Uptime | up 8 hours, 56 minutes |
 
 ## Recent markers
 - `2026-04-17T14:18:06` **queue_empty** — All 14 videos transcribed
