@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 22:22:15 UTC**
+> Last update: **2026-04-17 22:27:15 UTC**
 
 ## Services
 | Service | Status |
@@ -14,10 +14,10 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Bates Guide to Physical Examination 14e editie - Bickley.epub` (13 min) |
+| Current job | `Bates Guide to Physical Examination 14e editie - Bickley.epub` (18 min) |
 | Queued | 11 |
 | Total books | 37 |
-| Ingested | 62 |
+| Ingested | 63 |
 | Vectors in medical_library | 12345 |
 | Images pending approval | 2026 |
 | Images approved | 0 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (11 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (16 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 15.74 GB / 32.86 GB (48%) |
-| CPU | 95.0% |
+| RAM used | 9.62 GB / 32.86 GB (29%) |
+| CPU | 99.4% |
 | Disk used | 69.7 GB / 322.3 GB (22%) |
-| Uptime | up 16 hours, 46 minutes |
+| Uptime | up 16 hours, 51 minutes |
 
 ## Recent markers
 - `2026-04-17T22:11:15.512026+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
