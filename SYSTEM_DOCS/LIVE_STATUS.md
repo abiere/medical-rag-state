@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 19:32:12 UTC**
+> Last update: **2026-04-17 19:37:12 UTC**
 
 ## Services
 | Service | Status |
@@ -14,18 +14,18 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Sobotta Tables of Muscles, Joints and Nerves, English_Latin_ Tables to 17th ed. of the Sobotta Atlas_nodrm.epub` (14 min) |
-| Queued | 3 |
+| Current job | `Touch for Health_ The Complete Edition_ A Practical Guide to Natural Health With Acupressure Touch_nodrm.pdf` (3 min) |
+| Queued | 2 |
 | Total books | 18 |
-| Ingested | 51 |
-| Vectors in medical_library | 9598 |
+| Ingested | 52 |
+| Vectors in medical_library | 9633 |
 | Images pending approval | 2026 |
 | Images approved | 0 |
 
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (23 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (28 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in video_transcripts | ? |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 14.82 GB / 32.86 GB (45%) |
-| CPU | 100.0% |
-| Disk used | 67.3 GB / 322.3 GB (22%) |
-| Uptime | up 13 hours, 56 minutes |
+| RAM used | 14.72 GB / 32.86 GB (45%) |
+| CPU | 99.9% |
+| Disk used | 67.4 GB / 322.3 GB (22%) |
+| Uptime | up 14 hours, 1 minute |
 
 ## Recent markers
+- `2026-04-17T19:33:46.047756+00:00` **book_ingested** — Sobotta Tables of Muscles, Joints and Nerves, English_Latin_ Tables to 17th ed. of the Sobotta Atlas_nodrm.epub → medical_library: 35 chunks
 - `2026-04-17T19:17:21.581653+00:00` **book_ingested** — Sobotta Atlas of Anatomy, Vol.1, 17th ed., English_Latin_ General anatomy and Musculoskeletal System_nodrm.epub → medical_library: 372 chunks
 - `2026-04-17T18:45:38.452192+00:00` **book_ingested** — Sobotta Atlas of Anatomy, Vol. 3, 17th ed., English_Latin_ Head, Neck and Neuroanatomy_nodrm.epub → medical_library: 381 chunks
 - `2026-04-17T18:41:11.956447+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-17T18:18:47.244936+00:00` **book_ingested** — Orthopedic Physical Assessment_nodrm.epub → medical_library: 1566 chunks
-- `2026-04-17T18:11:11.460007+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 
 ## Nightly Consistency
 ```
