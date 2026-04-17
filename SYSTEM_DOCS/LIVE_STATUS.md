@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 04:17:40 UTC**
+> Last update: **2026-04-17 04:22:40 UTC**
 
 ## Services
 | Service | Status |
@@ -14,8 +14,8 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `03_trail_guide_to_the_body_6th.pdf` (751 min) |
-| Queued | 4 |
+| Current job | `How to Use FlexBeam on Stomach - Recharge Health.pdf` (479 min) |
+| Queued | 1 |
 | Total books | 43 |
 | Ingested | 35 |
 | Vectors in medical_library | 2775 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` (7 min) |
+| Current job | `1.Upper_Body_Techniques.mp4` (12 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 7.63 GB / 32.86 GB (23%) |
+| RAM used | 8.4 GB / 32.86 GB (26%) |
 | CPU | 100.0% |
 | Disk used | 60.5 GB / 322.3 GB (20%) |
-| Uptime | up 2 days, 18 hours, 34 minutes |
+| Uptime | up 2 days, 18 hours, 39 minutes |
 
 ## Recent markers
 - `2026-04-17T04:10:40.086977+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
