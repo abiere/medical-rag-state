@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 00:37:36 UTC**
+> Last update: **2026-04-17 00:42:36 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `03_trail_guide_to_the_body_6th.pdf` (531 min) |
+| Current job | `03_trail_guide_to_the_body_6th.pdf` (536 min) |
 | Queued | 4 |
 | Total books | 43 |
 | Ingested | 35 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` (3 min) |
+| Current job | `1.Upper_Body_Techniques.mp4` (8 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 14.0 GB / 32.86 GB (43%) |
-| CPU | 100.0% |
+| RAM used | 7.73 GB / 32.86 GB (24%) |
+| CPU | 99.4% |
 | Disk used | 59.5 GB / 322.3 GB (19%) |
-| Uptime | up 2 days, 14 hours, 54 minutes |
+| Uptime | up 2 days, 14 hours, 59 minutes |
 
 ## Recent markers
 - `2026-04-17T00:36:30.945139+00:00` **book_ingested** — test_acupuncture.pdf → medical_library: 2 chunks
