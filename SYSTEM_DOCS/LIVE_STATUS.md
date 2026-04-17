@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 15:37:08 UTC**
+> Last update: **2026-04-17 15:42:08 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Sobotta Anatomy Textbook_nodrm.epub` (13 min) |
+| Current job | `Sobotta Anatomy Textbook_nodrm.epub` (18 min) |
 | Queued | 9 |
 | Total books | 64 |
 | Ingested | 45 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (30 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (1 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in video_transcripts | 241 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 14.3 GB / 32.86 GB (44%) |
-| CPU | 99.6% |
+| RAM used | 13.82 GB / 32.86 GB (42%) |
+| CPU | 99.7% |
 | Disk used | 63.1 GB / 322.3 GB (20%) |
-| Uptime | up 10 hours, 1 minute |
+| Uptime | up 10 hours, 6 minutes |
 
 ## Recent markers
+- `2026-04-17T15:41:08.612443+00:00` **watchdog_restart** — transcription-queue hung (34 min stale) — restarted successfully
 - `2026-04-17T15:23:28.329029+00:00` **book_ingested** — Quantum-Touch_ The Power to Heal_nodrm.epub → medical_library: 142 chunks
 - `2026-04-17T15:13:36.045632+00:00` **book_ingested** — Quantum-Touch Core Transformation_ A New Way to Heal and Alter Reality_nodrm.epub → medical_library: 141 chunks
 - `2026-04-17T15:03:17.284001+00:00` **book_ingested** — Quantum-Touch 2.0 - The New Human_ Discovering and Becoming_nodrm.epub → medical_library: 158 chunks
 - `2026-04-17T15:02:27` **transcription_failed** — 1.Upper_Body_Techniques.mp4 FAILED (21/14)
-- `2026-04-17T14:56:49.962201+00:00` **book_ingested** — Bates' Guide To Physical Examination and History Taking_nodrm.epub → medical_library: 1251 chunks
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-17 15:02:27,176  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
-2026-04-17 15:02:27,176  INFO      Splitting 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 (1060 MB) into 20-min segments
-2026-04-17 15:02:31,352  INFO      Split 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 into 2 segments
-2026-04-17 15:02:31,352  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
-2026-04-17 15:06:54,240  INFO      ────────────────────────────────────────────────────────────
-2026-04-17 15:06:54,241  INFO      Transcription queue manager started
 2026-04-17 15:06:54,242  INFO      Startup scan: 14 untranscribed video(s) found, 1 new entry/entries added to queue
 2026-04-17 15:06:54,243  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
 2026-04-17 15:06:54,244  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
 2026-04-17 15:06:54,244  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
+2026-04-17 15:41:08,654  INFO      ────────────────────────────────────────────────────────────
+2026-04-17 15:41:08,655  INFO      Transcription queue manager started
+2026-04-17 15:41:08,656  INFO      Startup scan: 14 untranscribed video(s) found, 0 new entry/entries added to queue
+2026-04-17 15:41:08,656  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
+2026-04-17 15:41:08,657  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
+2026-04-17 15:41:08,657  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
 ```
