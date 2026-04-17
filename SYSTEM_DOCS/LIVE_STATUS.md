@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 14:36:19 UTC**
+> Last update: **2026-04-17 14:37:07 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Anatomy Trains_ Myofascial Meridians for Manual and Movement Therapists_nodrm.epub` (7 min) |
+| Current job | `Anatomy Trains_ Myofascial Meridians for Manual and Movement Therapists_nodrm.epub` (8 min) |
 | Queued | 7 |
 | Total books | 57 |
 | Ingested | 41 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 9.97 GB / 32.86 GB (30%) |
-| CPU | 92.5% |
+| RAM used | 9.95 GB / 32.86 GB (30%) |
+| CPU | 95.4% |
 | Disk used | 60.3 GB / 322.3 GB (20%) |
-| Uptime | up 9 hours, 0 minutes |
+| Uptime | up 9 hours, 1 minute |
 
 ## Recent markers
 - `2026-04-17T14:18:06` **queue_empty** — All 14 videos transcribed
