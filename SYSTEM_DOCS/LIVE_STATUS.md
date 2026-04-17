@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 17:02:10 UTC**
+> Last update: **2026-04-17 17:07:10 UTC**
 
 ## Services
 | Service | Status |
@@ -14,18 +14,18 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Sobotta Atlas of Anatomy Classic_nodrm.epub` (38 min) |
-| Queued | 8 |
+| Current job | `Sobotta Atlas of Anatomy, Vol. 2, 17th ed., English_Latin_ Internal Organs_nodrm.epub` (4 min) |
+| Queued | 7 |
 | Total books | 64 |
 | Ingested | 47 |
-| Vectors in medical_library | 6468 |
+| Vectors in medical_library | 7003 |
 | Images pending approval | 2026 |
 | Images approved | 0 |
 
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (21 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (26 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in video_transcripts | 241 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 8.0 GB / 32.86 GB (24%) |
-| CPU | 100.0% |
-| Disk used | 64.6 GB / 322.3 GB (21%) |
-| Uptime | up 11 hours, 26 minutes |
+| RAM used | 14.24 GB / 32.86 GB (43%) |
+| CPU | 99.4% |
+| Disk used | 65.3 GB / 322.3 GB (21%) |
+| Uptime | up 11 hours, 31 minutes |
 
 ## Recent markers
+- `2026-04-17T17:02:37.351437+00:00` **book_ingested** — Sobotta Atlas of Anatomy Classic_nodrm.epub → medical_library: 535 chunks
 - `2026-04-17T16:41:09.936544+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-17T16:23:13.715014+00:00` **book_ingested** — Sobotta Anatomy Textbook_nodrm.epub → medical_library: 1096 chunks
 - `2026-04-17T16:11:09.149861+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-17T15:41:08.612443+00:00` **watchdog_restart** — transcription-queue hung (34 min stale) — restarted successfully
-- `2026-04-17T15:23:28.329029+00:00` **book_ingested** — Quantum-Touch_ The Power to Heal_nodrm.epub → medical_library: 142 chunks
 
 ## Nightly Consistency
 ```
