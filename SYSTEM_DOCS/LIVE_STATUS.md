@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 20:23:29 UTC**
+> Last update: **2026-04-17 20:27:13 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `756201384-The-Foundations-of-Chinese-Medicine-A-Comprehensive-Text-3rd-Edition-ISBN-0702052167-978-0702052163.pdf` |
+| Current job | `756201384-The-Foundations-of-Chinese-Medicine-A-Comprehensive-Text-3rd-Edition-ISBN-0702052167-978-0702052163.pdf` (4 min) |
 | Queued | 18 |
 | Total books | 37 |
 | Ingested | 55 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (12 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (16 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 14.82 GB / 32.86 GB (45%) |
-| CPU | 100.0% |
+| RAM used | 15.06 GB / 32.86 GB (46%) |
+| CPU | 99.5% |
 | Disk used | 68.6 GB / 322.3 GB (22%) |
-| Uptime | up 14 hours, 48 minutes |
+| Uptime | up 14 hours, 51 minutes |
 
 ## Recent markers
 - `2026-04-17T20:23:13.478521+00:00` **book_ingested** — Whole Brain Living_ The Anatomy of Choice and the Four Characters That Drive Our Life_nodrm.epub → medical_library: 252 chunks
