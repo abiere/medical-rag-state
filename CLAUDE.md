@@ -206,3 +206,33 @@ The PostToolUse hook `.claude/hooks/update_pipeline_diagrams.sh` calls
 - ⚠️ QAT Balancepunten zijn definitief april 2026 — NIET WIJZIGEN zonder expliciete instructie
 
 **NOOIT** een nieuw orphan MD bestand aanmaken zonder trigger toe te voegen aan deze sectie.
+
+## Anti-hallucinatie regels
+
+Deze regels zijn verplicht voor elke sessie — overtreding leidt
+tot verkeerde opdrachten en verloren debugging-tijd.
+
+### Lees voor je beweert
+Nooit een uitspraak doen over hoe code werkt zonder het bestand
+te hebben gelezen in deze sessie. Geheugen is onbetrouwbaar.
+
+Verplichte leeslijst voor een opdracht:
+  - CLAUDE.md (altijd)
+  - Het/de bestand(en) die de opdracht raken (scripts/*.py, web/app.py)
+
+### Diagnose-voor-fix patroon
+Bij elke bug of onduidelijkheid:
+  Stap 1 — Diagnose: lees de code, rapporteer de root cause
+  Stap 2 — Fix: schrijf de fix op basis van de root cause
+  Nooit direct fixen zonder diagnose.
+
+### Geen aannames over limieten of configuratie
+Limieten (chunk-aantallen, tijdvensters, max_workers etc.) lezen
+uit de werkelijke code of config — nooit uit geheugen.
+
+### State na elke significante taak
+Na elke significante taak: ALTIJD updaten:
+  1. SYSTEM_DOCS/BACKLOG.md (✅ item toevoegen)
+  2. SYSTEM_DOCS/TECHNICAL.md (relevante sectie)
+  3. SYSTEM_DOCS/LIVE_STATUS.md (via sync_status.py)
+  4. Commit + push
