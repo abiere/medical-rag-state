@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 12:01:46 UTC**
+> Last update: **2026-04-17 12:06:47 UTC**
 
 ## Services
 | Service | Status |
@@ -25,25 +25,25 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `16_Expanded__Revised__and_New_Techniques.mp4` (11 min) |
-| Queued | 19 |
-| Done | 16 / 35 |
-| Vectors in video_transcripts | 158 |
+| Current job | `2.Lower_Body_Fundamentals.mp4` (2 min) |
+| Queued | 18 |
+| Done | 17 / 35 |
+| Vectors in video_transcripts | 170 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 6.7 GB / 32.86 GB (20%) |
-| CPU | 98.6% |
-| Disk used | 59.4 GB / 322.3 GB (19%) |
-| Uptime | up 6 hours, 26 minutes |
+| RAM used | 6.77 GB / 32.86 GB (21%) |
+| CPU | 96.4% |
+| Disk used | 59.5 GB / 322.3 GB (19%) |
+| Uptime | up 6 hours, 31 minutes |
 
 ## Recent markers
+- `2026-04-17T12:04:36` **transcription_done** — 16_Expanded__Revised__and_New_Techniques.mp4 complete (17/19)
+- `2026-04-17T12:04:36` **transcript_ingested** — 16_Expanded__Revised__and_New_Techniques.mp4 ingested into Qdrant
 - `2026-04-17T11:50:45.413111+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-17T11:46:51.672898+00:00` **book_ingested** — QRS 101 Operating Manual.pdf → device_documentation: 3 chunks
 - `2026-04-17T11:44:44.248640+00:00` **book_ingested** — QRS 101 Indication Settings English.pdf → device_documentation: 9 chunks
-- `2026-04-17T11:39:53.752127+00:00` **book_ingested** — QRS101 Quick start - English.pdf → device_documentation: 1 chunks
-- `2026-04-17T11:38:55.837722+00:00` **book_ingested** — QRS-101 Manual Englisch.pdf → device_documentation: 41 chunks
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-17 10:50:44,559  INFO      Startup scan: 19 untranscribed video(s) found, 0 new entry/entries added to queue
-2026-04-17 10:50:44,559  INFO      START  nrt/16_Expanded__Revised__and_New_Techniques.mp4
-2026-04-17 11:20:45,111  INFO      ────────────────────────────────────────────────────────────
-2026-04-17 11:20:45,111  INFO      Transcription queue manager started
-2026-04-17 11:20:45,113  INFO      Startup scan: 19 untranscribed video(s) found, 0 new entry/entries added to queue
-2026-04-17 11:20:45,113  INFO      START  nrt/16_Expanded__Revised__and_New_Techniques.mp4
-2026-04-17 11:50:45,452  INFO      ────────────────────────────────────────────────────────────
-2026-04-17 11:50:45,452  INFO      Transcription queue manager started
 2026-04-17 11:50:45,453  INFO      Startup scan: 19 untranscribed video(s) found, 0 new entry/entries added to queue
 2026-04-17 11:50:45,454  INFO      START  nrt/16_Expanded__Revised__and_New_Techniques.mp4
+2026-04-17 12:04:21,017  INFO      DONE   nrt/16_Expanded__Revised__and_New_Techniques.mp4  (816s)
+2026-04-17 12:04:21,017  INFO      Stats updated: 16_Expanded__Revised__and_New_Techniques.mp4 — 2.1s/MB  rate=2.1s/MB (1 samples)
+2026-04-17 12:04:21,018  INFO      INGEST nrt/16_Expanded__Revised__and_New_Techniques.mp4
+2026-04-17 12:04:36,559  INFO        [ingest] 16_Expanded__Revised__and_New_Techniques.json: 241 segments → 12 chunks
+2026-04-17 12:04:36,559  INFO        [ingest] Loading embedding model …
+2026-04-17 12:04:36,559  INFO        [ingest]   Ingested chunk 12/12 for 16_Expanded__Revised__and_New_Techniques.mp4
+2026-04-17 12:04:36,559  INFO        [ingest] Done: 12 chunks ingested, 0 skipped (already exists)
+2026-04-17 12:04:36,690  INFO      START  nrt/2.Lower_Body_Fundamentals.mp4
 ```
