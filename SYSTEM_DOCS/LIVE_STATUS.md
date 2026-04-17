@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 14:57:07 UTC**
+> Last update: **2026-04-17 15:02:07 UTC**
 
 ## Services
 | Service | Status |
@@ -14,10 +14,10 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Quantum-Touch 2.0 - The New Human_ Discovering and Becoming_nodrm.epub` |
+| Current job | `Quantum-Touch 2.0 - The New Human_ Discovering and Becoming_nodrm.epub` (5 min) |
 | Queued | 5 |
 | Total books | 57 |
-| Ingested | 42 |
+| Ingested | 43 |
 | Vectors in medical_library | 4931 |
 | Images pending approval | 2026 |
 | Images approved | 0 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 9.63 GB / 32.86 GB (29%) |
-| CPU | 50.6% |
+| RAM used | 10.6 GB / 32.86 GB (32%) |
+| CPU | 95.2% |
 | Disk used | 60.8 GB / 322.3 GB (20%) |
-| Uptime | up 9 hours, 21 minutes |
+| Uptime | up 9 hours, 26 minutes |
 
 ## Recent markers
 - `2026-04-17T14:56:49.962201+00:00` **book_ingested** — Bates' Guide To Physical Examination and History Taking_nodrm.epub → medical_library: 1251 chunks
