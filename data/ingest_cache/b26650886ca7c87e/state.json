@@ -1,0 +1,57 @@
+{
+  "filename": "Whole Brain Living_ The Anatomy of Choice and the Four Characters That Drive Our Life_nodrm.epub",
+  "book_hash": "b26650886ca7c87e",
+  "filepath": "/root/medical-rag/books/medical_literature/Whole Brain Living_ The Anatomy of Choice and the Four Characters That Drive Our Life_nodrm.epub",
+  "collection": "medical_library",
+  "library_category": "medical_literature",
+  "started_at": "2026-04-17T20:10:50.742690+00:00",
+  "updated_at": "2026-04-17T20:23:13.472435+00:00",
+  "completed_at": "2026-04-17T20:23:13.472408+00:00",
+  "phases": {
+    "parse": {
+      "status": "done",
+      "started_at": "2026-04-17T20:10:50.744088+00:00",
+      "completed_at": "2026-04-17T20:10:55.273665+00:00",
+      "pages_total": 252,
+      "pages_done": 252,
+      "chunks_extracted": 252,
+      "images_extracted": 149,
+      "parse_method": null,
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": [],
+      "ocr_engine": "native"
+    },
+    "audit": {
+      "status": "done",
+      "started_at": "2026-04-17T20:10:55.280193+00:00",
+      "completed_at": "2026-04-17T20:18:49.563951+00:00",
+      "chunks_total": 252,
+      "chunks_tagged": 252,
+      "chunks_skipped": 0,
+      "ollama_available": true,
+      "consecutive_failures_hit": false,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "done",
+      "started_at": "2026-04-17T20:18:49.569009+00:00",
+      "completed_at": "2026-04-17T20:23:13.136628+00:00",
+      "chunks_total": 252,
+      "chunks_done": 252,
+      "vectors_per_minute": 57.9,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-17T20:23:13.120896+00:00",
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "done",
+      "started_at": "2026-04-17T20:23:13.143011+00:00",
+      "completed_at": "2026-04-17T20:23:13.464114+00:00",
+      "chunks_inserted": 252,
+      "collection": "medical_library"
+    }
+  },
+  "image_extraction_enabled": true,
+  "parse_retry_count": 0
+}

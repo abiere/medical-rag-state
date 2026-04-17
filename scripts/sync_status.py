@@ -259,7 +259,7 @@ def build_md() -> str:
     imgs_pending, imgs_approved = _image_stats()
     book_ingest_s = _svc("book-ingest-queue")
     ml_vectors = _qdrant_vector_count("medical_library")
-    vt_vectors  = _qdrant_vector_count("video_transcripts")
+    vt_vectors  = _qdrant_vector_count("nrt_video_transcripts")
 
     return f"""# LIVE STATUS — auto-updated every 5 minutes
 > Last update: **{ts} UTC**
@@ -291,7 +291,7 @@ def build_md() -> str:
 | Current job | {_current_job()} |
 | Queued | {_queue_count()} |
 | Done | {_done_count()} / {_total_videos()} |
-| Vectors in video_transcripts | {vt_vectors} |
+| Vectors in nrt_video_transcripts | {vt_vectors} |
 
 ## System
 | Metric | Value |

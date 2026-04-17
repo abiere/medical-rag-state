@@ -575,7 +575,7 @@ class MaintenanceRunner:
     ) -> tuple[list[str], list[str]]:
         """
         For each JSON transcript in data/transcripts/, verify it has vectors
-        in video_transcripts.  Re-ingest if missing.
+        in nrt_video_transcripts.  Re-ingest if missing.
         """
         findings: list[str] = []
         incons:   list[str] = []
@@ -588,13 +588,13 @@ class MaintenanceRunner:
         if not json_files:
             return ["Transcripts: geen JSON bestanden gevonden"], []
 
-        if "video_transcripts" not in qdrant_cols:
+        if "nrt_video_transcripts" not in qdrant_cols:
             return [f"Transcripts: {len(json_files)} bestanden, collectie bestaat niet"], []
 
         missing = []
         for jf in json_files:
             code, res = http_post(
-                f"{QDRANT_BASE}/collections/video_transcripts/points/scroll",
+                f"{QDRANT_BASE}/collections/nrt_video_transcripts/points/scroll",
                 data={
                     "filter": {"must": [{"key": "source_file", "match": {"value": jf.name}}]},
                     "limit": 1,

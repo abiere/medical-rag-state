@@ -93,8 +93,8 @@ State machine per boek: `data/ingest_cache/{book_hash}/state.json`
 - **Primair:** Claude Haiku API (instelbaar — `settings.json claude_api.enabled`)
 - **Fallback:** Ollama llama3.1:8b — non-blocking: 3× timeout → `audit_status="skipped_ollama_timeout"` → chunk toch geëmbed
 - **Retroaudit:** `/api/retroaudit/start` widget op /library/ingest — verwerkt overgeslagen chunks via Claude API
-  - Doorzoekt ALLE 3 text-collecties: `medical_library`, `nrt_qat_curriculum`, `device_documentation`
-  - `video_transcripts` uitgesloten (andere schema — geen KAI-tagging nodig)
+  - Doorzoekt ALLE 5 text-collecties: `medical_library`, `nrt_curriculum`, `qat_curriculum`, `rlt_flexbeam`, `pemf_qrs`
+  - `nrt_video_transcripts`, `qat_video_transcripts` uitgesloten (andere schema — geen KAI-tagging nodig)
   - Na succesvolle run: `chunks_skipped` in state.json gereset naar 0 → `audit_lopend` status verdwijnt
   - Per-boek reaudit (Heraudit-knop): leest `state.collection` uit state.json — niet hardcoded
 - **Permanente fallback:** Chunks met lege tekst (<10 chars) → `tagged_claude_default` (k=3,a=3,i=3) zonder API-aanroep
@@ -293,7 +293,7 @@ Fase 5 drawer: `not_applicable` → "N.v.t.", `running` → "Bezig" + progressba
 | Audit overgeslagen | Ollama timeout / Claude API uit | Claude API retroaudit on-demand via /library/ingest widget |
 | GitHub push geblokkeerd | Secrets in git history | git filter-branch + --force push (zie eerdere sessie) |
 | 0 RAG resultaten | Verkeerde embedding model | Controleer: altijd BAAI/bge-large-en-v1.5 |
-| /images leeg | Nog geen images_metadata.json (nachtrun vult aan) | Nachtrun verwerkt automatisch: `_phase_image_extract()` |
+| /images leeg | Nog geen images_metadata.json — image extractie loopt als achtergrondthread tijdens ingest | images_metadata.json wordt aangemaakt door `image_extractor.py` na ingest fase 4 |
 
 ---
 

@@ -1,0 +1,42 @@
+{
+  "book": "Sobotta Tables of Muscles, Joints and Nerves, English_Latin_ Tables to 17th ed. of the Sobotta Atlas_nodrm.epub",
+  "collection": "medical_library",
+  "audited_at": "2026-04-17T19:33:07.488976+00:00",
+  "total_chunks": 35,
+  "structural": {
+    "total_chunks": 35,
+    "avg_chunk_words": 409.8,
+    "short_chunks": 0,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 15,
+    "images_extracted": 700,
+    "translation_applied": true,
+    "epub_strategy": "ebooklib",
+    "pdf_type": null
+  },
+  "llm_audit": {
+    "sample_size": 15,
+    "avg_coherence": 4.6,
+    "avg_completeness": 4.6,
+    "avg_terminology": 5.0,
+    "avg_translation": 5.0,
+    "quality_score": 4.8,
+    "flagged_chunks": 0,
+    "suggestion": "The chunk could be more coherent if it focused on a single anatomical region, such as the facial muscles or the extraocular muscles."
+  },
+  "auto_classification": {
+    "error": "classification failed"
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

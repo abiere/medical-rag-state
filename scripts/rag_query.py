@@ -5,7 +5,7 @@ rag_query.py — RAG query engine for Medical RAG.
 Usage as CLI:
   python3 scripts/rag_query.py \
     --query "what is the Golgi Tendon Reflex and how does it relate to NRT" \
-    --collections video_transcripts \
+    --collections nrt_video_transcripts \
     --output /tmp/test_query.json
 """
 
@@ -28,7 +28,7 @@ QDRANT_URL   = "http://localhost:6333"
 OLLAMA_URL   = "http://localhost:11434"
 OLLAMA_MODEL = "llama3.1:8b"
 
-ALL_COLLECTIONS = ["medical_library", "nrt_qat_curriculum", "video_transcripts"]
+ALL_COLLECTIONS = ["medical_library", "nrt_curriculum", "qat_curriculum", "rlt_flexbeam", "pemf_qrs", "nrt_video_transcripts", "qat_video_transcripts"]
 
 POINT_CODE_RE = re.compile(
     r"\b(LU|LI|ST|SP|HT|SI|BL|KD|PC|SJ|GB|LR|GV|CV|TH|TW|TB|TE|TR|KI|UB|VG|VC|RM|DU|RN)-\d+\b",
@@ -355,7 +355,7 @@ def image_search(
     fig_matches = FIGURE_RE.findall(query)
 
     if pt_codes:
-        for coll in ["medical_library", "nrt_qat_curriculum"]:
+        for coll in ["medical_library", "nrt_curriculum", "qat_curriculum"]:
             if not _collection_exists(coll):
                 continue
             pts = _qdrant_scroll(coll, {
@@ -380,7 +380,7 @@ def image_search(
 
     else:
         vector = embed_query(query)
-        for coll in ["medical_library", "nrt_qat_curriculum"]:
+        for coll in ["medical_library", "nrt_curriculum", "qat_curriculum"]:
             if not _collection_exists(coll):
                 continue
             for hit in _qdrant_search(coll, vector, limit=10):

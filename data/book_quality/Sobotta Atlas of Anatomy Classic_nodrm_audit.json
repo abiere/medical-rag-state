@@ -1,0 +1,42 @@
+{
+  "book": "Sobotta Atlas of Anatomy Classic_nodrm.epub",
+  "collection": "medical_library",
+  "audited_at": "2026-04-17T16:55:06.457895+00:00",
+  "total_chunks": 535,
+  "structural": {
+    "total_chunks": 535,
+    "avg_chunk_words": 335.6,
+    "short_chunks": 2,
+    "long_chunks": 0,
+    "point_codes_found": 1,
+    "figure_refs_found": 4,
+    "images_extracted": 535,
+    "translation_applied": true,
+    "epub_strategy": "ebooklib",
+    "pdf_type": null
+  },
+  "llm_audit": {
+    "sample_size": 15,
+    "avg_coherence": 4.5,
+    "avg_completeness": 4.8,
+    "avg_terminology": 5.0,
+    "avg_translation": 5.0,
+    "quality_score": 4.83,
+    "flagged_chunks": 0,
+    "suggestion": "The description of the abdominal aorta's branches and their division into unpaired and paired branches could be more detailed to reach completeness."
+  },
+  "auto_classification": {
+    "error": "classification failed"
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

@@ -31,16 +31,19 @@ Alleen via Tailscale (100.66.194.55). Outputs: behandelprotocollen, blogteksten,
 ## Qdrant collecties (stand 2026-04-17)
 | Collectie | Vectors | Gebruik |
 |---|---|---|
-| medical_library | 2.775 | Boekchunks (PDF/EPUB) |
-| video_transcripts | 158 | Whisper transcripties |
-| nrt_qat_curriculum | 546 | QAT curriculum |
-| device_documentation | 164 | PEMF/RLT docs |
+| medical_library | 10.428 | Boekchunks (PDF/EPUB) |
+| nrt_curriculum | 425 | NRT curriculum (Lawrence Woods) |
+| qat_curriculum | 125 | QAT curriculum |
+| rlt_flexbeam | 160 | Red Light Therapy docs |
+| pemf_qrs | 64 | PEMF QRS-101 docs |
+| nrt_video_transcripts | 241 | NRT video transcripties |
+| qat_video_transcripts | 0 | QAT video transcripties (lege collectie) |
 
 ## Stack
 - **Embedding:** BAAI/bge-large-en-v1.5 (1024 dim) — NOOIT nomic-embed-text
 - **LLM:** Ollama llama3.1:8b (lokaal)
 - **Audit:** Claude Haiku API of Ollama (instelbaar in settings.json)
-- **Vector DB:** Qdrant (4 collecties)
+- **Vector DB:** Qdrant (7 collecties)
 - **Web:** FastAPI poort 8000
 - **OCR cascade:** RapidOCR → EasyOCR → Surya → Tesseract → Google Vision
 - **Native PDF:** PyMuPDF (~92 pag/sec)
@@ -54,10 +57,16 @@ Alleen via Tailscale (100.66.194.55). Outputs: behandelprotocollen, blogteksten,
 ## Sleutelpaden
 ```
 /root/medical-rag/
-├── books/medical_literature/       ← PDF/EPUB bestanden
+├── books/
+│   ├── medical_literature/         ← Algemene medische PDF/EPUB
+│   ├── nrt_curriculum/             ← NRT Lawrence Woods bronnen
+│   ├── qat_curriculum/             ← QAT bronnen
+│   ├── rlt_flexbeam/               ← FlexBeam RLT bronnen
+│   └── pemf_qrs/                   ← PEMF QRS-101 bronnen
 ├── data/
 │   ├── ingest_cache/{hash}/        ← state.json + fase-bestanden per boek
 │   ├── transcripts/                ← Whisper JSON
+│   ├── domain_mds/                 ← Kennissyntheselaag (Domain-*.md)
 │   ├── acupuncture_points/         ← 476 Deadman PNGs + point_index.json
 │   ├── extracted_images/           ← Boekafbeeldingen
 │   ├── book_quality/               ← Audit rapporten + calibration_cache.json

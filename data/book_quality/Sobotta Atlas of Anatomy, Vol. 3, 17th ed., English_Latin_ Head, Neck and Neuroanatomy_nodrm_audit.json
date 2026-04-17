@@ -1,0 +1,42 @@
+{
+  "book": "Sobotta Atlas of Anatomy, Vol. 3, 17th ed., English_Latin_ Head, Neck and Neuroanatomy_nodrm.epub",
+  "collection": "medical_library",
+  "audited_at": "2026-04-17T18:39:10.802644+00:00",
+  "total_chunks": 381,
+  "structural": {
+    "total_chunks": 381,
+    "avg_chunk_words": 441.2,
+    "short_chunks": 1,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 949,
+    "images_extracted": 10668,
+    "translation_applied": true,
+    "epub_strategy": "ebooklib",
+    "pdf_type": null
+  },
+  "llm_audit": {
+    "sample_size": 15,
+    "avg_coherence": 4.17,
+    "avg_completeness": 4.33,
+    "avg_terminology": 5.0,
+    "avg_translation": 5.0,
+    "quality_score": 4.62,
+    "flagged_chunks": 1,
+    "suggestion": "Add a concluding sentence to summarize the innervation of the tongue, making it easier to understand and remember."
+  },
+  "auto_classification": {
+    "error": "classification failed"
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

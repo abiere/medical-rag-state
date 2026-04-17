@@ -1,0 +1,57 @@
+{
+  "filename": "Sobotta Tables of Muscles, Joints and Nerves, English_Latin_ Tables to 17th ed. of the Sobotta Atlas_nodrm.epub",
+  "book_hash": "c529bd9cc78367cb",
+  "filepath": "/root/medical-rag/books/medical_literature/Sobotta Tables of Muscles, Joints and Nerves, English_Latin_ Tables to 17th ed. of the Sobotta Atlas_nodrm.epub",
+  "collection": "medical_library",
+  "library_category": "medical_literature",
+  "started_at": "2026-04-17T19:17:21.585495+00:00",
+  "updated_at": "2026-04-17T19:33:46.042072+00:00",
+  "completed_at": "2026-04-17T19:33:46.042056+00:00",
+  "phases": {
+    "parse": {
+      "status": "done",
+      "started_at": "2026-04-17T19:17:21.587803+00:00",
+      "completed_at": "2026-04-17T19:25:21.727482+00:00",
+      "pages_total": 35,
+      "pages_done": 35,
+      "chunks_extracted": 35,
+      "images_extracted": 700,
+      "parse_method": null,
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": [],
+      "ocr_engine": "native"
+    },
+    "audit": {
+      "status": "done",
+      "started_at": "2026-04-17T19:25:21.732845+00:00",
+      "completed_at": "2026-04-17T19:33:07.492125+00:00",
+      "chunks_total": 35,
+      "chunks_tagged": 35,
+      "chunks_skipped": 0,
+      "ollama_available": true,
+      "consecutive_failures_hit": false,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "done",
+      "started_at": "2026-04-17T19:33:07.493974+00:00",
+      "completed_at": "2026-04-17T19:33:45.925824+00:00",
+      "chunks_total": 35,
+      "chunks_done": 35,
+      "vectors_per_minute": 58.5,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-17T19:33:45.920439+00:00",
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "done",
+      "started_at": "2026-04-17T19:33:45.927634+00:00",
+      "completed_at": "2026-04-17T19:33:46.034257+00:00",
+      "chunks_inserted": 35,
+      "collection": "medical_library"
+    }
+  },
+  "image_extraction_enabled": true,
+  "parse_retry_count": 0
+}

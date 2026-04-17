@@ -231,7 +231,7 @@ def auto_classify(chunks: list[dict]) -> dict:
         "3. image_type: describe what the images likely contain\n"
         "4. recommended_collection: single best collection name from "
         "[anatomy_atlas, acupuncture_points, medical_literature, nrt_curriculum, "
-        "qat_curriculum, device_documentation]\n"
+        "qat_curriculum, rlt_flexbeam, pemf_qrs]\n"
         "5. confidence: 0.0-1.0\n"
         "Respond in JSON only.\n\n"
         f"Chunks:\n{combined}"

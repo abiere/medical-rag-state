@@ -1,0 +1,42 @@
+{
+  "book": "Touch for Health_ The Complete Edition_ A Practical Guide to Natural Health With Acupressure Touch.epub",
+  "collection": "medical_library",
+  "audited_at": "2026-04-17T20:05:13.545181+00:00",
+  "total_chunks": 313,
+  "structural": {
+    "total_chunks": 313,
+    "avg_chunk_words": 444.2,
+    "short_chunks": 0,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 3,
+    "images_extracted": 11894,
+    "translation_applied": false,
+    "epub_strategy": "ebooklib",
+    "pdf_type": null
+  },
+  "llm_audit": {
+    "sample_size": 15,
+    "avg_coherence": 3.0,
+    "avg_completeness": 4.0,
+    "avg_terminology": 5.0,
+    "avg_translation": 5.0,
+    "quality_score": 4.25,
+    "flagged_chunks": 0,
+    "suggestion": "The chunk could be divided into two smaller chunks: one discussing the benefits of natural food vs. supplements, and another explaining how to balance meridians with specific foods."
+  },
+  "auto_classification": {
+    "error": "classification failed"
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

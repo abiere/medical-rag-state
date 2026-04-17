@@ -55,10 +55,13 @@ Restart web only: `systemctl restart medical-rag-web`
 
 | Collection | Embedding dims | Use |
 |---|---|---|
-| medical_library | 1024 | Books (PDF/EPUB) |
-| video_transcripts | 1024 | Whisper transcripts |
-| nrt_qat_curriculum | 1024 | QAT curriculum (empty — awaiting upload) |
-| device_documentation | 1024 | PEMF/RLT docs (empty) |
+| medical_library | 1024 | Books (PDF/EPUB) — 10428 vectors |
+| nrt_curriculum | 1024 | NRT curriculum (Lawrence Woods) — 425 vectors |
+| qat_curriculum | 1024 | QAT curriculum — 125 vectors |
+| rlt_flexbeam | 1024 | Red Light Therapy docs — 160 vectors |
+| pemf_qrs | 1024 | PEMF QRS-101 docs — 64 vectors |
+| nrt_video_transcripts | 1024 | NRT video transcripts — 241 vectors |
+| qat_video_transcripts | 1024 | QAT video transcripts — 0 vectors |
 
 **Embedding model: BAAI/bge-large-en-v1.5 (1024 dims)**
 ⚠ NOT nomic-embed-text — using nomic causes 0 RAG results.
@@ -69,7 +72,12 @@ Restart web only: `systemctl restart medical-rag-web`
 /root/medical-rag/
 ├── web/app.py                    ← FastAPI — all routes
 ├── scripts/                      ← All pipeline scripts
-├── books/                        ← PDFs/EPUBs by category
+├── books/
+│   ├── medical_literature/       ← General medical PDF/EPUB
+│   ├── nrt_curriculum/           ← NRT Lawrence Woods sources
+│   ├── qat_curriculum/           ← QAT sources
+│   ├── rlt_flexbeam/             ← FlexBeam RLT sources
+│   └── pemf_qrs/                 ← PEMF QRS-101 sources
 ├── videos/nrt/ + qat/            ← 35 videos (paused)
 ├── data/
 │   ├── transcripts/              ← Whisper JSON
@@ -122,7 +130,6 @@ Read this skill before ANY UI task. Key tokens: teal `#1A6B72`, nav `NAV_ITEMS` 
 | / | Dashboard — CPU/RAM/services/Qdrant stats |
 | /library | Catalog — 6 tabs, K/A/I badges, chunk counts, delete |
 | /library/ingest | Upload + ingest queue + progress |
-| /library/overview | Literature overview with audit scores |
 | /search | RAG search + image search + streaming |
 | /images | Image browser + approval |
 | /videos | Upload + transcription queue |

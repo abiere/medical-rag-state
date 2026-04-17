@@ -1,0 +1,42 @@
+{
+  "book": "Sobotta Anatomy Textbook_nodrm.epub",
+  "collection": "medical_library",
+  "audited_at": "2026-04-17T16:05:14.926574+00:00",
+  "total_chunks": 1096,
+  "structural": {
+    "total_chunks": 1096,
+    "avg_chunk_words": 443.6,
+    "short_chunks": 0,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 1589,
+    "images_extracted": 9864,
+    "translation_applied": true,
+    "epub_strategy": "ebooklib",
+    "pdf_type": null
+  },
+  "llm_audit": {
+    "sample_size": 15,
+    "avg_coherence": 4.88,
+    "avg_completeness": 4.88,
+    "avg_terminology": 5.0,
+    "avg_translation": 5.0,
+    "quality_score": 4.94,
+    "flagged_chunks": 0,
+    "suggestion": "Break the long sentence into two or three shorter ones for easier reading."
+  },
+  "auto_classification": {
+    "error": "classification failed"
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}
