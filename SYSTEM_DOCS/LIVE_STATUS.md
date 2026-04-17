@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 14:47:07 UTC**
+> Last update: **2026-04-17 14:52:07 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Bates' Guide To Physical Examination and History Taking_nodrm.epub` (8 min) |
+| Current job | `Bates' Guide To Physical Examination and History Taking_nodrm.epub` (13 min) |
 | Queued | 6 |
 | Total books | 57 |
 | Ingested | 42 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 10.08 GB / 32.86 GB (31%) |
-| CPU | 96.0% |
+| RAM used | 3.26 GB / 32.86 GB (10%) |
+| CPU | 91.0% |
 | Disk used | 60.6 GB / 322.3 GB (20%) |
-| Uptime | up 9 hours, 11 minutes |
+| Uptime | up 9 hours, 16 minutes |
 
 ## Recent markers
 - `2026-04-17T14:38:20.635476+00:00` **book_ingested** — Anatomy Trains_ Myofascial Meridians for Manual and Movement Therapists_nodrm.epub → medical_library: 432 chunks
