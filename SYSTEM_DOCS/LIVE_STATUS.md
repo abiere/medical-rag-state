@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 11:41:45 UTC**
+> Last update: **2026-04-17 11:46:45 UTC**
 
 ## Services
 | Service | Status |
@@ -14,10 +14,10 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `QRS 101 Indication Settings English.pdf` (1 min) |
-| Queued | 1 |
+| Current job | `QRS 101 Operating Manual.pdf` (2 min) |
+| Queued | 0 |
 | Total books | 49 |
-| Ingested | 38 |
+| Ingested | 40 |
 | Vectors in medical_library | 3248 |
 | Images pending approval | 2026 |
 | Images approved | 0 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `16_Expanded__Revised__and_New_Techniques.mp4` (21 min) |
+| Current job | `16_Expanded__Revised__and_New_Techniques.mp4` (26 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 15.48 GB / 32.86 GB (47%) |
-| CPU | 100.0% |
+| RAM used | 15.55 GB / 32.86 GB (47%) |
+| CPU | 96.7% |
 | Disk used | 59.4 GB / 322.3 GB (19%) |
-| Uptime | up 6 hours, 6 minutes |
+| Uptime | up 6 hours, 11 minutes |
 
 ## Recent markers
+- `2026-04-17T11:44:44.248640+00:00` **book_ingested** — QRS 101 Indication Settings English.pdf → device_documentation: 9 chunks
 - `2026-04-17T11:39:53.752127+00:00` **book_ingested** — QRS101 Quick start - English.pdf → device_documentation: 1 chunks
 - `2026-04-17T11:38:55.837722+00:00` **book_ingested** — QRS-101 Manual Englisch.pdf → device_documentation: 41 chunks
 - `2026-04-17T11:28:27.465578+00:00` **book_ingested** — QRS-101-Home-System-Brochure.pdf → device_documentation: 1 chunks
 - `2026-04-17T11:20:45.066077+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
-- `2026-04-17T11:07:03.654184+00:00` **book_ingested** — QRS Quantron Resonance 101 Home System.pdf → device_documentation: 9 chunks
 
 ## Nightly Consistency
 ```
