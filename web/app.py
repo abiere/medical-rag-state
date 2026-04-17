@@ -4558,7 +4558,7 @@ async def images_page(book: str = "", filter: str = "all"):
         cards = ""
         for e in entries:
             path = e.get("path", "")
-            img_src = f"/{path}" if path else ""
+            img_src = f"/images/file/{Path(path).name}" if path else ""
             ai_sug = e.get("ai_suggestion")
             ai_label = ("✓ Nuttig" if ai_sug else "✗ Niet nuttig") if ai_sug is not None else "—"
             ai_color = "#059669" if ai_sug else ("#dc2626" if ai_sug is False else "#6b7280")

@@ -708,6 +708,18 @@ def _phase_qdrant(state: dict) -> bool:
 
     logger.info("Qdrant done: %d vectors upserted to %s", n_upserted, collection)
     _set_phase_done(state, "qdrant", chunks_inserted=n_upserted)
+
+    # Populate image approvals for newly ingested book (non-fatal)
+    try:
+        sys.path.insert(0, str(BASE / "scripts"))
+        from audit_book import prescreeen_images  # noqa: three e's — typo in original
+        book_stem = Path(state.get("filename", "")).stem
+        if chunks and book_stem:
+            prescreeen_images(chunks, book_stem)
+            logger.info("Image approvals populated for %s", book_stem)
+    except Exception as e:
+        logger.warning("prescreeen_images failed (non-fatal): %s", e)
+
     return True
 
 

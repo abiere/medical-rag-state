@@ -200,6 +200,7 @@ Gebruik alleen: `systemctl restart medical-rag-web` voor web-only wijzigingen.
 | Audit overgeslagen | Ollama timeout / Claude API uit | Claude API retroaudit on-demand via /library/ingest widget |
 | GitHub push geblokkeerd | Secrets in git history | git filter-branch + --force push (zie eerdere sessie) |
 | 0 RAG resultaten | Verkeerde embedding model | Controleer: altijd BAAI/bge-large-en-v1.5 |
+| /images leeg | prescreeen_images() nooit aangeroepen na qdrant fase | Backfill script uitgevoerd 2026-04-17; nieuwe boeken: auto via _phase_qdrant() |
 
 ---
 

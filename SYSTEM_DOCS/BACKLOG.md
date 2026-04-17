@@ -1,6 +1,6 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-17 — documentatie overhaul + Trail Guide Google Vision + git secret removal
+> Laatste update: 2026-04-17 — image screening pipeline fix + /images page werkend
 
 ---
 
@@ -64,6 +64,17 @@
 - [ ] Officiële Deadman digitale versie aanschaffen (DRM-vrij via Eastland Press)
 - [ ] Consistentie guardian cross-collectie
 - [ ] Protocol pre-validatie (Ollama checkt dekking voor generatie)
+
+---
+
+## ✅ Afgerond — sessie 2026-04-17 (image screening fix)
+
+- [x] **Image screening pipeline gerepareerd** — prescreeen_images() nu aangeroepen na qdrant fase
+      `book_ingest_queue.py` roept prescreeen_images() aan na elke succesvolle qdrant upload
+      Nightly-bug gerepareerd: image_screen=done alleen als processed > 0
+      Backfill script uitgevoerd: 38 bestaande boeken gepopuleerd in image_approvals.json
+- [x] **/images pagina werkend** — img_src pad gecorrigeerd naar `/images/file/{filename}` route
+      15+ afbeeldingen zichtbaar, 200 OK bij serveren
 
 ---
 

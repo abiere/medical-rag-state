@@ -1094,8 +1094,8 @@ class MaintenanceRunner:
                 total_processed += processed
                 screened_books += 1
 
-                # Mark image_screen done if no errors and processed > 0
-                if result.get("errors", 0) == 0:
+                # Mark image_screen done only when images were actually processed
+                if processed > 0 and result.get("errors", 0) == 0:
                     state.setdefault("phases", {})["image_screen"] = {"status": "done"}
                     state_file.write_text(json.dumps(state, indent=2))
             except Exception as exc:
