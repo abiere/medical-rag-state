@@ -1,6 +1,6 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-17 — figcaption extractie + /images UI verbeterd
+> Laatste update: 2026-04-17 — EPUB re-extractie met figcaption gestart
 
 ---
 
@@ -64,6 +64,16 @@
 - [ ] Officiële Deadman digitale versie aanschaffen (DRM-vrij via Eastland Press)
 - [ ] Consistentie guardian cross-collectie
 - [ ] Protocol pre-validatie (Ollama checkt dekking voor generatie)
+
+---
+
+## ✅ Afgerond — sessie 2026-04-17 (EPUB re-extractie met figcaption)
+
+- [x] **Re-extractie gestart voor alle EPUBs zonder captions** — 5 boeken
+      Gestart: Bates (1449 imgs), QT 2.0 (37), QT Core (129), QT Heal (97), Sobotta Atlas (1919)
+      Skip: Sobotta Textbook (had al captions), Anatomy Trains (herextractie eerder in sessie)
+      Methode: `meta.unlink()` + `POST /api/library/book/{hash}/re-extract-images`
+      Na voltooiing: "Met Caption" filter in /images toont figcaptions in plaats van leeg
 
 ---
 
