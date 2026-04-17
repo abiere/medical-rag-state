@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 18:12:11 UTC**
+> Last update: **2026-04-17 18:17:11 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Orthopedic Physical Assessment_nodrm.epub` (38 min) |
+| Current job | `Orthopedic Physical Assessment_nodrm.epub` (43 min) |
 | Queued | 6 |
 | Total books | 64 |
 | Ingested | 49 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (1 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (6 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in video_transcripts | 241 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 8.36 GB / 32.86 GB (26%) |
-| CPU | 99.7% |
+| RAM used | 8.37 GB / 32.86 GB (26%) |
+| CPU | 99.9% |
 | Disk used | 66.0 GB / 322.3 GB (21%) |
-| Uptime | up 12 hours, 36 minutes |
+| Uptime | up 12 hours, 41 minutes |
 
 ## Recent markers
 - `2026-04-17T18:11:11.460007+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
