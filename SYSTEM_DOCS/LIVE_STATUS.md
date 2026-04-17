@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 11:31:45 UTC**
+> Last update: **2026-04-17 11:36:45 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `QRS-101 Manual Englisch.pdf` (3 min) |
+| Current job | `QRS-101 Manual Englisch.pdf` (8 min) |
 | Queued | 3 |
 | Total books | 49 |
 | Ingested | 37 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `16_Expanded__Revised__and_New_Techniques.mp4` (11 min) |
+| Current job | `16_Expanded__Revised__and_New_Techniques.mp4` (16 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 15.22 GB / 32.86 GB (46%) |
+| RAM used | 15.35 GB / 32.86 GB (47%) |
 | CPU | 100.0% |
 | Disk used | 59.4 GB / 322.3 GB (19%) |
-| Uptime | up 5 hours, 56 minutes |
+| Uptime | up 6 hours, 1 minute |
 
 ## Recent markers
 - `2026-04-17T11:28:27.465578+00:00` **book_ingested** — QRS-101-Home-System-Brochure.pdf → device_documentation: 1 chunks
