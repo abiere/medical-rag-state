@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 23:32:17 UTC**
+> Last update: **2026-04-17 23:37:17 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `CranioSacral Therapy Study Guide - Upledger.pdf` (43 min) |
+| Current job | `CranioSacral Therapy Study Guide - Upledger.pdf` (48 min) |
 | Queued | 10 |
 | Total books | 37 |
 | Ingested | 63 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (21 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (26 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 16.15 GB / 32.86 GB (49%) |
-| CPU | 98.0% |
+| RAM used | 16.41 GB / 32.86 GB (50%) |
+| CPU | 98.9% |
 | Disk used | 70.0 GB / 322.3 GB (23%) |
-| Uptime | up 17 hours, 56 minutes |
+| Uptime | up 18 hours, 1 minute |
 
 ## Recent markers
 - `2026-04-17T23:11:16.719229+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
