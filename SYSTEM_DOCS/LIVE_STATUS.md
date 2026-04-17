@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 18:42:11 UTC**
+> Last update: **2026-04-17 18:47:11 UTC**
 
 ## Services
 | Service | Status |
@@ -14,18 +14,18 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Sobotta Atlas of Anatomy, Vol. 3, 17th ed., English_Latin_ Head, Neck and Neuroanatomy_nodrm.epub` (23 min) |
-| Queued | 5 |
+| Current job | `Sobotta Atlas of Anatomy, Vol.1, 17th ed., English_Latin_ General anatomy and Musculoskeletal System_nodrm.epub` (1 min) |
+| Queued | 4 |
 | Total books | 64 |
 | Ingested | 50 |
-| Vectors in medical_library | 8845 |
+| Vectors in medical_library | 9226 |
 | Images pending approval | 2026 |
 | Images approved | 0 |
 
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (1 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (6 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in video_transcripts | 241 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 15.2 GB / 32.86 GB (46%) |
+| RAM used | 14.11 GB / 32.86 GB (43%) |
 | CPU | 100.0% |
-| Disk used | 66.6 GB / 322.3 GB (22%) |
-| Uptime | up 13 hours, 6 minutes |
+| Disk used | 67.1 GB / 322.3 GB (22%) |
+| Uptime | up 13 hours, 11 minutes |
 
 ## Recent markers
+- `2026-04-17T18:45:38.452192+00:00` **book_ingested** — Sobotta Atlas of Anatomy, Vol. 3, 17th ed., English_Latin_ Head, Neck and Neuroanatomy_nodrm.epub → medical_library: 381 chunks
 - `2026-04-17T18:41:11.956447+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-17T18:18:47.244936+00:00` **book_ingested** — Orthopedic Physical Assessment_nodrm.epub → medical_library: 1566 chunks
 - `2026-04-17T18:11:11.460007+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-17T17:41:10.919377+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
-- `2026-04-17T17:33:18.970769+00:00` **book_ingested** — Sobotta Atlas of Anatomy, Vol. 2, 17th ed., English_Latin_ Internal Organs_nodrm.epub → medical_library: 276 chunks
 
 ## Nightly Consistency
 ```
