@@ -1,6 +1,6 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-17 — Google Vision credentials hersteld
+> Laatste update: 2026-04-17 — /library legenda + K/A/I badge beschrijvingen
 
 ---
 
@@ -66,6 +66,19 @@
 - [ ] Officiële Deadman digitale versie aanschaffen (DRM-vrij via Eastland Press)
 - [ ] Consistentie guardian cross-collectie
 - [ ] Protocol pre-validatie (Ollama checkt dekking voor generatie)
+
+---
+
+## ✅ Afgerond — sessie 2026-04-17 (/library legenda + K/A/I badge beschrijvingen)
+
+- [x] **Legenda bovenaan /library** — 3-koloms grid (#f8fafc achtergrond):
+      Kolom 1: K/A/I categorie uitleg + prioriteit (1/2/3 gekleurde badges)
+      Kolom 2: Gebruiksprofiel bolletjes (1–5 met teal/lichtblauw dots + beschrijving)
+      Kolom 3: Audit score kleurschaal (4.5–5 groen → < 2.5 rood) + voetnoot
+- [x] **K/A/I badges inline beschrijving** — `kaiPill()` herschreven:
+      Elke badge toont tekst links ("Klinisch, primaire bron") + gekleurde badge rechts
+      Drie badges verticaal gestapeld, rechts uitgelijnd via `flex-direction:column`
+      `renderCard()` aangepast: array-filter voor aanwezige K/A/I waarden
 
 ---
 

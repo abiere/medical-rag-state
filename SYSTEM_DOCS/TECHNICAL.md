@@ -217,7 +217,7 @@ Gebruik alleen: `systemctl restart medical-rag-web` voor web-only wijzigingen.
 | Route | Beschrijving |
 |---|---|
 | `/` | Dashboard — CPU/RAM/services/Qdrant stats |
-| `/library` | Catalogus — 6 tabs, K/A/I badges, chunk counts, delete |
+| `/library` | Catalogus — legenda bovenaan (K/A/I, gebruiksprofiel, audit score), K/A/I badges met inline beschrijving (verticaal gestapeld), 6 tabs, chunk counts, delete |
 | `/library/ingest` | Upload + ingest queue + voortgang widget |
 | `/library/overview` | Literatuuroverzicht met audit scores |
 | `/search` | RAG zoeken + afbeelding zoeken + streaming |

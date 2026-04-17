@@ -2028,6 +2028,123 @@ async def library_page():
     </div>
   </div>
 
+  <!-- K/A/I legenda -->
+  <div style="background:#f8fafc;border-radius:8px;padding:12px 16px;
+       display:grid;grid-template-columns:1fr 1fr 1fr;
+       gap:16px 24px;margin-bottom:16px">
+
+    <!-- Kolom 1: K/A/I categorie + prioriteit -->
+    <div>
+      <div style="font-size:11px;font-weight:500;color:#6b7280;margin-bottom:8px">K / A / I \u2014 categorie</div>
+      <div style="display:flex;flex-direction:column;gap:4px;font-size:11px;color:#6b7280">
+        <div><b style="color:#111827">K</b>&nbsp;Klinisch \u2014 weefsel, anatomie, pathologie</div>
+        <div><b style="color:#111827">A</b>&nbsp;Acupunctuur \u2014 meridianen, punten, TCM</div>
+        <div><b style="color:#111827">I</b>&nbsp;Afbeeldingen \u2014 illustraties voor protocollen</div>
+      </div>
+      <div style="font-size:11px;font-weight:500;color:#6b7280;margin-top:10px;margin-bottom:6px">K / A / I \u2014 prioriteit</div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:#6b7280">
+          <span style="background:#dcfce7;color:#166534;border-radius:3px;padding:1px 6px;font-weight:500;font-size:10px;min-width:18px;text-align:center">1</span>
+          Primaire bron
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:#6b7280">
+          <span style="background:#ffedd5;color:#9a3412;border-radius:3px;padding:1px 6px;font-weight:500;font-size:10px;min-width:18px;text-align:center">2</span>
+          Ondersteunend
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:#6b7280">
+          <span style="background:#f3f4f6;color:#374151;border-radius:3px;padding:1px 6px;font-weight:500;font-size:10px;min-width:18px;text-align:center">3</span>
+          Achtergrond
+        </div>
+      </div>
+    </div>
+
+    <!-- Kolom 2: Gebruiksprofiel bolletjes 1-5 -->
+    <div>
+      <div style="font-size:11px;font-weight:500;color:#6b7280;margin-bottom:8px">Gebruiksprofiel \u2014 bolletjes</div>
+      <div style="display:flex;flex-direction:column;gap:7px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="display:inline-flex;gap:2px;flex-shrink:0">
+            <span style="width:8px;height:8px;border-radius:50%;background:#1A6B72;display:inline-block"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#1A6B72;display:inline-block"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#1A6B72;display:inline-block"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#1A6B72;display:inline-block"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#1A6B72;display:inline-block"></span>
+          </span>
+          <span style="font-size:11px;color:#6b7280"><b style="color:#111827">5</b> Uitputtend \u2014 alles staat erin</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="display:inline-flex;gap:2px;flex-shrink:0">
+            <span style="width:8px;height:8px;border-radius:50%;background:#1A6B72;display:inline-block"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#1A6B72;display:inline-block"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#1A6B72;display:inline-block"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#1A6B72;display:inline-block"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#c7e8eb;display:inline-block"></span>
+          </span>
+          <span style="font-size:11px;color:#6b7280"><b style="color:#111827">4</b> Sterk \u2014 brede dekking</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="display:inline-flex;gap:2px;flex-shrink:0">
+            <span style="width:8px;height:8px;border-radius:50%;background:#1A6B72;display:inline-block"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#1A6B72;display:inline-block"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#1A6B72;display:inline-block"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#c7e8eb;display:inline-block"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#c7e8eb;display:inline-block"></span>
+          </span>
+          <span style="font-size:11px;color:#6b7280"><b style="color:#111827">3</b> Goed \u2014 nuttige aanvulling</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="display:inline-flex;gap:2px;flex-shrink:0">
+            <span style="width:8px;height:8px;border-radius:50%;background:#1A6B72;display:inline-block"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#1A6B72;display:inline-block"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#c7e8eb;display:inline-block"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#c7e8eb;display:inline-block"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#c7e8eb;display:inline-block"></span>
+          </span>
+          <span style="font-size:11px;color:#6b7280"><b style="color:#111827">2</b> Beperkt \u2014 zijdelings relevant</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="display:inline-flex;gap:2px;flex-shrink:0">
+            <span style="width:8px;height:8px;border-radius:50%;background:#1A6B72;display:inline-block"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#c7e8eb;display:inline-block"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#c7e8eb;display:inline-block"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#c7e8eb;display:inline-block"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#c7e8eb;display:inline-block"></span>
+          </span>
+          <span style="font-size:11px;color:#6b7280"><b style="color:#111827">1</b> Minimaal \u2014 nauwelijks dekking</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kolom 3: Audit score -->
+    <div>
+      <div style="font-size:11px;font-weight:500;color:#6b7280;margin-bottom:8px">Audit score (1.0 \u2013 5.0)</div>
+      <div style="display:flex;flex-direction:column;gap:5px;font-size:11px;color:#6b7280">
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="width:36px;font-weight:500;color:#166534;flex-shrink:0">4.5\u20135</span>
+          Uitstekend \u2014 native PDF
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="width:36px;font-weight:500;color:#1A6B72;flex-shrink:0">3.5\u20134</span>
+          Goed \u2014 lichte OCR-ruis
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="width:36px;font-weight:500;color:#92400e;flex-shrink:0">2.5\u20133</span>
+          Normaal \u2014 gescande PDF
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="width:36px;font-weight:500;color:#991b1b;flex-shrink:0">&lt; 2.5</span>
+          Laag \u2014 OCR-problemen
+        </div>
+      </div>
+      <div style="margin-top:10px;font-size:10px;color:#6b7280;line-height:1.5;
+           border-top:0.5px solid #e2e8f0;padding-top:8px">
+        Score gebaseerd op steekproef van ~15 chunks.
+        Gebruiksprofiel afgeleid uit K/A/I-tags van alle chunks.
+      </div>
+    </div>
+
+  </div>
+
   <!-- Search + sort bar -->
   <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
     <input id="search-input" type="text" placeholder="Zoek op titel of auteur…"
@@ -2168,11 +2285,20 @@ function renderItems() {
 
 function kaiPill(letter, val) {
   if (!val) return '';
-  const c = KAI_COLORS[val] || '#9ca3af';
-  const labels = {1:'Primair',2:'Ondersteunend',3:'Achtergrond'};
-  return `<span title="${letter}: ${labels[val]||val}"
-    style="background:${c}22;color:${c};border:1px solid ${c}55;
-           border-radius:999px;padding:1px 7px;font-size:11px;font-weight:700">${letter}${val}</span>`;
+  const KAI_LABELS_MAP = {K:'Klinisch', A:'Acupunctuur', I:'Afbeeldingen'};
+  const KAI_PRIO_MAP   = {1:'primaire bron', 2:'ondersteunend', 3:'achtergrond'};
+  const KAI_BG_STYLE   = {
+    1:'background:#dcfce7;color:#166534',
+    2:'background:#ffedd5;color:#9a3412',
+    3:'background:#f3f4f6;color:#374151'
+  };
+  const bgStyle = KAI_BG_STYLE[val] || 'background:#f3f4f6;color:#374151';
+  const lbl  = KAI_LABELS_MAP[letter] || letter;
+  const prio = KAI_PRIO_MAP[val] || val;
+  return `<div style="display:flex;align-items:center;gap:6px">
+    <span style="font-size:11px;color:#6b7280">${lbl}, ${prio}</span>
+    <span style="font-size:11px;${bgStyle};border-radius:4px;padding:2px 8px;font-weight:500">${letter}${val}</span>
+  </div>`;
 }
 
 function statusPill(status) {
@@ -2193,14 +2319,19 @@ function renderCard(item) {
     ? `class="book-row" onclick="toggleBookDetail(this,'${escJs(item.book_hash)}')" style="cursor:pointer;`
     : 'style="';
 
+  const kaiBadges = [['K', item.k], ['A', item.a], ['I', item.i]]
+    .filter(([, v]) => v)
+    .map(([l, v]) => kaiPill(l, v))
+    .join('');
+
   return `<div ${clickable}background:#fff;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.07);
                       padding:14px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
     <div style="flex:1;min-width:200px">
       <div style="font-weight:600;font-size:15px;color:#111">${escHtml(item.title)}</div>
       <div style="font-size:12px;color:#6b7280;margin-top:2px">${escHtml(item.authors || '')}</div>
     </div>
-    <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">
-      ${kaiPill('K', item.k)} ${kaiPill('A', item.a)} ${kaiPill('I', item.i)}
+    <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
+      ${kaiBadges}
     </div>
     <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
       ${statusPill(item.status)}${ocrBadge(item.ocr_engine)}
