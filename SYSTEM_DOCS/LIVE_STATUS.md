@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 20:52:14 UTC**
+> Last update: **2026-04-17 20:57:14 UTC**
 
 ## Services
 | Service | Status |
@@ -14,10 +14,10 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Acupuncture in Practice - Campbell.pdf` (4 min) |
+| Current job | `Acupuncture in Practice - Campbell.pdf` (9 min) |
 | Queued | 16 |
 | Total books | 37 |
-| Ingested | 57 |
+| Ingested | 58 |
 | Vectors in medical_library | 11027 |
 | Images pending approval | 2026 |
 | Images approved | 0 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (11 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (16 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 14.83 GB / 32.86 GB (45%) |
+| RAM used | 15.96 GB / 32.86 GB (49%) |
 | CPU | 100.0% |
 | Disk used | 68.6 GB / 322.3 GB (22%) |
-| Uptime | up 15 hours, 16 minutes |
+| Uptime | up 15 hours, 21 minutes |
 
 ## Recent markers
 - `2026-04-17T20:47:29.731822+00:00` **book_ingested** — 354229827-daniel-keown-the-spark-in-the-machine-how-the-science-of-acupuncture-explains-the-mysteries-of-western-medicine-singi.pdf → medical_library: 314 chunks
