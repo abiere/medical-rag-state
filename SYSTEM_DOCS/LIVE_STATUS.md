@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 21:17:14 UTC**
+> Last update: **2026-04-17 21:22:14 UTC**
 
 ## Services
 | Service | Status |
@@ -14,10 +14,10 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Advanced Acupuncture - Cecil-Sterman.pdf` (7 min) |
+| Current job | `Advanced Acupuncture - Cecil-Sterman.pdf` (12 min) |
 | Queued | 14 |
 | Total books | 37 |
-| Ingested | 59 |
+| Ingested | 60 |
 | Vectors in medical_library | 11330 |
 | Images pending approval | 2026 |
 | Images approved | 0 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (6 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (11 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 15.07 GB / 32.86 GB (46%) |
-| CPU | 97.6% |
+| RAM used | 9.19 GB / 32.86 GB (28%) |
+| CPU | 100.0% |
 | Disk used | 68.7 GB / 322.3 GB (22%) |
-| Uptime | up 15 hours, 41 minutes |
+| Uptime | up 15 hours, 46 minutes |
 
 ## Recent markers
 - `2026-04-17T21:11:14.641319+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
