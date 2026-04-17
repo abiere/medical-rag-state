@@ -5290,7 +5290,6 @@ def _eval_badge(evaluated: bool) -> str:
 async def images_page(filter: str = "all"):
     kai = _load_kai_cache()
 
-    # Collect all books with images_metadata.json
     books_data: list[dict] = []
     for meta_file in sorted(IMAGES_DIR.glob("*/images_metadata.json")):
         try:
@@ -5303,12 +5302,13 @@ async def images_page(filter: str = "all"):
         if not images:
             continue
 
-        # Find matching classification entry
         cls_entry: dict = {}
-        for entry in kai.values():
+        cls_key = ""
+        for k, entry in kai.items():
             for pat in entry.get("filename_patterns", []):
                 if pat.lower() in filename.lower():
                     cls_entry = entry
+                    cls_key   = k
                     break
             if cls_entry:
                 break
@@ -5321,124 +5321,349 @@ async def images_page(filter: str = "all"):
         books_data.append({
             "book_hash":   book_hash,
             "filename":    filename,
-            "images":      images,
+            "image_count": len(images),
             "priority":    priority,
             "override":    priority_override,
             "effective":   effective,
             "evaluated":   evaluated,
-            "cls_key":     next((k for k, v in kai.items()
-                                 if v is cls_entry), ""),
+            "cls_key":     cls_key,
         })
 
-    # Apply filter
     filter_map = {
-        "high":   lambda b: b["effective"] == "high",
-        "normal": lambda b: b["effective"] == "normal",
-        "low":    lambda b: b["effective"] == "low",
-        "skip":   lambda b: b["effective"] == "skip",
+        "high":       lambda b: b["effective"] == "high",
+        "normal":     lambda b: b["effective"] == "normal",
+        "low":        lambda b: b["effective"] == "low",
+        "skip":       lambda b: b["effective"] == "skip",
         "unreviewed": lambda b: not b["evaluated"],
     }
     if filter != "all" and filter in filter_map:
         books_data = [b for b in books_data if filter_map[filter](b)]
 
-    # Sort: unreviewed first, then by priority level, then by filename
-    prio_order = {"high": 0, "normal": 1, "low": 2, "skip": 3}
-    books_data.sort(key=lambda b: (b["evaluated"], prio_order.get(b["effective"], 9), b["filename"]))
+    books_data.sort(key=lambda b: -b["image_count"])
+    total_images = sum(b["image_count"] for b in books_data)
 
-    sections = ""
+    book_rows = ""
     for bd in books_data:
-        cards = ""
-        for img in bd["images"][:20]:  # cap at 20 per book for performance
-            fname   = img.get("file", "")
-            img_src = f"/images/file/{bd['book_hash']}/{fname}" if fname else ""
-            caption = img.get("caption", "") or img.get("alt_text", "")
-            cards += f"""
-<div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:10px;
-            width:180px;flex-shrink:0">
-  <div style="height:110px;background:#f8fafc;border-radius:6px;overflow:hidden;
-              display:flex;align-items:center;justify-content:center;margin-bottom:6px">
-    <img src="{img_src}" style="max-width:100%;max-height:100%;object-fit:contain"
-         onerror="this.style.display='none';this.nextSibling.style.display='flex'"
-         loading="lazy">
-    <div style="display:none;color:#9ca3af;font-size:11px;text-align:center;padding:8px">
-      Niet gevonden
+        bh  = bd["book_hash"]
+        ck  = bd["cls_key"]
+        cur = bd["override"] or bd["priority"]
+        book_rows += f"""
+<div class="book-row-img" id="brow-{bh}"
+     style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;
+            margin-bottom:10px;overflow:hidden">
+  <div onclick="toggleImgBook('{bh}', this)"
+       style="padding:14px 18px;display:flex;align-items:center;
+              gap:12px;cursor:pointer;flex-wrap:wrap">
+    <div style="flex:1;min-width:160px">
+      <div style="font-weight:600;font-size:15px">{bd['filename']}</div>
+      <div style="font-size:12px;color:#6b7280;margin-top:2px">{bd['image_count']} afbeelding(en)</div>
     </div>
-  </div>
-  <div style="font-size:11px;color:#6b7280;overflow:hidden;text-overflow:ellipsis;
-              white-space:nowrap;margin-bottom:4px" title="{fname}">{fname}</div>
-  {f'<div style="font-size:11px;color:#4a5568;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">{caption[:80]}</div>' if caption else ''}
-</div>"""
-
-        more = len(bd["images"]) - 20
-        if more > 0:
-            cards += f'<div style="display:flex;align-items:center;justify-content:center;width:180px;color:#6b7280;font-size:13px">+{more} meer</div>'
-
-        n = len(bd["images"])
-        sections += f"""
-<div class="section" style="margin-bottom:20px">
-  <div class="section-head" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-      <span class="section-title" style="font-size:15px">{bd['filename']}</span>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"
+         onclick="event.stopPropagation()">
       {_priority_badge(bd['priority'], bd['override'])}
       {_eval_badge(bd['evaluated'])}
-    </div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <span style="font-size:13px;color:#6b7280">{n} afbeelding(en)</span>
+      <button class="img-filter-btn active" data-hash="{bh}" data-filter="all"
+              onclick="setImgFilter('{bh}','all',this)">Alle</button>
+      <button class="img-filter-btn" data-hash="{bh}" data-filter="with_alt"
+              onclick="setImgFilter('{bh}','with_alt',this)">Met ALT</button>
+      <button class="img-filter-btn" data-hash="{bh}" data-filter="without_alt"
+              onclick="setImgFilter('{bh}','without_alt',this)">Zonder ALT</button>
       <div style="position:relative">
-        <button onclick="togglePrioMenu('{bd['book_hash']}')"
+        <button onclick="togglePrioMenu('{bh}')"
                 class="btn btn-secondary" style="font-size:12px;padding:4px 10px">
           Prioriteit ▾
         </button>
-        <div id="prio-{bd['book_hash']}"
-             style="display:none;position:absolute;right:0;top:110%;background:#fff;
-                    border:1px solid #e2e8f0;border-radius:8px;padding:4px;
-                    min-width:140px;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1)">
-          {_prio_dropdown_items(bd['book_hash'], bd['cls_key'], bd['override'] or bd['priority'])}
+        <div id="prio-{bh}"
+             style="display:none;position:absolute;right:0;top:110%;
+                    background:#fff;border:1px solid #e2e8f0;border-radius:8px;
+                    padding:4px;min-width:140px;z-index:100;
+                    box-shadow:0 4px 12px rgba(0,0,0,.1)">
+          {_prio_dropdown_items(bh, ck, cur)}
         </div>
       </div>
+      <button id="del-btn-{bh}"
+              onclick="event.stopPropagation();deleteSelected('{bh}')"
+              style="display:none;padding:5px 12px;background:#fee2e2;
+                     color:#991b1b;border:1px solid #fca5a5;border-radius:6px;
+                     font-size:12px;cursor:pointer">
+        Verwijder geselecteerde
+      </button>
+    </div>
+    <span id="chev-{bh}"
+          style="font-size:18px;color:#9ca3af;transition:transform 0.2s">&#9658;</span>
+  </div>
+  <div id="grid-{bh}" style="display:none;padding:0 18px 16px">
+    <div id="imgs-{bh}"
+         style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+                gap:10px;margin-top:10px">
+      <div style="color:#9ca3af;font-size:13px">Laden...</div>
+    </div>
+    <div id="more-{bh}" style="margin-top:12px;display:none;text-align:center">
+      <button onclick="loadMoreImgs('{bh}')"
+              class="btn btn-secondary" style="font-size:13px">Meer laden</button>
     </div>
   </div>
-  <div style="display:flex;flex-wrap:wrap;gap:10px;padding:14px 20px">{cards}</div>
 </div>"""
 
     filter_links = ""
-    for fkey, flabel in [("all","Alle"),("high","Hoog"),("normal","Normaal"),
-                         ("low","Laag"),("skip","Overslaan"),("unreviewed","Niet beoordeeld")]:
+    for fkey, flabel in [("all", "Alle"), ("high", "Hoog"), ("normal", "Normaal"),
+                         ("low", "Laag"), ("skip", "Overslaan"),
+                         ("unreviewed", "Niet beoordeeld")]:
         active = "background:#1A6B72;color:#fff;" if filter == fkey else ""
         filter_links += (f'<a href="/images?filter={fkey}" class="btn btn-secondary" '
                          f'style="font-size:13px;{active}">{flabel}</a>')
 
-    total = sum(len(b["images"]) for b in books_data)
-    body = f"""
-<div class="wrap">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
-    <h1 style="font-size:22px;font-weight:700">Afbeeldingen</h1>
-    <span style="font-size:13px;color:#6b7280">{len(books_data)} boek(en) · {total} afbeeldingen</span>
-  </div>
-  <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">{filter_links}</div>
-  {sections if sections else
-   '<div style="color:#9ca3af;padding:24px">Geen afbeeldingen gevonden. Nachtrun verwerkt nieuwe boeken automatisch.</div>'}
-</div>
-<script>
-function togglePrioMenu(bh) {{
+    _img_css = """<style>
+.img-filter-btn {
+  padding:4px 10px;border-radius:6px;font-size:12px;
+  border:1px solid #e2e8f0;background:transparent;
+  cursor:pointer;color:#6b7280;
+}
+.img-filter-btn.active {
+  background:#1A6B72;color:#fff;border-color:#1A6B72;
+}
+</style>"""
+
+    _img_js = """<script>
+const _imgState = {};
+function _getState(hash) {
+  if (!_imgState[hash]) {
+    _imgState[hash] = {offset:0, filter:'all', loading:false, total:0, expanded:false};
+  }
+  return _imgState[hash];
+}
+
+async function toggleImgBook(hash, headerEl) {
+  const grid = document.getElementById('grid-' + hash);
+  const chev = document.getElementById('chev-' + hash);
+  const st = _getState(hash);
+  if (st.expanded) {
+    grid.style.display = 'none';
+    chev.style.transform = '';
+    st.expanded = false;
+    return;
+  }
+  grid.style.display = 'block';
+  chev.style.transform = 'rotate(90deg)';
+  st.expanded = true;
+  if (st.offset === 0) await loadImgs(hash, true);
+}
+
+async function setImgFilter(hash, filter, btn) {
+  const st = _getState(hash);
+  st.filter = filter;
+  st.offset = 0;
+  document.querySelectorAll('.img-filter-btn[data-hash="' + hash + '"]')
+    .forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  _selectedImgs[hash] = new Set();
+  _updateDelBtn(hash);
+  if (_getState(hash).expanded) await loadImgs(hash, true);
+}
+
+async function loadImgs(hash, reset) {
+  const st = _getState(hash);
+  if (st.loading) return;
+  st.loading = true;
+  const container = document.getElementById('imgs-' + hash);
+  const moreBtn   = document.getElementById('more-' + hash);
+  if (reset) {
+    container.innerHTML = '<div style="color:#9ca3af;font-size:13px">Laden...</div>';
+    st.offset = 0;
+  }
+  try {
+    const r = await fetch(
+      '/api/images/book/' + hash +
+      '?offset=' + st.offset + '&limit=50&filter=' + st.filter
+    );
+    const d = await r.json();
+    st.total = d.total;
+    if (reset) container.innerHTML = '';
+    if (d.images.length === 0 && st.offset === 0) {
+      container.innerHTML =
+        '<div style="color:#9ca3af;font-size:13px">Geen afbeeldingen gevonden</div>';
+    } else {
+      d.images.forEach(img => container.appendChild(_makeThumb(hash, img)));
+      st.offset += d.images.length;
+    }
+    moreBtn.style.display = st.offset < st.total ? 'block' : 'none';
+  } catch(e) {
+    container.innerHTML =
+      '<div style="color:#dc2626;font-size:13px">Fout bij laden: ' + e + '</div>';
+  }
+  st.loading = false;
+}
+
+async function loadMoreImgs(hash) { await loadImgs(hash, false); }
+
+const _selectedImgs = {};
+
+function _makeThumb(hash, img) {
+  if (!_selectedImgs[hash]) _selectedImgs[hash] = new Set();
+  const wrap = document.createElement('div');
+  wrap.style.cssText =
+    'position:relative;background:#f3f4f6;border-radius:8px;overflow:hidden;' +
+    'aspect-ratio:1;border:2px solid transparent;cursor:pointer;transition:border-color 0.15s';
+  wrap.dataset.filename = img.filename;
+
+  const im = document.createElement('img');
+  im.src = img.url;
+  im.loading = 'lazy';
+  im.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block';
+  im.onerror = function() {
+    im.style.display = 'none';
+    wrap.style.background = '#fee2e2';
+    const err = document.createElement('div');
+    err.textContent = '\u26a0 niet geladen';
+    err.style.cssText =
+      'font-size:10px;color:#991b1b;padding:8px;text-align:center';
+    wrap.appendChild(err);
+  };
+  wrap.appendChild(im);
+
+  if (img.alt_text && img.alt_text.trim()) {
+    const alt = document.createElement('div');
+    alt.title = img.alt_text;
+    alt.style.cssText =
+      'position:absolute;top:4px;left:4px;background:rgba(0,0,0,0.55);' +
+      'color:#fff;font-size:9px;padding:2px 5px;border-radius:4px;' +
+      'max-width:90%;overflow:hidden;text-overflow:ellipsis;' +
+      'white-space:nowrap;pointer-events:none';
+    alt.textContent = img.alt_text.trim().slice(0, 40);
+    wrap.appendChild(alt);
+  }
+
+  const zoom = document.createElement('div');
+  zoom.textContent = '\U0001f50d';
+  zoom.style.cssText =
+    'position:absolute;bottom:4px;right:4px;background:rgba(0,0,0,0.55);' +
+    'color:#fff;font-size:13px;width:22px;height:22px;border-radius:50%;' +
+    'display:flex;align-items:center;justify-content:center;cursor:pointer';
+  zoom.onclick = function(e) {
+    e.stopPropagation();
+    _openLightbox(img.url, img.alt_text, img.filename);
+  };
+  wrap.appendChild(zoom);
+
+  const cb = document.createElement('input');
+  cb.type = 'checkbox';
+  cb.style.cssText =
+    'position:absolute;bottom:5px;left:5px;width:16px;height:16px;' +
+    'cursor:pointer;accent-color:#1A6B72';
+  cb.onclick = e => e.stopPropagation();
+  cb.onchange = function() {
+    if (cb.checked) {
+      _selectedImgs[hash].add(img.filename);
+      wrap.style.borderColor = '#1A6B72';
+    } else {
+      _selectedImgs[hash].delete(img.filename);
+      wrap.style.borderColor = 'transparent';
+    }
+    _updateDelBtn(hash);
+  };
+  wrap.appendChild(cb);
+  return wrap;
+}
+
+function _updateDelBtn(hash) {
+  const btn = document.getElementById('del-btn-' + hash);
+  if (!btn) return;
+  const n = (_selectedImgs[hash] || new Set()).size;
+  btn.style.display = n > 0 ? 'block' : 'none';
+  if (n > 0) btn.textContent = 'Verwijder ' + n + ' geselecteerde';
+}
+
+async function deleteSelected(hash) {
+  const sel = [...(_selectedImgs[hash] || new Set())];
+  if (!sel.length) return;
+  if (!confirm(sel.length + ' afbeelding(en) definitief verwijderen?')) return;
+  const r = await fetch('/api/images/book/' + hash + '/delete', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({filenames: sel})
+  });
+  const d = await r.json();
+  _selectedImgs[hash] = new Set();
+  _updateDelBtn(hash);
+  await loadImgs(hash, true);
+  alert(d.deleted + ' afbeelding(en) verwijderd. ' + d.remaining + ' resterend.');
+}
+
+function _openLightbox(url, alt, filename) {
+  const overlay = document.createElement('div');
+  overlay.style.cssText =
+    'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;' +
+    'display:flex;flex-direction:column;align-items:center;' +
+    'justify-content:center;padding:20px;cursor:pointer';
+  overlay.onclick = () => document.body.removeChild(overlay);
+  const img = document.createElement('img');
+  img.src = url;
+  img.style.cssText =
+    'max-width:90vw;max-height:80vh;border-radius:8px;' +
+    'object-fit:contain;cursor:default';
+  img.onclick = e => e.stopPropagation();
+  overlay.appendChild(img);
+  if (alt && alt.trim()) {
+    const cap = document.createElement('div');
+    cap.style.cssText =
+      'color:#fff;margin-top:12px;font-size:14px;' +
+      'max-width:600px;text-align:center;opacity:.85';
+    cap.textContent = alt;
+    overlay.appendChild(cap);
+  }
+  const fn = document.createElement('div');
+  fn.style.cssText = 'color:#9ca3af;margin-top:6px;font-size:11px';
+  fn.textContent = filename;
+  overlay.appendChild(fn);
+  document.body.appendChild(overlay);
+}
+
+function togglePrioMenu(bh) {
   const el = document.getElementById('prio-' + bh);
   el.style.display = el.style.display === 'none' ? 'block' : 'none';
-}}
-document.addEventListener('click', function(e) {{
-  if (!e.target.closest('[id^=prio-]') && !e.target.textContent.includes('▾'))
-    document.querySelectorAll('[id^=prio-]').forEach(el => el.style.display = 'none');
-}});
-function setPriority(bookHash, clsKey, priority) {{
-  fetch('/api/images/priority', {{
+}
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('[id^="prio-"]') && !e.target.textContent.includes('\u25be'))
+    document.querySelectorAll('[id^="prio-"]').forEach(el => el.style.display = 'none');
+});
+function setPriority(bookHash, clsKey, priority) {
+  fetch('/api/images/priority', {
     method: 'POST',
-    headers: {{'Content-Type': 'application/json'}},
-    body: JSON.stringify({{book_hash: bookHash, cls_key: clsKey, priority_override: priority}})
-  }})
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({book_hash: bookHash, cls_key: clsKey, priority_override: priority})
+  })
   .then(r => r.json())
-  .then(d => {{ if (d.status === 'ok') location.reload(); else alert(JSON.stringify(d)); }})
+  .then(d => { if (d.status === 'ok') location.reload(); else alert(JSON.stringify(d)); })
   .catch(e => alert('Fout: ' + e));
-}}
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const firstRow = document.querySelector('.book-row-img');
+  if (firstRow) {
+    const hash = firstRow.id.replace('brow-', '');
+    toggleImgBook(hash, firstRow.querySelector('div'));
+  }
+});
 </script>"""
+
+    no_results = ('<div style="color:#9ca3af;padding:24px">Geen afbeeldingen gevonden. '
+                  'Nachtrun verwerkt nieuwe boeken automatisch.</div>')
+    body = f"""
+{_img_css}
+<div class="wrap">
+  <div style="display:flex;justify-content:space-between;align-items:center;
+              margin-bottom:16px;flex-wrap:wrap;gap:10px">
+    <h1 style="font-size:22px;font-weight:700">Afbeeldingen</h1>
+    <span style="font-size:13px;color:#6b7280">
+      {len(books_data)} boek(en) &middot; {total_images} afbeeldingen
+    </span>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+    {filter_links}
+  </div>
+  {book_rows if book_rows else no_results}
+</div>
+{_img_js}"""
     return _page_shell("Afbeeldingen", "/images", body)
 
 
@@ -5505,6 +5730,97 @@ async def api_images_priority(request_data: dict):
 
     cfg_path.write_text(json.dumps(cfg, indent=2, ensure_ascii=False))
     return {"status": "ok", "cls_key": cls_key, "priority_override": priority_override}
+
+
+# ── GET /api/images/book/{book_hash} ──────────────────────────────────────────
+
+@app.get("/api/images/book/{book_hash}")
+async def api_images_book(
+    book_hash: str,
+    offset: int = 0,
+    limit: int = 50,
+    filter: str = "all",
+):
+    meta_path = IMAGES_DIR / book_hash / "images_metadata.json"
+    if not meta_path.exists():
+        return JSONResponse({"error": "not found"}, status_code=404)
+
+    data      = json.loads(meta_path.read_text())
+    orig_imgs = data.get("images", [])
+    book_name = data.get("filename", book_hash)
+
+    total_with_alt    = sum(1 for i in orig_imgs if (i.get("alt_text") or "").strip())
+    total_without_alt = len(orig_imgs) - total_with_alt
+
+    if filter == "with_alt":
+        filtered = [i for i in orig_imgs if (i.get("alt_text") or "").strip()]
+    elif filter == "without_alt":
+        filtered = [i for i in orig_imgs if not (i.get("alt_text") or "").strip()]
+    else:
+        filtered = orig_imgs
+
+    total     = len(filtered)
+    page_imgs = filtered[offset:offset + limit]
+
+    return {
+        "book_hash":          book_hash,
+        "book_name":          book_name,
+        "total":              total,
+        "total_with_alt":     total_with_alt,
+        "total_without_alt":  total_without_alt,
+        "offset":             offset,
+        "images": [
+            {
+                "filename": i.get("filename") or i.get("file") or "",
+                "alt_text": i.get("alt_text") or i.get("caption") or "",
+                "page":     i.get("page"),
+                "source":   i.get("source", ""),
+                "url": (
+                    f"/images/file/{book_hash}/"
+                    f"{i.get('filename') or i.get('file', '')}"
+                ),
+            }
+            for i in page_imgs
+        ],
+    }
+
+
+# ── POST /api/images/book/{book_hash}/delete ───────────────────────────────────
+
+@app.post("/api/images/book/{book_hash}/delete")
+async def api_images_delete(book_hash: str, request_data: dict):
+    filenames = request_data.get("filenames", [])
+    if not filenames:
+        return {"deleted": 0}
+
+    meta_path = IMAGES_DIR / book_hash / "images_metadata.json"
+    if not meta_path.exists():
+        return JSONResponse({"error": "not found"}, status_code=404)
+
+    data   = json.loads(meta_path.read_text())
+    before = len(data.get("images", []))
+    fn_set = set(filenames)
+
+    deleted_count = 0
+    kept = []
+    for img in data.get("images", []):
+        fn = img.get("filename") or img.get("file", "")
+        if fn in fn_set:
+            p = IMAGES_DIR / book_hash / fn
+            if p.exists():
+                p.unlink()
+                deleted_count += 1
+        else:
+            kept.append(img)
+
+    data["images"] = kept
+    tmp = meta_path.with_suffix(".tmp")
+    tmp.write_text(json.dumps(data, indent=2))
+    tmp.replace(meta_path)
+    _invalidate_items_cache()
+
+    return {"deleted": deleted_count, "remaining": len(kept), "before": before}
+
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # SEARCH — /search  /search/query  /search/images  /search/suggest
