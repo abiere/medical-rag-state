@@ -1,6 +1,6 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-17 — Status systeem overhaul
+> Laatste update: 2026-04-17 — Drawer beschrijvingstekst + image herextractie
 
 ---
 
@@ -66,6 +66,18 @@
 - [ ] Officiële Deadman digitale versie aanschaffen (DRM-vrij via Eastland Press)
 - [ ] Consistentie guardian cross-collectie
 - [ ] Protocol pre-validatie (Ollama checkt dekking voor generatie)
+
+---
+
+## ✅ Afgerond — sessie 2026-04-17 (Drawer + image herextractie)
+
+- [x] **Drawer categorie beschrijvingstekst** — `dotRow(label, n, desc)` uitgebreid met muted beschrijving rechts van dots
+      Beschrijvingen: Protocol="Behandelinstructies, punten", Diagnose="Symptomen, TCM-patronen",
+      Anatomie="Spieren, zenuwen, structuren", Literatuur="Wetenschappelijke basis"
+      Style: `font-size:11px; color:#085041; opacity:0.65; margin-left:8px`
+- [x] **`POST /api/library/book/{hash}/re-extract-images`** — nieuwe endpoint, verwijdert metadata + herstart extractie in thread
+- [x] **Deadman + Travell herextractie gestart** — `images_metadata.json` verwijderd, extracties lopen (`/tmp/image_extraction_*.json` aanwezig)
+      Reden: eerste extractie (16 apr) had geen Google Vision credentials → lege `images: []`
 
 ---
 

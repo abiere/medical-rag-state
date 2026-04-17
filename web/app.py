@@ -2528,18 +2528,20 @@ function buildPhaseTable(d, meta) {
   const chunkCountD  = d.chunk_count || 0;
   const catScores    = d.category_scores || {};
   const catDefs      = [
-    ['Protocol',   catScores.protocol   || 0],
-    ['Diagnose',   catScores.diagnose   || 0],
-    ['Anatomie',   catScores.anatomie   || 0],
-    ['Literatuur', catScores.literatuur || 0],
+    ['Protocol',   catScores.protocol   || 0, 'Behandelinstructies, punten'],
+    ['Diagnose',   catScores.diagnose   || 0, 'Symptomen, TCM-patronen'],
+    ['Anatomie',   catScores.anatomie   || 0, 'Spieren, zenuwen, structuren'],
+    ['Literatuur', catScores.literatuur || 0, 'Wetenschappelijke basis'],
   ];
-  const dotRow = (label, n) => {
+  const dotRow = (label, n, desc) => {
     const dots = Array.from({length: 5}, (_, i) =>
       '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;'
       + 'background:' + (i < n ? '#1A6B72' : '#c7e8eb') + ';margin-right:2px"></span>'
     ).join('');
     return '<div style="display:flex;align-items:center;gap:4px;margin-bottom:2px">'
-      + '<span style="font-size:11px;color:#085041;width:62px">' + label + '</span>' + dots + '</div>';
+      + '<span style="font-size:11px;color:#085041;width:68px">' + label + '</span>' + dots
+      + (desc ? '<span style="font-size:11px;color:#085041;opacity:0.65;margin-left:8px">' + desc + '</span>' : '')
+      + '</div>';
   };
   let html = '<div style="background:#ddf2f3;border-radius:8px;padding:10px 12px;margin-bottom:12px;'
     + 'display:flex;justify-content:space-between;align-items:flex-start;gap:16px">'
@@ -2551,7 +2553,7 @@ function buildPhaseTable(d, meta) {
       + '<div style="display:flex;justify-content:space-between;align-items:flex-start">'
         + '<div>'
           + '<div style="font-size:11px;color:#085041;font-weight:500;margin-bottom:4px">Categorie\u00ebn</div>'
-          + catDefs.map(([l, n]) => dotRow(l, n)).join('')
+          + catDefs.map(([l, n, d]) => dotRow(l, n, d)).join('')
         + '</div>'
         + '<div style="font-size:13px;font-weight:500;color:#085041;white-space:nowrap">'
           + (chunkCountD ? chunkCountD.toLocaleString('nl-NL') + ' chunks' : '\u2014')
@@ -4911,6 +4913,50 @@ async def api_library_progress_book(book_hash: str):
     if state is None:
         return JSONResponse({"error": "not found"}, status_code=404)
     return state
+
+
+# ── POST /api/library/book/{book_hash}/re-extract-images ─────────────────────
+
+@app.post("/api/library/book/{book_hash}/re-extract-images")
+async def api_re_extract_images(book_hash: str):
+    """Delete images_metadata.json and re-trigger image extraction for a completed book."""
+    sf = CACHE_DIR / book_hash / "state.json"
+    state = _load_state(sf)
+    if state is None:
+        return JSONResponse({"error": "book not found"}, status_code=404)
+
+    filepath = state.get("filepath", "")
+    if not filepath:
+        return JSONResponse({"error": "no filepath in state"}, status_code=400)
+
+    book_path = Path(filepath)
+    if not book_path.exists():
+        return JSONResponse({"error": f"file not found: {filepath}"}, status_code=404)
+
+    # Delete existing metadata so extraction runs fresh
+    meta_path = IMAGES_DIR / book_hash / "images_metadata.json"
+    if meta_path.exists():
+        meta_path.unlink()
+
+    suffix = book_path.suffix.lower()
+
+    import threading
+    import sys
+    sys.path.insert(0, str(BASE / "scripts"))
+    from image_extractor import extract_figures_from_pdf, extract_images_from_epub, IMAGES_OUT as _IMAGES_OUT
+
+    def _run():
+        try:
+            if suffix == ".pdf":
+                extract_figures_from_pdf(book_path, book_hash, _IMAGES_OUT)
+            elif suffix in (".epub",):
+                extract_images_from_epub(book_path, book_hash, _IMAGES_OUT)
+        except Exception as exc:
+            import logging
+            logging.getLogger(__name__).warning("re-extract failed for %s: %s", book_hash, exc)
+
+    threading.Thread(target=_run, daemon=True).start()
+    return {"status": "started", "book_hash": book_hash, "file": book_path.name}
 
 
 # ── GET /videos/progress ──────────────────────────────────────────────────────
