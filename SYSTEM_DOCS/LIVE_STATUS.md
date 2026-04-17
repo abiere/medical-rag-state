@@ -1,12 +1,12 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 11:46:45 UTC**
+> Last update: **2026-04-17 11:51:45 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
 | transcription-queue | ✅ active |
-| book-ingest-queue | ✅ active |
+| book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
 | ollama | ✅ healthy |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `QRS 101 Operating Manual.pdf` (2 min) |
+| Current job | idle |
 | Queued | 0 |
 | Total books | 49 |
 | Ingested | 40 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `16_Expanded__Revised__and_New_Techniques.mp4` (26 min) |
+| Current job | `16_Expanded__Revised__and_New_Techniques.mp4` (1 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 15.55 GB / 32.86 GB (47%) |
-| CPU | 96.7% |
+| RAM used | 7.18 GB / 32.86 GB (22%) |
+| CPU | 100.0% |
 | Disk used | 59.4 GB / 322.3 GB (19%) |
-| Uptime | up 6 hours, 11 minutes |
+| Uptime | up 6 hours, 16 minutes |
 
 ## Recent markers
+- `2026-04-17T11:50:45.413111+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
+- `2026-04-17T11:46:51.672898+00:00` **book_ingested** — QRS 101 Operating Manual.pdf → device_documentation: 3 chunks
 - `2026-04-17T11:44:44.248640+00:00` **book_ingested** — QRS 101 Indication Settings English.pdf → device_documentation: 9 chunks
 - `2026-04-17T11:39:53.752127+00:00` **book_ingested** — QRS101 Quick start - English.pdf → device_documentation: 1 chunks
 - `2026-04-17T11:38:55.837722+00:00` **book_ingested** — QRS-101 Manual Englisch.pdf → device_documentation: 41 chunks
-- `2026-04-17T11:28:27.465578+00:00` **book_ingested** — QRS-101-Home-System-Brochure.pdf → device_documentation: 1 chunks
-- `2026-04-17T11:20:45.066077+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-17 10:20:43,889  INFO      Startup scan: 19 untranscribed video(s) found, 0 new entry/entries added to queue
-2026-04-17 10:20:43,890  INFO      START  nrt/16_Expanded__Revised__and_New_Techniques.mp4
-2026-04-17 10:50:44,557  INFO      ────────────────────────────────────────────────────────────
-2026-04-17 10:50:44,558  INFO      Transcription queue manager started
 2026-04-17 10:50:44,559  INFO      Startup scan: 19 untranscribed video(s) found, 0 new entry/entries added to queue
 2026-04-17 10:50:44,559  INFO      START  nrt/16_Expanded__Revised__and_New_Techniques.mp4
 2026-04-17 11:20:45,111  INFO      ────────────────────────────────────────────────────────────
 2026-04-17 11:20:45,111  INFO      Transcription queue manager started
 2026-04-17 11:20:45,113  INFO      Startup scan: 19 untranscribed video(s) found, 0 new entry/entries added to queue
 2026-04-17 11:20:45,113  INFO      START  nrt/16_Expanded__Revised__and_New_Techniques.mp4
+2026-04-17 11:50:45,452  INFO      ────────────────────────────────────────────────────────────
+2026-04-17 11:50:45,452  INFO      Transcription queue manager started
+2026-04-17 11:50:45,453  INFO      Startup scan: 19 untranscribed video(s) found, 0 new entry/entries added to queue
+2026-04-17 11:50:45,454  INFO      START  nrt/16_Expanded__Revised__and_New_Techniques.mp4
 ```
