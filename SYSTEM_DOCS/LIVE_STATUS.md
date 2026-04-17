@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 16:22:09 UTC**
+> Last update: **2026-04-17 16:27:09 UTC**
 
 ## Services
 | Service | Status |
@@ -14,18 +14,18 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Sobotta Anatomy Textbook_nodrm.epub` (58 min) |
-| Queued | 9 |
+| Current job | `Sobotta Atlas of Anatomy Classic_nodrm.epub` (3 min) |
+| Queued | 8 |
 | Total books | 64 |
 | Ingested | 46 |
-| Vectors in medical_library | 5372 |
+| Vectors in medical_library | 6468 |
 | Images pending approval | 2026 |
 | Images approved | 0 |
 
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (11 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (16 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in video_transcripts | 241 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 8.38 GB / 32.86 GB (26%) |
-| CPU | 99.9% |
-| Disk used | 63.1 GB / 322.3 GB (20%) |
-| Uptime | up 10 hours, 46 minutes |
+| RAM used | 13.93 GB / 32.86 GB (42%) |
+| CPU | 100.0% |
+| Disk used | 64.6 GB / 322.3 GB (21%) |
+| Uptime | up 10 hours, 51 minutes |
 
 ## Recent markers
+- `2026-04-17T16:23:13.715014+00:00` **book_ingested** — Sobotta Anatomy Textbook_nodrm.epub → medical_library: 1096 chunks
 - `2026-04-17T16:11:09.149861+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-17T15:41:08.612443+00:00` **watchdog_restart** — transcription-queue hung (34 min stale) — restarted successfully
 - `2026-04-17T15:23:28.329029+00:00` **book_ingested** — Quantum-Touch_ The Power to Heal_nodrm.epub → medical_library: 142 chunks
 - `2026-04-17T15:13:36.045632+00:00` **book_ingested** — Quantum-Touch Core Transformation_ A New Way to Heal and Alter Reality_nodrm.epub → medical_library: 141 chunks
-- `2026-04-17T15:03:17.284001+00:00` **book_ingested** — Quantum-Touch 2.0 - The New Human_ Discovering and Becoming_nodrm.epub → medical_library: 158 chunks
 
 ## Nightly Consistency
 ```
