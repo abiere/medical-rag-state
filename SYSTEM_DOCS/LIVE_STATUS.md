@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 20:32:13 UTC**
+> Last update: **2026-04-17 20:37:13 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `354229827-daniel-keown-the-spark-in-the-machine-how-the-science-of-acupuncture-explains-the-mysteries-of-western-medicine-singi.pdf` |
+| Current job | `354229827-daniel-keown-the-spark-in-the-machine-how-the-science-of-acupuncture-explains-the-mysteries-of-western-medicine-singi.pdf` (5 min) |
 | Queued | 17 |
 | Total books | 37 |
 | Ingested | 56 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (21 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (26 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 15.2 GB / 32.86 GB (46%) |
-| CPU | 100.0% |
+| RAM used | 15.27 GB / 32.86 GB (46%) |
+| CPU | 99.6% |
 | Disk used | 68.6 GB / 322.3 GB (22%) |
-| Uptime | up 14 hours, 56 minutes |
+| Uptime | up 15 hours, 1 minute |
 
 ## Recent markers
 - `2026-04-17T20:31:11.813083+00:00` **book_ingested** — 756201384-The-Foundations-of-Chinese-Medicine-A-Comprehensive-Text-3rd-Edition-ISBN-0702052167-978-0702052163.pdf → medical_library: 33 chunks
