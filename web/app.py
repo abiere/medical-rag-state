@@ -1763,13 +1763,14 @@ function fetchMarkers() {
 # ── Status system — single source of truth ────────────────────────────────────
 
 _STATUS_PILLS_PY: dict[str, dict] = {
-    "in_wachtrij":    {"label": "In wachtrij",     "bg": "#f3f4f6", "color": "#374151"},
-    "bezig":          {"label": "Bezig\u2026",      "bg": "#e8f4f5", "color": "#085041"},
-    "audit_lopend":   {"label": "Audit lopend",     "bg": "#fde68a", "color": "#92400e"},
-    "afb_lopend":     {"label": "Afb. lopend",      "bg": "#ddf2f3", "color": "#085041"},
-    "klaar":          {"label": "Klaar",            "bg": "#dcfce7", "color": "#166534"},
-    "fout":           {"label": "Fout",             "bg": "#fee2e2", "color": "#991b1b"},
-    "permanent_fout": {"label": "Permanent fout",   "bg": "#fee2e2", "color": "#7f1d1d"},
+    "in_wachtrij":    {"label": "In wachtrij",       "bg": "#f3f4f6", "color": "#374151"},
+    "bezig":          {"label": "Bezig\u2026",        "bg": "#e8f4f5", "color": "#085041"},
+    "audit_lopend":   {"label": "Audit lopend",       "bg": "#fde68a", "color": "#92400e"},
+    "afb_lopend":     {"label": "Afb. lopend",        "bg": "#ddf2f3", "color": "#085041"},
+    "afb_bezig":      {"label": "Afb. bezig\u2026",   "bg": "#ddf2f3", "color": "#085041"},
+    "klaar":          {"label": "Klaar",              "bg": "#dcfce7", "color": "#166534"},
+    "fout":           {"label": "Fout",               "bg": "#fee2e2", "color": "#991b1b"},
+    "permanent_fout": {"label": "Permanent fout",     "bg": "#fee2e2", "color": "#7f1d1d"},
 }
 
 
@@ -1787,27 +1788,37 @@ def _get_book_image_source(filename: str) -> str:
     return "none"
 
 
+def _get_image_progress(book_hash: str) -> dict | None:
+    """Read live extraction progress from /tmp file."""
+    p = Path(f"/tmp/image_extraction_{book_hash}.json")
+    if not p.exists():
+        return None
+    try:
+        return json.loads(p.read_text())
+    except Exception:
+        return None
+
+
 def _compute_book_status(state: dict) -> str:
-    """Single source of truth for book status. Returns one of 7 status strings."""
+    """Single source of truth for book status. Returns one of 8 status strings."""
     if state.get("status") == "permanently_failed":
         return "permanent_fout"
 
-    phases = state.get("phases", {})
-    parse  = phases.get("parse",  {})
-    audit  = phases.get("audit",  {})
-    qdrant = phases.get("qdrant", {})
+    phases  = state.get("phases", {})
+    parse   = phases.get("parse",  {})
+    audit   = phases.get("audit",  {})
+    qdrant  = phases.get("qdrant", {})
 
     if parse.get("status") == "failed":
         return "fout"
 
     for ph in phases.values():
-        if ph.get("status") == "running":
+        if isinstance(ph, dict) and ph.get("status") == "running":
             return "bezig"
 
     if qdrant.get("status") != "done":
         return "in_wachtrij"
 
-    # Qdrant done — check audit skipped
     skipped = audit.get("chunks_skipped", 0) or 0
     if skipped > 0:
         return "audit_lopend"
@@ -1815,12 +1826,25 @@ def _compute_book_status(state: dict) -> str:
     # Check images
     book_hash    = state.get("book_hash", "")
     filename     = state.get("filename", "")
-    meta_path    = BASE / "data" / "extracted_images" / book_hash / "images_metadata.json"
     image_source = _get_book_image_source(filename)
-    if image_source not in ("none", None) and not meta_path.exists():
+
+    if image_source in ("none", None, ""):
+        return "klaar"
+
+    if _get_image_progress(book_hash) is not None:
+        return "afb_bezig"
+
+    meta_path = BASE / "data" / "extracted_images" / book_hash / "images_metadata.json"
+    if meta_path.exists():
+        try:
+            data = json.loads(meta_path.read_text())
+            if len(data.get("images", [])) > 0:
+                return "klaar"
+        except Exception:
+            pass
         return "afb_lopend"
 
-    return "klaar"
+    return "afb_lopend"
 
 
 def _find_state_for_file(filename: str) -> dict | None:
@@ -1844,7 +1868,8 @@ def _book_status(filename: str) -> dict:
     if state:
         s = _compute_book_status(state)
         pill = _STATUS_PILLS_PY.get(s, _STATUS_PILLS_PY["in_wachtrij"])
-        return {"status": s, "label": pill["label"], "bg": pill["bg"], "color": pill["color"]}
+        return {"status": s, "label": pill["label"], "bg": pill["bg"], "color": pill["color"],
+                "book_hash": state.get("book_hash", "")}
 
     # Fallback when no state.json: check queue/current files
     try:
@@ -1852,7 +1877,8 @@ def _book_status(filename: str) -> dict:
             cur = json.loads(BOOK_CURRENT_FILE.read_text())
             if cur.get("filename") == filename:
                 p = _STATUS_PILLS_PY["bezig"]
-                return {"status": "bezig", "label": p["label"], "bg": p["bg"], "color": p["color"]}
+                return {"status": "bezig", "label": p["label"], "bg": p["bg"], "color": p["color"],
+                        "book_hash": cur.get("book_hash", "")}
     except Exception:
         pass
     try:
@@ -1860,11 +1886,13 @@ def _book_status(filename: str) -> dict:
             q = json.loads(BOOK_QUEUE_FILE.read_text())
             if any(item.get("filename") == filename for item in q):
                 p = _STATUS_PILLS_PY["in_wachtrij"]
-                return {"status": "in_wachtrij", "label": p["label"], "bg": p["bg"], "color": p["color"]}
+                return {"status": "in_wachtrij", "label": p["label"], "bg": p["bg"], "color": p["color"],
+                        "book_hash": ""}
     except Exception:
         pass
     p = _STATUS_PILLS_PY["in_wachtrij"]
-    return {"status": "in_wachtrij", "label": p["label"], "bg": p["bg"], "color": p["color"]}
+    return {"status": "in_wachtrij", "label": p["label"], "bg": p["bg"], "color": p["color"],
+            "book_hash": ""}
 
 
 def _enqueue_book(filename: str, filepath: str, collection: str, category: str, fmt: str) -> None:
@@ -1961,7 +1989,7 @@ def _library_section_html(section_key: str) -> str:
             badge_bg  = b.get("bg", b["color"] + "22")
             badge_fg  = b["color"]
             safe_id   = re.sub(r"[^a-zA-Z0-9]", "_", b["name"])
-            is_done   = b["status"] in ("klaar", "audit_lopend", "afb_lopend")
+            is_done   = b["status"] in ("klaar", "audit_lopend", "afb_lopend", "afb_bezig")
             reaudit_btn = (
                 f'<button onclick="reauditBook(\'{b["name"]}\')" '
                 f'class="btn btn-secondary" style="font-size:12px;margin-left:4px">Heraudit</button>'
@@ -1977,12 +2005,25 @@ def _library_section_html(section_key: str) -> str:
                 )
             else:
                 name_cell = f'<span style="font-weight:600">{b["name"]}</span>'
+            # Build status cell — add extraction progress for afb_bezig
+            status_cell = (f'<span style="background:{badge_bg};color:{badge_fg};padding:3px 10px;'
+                           f'border-radius:999px;font-size:12px;font-weight:600">{b["label"]}</span>')
+            if b["status"] == "afb_bezig":
+                bh_prog = b.get("book_hash", "")
+                if bh_prog:
+                    prog = _get_image_progress(bh_prog)
+                    if prog:
+                        pp = prog.get("pages_processed", "?")
+                        pt = prog.get("pages_total", "?")
+                        ff = prog.get("figures_found", 0)
+                        status_cell += (f'<div style="font-size:10px;color:#085041;'
+                                        f'opacity:0.7;margin-top:2px">'
+                                        f'{pp}/{pt} pag. &middot; {ff} fig.</div>')
             rows += f"""
 <tr>
   <td>{name_cell}</td>
   <td class="hide-sm">{b.get('size','')}</td>
-  <td><span style="background:{badge_bg};color:{badge_fg};padding:3px 10px;
-      border-radius:999px;font-size:12px;font-weight:600">{b['label']}</span></td>
+  <td>{status_cell}</td>
   <td>{b.get('total_chunks','') or ''}</td>
   <td style="white-space:nowrap">
     <a href="/library/audit/{b['name']}" class="btn btn-secondary" style="font-size:12px"
@@ -2250,6 +2291,11 @@ async def library_page():
       </div>
       <span style="font-size:14px;color:#d1d5db;margin:0 4px;padding-bottom:14px">&rsaquo;</span>
       <div style="display:flex;flex-direction:column;align-items:center;gap:3px;min-width:76px">
+        <span style="background:#ddf2f3;color:#085041;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:500">Afb. bezig</span>
+        <span style="font-size:10px;color:#6b7280;text-align:center">Extractie<br>actief</span>
+      </div>
+      <span style="font-size:14px;color:#d1d5db;margin:0 4px;padding-bottom:14px">&rsaquo;</span>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:3px;min-width:76px">
         <span style="background:#dcfce7;color:#166534;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:500">Klaar</span>
         <span style="font-size:10px;color:#6b7280;text-align:center">Volledig<br>doorzoekbaar</span>
       </div>
@@ -2319,13 +2365,14 @@ const CAT_LABELS = {
 const CAT_ORDER = ['all','medical_literature','acupuncture','nrt_kinesiology','qat_curriculum','device','videos'];
 const KAI_COLORS = {1:'#16a34a', 2:'#ea580c', 3:'#6b7280'};
 const STATUS_PILLS = {
-  in_wachtrij:   {label:'In wachtrij',    bg:'#f3f4f6', color:'#374151'},
-  bezig:         {label:'Bezig\u2026',    bg:'#e8f4f5', color:'#085041'},
-  audit_lopend:  {label:'Audit lopend',   bg:'#fde68a', color:'#92400e'},
-  afb_lopend:    {label:'Afb. lopend',    bg:'#ddf2f3', color:'#085041'},
-  klaar:         {label:'Klaar',          bg:'#dcfce7', color:'#166534'},
-  fout:          {label:'Fout',           bg:'#fee2e2', color:'#991b1b'},
-  permanent_fout:{label:'Permanent fout', bg:'#fee2e2', color:'#7f1d1d'},
+  in_wachtrij:   {label:'In wachtrij',      bg:'#f3f4f6', color:'#374151'},
+  bezig:         {label:'Bezig\u2026',      bg:'#e8f4f5', color:'#085041'},
+  audit_lopend:  {label:'Audit lopend',     bg:'#fde68a', color:'#92400e'},
+  afb_lopend:    {label:'Afb. lopend',      bg:'#ddf2f3', color:'#085041'},
+  afb_bezig:     {label:'Afb. bezig\u2026', bg:'#ddf2f3', color:'#085041'},
+  klaar:         {label:'Klaar',            bg:'#dcfce7', color:'#166534'},
+  fout:          {label:'Fout',             bg:'#fee2e2', color:'#991b1b'},
+  permanent_fout:{label:'Permanent fout',   bg:'#fee2e2', color:'#7f1d1d'},
 };
 
 async function loadItems() {
@@ -2335,9 +2382,11 @@ async function loadItems() {
     _allItems = d.items || [];
     filterItems();
     renderTabs();
+    return _allItems;
   } catch(e) {
     document.getElementById('item-list').innerHTML =
       '<div style="color:#dc2626;font-size:14px;text-align:center;padding:40px">Fout bij laden: ' + e + '</div>';
+    return [];
   }
 }
 
@@ -2442,6 +2491,15 @@ function renderCard(item) {
     .map(([l, v]) => kaiPill(l, v))
     .join('');
 
+  let statusHtml = statusPill(item.status);
+  if (item.status === 'afb_bezig' && item.image_progress) {
+    const pr = item.image_progress;
+    const pp = pr.pages_processed ?? '?';
+    const pt = pr.pages_total ?? '?';
+    const ff = pr.figures_found ?? 0;
+    statusHtml += `<div style="font-size:10px;color:#085041;opacity:0.7;margin-top:3px;text-align:right;white-space:nowrap">${pp}/${pt} pagina's &middot; ${ff} fig.</div>`;
+  }
+
   return `<div ${clickable}background:#fff;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.07);
                       padding:14px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
     <div style="flex:1;min-width:200px">
@@ -2451,8 +2509,9 @@ function renderCard(item) {
     <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
       ${kaiBadges}
     </div>
-    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-      ${statusPill(item.status)}${ocrBadge(item.ocr_engine)}
+    <div style="display:flex;gap:6px;align-items:flex-start;flex-wrap:wrap">
+      <div style="display:flex;flex-direction:column;align-items:flex-end">${statusHtml}</div>
+      ${ocrBadge(item.ocr_engine)}
     </div>
   </div>`;
 }
@@ -2672,29 +2731,26 @@ function buildPhaseTable(d, meta) {
   }
 
   // ── 5th row: Image extraction (outside phase loop, background thread) ────────
-  const ie    = d.image_extraction || {};
-  const ieSt  = ie.status || 'pending';
-  if (ieSt !== 'not_applicable') {
-    const ieRunning = ieSt === 'running';
-    const ieDone    = ieSt === 'done';
-    let ieccol   = ieDone ? '#059669' : (ieRunning ? '#1A6B72' : '#d1d5db');
-    let ieicon   = ieDone ? '\u2713'  : (ieRunning ? '\u25B6'  : '\u2022');
+  {
+    const ie   = d.image_extraction || {};
+    const ieSt = ie.status || 'pending';
+    let ieccol   = '#d1d5db';
+    let ieicon   = '\u2022';
     let ieDetail = '';
     let ieBar    = '';
-    let iePillSt = pillStyles[ieSt] || pillStyles.pending;
-    let iePillLb = pillLabels[ieSt] || 'Wacht';
-    if (ieDone) {
-      const nf = ie.figures_found;
-      if (nf === 0 || nf == null) {
-        iePillLb = 'Geen';
-        iePillSt = 'background:#f3f4f6;color:#6b7280';
-        ieDetail = 'Geen figuren gevonden in document';
-        ieccol   = '#d1d5db';
-        ieicon   = '\u2014';
-      } else {
-        ieDetail = fmt(nf) + ' figuren ge\u00ebxtraheerd';
-      }
-    } else if (ieRunning) {
+    let iePillSt = 'background:#f3f4f6;color:#6b7280';
+    let iePillLb = 'Wacht';
+    if (ieSt === 'not_applicable') {
+      iePillLb = 'N.v.t.';
+      iePillSt = 'background:#f3f4f6;color:#6b7280';
+      ieccol   = '#d1d5db';
+      ieicon   = '\u2014';
+      ieDetail = 'Geen afbeeldingen verwacht voor dit boektype';
+    } else if (ieSt === 'running') {
+      iePillSt = 'background:#ddf2f3;color:#085041';
+      iePillLb = 'Bezig';
+      ieccol   = '#1A6B72';
+      ieicon   = '\u25B6';
       const pp = ie.pages_processed, pt = ie.pages_total, ff = ie.figures_found;
       if (pp != null && pt != null) {
         ieDetail = `pagina ${fmt(pp)} / ${fmt(pt)}`;
@@ -2703,7 +2759,23 @@ function buildPhaseTable(d, meta) {
         ieBar = `<div style="margin-top:4px;background:#c7e8eb;border-radius:999px;height:4px">`
           + `<div style="background:#1A6B72;border-radius:999px;height:4px;width:${pct}%;transition:width 0.5s"></div></div>`;
       }
+    } else if (ieSt === 'done') {
+      const nf = ie.figures_found;
+      if (nf != null && nf > 0) {
+        iePillSt = 'background:#dcfce7;color:#166534';
+        iePillLb = 'Klaar';
+        ieccol   = '#059669';
+        ieicon   = '\u2713';
+        ieDetail = fmt(nf) + ' figuren ge\u00ebxtraheerd';
+      } else {
+        iePillLb = 'Geen';
+        iePillSt = 'background:#f3f4f6;color:#6b7280';
+        ieDetail = 'Geen figuren gevonden in document';
+        ieccol   = '#d1d5db';
+        ieicon   = '\u2014';
+      }
     }
+    const ieRunning = ieSt === 'running';
     const iePill  = `<span style="${iePillSt};border-radius:999px;padding:2px 8px;font-size:11px;font-weight:600">${iePillLb}</span>`;
     const ieRowBg = ieRunning ? 'background:#f0faf8;' : '';
     html += `<tr style="${ieRowBg}border-bottom:0.5px solid #e2e8f0">`
@@ -2793,7 +2865,22 @@ async function confirmDelete() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', loadItems);
+document.addEventListener('DOMContentLoaded', () => {
+  loadItems().then(items => {
+    const hasActive = items.some(i => i.status === 'afb_bezig');
+    if (hasActive && !window._imgRefreshTimer) {
+      window._imgRefreshTimer = setInterval(() => {
+        loadItems().then(items => {
+          const stillActive = items.some(i => i.status === 'afb_bezig');
+          if (!stillActive) {
+            clearInterval(window._imgRefreshTimer);
+            window._imgRefreshTimer = null;
+          }
+        });
+      }, 15000);
+    }
+  });
+});
 </script>"""
     return _page_shell("Bibliotheek", "/library", body)
 
@@ -2919,8 +3006,10 @@ async def api_library_items():
             else:
                 status = "in_wachtrij"
 
+        image_progress = _get_image_progress(book_hash) if status == "afb_bezig" else None
         items_out.append({**meta, "chunk_count": chunk_count, "status": status,
-                          "ocr_engine": ocr_engine, "book_hash": book_hash})
+                          "ocr_engine": ocr_engine, "book_hash": book_hash,
+                          "image_progress": image_progress})
 
     return {"items": items_out}
 
@@ -2973,11 +3062,13 @@ async def api_library_book_detail(book_hash: str):
         pass
 
     image_extraction = _build_image_extraction_info(safe, state, filename)
+    computed_status  = _compute_book_status(state)
 
     return {**state, "audit_score": audit_score,
             "category_scores": category_scores, "chunk_count": chunk_count,
             "claude_api_enabled": claude_api_enabled,
-            "image_extraction": image_extraction}
+            "image_extraction": image_extraction,
+            "computed_status": computed_status}
 
 
 # ── DELETE /api/library/items/{item_id} ────────────────────────────────────────
@@ -4803,56 +4894,39 @@ def _load_state(state_file: Path) -> dict | None:
 
 def _build_image_extraction_info(book_hash: str, state: dict, filename: str) -> dict:
     """Build image_extraction status dict for drawer and progress widget display."""
-    _none = {"status": "not_applicable", "source": "none",
-             "figures_found": None, "pages_processed": None, "pages_total": None}
+    image_source = _get_book_image_source(filename)
 
-    # Determine image_source from book_classifications.json
-    image_source = "none"
-    try:
-        cls_data = json.loads(CLASSIFICATIONS_PATH.read_text()).get("classifications", {})
-        fn_lower = filename.lower()
-        for entry in cls_data.values():
-            for pat in entry.get("filename_patterns", []):
-                if pat.lower() in fn_lower:
-                    src = entry.get("image_source") or "none"
-                    image_source = src
-                    break
-            if image_source != "none":
-                break
-    except Exception:
-        pass
+    if image_source in ("none", None, ""):
+        return {"status": "not_applicable", "source": "none",
+                "figures_found": 0, "pages_processed": None, "pages_total": None}
 
-    if image_source == "none":
-        return _none
+    # ALWAYS check live progress FIRST — takes priority over stale metadata
+    progress = _get_image_progress(book_hash)
+    if progress is not None:
+        return {
+            "status":          "running",
+            "figures_found":   progress.get("figures_found", 0),
+            "pages_processed": progress.get("pages_processed", 0),
+            "pages_total":     progress.get("pages_total"),
+            "source":          progress.get("source", image_source),
+        }
 
-    # done — images_metadata.json exists
+    # No live extraction — check completed metadata
     meta_path = BASE / "data" / "extracted_images" / book_hash / "images_metadata.json"
     if meta_path.exists():
         try:
-            m = json.loads(meta_path.read_text())
-            return {"status": "done", "source": image_source,
-                    "figures_found": len(m.get("images", [])),
-                    "pages_processed": None, "pages_total": None}
+            data = json.loads(meta_path.read_text())
+            figures = data.get("images", [])
+            return {"status": "done", "figures_found": len(figures),
+                    "pages_processed": None, "pages_total": None,
+                    "source": data.get("source", image_source)}
         except Exception:
-            return {"status": "done", "source": image_source,
-                    "figures_found": 0, "pages_processed": None, "pages_total": None}
+            return {"status": "done", "figures_found": 0,
+                    "pages_processed": None, "pages_total": None,
+                    "source": image_source}
 
-    # running — temp progress file written by image_extractor
-    progress_file = Path("/tmp") / f"image_extraction_{book_hash}.json"
-    if progress_file.exists():
-        try:
-            prog = json.loads(progress_file.read_text())
-            return {"status": "running", "source": image_source,
-                    "figures_found":   prog.get("figures_found"),
-                    "pages_processed": prog.get("pages_processed"),
-                    "pages_total":     prog.get("pages_total")}
-        except Exception:
-            return {"status": "running", "source": image_source,
-                    "figures_found": None, "pages_processed": None, "pages_total": None}
-
-    # pending — waiting for qdrant phase (or qdrant done, extraction not yet started)
-    return {"status": "pending", "source": image_source,
-            "figures_found": None, "pages_processed": None, "pages_total": None}
+    return {"status": "pending", "figures_found": 0,
+            "pages_processed": None, "pages_total": None, "source": image_source}
 
 
 @app.get("/api/library/progress/all")

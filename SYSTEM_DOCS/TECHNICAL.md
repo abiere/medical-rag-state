@@ -223,19 +223,27 @@ Gebruik alleen: `systemctl restart medical-rag-web` voor web-only wijzigingen.
 | `bezig` | Bezig… | `#e8f4f5` | enige fase heeft `status == "running"` |
 | `in_wachtrij` | In wachtrij | `#f3f4f6` | qdrant fase nog niet `done` |
 | `audit_lopend` | Audit lopend | `#fde68a` | qdrant done + `chunks_skipped > 0` |
-| `afb_lopend` | Afb. lopend | `#ddf2f3` | qdrant done + geen images_metadata.json |
-| `klaar` | Klaar | `#dcfce7` | alle fasen klaar |
+| `afb_lopend` | Afb. lopend | `#ddf2f3` | qdrant done + geen of lege images_metadata.json |
+| `afb_bezig` | Afb. bezig… | `#ddf2f3` | `/tmp/image_extraction_{hash}.json` bestaat |
+| `klaar` | Klaar | `#dcfce7` | alle fasen klaar + images > 0 (of geen images verwacht) |
 
-Prioriteit (hoog→laag): `permanent_fout > fout > bezig > in_wachtrij > audit_lopend > afb_lopend > klaar`
+Prioriteit (hoog→laag): `permanent_fout > fout > bezig > in_wachtrij > audit_lopend > afb_bezig > afb_lopend > klaar`
+
+**`_get_image_progress(book_hash)`** — leest live voortgang uit `/tmp/image_extraction_{hash}.json`.
+**`_build_image_extraction_info()`** — progress FIRST dan metadata (anders stale done bij herstart).
+**`klaar`** vereist: `image_source == "none"` OF `images_metadata.json` met `images > 0`.
+**`afb_lopend`** ook bij lege metadata (0 images) — herextractie nodig.
 
 Gebruikt door:
-- `api_library_items` — `status` veld in elke item
+- `api_library_items` — `status` + `image_progress` veld per item
 - `api_library_progress_all` — `computed_status` veld
 - `api_library_progress_active` — `computed_status` veld
-- `_book_status()` — ingest pagina boekenlijst
+- `api_library_book_detail` — `computed_status` + `image_extraction` veld
+- `_book_status()` — ingest pagina boekenlijst (incl. `book_hash`)
 
 JS: `STATUS_PILLS` object + `statusPill(status)` function in `/library` pagina.
-Fase 5 Afbeeldingen: `figures_found == 0` → badge "Geen" (grijs) i.p.v. "Klaar".
+Auto-refresh: elke 15 sec als `afb_bezig` item aanwezig; stopt automatisch.
+Fase 5 drawer: `not_applicable` → "N.v.t.", `running` → "Bezig" + progressbalk, `done/0` → "Geen", `done/>0` → "Klaar".
 
 ---
 

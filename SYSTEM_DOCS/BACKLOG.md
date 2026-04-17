@@ -1,6 +1,6 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-17 — Drawer beschrijvingstekst + image herextractie
+> Laatste update: 2026-04-17 — afb_bezig status + 10-fixes sessie
 
 ---
 
@@ -66,6 +66,24 @@
 - [ ] Officiële Deadman digitale versie aanschaffen (DRM-vrij via Eastland Press)
 - [ ] Consistentie guardian cross-collectie
 - [ ] Protocol pre-validatie (Ollama checkt dekking voor generatie)
+
+---
+
+## ✅ Afgerond — sessie 2026-04-17 (afb_bezig status systeem)
+
+- [x] **`_get_image_progress(book_hash)`** — helper die `/tmp/image_extraction_{hash}.json` leest
+- [x] **`_compute_book_status()` herschreven** — 8 statussen, afb_bezig gedetecteerd via progress file
+      klaar vereist nu `images > 0` OF `image_source == none`; lege metadata → `afb_lopend`
+- [x] **`_build_image_extraction_info()` herschreven** — progress FIRST, daarna metadata check
+- [x] **`afb_bezig` status toegevoegd** — `_STATUS_PILLS_PY` + JS `STATUS_PILLS`
+- [x] **`api_library_items`** — `image_progress` veld toegevoegd bij `afb_bezig` items
+- [x] **`renderCard()` JS** — progress subtitle (pagina's + fig. count) bij `afb_bezig`
+- [x] **`buildPhaseTable()` fase 5** — `not_applicable` tonen; running vóór done; juiste badges
+- [x] **Auto-refresh 15 sec** — `loadItems()` retourneert items; timer start/stopt op `afb_bezig`
+- [x] **Statusflow legenda** — "Afb. bezig" node tussen "Afb. lopend" en "Klaar"
+- [x] **`_library_section_html()`** — `afb_bezig` in `is_done`; progress tekst in statuscell
+- [x] **`_book_status()`** — retourneert nu ook `book_hash` voor progress lookup
+- [x] **`api_library_book_detail`** — `computed_status` veld toegevoegd
 
 ---
 
