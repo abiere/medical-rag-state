@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 12:36:51 UTC**
+> Last update: **2026-04-17 12:41:51 UTC**
 
 ## Services
 | Service | Status |
@@ -25,18 +25,18 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2.Upper_Body_Fundamentals.mp4` (14 min) |
-| Queued | 17 |
-| Done | 18 / 35 |
+| Current job | idle |
+| Queued | 16 |
+| Done | 19 / 35 |
 | Vectors in video_transcripts | 189 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 6.79 GB / 32.86 GB (21%) |
-| CPU | 96.8% |
-| Disk used | 59.5 GB / 322.3 GB (19%) |
-| Uptime | up 7 hours, 1 minute |
+| RAM used | 3.59 GB / 32.86 GB (11%) |
+| CPU | 90.3% |
+| Disk used | 59.4 GB / 322.3 GB (19%) |
+| Uptime | up 7 hours, 6 minutes |
 
 ## Recent markers
 - `2026-04-17T12:21:57` **transcription_done** — 2.Lower_Body_Fundamentals.mp4 complete (18/19)
@@ -59,9 +59,6 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-17 12:04:36,559  INFO        [ingest] Done: 12 chunks ingested, 0 skipped (already exists)
-2026-04-17 12:04:36,690  INFO      START  nrt/2.Lower_Body_Fundamentals.mp4
-2026-04-17 12:21:39,618  INFO      DONE   nrt/2.Lower_Body_Fundamentals.mp4  (1023s)
 2026-04-17 12:21:39,619  INFO      Stats updated: 2.Lower_Body_Fundamentals.mp4 — 3.7s/MB  rate=2.9s/MB (2 samples)
 2026-04-17 12:21:39,620  INFO      INGEST nrt/2.Lower_Body_Fundamentals.mp4
 2026-04-17 12:21:57,263  INFO        [ingest] 2.Lower_Body_Fundamentals.json: 621 segments → 19 chunks
@@ -69,4 +66,7 @@
 2026-04-17 12:21:57,263  INFO        [ingest]   Ingested chunk 19/19 for 2.Lower_Body_Fundamentals.mp4
 2026-04-17 12:21:57,264  INFO        [ingest] Done: 19 chunks ingested, 0 skipped (already exists)
 2026-04-17 12:21:57,360  INFO      START  nrt/2.Upper_Body_Fundamentals.mp4
+2026-04-17 12:41:42,253  INFO      DONE   nrt/2.Upper_Body_Fundamentals.mp4  (1185s)
+2026-04-17 12:41:42,254  INFO      Stats updated: 2.Upper_Body_Fundamentals.mp4 — 3.7s/MB  rate=3.2s/MB (3 samples)
+2026-04-17 12:41:42,254  INFO      INGEST nrt/2.Upper_Body_Fundamentals.mp4
 ```
