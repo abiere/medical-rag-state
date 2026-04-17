@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 17:32:10 UTC**
+> Last update: **2026-04-17 17:37:10 UTC**
 
 ## Services
 | Service | Status |
@@ -14,18 +14,18 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Sobotta Atlas of Anatomy, Vol. 2, 17th ed., English_Latin_ Internal Organs_nodrm.epub` (29 min) |
-| Queued | 7 |
+| Current job | `Orthopedic Physical Assessment_nodrm.epub` (3 min) |
+| Queued | 6 |
 | Total books | 64 |
 | Ingested | 48 |
-| Vectors in medical_library | 7003 |
+| Vectors in medical_library | 7279 |
 | Images pending approval | 2026 |
 | Images approved | 0 |
 
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (21 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (26 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in video_transcripts | 241 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 16.19 GB / 32.86 GB (49%) |
-| CPU | 99.9% |
-| Disk used | 65.3 GB / 322.3 GB (21%) |
-| Uptime | up 11 hours, 56 minutes |
+| RAM used | 15.03 GB / 32.86 GB (46%) |
+| CPU | 99.4% |
+| Disk used | 65.9 GB / 322.3 GB (21%) |
+| Uptime | up 12 hours, 1 minute |
 
 ## Recent markers
+- `2026-04-17T17:33:18.970769+00:00` **book_ingested** — Sobotta Atlas of Anatomy, Vol. 2, 17th ed., English_Latin_ Internal Organs_nodrm.epub → medical_library: 276 chunks
 - `2026-04-17T17:11:10.480306+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-17T17:02:37.351437+00:00` **book_ingested** — Sobotta Atlas of Anatomy Classic_nodrm.epub → medical_library: 535 chunks
 - `2026-04-17T16:41:09.936544+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-17T16:23:13.715014+00:00` **book_ingested** — Sobotta Anatomy Textbook_nodrm.epub → medical_library: 1096 chunks
-- `2026-04-17T16:11:09.149861+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 
 ## Nightly Consistency
 ```
