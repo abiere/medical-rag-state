@@ -1,6 +1,6 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-17 — Domain MDs kennissyntheselaag aangemaakt
+> Laatste update: 2026-04-17 — Kennissyntheselaag architectuur bijgesteld (Fase 0–5)
 
 ---
 
@@ -8,11 +8,6 @@
 
 - [x] **OPDRACHT B (UI) voltooid** ✅ — zie Afgerond hieronder
 - [x] **Domain MDs aangemaakt** ✅ — zie Afgerond hieronder (Domain-QAT, NRT, RLT, PEMF, Klinisch skeleton)
-
-- [ ] **Domain-Klinisch.md invullen** — samen met Axel: behandelvolgorde, GTR/Tit Tar, QAT balancepunten, casusvoorbeelden
-- [ ] **Appendices aanmaken** — Appendix-Autoimmuun, NervusVagus, Endocrien, Sympathicus (na klinisch gesprek)
-- [ ] **Domain MDs in /protocollen UI** — tab "Domain Knowledge" voor weergave/bewerking van alle Domain MDs
-- [ ] **Protocol generator** — Domain MD context-injectie per paragraaf bij generatie
 
 - [ ] **Trail Guide ingest valideren** — RapidOCR run actief (gestart 08:32)
       ```bash
@@ -31,6 +26,155 @@
       Test: `python3 /root/medical-rag/scripts/generate_protocol.py "Etalagebenen"`
 
 - [x] **1.Upper_Body_Techniques.mp4 verwijderen uit skip_files** ✅ — verwijderd uit settings.json; transcription-queue geherstart; 14 videos in queue waaronder dit bestand
+
+---
+
+## 🧠 ARCHITECTUUR — Kennissyntheselaag (ontworpen sessie 2026-04-17)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+## 🔴 PRIORITEIT — Volgorde van uitvoering (bijgesteld 2026-04-17)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+### Fase 0 — Bestaande functionaliteit stabiliseren (EERST)
+
+- [ ] Bestaande protocollen draaien door nieuwe setup valideren
+      Test: genereer protocol voor Etalagebenen en OMD
+      Vergelijk kwaliteit met bestaande gold standard .docx bestanden
+      Pas aan waar kwaliteit terugloopt
+
+- [ ] Bibliotheek verder opbouwen — nieuwe boeken en transcripties
+      Transcriptie queue afmaken (video's die wachten)
+      EPUBs met captions volledig verwerkt (re-extractie loopt)
+
+- [ ] Trail Guide ingest valideren
+      473 vectors aanwezig in Qdrant maar state.json zegt pending
+
+### Fase 1 — Appendices (eerste concrete deliverable, hoge waarde)
+
+Appendices zijn herbruikbare protocolblokken. Als een klacht een
+bepaald systeem raakt, wordt de appendix automatisch toegevoegd.
+Doel: het wiel niet opnieuw uitvinden.
+
+Bekende appendices om te maken (handmatig schrijven, Axel + AI):
+- [ ] Appendix-Autoimmuun.md
+      Inhoud: HPA-as, pijnappelklier, hypofyse, thymus
+      Weefsel, QAT aanpak, NRT relevantie, acupunctuurpunten,
+      PEMF/RLT indien van toepassing
+      Trigger: klacht heeft auto-immuun component
+
+- [ ] Appendix-NervusVagus.md
+      Inhoud: vagustonus, polyvagale theorie,
+      cholinergic anti-inflammatory pathway
+      Trigger: chronische pijn, burn-out, trauma, autonome component
+
+- [ ] Appendix-Endocrien.md
+      Inhoud: hypofyse, bijnier, schildklier, pijnappelklier
+      Trigger: klacht heeft endocrien component
+
+- [ ] Appendix-Sympathicus.md
+      Inhoud: SNS hyperactiviteit, fight/flight weefseleffecten
+      Trigger: sympathische hyperactiviteit aanwezig
+
+Werkwijze appendices:
+  Stap 1: Axel schrijft/keurt goed wat er in moet staan
+  Stap 2: AI vult aan vanuit literatuur (RAG op medical_library)
+  Stap 3: Opslaan als MD op server, zichtbaar op /protocollen
+  Stap 4: Trigger-logica in protocolgenerator
+
+### Fase 2 — QAT en NRT samenvatting (cross-document)
+
+BESLUIT: Geen automatisch gegenereerde Domain MDs vanuit Qdrant chunks.
+Te weinig chunks (QAT=125, NRT=425) voor kwalitatieve synthese.
+Te veel risico op oppervlakkige output die meer kwaad dan goed doet.
+
+Aanpak: platte, handgeschreven uitleg van wat verwacht wordt.
+Doel: AI snapt wat QAT/NRT is en hoe het te integreren in protocol.
+
+- [ ] QAT-Samenvatting.md — handmatig schrijven
+      Beantwoordt: hoe behandel ik weefsel met QAT?
+      Secties:
+        Wat is QAT (kort, voor AI-context)
+        Werkingsprincipe: visualisatie + intentie op weefsel
+        Welk weefsel visualiseer je: spier / fascia / orgaan / bot / zenuw
+        Balancepunten (definitief april 2026 — niet wijzigen):
+          CV=SP-21r | GV=SP-21l | BL=BL-58 | SJ=SJ-5
+          KID=KID-4 | P=P-6 | GB=GB-37 | ST=ST-40
+          LI=LI-6 | SI=SI-7 | LU=LU-7 | SP=SP-4 | HE=HE-5 | LIV=LIV-5
+        Wanneer QAT inzetten, wanneer niet
+        Combinatie met NRT en acupunctuur
+      Extra: cross-document samenvatting vanuit qat_curriculum + video
+      → "wat zegt al het QAT materiaal samen over visualisatie?"
+
+- [ ] NRT-Samenvatting.md — handmatig schrijven
+      Beantwoordt: welke spieren reset ik, hoe, en hoe visualiseer ik?
+      Secties:
+        Wat is NRT (kort, voor AI-context)
+        Werkingsprincipe: GTR / neuraal reset mechanisme
+        Spiergroepen per zone (bovenlichaam / onderlichaam)
+        Hoe reset je (techniek — geen fysio nodig)
+        Visualisatie: hoe stel je je de spier voor
+        Wanneer NRT, wanneer niet
+        Combinatie met QAT en acupunctuur
+      Extra: cross-document samenvatting vanuit nrt_curriculum + video
+      → "wat zegt al het NRT materiaal samen over resetvolgorde?"
+
+  Waarde cross-document samenvatting:
+  De AI verzamelt informatie verspreid over cursusmateriaal,
+  handleidingen en video-transcripties tot één coherent beeld.
+  Dit is wél zinvol — niet als automatisch gegenereerde MD,
+  maar als door Axel goedgekeurde en bewerkte samenvatting.
+
+### Fase 3 — Domain-Klinisch.md (kennisgeheugen)
+
+- [ ] Domain-Klinisch.md aanmaken — handmatig starten
+      Eerste vulling: pijnappelklier + hypofyse bij auto-immuun
+        Bron: QAT cursus (Woods, Niveau 3)
+        Bevestiging: Guyton H77 HPA-as + H80 melatonine/immuun
+        Status: bevestigd mechanisme
+      Daarna: groeit na elke sessie
+
+      Secties:
+        1. Weefsel-Diagnose koppelingen (ontdekt, met bronniveau)
+        2. Verborgen mechanismen (hypothese / ondersteund / bevestigd)
+        3. Weefsel-Weefsel relaties (anatomisch/functioneel)
+        4. TCM-Westers bruggen
+        5. Diagnose-combinaties
+        6. Tegengestelde bevindingen
+        7. Openstaande hypotheses
+
+      Update-signalen:
+        AI zoekt iets op dat al eerder uitgewerkt was
+        Bevinding bij klacht X ook relevant voor klacht Y
+        Axel voegt mondelinge kennis toe
+        Bestaand inzicht onvolledig voor nieuwe klacht
+
+### Fase 4 — /protocollen UI uitbreiden
+
+- [ ] Tabblad "Kennisbank" toevoegen aan /protocollen
+      Toont: QAT-Samenvatting, NRT-Samenvatting, Domain-Klinisch
+      Toont: alle Appendices
+      Bewerkbaar via editor (zelfde patroon als Standaard Protocol)
+      Status-badge per MD: "handmatig" / "AI-gegenereerd" / "goedgekeurd"
+
+- [ ] Protocolgenerator aanpassen
+      Appendix-trigger logica: welke appendix bij welke klacht
+      QAT/NRT summaries als context meesturen per protocol
+      Domain-Klinisch.md altijd meelezen
+
+### Fase 5 — Zelflerende kennisgraaf (GEPARKEERD)
+
+BESLUIT: Nu niet bouwen. Infrastructuur te complex voor huidige fase.
+Opnieuw evalueren als Fase 1-3 werken en kwaliteit protocollen
+aantoonbaar beter is dan huidige gold standard.
+
+Concept (voor toekomstige sessie):
+  Relaties worden querybaar in plaats van alleen leesbaar als tekst
+  "Geef alle weefsels betrokken bij auto-immuun" → directe query
+  "Welke meridianen zijn actief bij tinnitus" → gestructureerd antwoord
+  Implementatie: knowledge graph (Neo4j of JSON structuur)
+  gevuld vanuit Domain-Klinisch.md + Literatuurreferenties per klacht
+  Voorwaarde: Domain-Klinisch.md eerst manueel rijp maken
+              zodat auto-extractie later mogelijk is
 
 ---
 
