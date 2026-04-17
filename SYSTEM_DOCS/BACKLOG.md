@@ -1,6 +1,6 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-17 — /images pagina volledige rewrite
+> Laatste update: 2026-04-17 — figcaption extractie + /images UI verbeterd
 
 ---
 
@@ -64,6 +64,24 @@
 - [ ] Officiële Deadman digitale versie aanschaffen (DRM-vrij via Eastland Press)
 - [ ] Consistentie guardian cross-collectie
 - [ ] Protocol pre-validatie (Ollama checkt dekking voor generatie)
+
+---
+
+## ✅ Afgerond — sessie 2026-04-17 (figcaption extractie + /images UI)
+
+- [x] **`image_extractor.py` figcaption extractie verbeterd** — nieuwe helper `_extract_img_caption()`
+      Oud: alleen `<figure><figcaption>` + `alt` → 1 caption in Anatomy Trains, 0 in Bates
+      Nieuw: parent `figcaption` + next-sibling `<p>` met "Figure/Fig." + `alt` fallback
+      Resultaat: 474/531 Anatomy Trains, 720/1449 Bates na re-extractie
+      Opgeslagen als zowel `caption` als `alt_text` veld (API retourneert `alt_text`)
+      Re-extractie triggeren: `POST /api/library/book/{hash}/re-extract-images`
+
+- [x] **`/images` UI: filters verplaatst naar drawer, renamed naar Caption**
+      Filter knoppen (Alle / Met Caption / Zonder Caption) verplaatst uit header naar action bar in drawer
+      Verwijder-knop ook verplaatst naar drawer action bar
+      Knop "Alles selecteren" toegevoegd — togglet alle zichtbare thumbnails (deselect als alle al geselecteerd)
+      `_updateDelBtn()` gebruikt nu `inline-block` (was `block`)
+      Header is nu schoner: alleen titel, image count, prioriteit badge, eval badge, prioriteit dropdown
 
 ---
 
