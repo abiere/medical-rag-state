@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 15:32:08 UTC**
+> Last update: **2026-04-17 15:37:08 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Sobotta Anatomy Textbook_nodrm.epub` (8 min) |
+| Current job | `Sobotta Anatomy Textbook_nodrm.epub` (13 min) |
 | Queued | 9 |
 | Total books | 64 |
 | Ingested | 45 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (25 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (30 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in video_transcripts | 241 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 14.27 GB / 32.86 GB (43%) |
-| CPU | 99.8% |
+| RAM used | 14.3 GB / 32.86 GB (44%) |
+| CPU | 99.6% |
 | Disk used | 63.1 GB / 322.3 GB (20%) |
-| Uptime | up 9 hours, 56 minutes |
+| Uptime | up 10 hours, 1 minute |
 
 ## Recent markers
 - `2026-04-17T15:23:28.329029+00:00` **book_ingested** — Quantum-Touch_ The Power to Heal_nodrm.epub → medical_library: 142 chunks
