@@ -212,6 +212,33 @@ Gebruik alleen: `systemctl restart medical-rag-web` voor web-only wijzigingen.
 
 ---
 
+## 7b. Status Systeem (single source of truth)
+
+`web/app.py` — `_compute_book_status(state: dict) -> str`
+
+| Status | Label | Achtergrond | Conditie |
+|---|---|---|---|
+| `permanent_fout` | Permanent fout | `#fee2e2` | `state.status == "permanently_failed"` |
+| `fout` | Fout | `#fee2e2` | parse fase `status == "failed"` |
+| `bezig` | Bezig… | `#e8f4f5` | enige fase heeft `status == "running"` |
+| `in_wachtrij` | In wachtrij | `#f3f4f6` | qdrant fase nog niet `done` |
+| `audit_lopend` | Audit lopend | `#fde68a` | qdrant done + `chunks_skipped > 0` |
+| `afb_lopend` | Afb. lopend | `#ddf2f3` | qdrant done + geen images_metadata.json |
+| `klaar` | Klaar | `#dcfce7` | alle fasen klaar |
+
+Prioriteit (hoog→laag): `permanent_fout > fout > bezig > in_wachtrij > audit_lopend > afb_lopend > klaar`
+
+Gebruikt door:
+- `api_library_items` — `status` veld in elke item
+- `api_library_progress_all` — `computed_status` veld
+- `api_library_progress_active` — `computed_status` veld
+- `_book_status()` — ingest pagina boekenlijst
+
+JS: `STATUS_PILLS` object + `statusPill(status)` function in `/library` pagina.
+Fase 5 Afbeeldingen: `figures_found == 0` → badge "Geen" (grijs) i.p.v. "Klaar".
+
+---
+
 ## 8. Web UI Pagina's (web/app.py)
 
 | Route | Beschrijving |

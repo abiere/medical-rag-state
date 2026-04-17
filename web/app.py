@@ -1172,14 +1172,11 @@ async function _refreshBookProgress() {
         if (ieSt2 !== 'not_applicable') {
           const ieRunning2 = ieSt2 === 'running';
           const ieDone2    = ieSt2 === 'done';
-          const ieccol2    = ieDone2 ? '#059669' : (ieRunning2 ? '#1A6B72' : '#d1d5db');
-          const ieicon2    = ieDone2 ? '\u2713'  : (ieRunning2 ? '\u25B6'  : '\u2022');
+          let   ieccol2    = ieDone2 ? '#059669' : (ieRunning2 ? '#1A6B72' : '#d1d5db');
+          let   ieicon2    = ieDone2 ? '\u2713'  : (ieRunning2 ? '\u25B6'  : '\u2022');
           let   ieDetail2  = '';
           let   ieBar2     = '';
-          if (ieDone2) {
-            const nf = ie2.figures_found;
-            ieDetail2 = (nf == null ? '\u2014' : fmt(nf)) + ' figuren ge\u00ebxtraheerd';
-          } else if (ieRunning2) {
+          if (ieRunning2) {
             const pp = ie2.pages_processed, pt = ie2.pages_total, ff = ie2.figures_found;
             if (pp != null && pt != null) {
               ieDetail2 = `pagina ${fmt(pp)} / ${fmt(pt)}`;
@@ -1191,6 +1188,17 @@ async function _refreshBookProgress() {
           }
           const iePillStyles2 = {done:'background:#dcfce7;color:#16a34a',running:'background:#e8f4f5;color:#1A6B72',failed:'background:#fee2e2;color:#dc2626',pending:'background:#f3f4f6;color:#6b7280'};
           const iePillLabels2 = {done:'Klaar',running:'Bezig',failed:'Fout',pending:'Wacht'};
+          // Fix: 0 figures → "Geen" instead of "Klaar"
+          if (ieDone2) {
+            const nf2 = ie2.figures_found;
+            if (nf2 === 0 || nf2 == null) {
+              iePillStyles2.done = 'background:#f3f4f6;color:#6b7280';
+              iePillLabels2.done = 'Geen';
+              ieccol2 = '#d1d5db';
+              ieicon2 = '\u2014';
+              ieDetail2 = 'Geen figuren gevonden in document';
+            }
+          }
           const iePill2   = `<span style="${iePillStyles2[ieSt2]||iePillStyles2.pending};border-radius:999px;padding:2px 8px;font-size:11px;font-weight:600;white-space:nowrap">${iePillLabels2[ieSt2]||'Wacht'}</span>`;
           const tdS2  = 'style="padding:7px 6px;vertical-align:top;border-bottom:1px solid #e2e8f0"';
           const tdSF2 = 'style="padding:7px 0;vertical-align:top;border-bottom:1px solid #e2e8f0"';
@@ -1752,40 +1760,111 @@ function fetchMarkers() {
 # LIBRARY — helpers
 # ═══════════════════════════════════════════════════════════════════════════════
 
+# ── Status system — single source of truth ────────────────────────────────────
+
+_STATUS_PILLS_PY: dict[str, dict] = {
+    "in_wachtrij":    {"label": "In wachtrij",     "bg": "#f3f4f6", "color": "#374151"},
+    "bezig":          {"label": "Bezig\u2026",      "bg": "#e8f4f5", "color": "#085041"},
+    "audit_lopend":   {"label": "Audit lopend",     "bg": "#fde68a", "color": "#92400e"},
+    "afb_lopend":     {"label": "Afb. lopend",      "bg": "#ddf2f3", "color": "#085041"},
+    "klaar":          {"label": "Klaar",            "bg": "#dcfce7", "color": "#166534"},
+    "fout":           {"label": "Fout",             "bg": "#fee2e2", "color": "#991b1b"},
+    "permanent_fout": {"label": "Permanent fout",   "bg": "#fee2e2", "color": "#7f1d1d"},
+}
+
+
+def _get_book_image_source(filename: str) -> str:
+    """Return image_source for a book filename from book_classifications.json."""
+    try:
+        cls_data = json.loads(CLASSIFICATIONS_PATH.read_text()).get("classifications", {})
+        fn_lower = filename.lower()
+        for entry in cls_data.values():
+            for pat in entry.get("filename_patterns", []):
+                if pat.lower() in fn_lower:
+                    return entry.get("image_source") or "none"
+    except Exception:
+        pass
+    return "none"
+
+
+def _compute_book_status(state: dict) -> str:
+    """Single source of truth for book status. Returns one of 7 status strings."""
+    if state.get("status") == "permanently_failed":
+        return "permanent_fout"
+
+    phases = state.get("phases", {})
+    parse  = phases.get("parse",  {})
+    audit  = phases.get("audit",  {})
+    qdrant = phases.get("qdrant", {})
+
+    if parse.get("status") == "failed":
+        return "fout"
+
+    for ph in phases.values():
+        if ph.get("status") == "running":
+            return "bezig"
+
+    if qdrant.get("status") != "done":
+        return "in_wachtrij"
+
+    # Qdrant done — check audit skipped
+    skipped = audit.get("chunks_skipped", 0) or 0
+    if skipped > 0:
+        return "audit_lopend"
+
+    # Check images
+    book_hash    = state.get("book_hash", "")
+    filename     = state.get("filename", "")
+    meta_path    = BASE / "data" / "extracted_images" / book_hash / "images_metadata.json"
+    image_source = _get_book_image_source(filename)
+    if image_source not in ("none", None) and not meta_path.exists():
+        return "afb_lopend"
+
+    return "klaar"
+
+
+def _find_state_for_file(filename: str) -> dict | None:
+    """Find state.json for a book file by matching filename."""
+    fn_lower = filename.lower()
+    if CACHE_DIR.exists():
+        for sf in CACHE_DIR.glob("*/state.json"):
+            try:
+                s = json.loads(sf.read_text())
+                sfn = (s.get("filename") or "").lower()
+                if sfn == fn_lower or fn_lower in sfn or sfn in fn_lower:
+                    return s
+            except Exception:
+                pass
+    return None
+
+
 def _book_status(filename: str) -> dict:
-    """Return status dict for one book file."""
-    stem = Path(filename).stem
-    # Running?
+    """Return status dict for one book file, using _compute_book_status if state.json found."""
+    state = _find_state_for_file(filename)
+    if state:
+        s = _compute_book_status(state)
+        pill = _STATUS_PILLS_PY.get(s, _STATUS_PILLS_PY["in_wachtrij"])
+        return {"status": s, "label": pill["label"], "bg": pill["bg"], "color": pill["color"]}
+
+    # Fallback when no state.json: check queue/current files
     try:
         if BOOK_CURRENT_FILE.exists():
             cur = json.loads(BOOK_CURRENT_FILE.read_text())
             if cur.get("filename") == filename:
-                return {"status": "running", "label": "Ingesteren…", "color": "#1A6B72"}
+                p = _STATUS_PILLS_PY["bezig"]
+                return {"status": "bezig", "label": p["label"], "bg": p["bg"], "color": p["color"]}
     except Exception:
         pass
-    # Queued?
     try:
         if BOOK_QUEUE_FILE.exists():
             q = json.loads(BOOK_QUEUE_FILE.read_text())
             if any(item.get("filename") == filename for item in q):
-                return {"status": "queued", "label": "In wachtrij", "color": "#d97706"}
+                p = _STATUS_PILLS_PY["in_wachtrij"]
+                return {"status": "in_wachtrij", "label": p["label"], "bg": p["bg"], "color": p["color"]}
     except Exception:
         pass
-    # Done?
-    audit_path = QUALITY_DIR / f"{stem}_audit.json"
-    if audit_path.exists():
-        try:
-            a = json.loads(audit_path.read_text())
-            qs = (a.get("llm_audit") or {}).get("quality_score")
-            if a.get("status") == "approved":
-                return {"status": "done", "label": "Klaar", "color": "#059669",
-                        "quality_score": qs, "total_chunks": a.get("total_chunks", 0)}
-            else:
-                return {"status": "low_quality", "label": f"Lage kwaliteit ({qs:.1f})",
-                        "color": "#dc2626", "quality_score": qs}
-        except Exception:
-            pass
-    return {"status": "waiting", "label": "Wachten", "color": "#6b7280"}
+    p = _STATUS_PILLS_PY["in_wachtrij"]
+    return {"status": "in_wachtrij", "label": p["label"], "bg": p["bg"], "color": p["color"]}
 
 
 def _enqueue_book(filename: str, filepath: str, collection: str, category: str, fmt: str) -> None:
@@ -1879,9 +1958,10 @@ def _library_section_html(section_key: str) -> str:
     rows = ""
     if books:
         for b in books:
-            badge_bg  = b["color"] + "22"
+            badge_bg  = b.get("bg", b["color"] + "22")
+            badge_fg  = b["color"]
             safe_id   = re.sub(r"[^a-zA-Z0-9]", "_", b["name"])
-            is_done   = b["status"] in ("done", "low_quality")
+            is_done   = b["status"] in ("klaar", "audit_lopend", "afb_lopend")
             reaudit_btn = (
                 f'<button onclick="reauditBook(\'{b["name"]}\')" '
                 f'class="btn btn-secondary" style="font-size:12px;margin-left:4px">Heraudit</button>'
@@ -1901,12 +1981,12 @@ def _library_section_html(section_key: str) -> str:
 <tr>
   <td>{name_cell}</td>
   <td class="hide-sm">{b.get('size','')}</td>
-  <td><span style="background:{badge_bg};color:{b['color']};padding:3px 10px;
+  <td><span style="background:{badge_bg};color:{badge_fg};padding:3px 10px;
       border-radius:999px;font-size:12px;font-weight:600">{b['label']}</span></td>
   <td>{b.get('total_chunks','') or ''}</td>
   <td style="white-space:nowrap">
     <a href="/library/audit/{b['name']}" class="btn btn-secondary" style="font-size:12px"
-       {'onclick="return false;this.style.opacity=.4" ' if b['status'] == 'waiting' else ''}>Rapport</a>
+       {'onclick="return false;this.style.opacity=.4" ' if b['status'] == 'in_wachtrij' else ''}>Rapport</a>
     <a href="/images?book={b['name']}" class="btn btn-secondary" style="font-size:12px;margin-left:4px">Afb.</a>
     {reaudit_btn}
   </td>
@@ -2143,6 +2223,40 @@ async def library_page():
       </div>
     </div>
 
+  <!-- Verwerkingsstatus flow -->
+  <div style="background:#f8fafc;border-radius:8px;padding:12px 16px;margin-bottom:16px">
+    <div style="font-size:11px;font-weight:500;color:#6b7280;margin-bottom:10px">Verwerkingsstatus</div>
+    <div style="display:flex;align-items:center;gap:0;flex-wrap:wrap;row-gap:8px">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:3px;min-width:76px">
+        <span style="background:#f3f4f6;color:#374151;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:500">In wachtrij</span>
+        <span style="font-size:10px;color:#6b7280;text-align:center">Wacht op<br>verwerking</span>
+      </div>
+      <span style="font-size:14px;color:#d1d5db;margin:0 4px;padding-bottom:14px">&rsaquo;</span>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:3px;min-width:76px">
+        <span style="background:#e8f4f5;color:#085041;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:500">Bezig&hellip;</span>
+        <span style="font-size:10px;color:#6b7280;text-align:center">Parsing,<br>embedding</span>
+      </div>
+      <span style="font-size:14px;color:#d1d5db;margin:0 4px;padding-bottom:14px">&rsaquo;</span>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:3px;min-width:84px">
+        <span style="background:#fde68a;color:#92400e;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:500">Audit lopend</span>
+        <span style="font-size:10px;color:#6b7280;text-align:center">Tekst klaar,<br>tags wachten</span>
+      </div>
+      <span style="font-size:14px;color:#d1d5db;margin:0 4px;padding-bottom:14px">&rsaquo;</span>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:3px;min-width:84px">
+        <span style="background:#ddf2f3;color:#085041;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:500">Afb. lopend</span>
+        <span style="font-size:10px;color:#6b7280;text-align:center">Tekst + audit<br>klaar</span>
+      </div>
+      <span style="font-size:14px;color:#d1d5db;margin:0 4px;padding-bottom:14px">&rsaquo;</span>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:3px;min-width:76px">
+        <span style="background:#dcfce7;color:#166534;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:500">Klaar</span>
+        <span style="font-size:10px;color:#6b7280;text-align:center">Volledig<br>doorzoekbaar</span>
+      </div>
+      <div style="width:0.5px;height:32px;background:#e2e8f0;margin:0 12px;align-self:center"></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:3px;min-width:76px">
+        <span style="background:#fee2e2;color:#991b1b;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:500">Fout</span>
+        <span style="font-size:10px;color:#6b7280;text-align:center">Handmatige<br>interventie</span>
+      </div>
+    </div>
   </div>
 
   <!-- Search + sort bar -->
@@ -2202,12 +2316,14 @@ const CAT_LABELS = {
 };
 const CAT_ORDER = ['all','medical_literature','acupuncture','nrt_kinesiology','qat_curriculum','device','videos'];
 const KAI_COLORS = {1:'#16a34a', 2:'#ea580c', 3:'#6b7280'};
-const STATUS_CFG = {
-  ingested:      {bg:'#dcfce7', fg:'#166534', label:'✅ Klaar'},
-  audit_pending: {bg:'#fef3c7', fg:'#92400e', label:'\U0001F319 Audit lopend'},
-  processing:    {bg:'#ffedd5', fg:'#ea580c', label:'⏳ Bezig'},
-  queued:        {bg:'#fef9c3', fg:'#ca8a04', label:'🕐 Wachtrij'},
-  not_ingested:  {bg:'#f3f4f6', fg:'#6b7280', label:'⬜ Nog niet'},
+const STATUS_PILLS = {
+  in_wachtrij:   {label:'In wachtrij',    bg:'#f3f4f6', color:'#374151'},
+  bezig:         {label:'Bezig\u2026',    bg:'#e8f4f5', color:'#085041'},
+  audit_lopend:  {label:'Audit lopend',   bg:'#fde68a', color:'#92400e'},
+  afb_lopend:    {label:'Afb. lopend',    bg:'#ddf2f3', color:'#085041'},
+  klaar:         {label:'Klaar',          bg:'#dcfce7', color:'#166534'},
+  fout:          {label:'Fout',           bg:'#fee2e2', color:'#991b1b'},
+  permanent_fout:{label:'Permanent fout', bg:'#fee2e2', color:'#7f1d1d'},
 };
 
 async function loadItems() {
@@ -2302,9 +2418,9 @@ function kaiPill(letter, val) {
 }
 
 function statusPill(status) {
-  const cfg = STATUS_CFG[status] || STATUS_CFG['not_ingested'];
-  return `<span style="background:${cfg.bg};color:${cfg.fg};border-radius:999px;
-                padding:2px 10px;font-size:12px;font-weight:600">${cfg.label}</span>`;
+  const s = STATUS_PILLS[status] || STATUS_PILLS['in_wachtrij'];
+  return `<span style="background:${s.bg};color:${s.color};border-radius:999px;
+    padding:3px 10px;font-size:12px;font-weight:500;white-space:nowrap">${s.label}</span>`;
 }
 
 function ocrBadge(engine) {
@@ -2557,13 +2673,23 @@ function buildPhaseTable(d, meta) {
   if (ieSt !== 'not_applicable') {
     const ieRunning = ieSt === 'running';
     const ieDone    = ieSt === 'done';
-    const ieccol    = ieDone ? '#059669' : (ieRunning ? '#1A6B72' : '#d1d5db');
-    const ieicon    = ieDone ? '\u2713'  : (ieRunning ? '\u25B6'  : '\u2022');
-    let   ieDetail  = '';
-    let   ieBar     = '';
+    let ieccol   = ieDone ? '#059669' : (ieRunning ? '#1A6B72' : '#d1d5db');
+    let ieicon   = ieDone ? '\u2713'  : (ieRunning ? '\u25B6'  : '\u2022');
+    let ieDetail = '';
+    let ieBar    = '';
+    let iePillSt = pillStyles[ieSt] || pillStyles.pending;
+    let iePillLb = pillLabels[ieSt] || 'Wacht';
     if (ieDone) {
       const nf = ie.figures_found;
-      ieDetail = (nf == null ? '\u2014' : fmt(nf)) + ' figuren ge\u00ebxtraheerd';
+      if (nf === 0 || nf == null) {
+        iePillLb = 'Geen';
+        iePillSt = 'background:#f3f4f6;color:#6b7280';
+        ieDetail = 'Geen figuren gevonden in document';
+        ieccol   = '#d1d5db';
+        ieicon   = '\u2014';
+      } else {
+        ieDetail = fmt(nf) + ' figuren ge\u00ebxtraheerd';
+      }
     } else if (ieRunning) {
       const pp = ie.pages_processed, pt = ie.pages_total, ff = ie.figures_found;
       if (pp != null && pt != null) {
@@ -2574,10 +2700,8 @@ function buildPhaseTable(d, meta) {
           + `<div style="background:#1A6B72;border-radius:999px;height:4px;width:${pct}%;transition:width 0.5s"></div></div>`;
       }
     }
-    const iePillSt = pillStyles[ieSt] || pillStyles.pending;
-    const iePillLb = pillLabels[ieSt] || 'Wacht';
-    const iePill   = `<span style="${iePillSt};border-radius:999px;padding:2px 8px;font-size:11px;font-weight:600">${iePillLb}</span>`;
-    const ieRowBg  = ieRunning ? 'background:#f0faf8;' : '';
+    const iePill  = `<span style="${iePillSt};border-radius:999px;padding:2px 8px;font-size:11px;font-weight:600">${iePillLb}</span>`;
+    const ieRowBg = ieRunning ? 'background:#f0faf8;' : '';
     html += `<tr style="${ieRowBg}border-bottom:0.5px solid #e2e8f0">`
       + `<td style="padding:7px 0;vertical-align:top">`
         + `<div style="display:flex;align-items:flex-start;gap:6px">`
@@ -2701,7 +2825,7 @@ async def api_library_items():
     except Exception:
         pass
 
-    # Build map of filename.lower() → {book_hash, ocr_engine, state} from state.json cache
+    # Build map of filename.lower() → {book_hash, ocr_engine, state, _full_state} from state.json cache
     # MUST be built before count_coros so we can use the real filename as Qdrant source_key
     state_map: dict[str, dict] = {}
     try:
@@ -2711,22 +2835,12 @@ async def api_library_items():
                 fn = (s.get("filename") or "").lower()
                 if fn:
                     phases = s.get("phases") or {}
-                    all_done = all(
-                        phases.get(ph, {}).get("status") == "done"
-                        for ph in ("parse", "audit", "embed", "qdrant")
-                    )
-                    audit_ph = phases.get("audit") or {}
-                    retroaudit_pending = (
-                        audit_ph.get("status") == "done"
-                        and (audit_ph.get("chunks_skipped") or 0) > 0
-                    )
                     state_map[fn] = {
-                        "book_hash":          s.get("book_hash", ""),
-                        "ocr_engine":         phases.get("parse", {}).get("ocr_engine") or "",
-                        "completed_at":       s.get("completed_at") or "",
-                        "all_done":           all_done,
-                        "chunks_inserted":    phases.get("qdrant", {}).get("chunks_inserted") or 0,
-                        "retroaudit_pending": retroaudit_pending,
+                        "book_hash":       s.get("book_hash", ""),
+                        "ocr_engine":      phases.get("parse", {}).get("ocr_engine") or "",
+                        "completed_at":    s.get("completed_at") or "",
+                        "chunks_inserted": phases.get("qdrant", {}).get("chunks_inserted") or 0,
+                        "_full_state":     s,
                     }
             except Exception:
                 pass
@@ -2781,27 +2895,28 @@ async def api_library_items():
         ocr_engine    = sm.get("ocr_engine", "")
         book_hash     = sm.get("book_hash", "")
 
-        # Determine status — check all patterns against processing/queue filenames
-        def _matches_file(fname: str, _pats=patterns, _id=meta["id"]) -> bool:
-            if not fname:
-                return False
-            fl = fname.lower()
-            return any(p.lower() in fl or fl in p.lower() for p in _pats) if _pats else (_id.lower() in fl)
-
-        if _matches_file(processing_file):
-            status = "processing"
-        elif any(_matches_file(qf) for qf in queued_files):
-            status = "queued"
-        elif chunk_count > 0 or sm.get("all_done"):
-            if sm.get("all_done") and chunk_count == 0:
+        # Determine status via _compute_book_status (single source of truth)
+        full_state = sm.get("_full_state", {})
+        if full_state:
+            status = _compute_book_status(full_state)
+            if status == "klaar" and chunk_count == 0:
                 chunk_count = sm.get("chunks_inserted", 0)
-            status = "audit_pending" if sm.get("retroaudit_pending") else "ingested"
         else:
-            status = "not_ingested"
+            # No state.json — fall back to queue/current file check
+            def _matches_file(fname: str, _pats=patterns, _id=meta["id"]) -> bool:
+                if not fname:
+                    return False
+                fl = fname.lower()
+                return any(p.lower() in fl or fl in p.lower() for p in _pats) if _pats else (_id.lower() in fl)
+            if _matches_file(processing_file):
+                status = "bezig"
+            elif any(_matches_file(qf) for qf in queued_files):
+                status = "in_wachtrij"
+            else:
+                status = "in_wachtrij"
 
         items_out.append({**meta, "chunk_count": chunk_count, "status": status,
-                          "ocr_engine": ocr_engine, "book_hash": book_hash,
-                          "retroaudit_pending": sm.get("retroaudit_pending", False)})
+                          "ocr_engine": ocr_engine, "book_hash": book_hash})
 
     return {"items": items_out}
 
@@ -4744,6 +4859,8 @@ async def api_library_progress_all():
         for sf in sorted(CACHE_DIR.glob("*/state.json")):
             s = _load_state(sf)
             if s:
+                s = dict(s)
+                s["computed_status"] = _compute_book_status(s)
                 states.append(s)
     return states
 
@@ -4774,12 +4891,13 @@ async def api_library_progress_active():
     if state is None:
         return None
 
-    # Enrich with image_extraction status
+    # Enrich with image_extraction status and computed_status
     bh = state.get("book_hash", "")
     fn = state.get("filename", "")
+    state = dict(state)  # shallow copy — don't mutate cached state
     if bh and fn:
-        state = dict(state)  # shallow copy — don't mutate cached state
         state["image_extraction"] = _build_image_extraction_info(bh, state, fn)
+    state["computed_status"] = _compute_book_status(state)
     return state
 
 

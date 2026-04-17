@@ -1,6 +1,6 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-17 — /library legenda + K/A/I badge beschrijvingen
+> Laatste update: 2026-04-17 — Status systeem overhaul
 
 ---
 
@@ -66,6 +66,24 @@
 - [ ] Officiële Deadman digitale versie aanschaffen (DRM-vrij via Eastland Press)
 - [ ] Consistentie guardian cross-collectie
 - [ ] Protocol pre-validatie (Ollama checkt dekking voor generatie)
+
+---
+
+## ✅ Afgerond — sessie 2026-04-17 (Status systeem overhaul)
+
+- [x] **`_compute_book_status()`** — Python single source of truth, 7 statussen
+      Prioriteitslogica: `permanent_fout > fout > bezig > in_wachtrij > audit_lopend > afb_lopend > klaar`
+      Gebruikt door `api_library_items`, `api_library_progress_all/active`, `_book_status()`
+- [x] **`STATUS_PILLS` + `statusPill()`** — JS object vervangt `STATUS_CFG` in /library pagina
+      Zeven uniforme statussen met aparte `bg` en `color` (geen enkelvoudige `color + "22"` truc)
+- [x] **"Lage kwaliteit" verwijderd** — `_book_status()` gebruikt `_compute_book_status()`;
+      geen `low_quality` status meer; audit score hoort alleen in de drawer
+- [x] **Fase 5 "Geen" fix** — `figures_found == 0` → badge "Geen" (grijs) i.p.v. "Klaar"
+      Zowel in `buildPhaseTable()` (library drawer) als `_BOOK_PROGRESS_SCRIPT` (ingest pagina)
+- [x] **Statusflow bovenaan /library** — horizontale flow na K/A/I legenda:
+      In wachtrij → Bezig → Audit lopend → Afb. lopend → Klaar | Fout (apart)
+- [x] **`computed_status` in API** — `api_library_progress_all` + `api_library_progress_active`
+- [x] **Verificatie** — Deadman toont "Klaar", Trail Guide "Bezig", QAT items "Audit lopend"
 
 ---
 
