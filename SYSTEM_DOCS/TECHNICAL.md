@@ -41,8 +41,20 @@ Ollama bepaalt de beste engine per boek via 5 steekproefpagina's. Resultaat geca
 In `parse_pdf()` wordt dit gelezen vóór `detect_pdf_type()` — kalibratie volledig overgeslagen.
 **Bijwerking:** `force_ocr_engine` bypast ook `_is_mostly_image()` check — atlas pagina's worden anders allemaal overgeslagen (diagnose 2026-04-17). RapidOCR werkt als fallback wanneer Vision credentials ontbreken.
 
-**Google Vision parallel:** Wanneer google_vision de eerste engine is, worden alle pagina's parallel verwerkt (8 workers via ThreadPoolExecutor) — `_parse_scanned_parallel_vision()`.
-Verbeteringen (2026-04-17): 300 DPI (was 150), `language_hints=["en"]`, lege-pagina filter ipv `< 3 words`.
+**Google Vision parallel:** Wanneer google_vision de eerste engine is, worden alle pagina's parallel verwerkt via `_parse_scanned_parallel_vision()`.
+Parameters instelbaar via `config/settings.json` sectie `google_vision` (zie §5) en via /settings UI:
+
+| Parameter | Default | Omschrijving |
+|---|---|---|
+| `dpi` | 300 | Renderresolutie (72–600) |
+| `language_hints` | `["en"]` | Taalhinten voor Vision API |
+| `min_words_per_page` | 1 | Pagina's met minder woorden gefilterd |
+| `max_workers` | 8 | Parallelle ThreadPoolExecutor workers |
+| `enable_confidence_scores` | false | Confidence scores berekenen |
+| `confidence_threshold` | 0.0 | Min. confidence (alleen bij enable_confidence_scores=true) |
+| `advanced_ocr_options` | `[]` | Extra Vision API feature flags |
+
+Per-boek overrides in `book_classifications.json`: `vision_dpi`, `vision_min_words`.
 **Vereiste:** `config/google_vision_key.json` moet aanwezig zijn — wordt gitignored maar niet meegeleverd.
 
 **startup_scan() max retries:** Na 3 parse-mislukkingen → `status="permanently_failed"` in state.json → nooit meer ge-enqueuet. Counter `parse_retry_count` in state.json; reset bij succes.
@@ -160,7 +172,10 @@ Query profielen:
 {
   "claude_api": { "enabled": true, "model": "claude-haiku-4-5-20251001", "max_workers": 10 },
   "nightly": { "start_time": "00:00", "end_time": "07:00", "image_screen_limit": 200 },
-  "transcription": { "skip_files": ["..."], "max_file_size_mb": 400 }
+  "transcription": { "skip_files": ["..."], "max_file_size_mb": 400 },
+  "google_vision": { "dpi": 300, "language_hints": ["en"], "min_words_per_page": 1,
+                     "max_workers": 8, "enable_confidence_scores": false,
+                     "confidence_threshold": 0.0, "advanced_ocr_options": [] }
 }
 ```
 

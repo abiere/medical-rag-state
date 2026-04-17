@@ -1,6 +1,6 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-17 — Trail Guide loop fix + Vision parameters
+> Laatste update: 2026-04-17 — Google Vision Settings UI
 
 ---
 
@@ -66,6 +66,18 @@
 - [ ] Officiële Deadman digitale versie aanschaffen (DRM-vrij via Eastland Press)
 - [ ] Consistentie guardian cross-collectie
 - [ ] Protocol pre-validatie (Ollama checkt dekking voor generatie)
+
+---
+
+## ✅ Afgerond — sessie 2026-04-17 (Google Vision Settings UI)
+
+- [x] **Google Vision UI card** — `/settings` pagina, na Nachtelijke onderhoud kaart
+      7 velden: DPI, language hints, min words, parallel workers, confidence toggle + drempel, advanced opties
+      Amber banner wanneer `config/google_vision_key.json` ontbreekt (`vision_credentials_missing` vlag)
+      `saveVision()` JS functie + `loadSettings()` uitgebreid met Vision sectie
+- [x] **api_settings_post()** — `google_vision` toegevoegd aan saveable sections (deep merge)
+- [x] **_get_vision_settings()** helper — leest uit settings.json, ondersteunt per-boek overrides via `vision_dpi`/`vision_min_words`
+- [x] **TECHNICAL.md §1.2 + §5** — Vision parameters tabel + settings.json structuur bijgewerkt
 
 ---
 

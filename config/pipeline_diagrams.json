@@ -1,7 +1,7 @@
 {
   "version": "2.0",
-  "updated_at": "2026-04-17T07:07:51.210600+00:00",
-  "updated_by": "Claude Code — auto-refresh",
+  "updated_at": "2026-04-17T09:00:00.000000+00:00",
+  "updated_by": "Claude Code \u2014 Google Vision parameters configurable via settings.json",
   "pdf_type_detection": {
     "threshold_words_native": 50,
     "threshold_words_low": 15,
@@ -70,10 +70,19 @@
       {
         "order": 5,
         "name": "Google Vision",
-        "subtitle": "API-call (~1 sec)",
+        "subtitle": "API-call (~1 sec) \u2014 300 DPI, 8 workers parallel",
         "type": "cloud",
         "color": "amber",
-        "available": true
+        "available": true,
+        "configurable": true,
+        "config_section": "google_vision",
+        "params": {
+          "dpi": 300,
+          "language_hints": ["en"],
+          "min_words_per_page": 1,
+          "max_workers": 8,
+          "enable_confidence_scores": false
+        }
       }
     ]
   },

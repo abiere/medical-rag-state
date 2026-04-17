@@ -381,7 +381,9 @@
       "image_source": "pdf_cropped",
       "image_priority": "normal",
       "image_priority_override": null,
-      "image_evaluated": false
+      "image_evaluated": false,
+      "vision_dpi": 300,
+      "vision_min_words": 1
     },
     "thieme_atlas": {
       "k": 1,

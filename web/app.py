@@ -3153,6 +3153,16 @@ async def api_settings_get():
     if cfg.get("claude_api"):
         cfg["claude_api"]["api_key_masked"] = masked
         cfg["claude_api"]["api_key_set"]    = bool(api_key or os.environ.get("ANTHROPIC_API_KEY"))
+    # Vision credentials status
+    cfg["vision_credentials_missing"] = not (BASE / "config" / "google_vision_key.json").exists()
+    # Ensure google_vision section has defaults for UI even if not in settings.json
+    gv_defaults = {
+        "dpi": 300, "language_hints": ["en"], "min_words_per_page": 1,
+        "max_workers": 8, "enable_confidence_scores": False,
+        "confidence_threshold": 0.0, "advanced_ocr_options": [],
+    }
+    gv_defaults.update(cfg.get("google_vision") or {})
+    cfg["google_vision"] = gv_defaults
     return cfg
 
 @app.post("/api/settings")
@@ -3165,7 +3175,7 @@ async def api_settings_post(request: Request):
     current = _load_settings_cfg()
 
     # Deep merge — only update known top-level sections
-    for section in ("claude_api", "nightly"):
+    for section in ("claude_api", "nightly", "google_vision"):
         if section in body and isinstance(body[section], dict):
             if section not in current:
                 current[section] = {}
@@ -3451,6 +3461,77 @@ async def settings_page():
       </div>
     </div>
 
+    <!-- Google Vision card -->
+    <div class="section" style="max-width:680px">
+      <div class="section-head">
+        <span class="section-title">Google Vision OCR</span>
+      </div>
+      <div id="vision-creds-banner" style="display:none;margin:16px 24px 0;padding:12px 16px;
+           background:#fef3c7;border:1px solid #d97706;border-radius:8px;font-size:13px;color:#92400e">
+        &#9888; <strong>Credentials ontbreken</strong> — <code>config/google_vision_key.json</code>
+        niet aanwezig. Google Vision wordt overgeslagen; RapidOCR neemt over als fallback.
+      </div>
+      <div style="padding:20px 24px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">
+            DPI (72\u2013600, stap 50)
+          </label>
+          <input id="vision-dpi" type="number" min="72" max="600" step="50" value="300"
+            style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px">
+        </div>
+        <div>
+          <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">
+            Language hints (komma-gescheiden)
+          </label>
+          <input id="vision-language-hints" type="text" value="en"
+            style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px">
+        </div>
+        <div>
+          <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">
+            Min. woorden per pagina
+          </label>
+          <input id="vision-min-words" type="number" min="0" max="50" value="1"
+            style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px">
+        </div>
+        <div>
+          <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">
+            Parallelle verzoeken (1\u201316)
+          </label>
+          <input id="vision-max-workers" type="number" min="1" max="16" value="8"
+            style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px">
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <label style="font-size:13px;font-weight:600;color:#374151">
+            Confidence scores inschakelen
+          </label>
+          <input id="vision-confidence-toggle" type="checkbox"
+            onchange="document.getElementById('vision-confidence-row').style.display=this.checked?'block':'none'"
+            style="width:16px;height:16px;cursor:pointer">
+        </div>
+        <div>
+          <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">
+            Advanced OCR opties (komma-gescheiden)
+          </label>
+          <input id="vision-advanced-options" type="text" placeholder="bijv. TEXT_DETECTION"
+            style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px">
+        </div>
+        <div id="vision-confidence-row" style="display:none">
+          <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">
+            Confidence drempel (0.0\u20131.0)
+          </label>
+          <input id="vision-confidence-threshold" type="number" min="0" max="1" step="0.05" value="0.0"
+            style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px">
+        </div>
+        <div style="grid-column:1/-1;display:flex;justify-content:flex-end">
+          <button onclick="saveVision()"
+            style="padding:10px 24px;background:#1A6B72;color:#fff;border:none;
+                   border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">
+            Opslaan
+          </button>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /pane-params -->
 
   <!-- TAB 2: Schema's -->
@@ -3508,6 +3589,20 @@ async function loadSettings() {
     if (n.start_time) document.getElementById('nightly-start').value = n.start_time;
     if (n.end_time)   document.getElementById('nightly-end').value   = n.end_time;
     if (n.image_screen_limit) document.getElementById('image-limit').value = n.image_screen_limit;
+
+    const gv = _settings.google_vision || {};
+    if (gv.dpi !== undefined)  document.getElementById('vision-dpi').value = gv.dpi;
+    if (gv.language_hints)     document.getElementById('vision-language-hints').value = gv.language_hints.join(',');
+    if (gv.min_words_per_page !== undefined) document.getElementById('vision-min-words').value = gv.min_words_per_page;
+    if (gv.max_workers !== undefined)        document.getElementById('vision-max-workers').value = gv.max_workers;
+    const confToggle = document.getElementById('vision-confidence-toggle');
+    confToggle.checked = !!gv.enable_confidence_scores;
+    document.getElementById('vision-confidence-row').style.display = confToggle.checked ? 'block' : 'none';
+    if (gv.confidence_threshold !== undefined) document.getElementById('vision-confidence-threshold').value = gv.confidence_threshold;
+    if (gv.advanced_ocr_options) document.getElementById('vision-advanced-options').value = (gv.advanced_ocr_options || []).join(',');
+    if (_settings.vision_credentials_missing) {
+      document.getElementById('vision-creds-banner').style.display = 'block';
+    }
   } catch(e) { console.error('loadSettings failed:', e); }
 }
 
@@ -3566,6 +3661,25 @@ async function saveNightly() {
     start_time:         document.getElementById('nightly-start').value || '02:00',
     end_time:           document.getElementById('nightly-end').value   || '05:00',
     image_screen_limit: parseInt(document.getElementById('image-limit').value) || 200,
+  }};
+  const r = await fetch('/api/settings', {method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(payload)});
+  const d = await r.json();
+  showToast(d.ok ? 'Opgeslagen' : 'Fout');
+}
+
+async function saveVision() {
+  const hintsRaw = document.getElementById('vision-language-hints').value.trim();
+  const advRaw   = document.getElementById('vision-advanced-options').value.trim();
+  const confEnabled = document.getElementById('vision-confidence-toggle').checked;
+  const payload = { google_vision: {
+    dpi:                    parseInt(document.getElementById('vision-dpi').value) || 300,
+    language_hints:         hintsRaw ? hintsRaw.split(',').map(s => s.trim()).filter(Boolean) : ['en'],
+    min_words_per_page:     parseInt(document.getElementById('vision-min-words').value) || 1,
+    max_workers:            parseInt(document.getElementById('vision-max-workers').value) || 8,
+    enable_confidence_scores: confEnabled,
+    confidence_threshold:   parseFloat(document.getElementById('vision-confidence-threshold').value) || 0.0,
+    advanced_ocr_options:   advRaw ? advRaw.split(',').map(s => s.trim()).filter(Boolean) : [],
   }};
   const r = await fetch('/api/settings', {method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify(payload)});

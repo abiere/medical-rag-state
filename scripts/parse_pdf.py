@@ -466,6 +466,33 @@ def _lazy_vision_client():
     return _vision_client
 
 
+def _get_vision_settings(book_meta: dict | None = None) -> dict:
+    """Global Vision defaults from settings.json, with optional per-book overrides."""
+    defaults = {
+        "dpi":                    300,
+        "language_hints":         ["en"],
+        "min_words_per_page":     1,
+        "max_workers":            8,
+        "enable_confidence_scores": False,
+        "confidence_threshold":   0.0,
+        "advanced_ocr_options":   [],
+    }
+    try:
+        settings_path = BASE / "config" / "settings.json"
+        if settings_path.exists():
+            s = json.loads(settings_path.read_text())
+            defaults.update({k: v for k, v in s.get("google_vision", {}).items()
+                             if v is not None})
+    except Exception:
+        pass
+    if book_meta:
+        for key in ("dpi", "min_words_per_page"):
+            meta_key = f"vision_{key.split('_')[0]}" if key == "dpi" else f"vision_min_words"
+            if meta_key in book_meta:
+                defaults[key] = book_meta[meta_key]
+    return defaults
+
+
 def _lazy_surya():
     global _surya_det, _surya_rec
     if _surya_det is None:
@@ -525,24 +552,27 @@ def _ocr_tesseract(pil_image) -> tuple[str, float]:
 def _ocr_google_vision(pil_image) -> tuple[str, float]:
     import io
     from google.cloud import vision as gv
-    client   = _lazy_vision_client()
-    buf      = io.BytesIO()
+    vs     = _get_vision_settings()
+    client = _lazy_vision_client()
+    buf    = io.BytesIO()
     pil_image.save(buf, format="PNG")
-    image    = gv.Image(content=buf.getvalue())
-    image_context = gv.ImageContext(language_hints=["en"])
+    image         = gv.Image(content=buf.getvalue())
+    image_context = gv.ImageContext(language_hints=vs["language_hints"])
     response = client.document_text_detection(image=image, image_context=image_context)
     if response.error.message:
         raise RuntimeError(f"Vision API error: {response.error.message}")
     full_text = response.full_text_annotation
     if not full_text or not full_text.text:
         return "", 0.0
-    confs = [
-        block.confidence
-        for page in full_text.pages
-        for block in page.blocks
-        if block.confidence
-    ]
-    conf = sum(confs) / len(confs) if confs else 0.9
+    conf = 0.9
+    if vs["enable_confidence_scores"]:
+        confs = [
+            block.confidence
+            for page in full_text.pages
+            for block in page.blocks
+            if block.confidence
+        ]
+        conf = sum(confs) / len(confs) if confs else 0.9
     return full_text.text, round(conf, 3)
 
 
@@ -739,16 +769,20 @@ def _save_page_render(pil_image, book_stem: str, page_num: int) -> str:
 # ── Google Vision parallel parser ────────────────────────────────────────────
 
 def _parse_scanned_parallel_vision(
-    pdf_path: Path, progress_fn=None, max_workers: int = 8
+    pdf_path: Path, progress_fn=None, max_workers: int | None = None
 ) -> tuple[list[dict], dict]:
     """
-    Google Vision variant: renders all pages at 150 DPI, sends API calls in
-    parallel via ThreadPoolExecutor. Network I/O-bound — 8 workers ≈ 8× faster
-    than sequential. Used automatically when calibration picks google_vision.
+    Google Vision variant: renders all pages, sends API calls in parallel via
+    ThreadPoolExecutor. DPI, max_workers and page filter read from settings.json.
     """
     import fitz
     from concurrent.futures import ThreadPoolExecutor, as_completed
     from PIL import Image as PilImage
+
+    vs = _get_vision_settings()
+    dpi           = vs["dpi"]
+    n_workers     = max_workers if max_workers is not None else vs["max_workers"]
+    min_words     = vs["min_words_per_page"]
 
     try:
         doc = fitz.open(str(pdf_path))
@@ -760,10 +794,10 @@ def _parse_scanned_parallel_vision(
     n_pages = len(doc)
     _report_progress(progress_fn, "parsing", 0, n_pages, 0)
 
-    # Render all pages at 300 DPI — necessary for atlas-style books with small labels
+    # Render all pages at configured DPI
     pil_images: list = []
     for i in range(n_pages):
-        mat = fitz.Matrix(300 / 72, 300 / 72)
+        mat = fitz.Matrix(dpi / 72, dpi / 72)
         pix = doc[i].get_pixmap(matrix=mat, colorspace=fitz.csRGB)
         pil_images.append(PilImage.frombytes("RGB", [pix.width, pix.height], pix.samples))
     doc.close()
@@ -776,7 +810,7 @@ def _parse_scanned_parallel_vision(
         text, conf = _ocr_google_vision(pil_images[page_num])
         return page_num, text, conf
 
-    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+    with ThreadPoolExecutor(max_workers=n_workers) as executor:
         futures = {executor.submit(_process_page, i): i for i in range(n_pages)}
         for future in as_completed(futures):
             try:
@@ -793,7 +827,7 @@ def _parse_scanned_parallel_vision(
         if result is None:
             continue
         text, conf = result
-        if not text or not text.strip():
+        if not text or len(text.split()) < min_words:
             continue
         paras  = [p.strip() for p in text.split("\n\n") if p.strip()]
         ch, sec = _detect_chapter_section(paras)
@@ -806,7 +840,7 @@ def _parse_scanned_parallel_vision(
             "ocr_confidence": conf,
         })
 
-    good = [r for r in results if r and r[0] and r[0].strip()]
+    good = [r for r in results if r and r[0] and len(r[0].split()) >= min_words]
     avg_conf = round(sum(c for _, c in good) / len(good), 3) if good else 0.9
     ocr_stats = {
         "total_pages":      n_pages,
