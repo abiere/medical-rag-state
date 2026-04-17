@@ -1,11 +1,11 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 13:06:55 UTC**
+> Last update: **2026-04-17 13:11:55 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ✅ active |
+| transcription-queue | ❌ inactive |
 | book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
@@ -25,25 +25,25 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `Healing_Organs_with_NRT.mp4` (4 min) |
-| Queued | 9 |
-| Done | 20 / 35 |
-| Vectors in video_transcripts | 231 |
+| Current job | idle |
+| Queued | 0 |
+| Done | 21 / 35 |
+| Vectors in video_transcripts | 241 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 6.7 GB / 32.86 GB (20%) |
-| CPU | 96.4% |
+| RAM used | 2.55 GB / 32.86 GB (8%) |
+| CPU | 0.1% |
 | Disk used | 59.4 GB / 322.3 GB (19%) |
-| Uptime | up 7 hours, 31 minutes |
+| Uptime | up 7 hours, 36 minutes |
 
 ## Recent markers
-- `2026-04-17T13:02:09` **transcription_failed** — Everything_Reset_Sequence_-_Part_5.mp4 FAILED (20/19)
-- `2026-04-17T13:02:09` **transcription_failed** — Everything_Reset_Sequence_-_Part_4.mp4 FAILED (20/19)
-- `2026-04-17T13:02:09` **transcription_failed** — Everything_Reset_Sequence_-_Part_3.mp4 FAILED (20/19)
-- `2026-04-17T13:02:09` **transcription_failed** — Everything_Reset_Sequence_-_Part_2.mp4 FAILED (20/19)
-- `2026-04-17T13:02:09` **transcription_failed** — Everything_Reset_Sequence_-_Part_1.mp4 FAILED (20/19)
+- `2026-04-17T13:09:22` **queue_empty** — All 19 videos transcribed
+- `2026-04-17T13:09:22` **transcription_failed** — 1.Upper_Body_Techniques.mp4 FAILED (21/19)
+- `2026-04-17T13:09:22` **transcription_failed** — NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.mp4 FAILED (21/19)
+- `2026-04-17T13:09:22` **transcription_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 FAILED (21/19)
+- `2026-04-17T13:09:22` **transcription_failed** — NRT_Fascial_Activation_Application_Method.mp4 FAILED (21/19)
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-17 13:02:09,065  INFO        [ingest] 3.Why_People_Hurt.json: 867 segments → 23 chunks
-2026-04-17 13:02:09,065  INFO        [ingest] Loading embedding model …
-2026-04-17 13:02:09,065  INFO        [ingest]   Ingested chunk 23/23 for 3.Why_People_Hurt.mp4
-2026-04-17 13:02:09,066  INFO        [ingest] Done: 23 chunks ingested, 0 skipped (already exists)
-2026-04-17 13:02:09,194  WARNING   Skipping nrt/Everything_Reset_Sequence_-_Part_1.mp4 (649 MB > limit 400 MB)
-2026-04-17 13:02:09,259  WARNING   Skipping nrt/Everything_Reset_Sequence_-_Part_2.mp4 (499 MB > limit 400 MB)
-2026-04-17 13:02:09,324  WARNING   Skipping nrt/Everything_Reset_Sequence_-_Part_3.mp4 (565 MB > limit 400 MB)
-2026-04-17 13:02:09,389  WARNING   Skipping nrt/Everything_Reset_Sequence_-_Part_4.mp4 (690 MB > limit 400 MB)
-2026-04-17 13:02:09,454  WARNING   Skipping nrt/Everything_Reset_Sequence_-_Part_5.mp4 (618 MB > limit 400 MB)
-2026-04-17 13:02:09,520  INFO      START  nrt/Healing_Organs_with_NRT.mp4
+2026-04-17 13:09:21,803  WARNING   Skipping nrt/How_to_Reset_23_More_Muscles.mp4 (412 MB > limit 400 MB)
+2026-04-17 13:09:21,868  WARNING   Skipping nrt/Miraculous_Sequence_-_Part_1.mp4 (689 MB > limit 400 MB)
+2026-04-17 13:09:21,934  WARNING   Skipping nrt/Miraculous_Sequence_-_Part_2.mp4 (664 MB > limit 400 MB)
+2026-04-17 13:09:22,000  WARNING   Skipping nrt/NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4 (990 MB > limit 400 MB)
+2026-04-17 13:09:22,065  WARNING   Skipping nrt/NRT_Fascial_Activation_Application_Method.mp4 (1871 MB > limit 400 MB)
+2026-04-17 13:09:22,130  WARNING   Skipping nrt/NRT_Sports_Specific_or_Universal_Reset.mp4 (957 MB > limit 400 MB)
+2026-04-17 13:09:22,195  WARNING   Skipping nrt/NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.mp4 (639 MB > limit 400 MB)
+2026-04-17 13:09:22,261  WARNING   Skipping nrt/1.Upper_Body_Techniques.mp4 (in skip_files list)
+2026-04-17 13:09:22,325  INFO      Queue empty — 19 video(s) processed. Exiting.
+2026-04-17 13:09:22,390  INFO      Transcription queue manager done
 ```
