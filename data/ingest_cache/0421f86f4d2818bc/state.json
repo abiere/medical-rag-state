@@ -1,0 +1,57 @@
+{
+  "filename": "Bates' Guide To Physical Examination and History Taking_nodrm.epub",
+  "book_hash": "0421f86f4d2818bc",
+  "filepath": "/root/medical-rag/books/medical_literature/Bates' Guide To Physical Examination and History Taking_nodrm.epub",
+  "collection": "medical_library",
+  "library_category": "medical_literature",
+  "started_at": "2026-04-17T14:38:20.641435+00:00",
+  "updated_at": "2026-04-17T14:56:49.951262+00:00",
+  "completed_at": "2026-04-17T14:56:49.951219+00:00",
+  "phases": {
+    "parse": {
+      "status": "done",
+      "started_at": "2026-04-17T14:38:20.642856+00:00",
+      "completed_at": "2026-04-17T14:39:25.044296+00:00",
+      "pages_total": 1251,
+      "pages_done": 1251,
+      "chunks_extracted": 1251,
+      "images_extracted": 41283,
+      "parse_method": null,
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": [],
+      "ocr_engine": "native"
+    },
+    "audit": {
+      "status": "done",
+      "started_at": "2026-04-17T14:39:25.090787+00:00",
+      "completed_at": "2026-04-17T14:46:59.530950+00:00",
+      "chunks_total": 1251,
+      "chunks_tagged": 1251,
+      "chunks_skipped": 0,
+      "ollama_available": true,
+      "consecutive_failures_hit": false,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "done",
+      "started_at": "2026-04-17T14:46:59.569321+00:00",
+      "completed_at": "2026-04-17T14:56:48.429025+00:00",
+      "chunks_total": 1251,
+      "chunks_done": 1251,
+      "vectors_per_minute": 128.1,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-17T14:56:48.379268+00:00",
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "done",
+      "started_at": "2026-04-17T14:56:48.488471+00:00",
+      "completed_at": "2026-04-17T14:56:49.926033+00:00",
+      "chunks_inserted": 1251,
+      "collection": "medical_library"
+    }
+  },
+  "image_extraction_enabled": true,
+  "parse_retry_count": 0
+}

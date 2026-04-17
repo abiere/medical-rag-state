@@ -2127,20 +2127,37 @@ _CAT_COLLECTION = {
 _KAI_COLORS = {1: "#16a34a", 2: "#d97706", 3: "#9ca3af"}
 _KAI_LABELS = {1: "Primair", 2: "Ondersteunend", 3: "Achtergrond"}
 
+# ── /api/library/items response cache ────────────────────────────────────────
+_ITEMS_CACHE: dict = {"data": None, "ts": 0.0}
+_ITEMS_TTL = 10  # seconds
 
-async def _qdrant_count_source(collection: str, source_file: str) -> int:
+def _invalidate_items_cache() -> None:
+    _ITEMS_CACHE["data"] = None
+    _ITEMS_CACHE["ts"] = 0.0
+
+
+async def _qdrant_count_source(
+    collection: str,
+    source_file: str,
+    *,
+    client: "httpx.AsyncClient | None" = None,
+) -> int:
     """Count Qdrant points where source_file == source_file in the given collection."""
-    try:
-        async with httpx.AsyncClient(timeout=5) as client:
-            r = await client.post(
+    async def _do(c: httpx.AsyncClient) -> int:
+        try:
+            r = await c.post(
                 f"http://localhost:6333/collections/{collection}/points/count",
                 json={"filter": {"must": [{"key": "source_file", "match": {"value": source_file}}]}},
             )
             if r.status_code == 200:
                 return r.json().get("result", {}).get("count", 0)
-    except Exception:
-        pass
-    return 0
+        except Exception:
+            pass
+        return 0
+    if client is not None:
+        return await _do(client)
+    async with httpx.AsyncClient(timeout=5) as c:
+        return await _do(c)
 
 
 # ── GET /library ───────────────────────────────────────────────────────────────
@@ -2159,7 +2176,6 @@ async def library_page():
     <h1 style="font-size:22px;font-weight:700">Bibliotheek — Catalogus</h1>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <a href="/library/ingest" class="btn btn-secondary">Upload / Ingest</a>
-      <a href="/library/overview" class="btn btn-secondary">Literatuuroverzicht</a>
     </div>
   </div>
 
@@ -2962,6 +2978,10 @@ document.addEventListener('DOMContentLoaded', () => {
 @app.get("/api/library/items")
 async def api_library_items():
     """Return all catalog items with metadata + live Qdrant chunk counts."""
+    _now = time.time()
+    if _ITEMS_CACHE["data"] is not None and _now - _ITEMS_CACHE["ts"] < _ITEMS_TTL:
+        return _ITEMS_CACHE["data"]
+
     try:
         cfg = json.loads(CLASSIFICATIONS_PATH.read_text())
     except Exception as e:
@@ -3019,9 +3039,9 @@ async def api_library_items():
                     return fn_key, sm
         return "", {}
 
-    # Build item list and collect async Qdrant queries
+    # Build item list and collect Qdrant query arguments
     items_meta: list[dict] = []
-    count_coros = []
+    count_args: list[tuple[str, str]] = []  # (collection, source_key)
 
     for book_id, info in classifications.items():
         category = info.get("library_category", "")
@@ -3044,10 +3064,14 @@ async def api_library_items():
         # Fall back to first pattern if no state.json entry found
         actual_fn, _sm = _resolve_state_entry(patterns, book_id)
         source_key = actual_fn if actual_fn else (patterns[0] if patterns else book_id)
-        count_coros.append(_qdrant_count_source(collection, source_key))
+        count_args.append((collection, source_key))
 
-    # Run all Qdrant count queries in parallel
-    counts = await asyncio.gather(*count_coros, return_exceptions=True)
+    # Run all Qdrant count queries in parallel with a single shared HTTP connection
+    async with httpx.AsyncClient(timeout=5) as _qdrant_client:
+        counts = await asyncio.gather(
+            *[_qdrant_count_source(c, s, client=_qdrant_client) for c, s in count_args],
+            return_exceptions=True,
+        )
 
     items_out = []
     for meta, count in zip(items_meta, counts):
@@ -3083,7 +3107,10 @@ async def api_library_items():
                           "ocr_engine": ocr_engine, "book_hash": book_hash,
                           "image_progress": image_progress})
 
-    return {"items": items_out}
+    result = {"items": items_out}
+    _ITEMS_CACHE["data"] = result
+    _ITEMS_CACHE["ts"] = time.time()
+    return result
 
 
 # ── GET /api/library/book/{book_hash}/detail ───────────────────────────────────
@@ -3204,8 +3231,6 @@ async def library_ingest_page():
     <h1 style="font-size:22px;font-weight:700">Bibliotheek — Upload</h1>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <a href="/library" class="btn btn-secondary">← Catalogus</a>
-      <a href="/library/overview" class="btn btn-secondary">Literatuuroverzicht</a>
-      <span style="font-size:13px;color:#6b7280">→ alle boeken in <code>medical_library</code></span>
     </div>
   </div>
   <div id="book-progress" style="margin-bottom:16px"></div>
@@ -3510,6 +3535,10 @@ async def library_upload(
     collection:    str        = Form(...),   # section key (medical_literature/nrt_qat/device)
     enable_images: str        = Form("true"),
 ):
+    import logging as _log
+    import traceback as _tb
+    _ulog = _log.getLogger(__name__)
+
     section_key = collection
     if section_key not in SECTION_MAP:
         return JSONResponse({"error": f"Unknown section: {section_key}"}, status_code=400)
@@ -3520,20 +3549,40 @@ async def library_upload(
 
     fname = file.filename or "upload"
     ext   = Path(fname).suffix.lower()
+    _ulog.info("UPLOAD received: %s  ext=%s  collection=%s", fname, ext, qdrant_collection)
+
     if ext not in BOOK_EXTS:
+        _ulog.warning("UPLOAD rejected: %s — extension not allowed", fname)
         return JSONResponse({"error": "Only .pdf and .epub allowed"}, status_code=400)
 
     dest_dir = BOOKS_DIR / section_key
     dest_dir.mkdir(parents=True, exist_ok=True)
     dest = dest_dir / fname
 
-    content = await file.read()
-    dest.write_bytes(content)
+    try:
+        content = await file.read()
+        size_mb = len(content) / 1024 / 1024
+        _ulog.info("UPLOAD read: %s  size=%.1f MB", fname, size_mb)
+        if len(content) > 2 * 1024 * 1024 * 1024:
+            _ulog.warning("UPLOAD rejected: %s too large (%.1f MB)", fname, size_mb)
+            return JSONResponse({"error": "Bestand te groot (max 2 GB)"}, status_code=413)
+        dest.write_bytes(content)
+        _ulog.info("UPLOAD saved: %s → %s", fname, dest)
+    except Exception:
+        _ulog.error("UPLOAD failed writing %s:\n%s", fname, _tb.format_exc())
+        return JSONResponse({"error": "Opslaan mislukt"}, status_code=500)
 
-    image_extraction_enabled = enable_images.lower() == "true"
-    _enqueue_book(fname, str(dest), qdrant_collection, source_category, ext.lstrip("."),
-                  image_extraction_enabled=image_extraction_enabled)
+    try:
+        image_extraction_enabled = enable_images.lower() == "true"
+        _enqueue_book(fname, str(dest), qdrant_collection, source_category, ext.lstrip("."),
+                      image_extraction_enabled=image_extraction_enabled)
+        _ulog.info("UPLOAD enqueued: %s  collection=%s  images=%s",
+                   fname, qdrant_collection, image_extraction_enabled)
+    except Exception:
+        _ulog.error("UPLOAD enqueue failed for %s:\n%s", fname, _tb.format_exc())
+        return JSONResponse({"error": "Wachtrij mislukt"}, status_code=500)
 
+    _invalidate_items_cache()
     return {"status": "queued", "filename": fname, "collection": qdrant_collection,
             "section": section_key, "image_extraction_enabled": image_extraction_enabled}
 
@@ -4729,122 +4778,6 @@ loadSettings();
 </script>
 """
     return HTMLResponse(_page_shell("Instellingen", "/settings", body))
-
-
-# ── GET /library/overview ──────────────────────────────────────────────────────
-
-@app.get("/library/overview", response_class=HTMLResponse)
-async def library_overview():
-    # Load usability tag definitions
-    tag_defs: dict = {}
-    try:
-        if USABILITY_TAGS_FILE.exists():
-            tag_defs = json.loads(USABILITY_TAGS_FILE.read_text()).get("tags", {})
-    except Exception:
-        pass
-
-    # Build table rows from audit reports
-    rows = ""
-    all_books = []
-    for sec_key, sec in SECTION_MAP.items():
-        d = BOOKS_DIR / sec_key
-        if not d.exists():
-            continue
-        for f in sorted(d.iterdir()):
-            if f.suffix.lower() not in BOOK_EXTS:
-                continue
-            all_books.append((sec_key, f))
-
-    for sec_key, f in all_books:
-        sec_label = SECTION_MAP[sec_key]["label"]
-        audit_path = QUALITY_DIR / f"{f.stem}_audit.json"
-        chunks_n = imgs_total = 0
-        qs = score_html = dots_html = ""
-        if audit_path.exists():
-            try:
-                a = json.loads(audit_path.read_text())
-                chunks_n = a.get("total_chunks", 0)
-                qs_val = (a.get("llm_audit") or {}).get("quality_score")
-                qs = f"{qs_val:.1f}" if qs_val else "—"
-                up = (a.get("usability_profile") or {}).get("scores", {})
-                dots_html = _usability_dots(up, []) if up else ""
-            except Exception:
-                pass
-        # Count extracted images from images_metadata.json if available
-        bh_meta = None
-        try:
-            bh = _book_hash_for_file(f)
-            meta_path = IMAGES_DIR / bh / "images_metadata.json"
-            if meta_path.exists():
-                meta = json.loads(meta_path.read_text())
-                imgs_total = len(meta.get("images", []))
-        except Exception:
-            pass
-        rows += f"""
-<tr>
-  <td><span style="font-weight:600">{f.name}</span><br>
-      <span style="font-size:12px;color:#6b7280">{sec_label}</span></td>
-  <td style="text-align:right">{chunks_n or '—'}</td>
-  <td style="text-align:right">{imgs_total or '—'}</td>
-  <td>{dots_html}</td>
-  <td style="text-align:center">{qs}</td>
-  <td style="white-space:nowrap">
-    <a href="/library/audit/{f.name}" class="btn btn-secondary" style="font-size:12px">Rapport</a>
-    <button onclick="retag('{f.name}')" class="btn btn-secondary" style="font-size:12px;margin-left:4px">Heranalyseer</button>
-  </td>
-</tr>"""
-
-    # Tag definitions editor
-    tag_rows = ""
-    for tag_name, tag_info in tag_defs.items():
-        tag_rows += f"""
-<tr>
-  <td><code style="font-size:13px">{tag_name}</code></td>
-  <td><span style="font-size:13px">{tag_info.get('description','')}</span></td>
-  <td><span style="font-size:12px;color:#6b7280">{tag_info.get('protocol_use','')}</span></td>
-</tr>"""
-
-    body = f"""
-<div class="wrap">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px">
-    <h1 style="font-size:22px;font-weight:700">Literatuuroverzicht</h1>
-    <a href="/library" class="btn btn-secondary">← Bibliotheek</a>
-  </div>
-
-  <div class="section" style="margin-bottom:24px">
-    <div class="section-head"><span class="section-title">Ingested boeken</span></div>
-    <table>
-      <thead><tr>
-        <th>Bestand</th><th style="text-align:right">Chunks</th>
-        <th style="text-align:right">Afb. (goedgekeurd/totaal)</th>
-        <th>Bruikbaarheid</th>
-        <th style="text-align:center">Score</th><th></th>
-      </tr></thead>
-      <tbody>{''.join([rows]) if rows else '<tr><td colspan="6" style="color:#9ca3af">Geen boeken</td></tr>'}</tbody>
-    </table>
-  </div>
-
-  <div class="section">
-    <div class="section-head">
-      <span class="section-title">Bruikbaarheidsdefinities</span>
-      <span style="font-size:12px;color:#6b7280">{USABILITY_TAGS_FILE}</span>
-    </div>
-    <table>
-      <thead><tr><th>Tag</th><th>Beschrijving</th><th>Gebruik in protocol</th></tr></thead>
-      <tbody>{tag_rows or '<tr><td colspan="3" style="color:#9ca3af">Geen tags</td></tr>'}</tbody>
-    </table>
-  </div>
-</div>
-<script>
-function retag(filename) {{
-  if (!confirm('Heranalyseer AI-tags voor ' + filename + '?')) return;
-  fetch('/library/retag/' + encodeURIComponent(filename), {{method:'POST'}})
-    .then(r => r.json())
-    .then(d => alert(d.status || JSON.stringify(d)))
-    .catch(e => alert('Fout: ' + e));
-}}
-</script>"""
-    return _page_shell("Literatuuroverzicht", "/library", body)
 
 
 # ── POST /library/retag/{filename} ────────────────────────────────────────────

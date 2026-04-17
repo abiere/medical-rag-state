@@ -1,0 +1,47 @@
+{
+  "book": "Bates' Guide To Physical Examination and History Taking_nodrm.epub",
+  "collection": "medical_library",
+  "audited_at": "2026-04-17T14:46:59.447512+00:00",
+  "total_chunks": 1251,
+  "structural": {
+    "total_chunks": 1251,
+    "avg_chunk_words": 454.3,
+    "short_chunks": 0,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 458,
+    "images_extracted": 41283,
+    "translation_applied": false,
+    "epub_strategy": "ebooklib",
+    "pdf_type": null
+  },
+  "llm_audit": {
+    "sample_size": 15,
+    "avg_coherence": 4.57,
+    "avg_completeness": 4.36,
+    "avg_terminology": 4.93,
+    "avg_translation": 4.64,
+    "quality_score": 4.62,
+    "flagged_chunks": 2,
+    "suggestion": "None"
+  },
+  "auto_classification": {
+    "primary_use": [],
+    "secondary_use": [],
+    "image_quality": "unknown",
+    "image_type": "",
+    "recommended_collection": "",
+    "confidence": 0.0
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

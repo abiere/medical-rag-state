@@ -1,0 +1,57 @@
+{
+  "filename": "Quantum-Touch 2.0 - The New Human_ Discovering and Becoming_nodrm.epub",
+  "book_hash": "31520470b6bc993c",
+  "filepath": "/root/medical-rag/books/medical_literature/Quantum-Touch 2.0 - The New Human_ Discovering and Becoming_nodrm.epub",
+  "collection": "medical_library",
+  "library_category": "medical_literature",
+  "started_at": "2026-04-17T14:56:49.964002+00:00",
+  "updated_at": "2026-04-17T15:03:17.276630+00:00",
+  "completed_at": "2026-04-17T15:03:17.276622+00:00",
+  "phases": {
+    "parse": {
+      "status": "done",
+      "started_at": "2026-04-17T14:56:49.964795+00:00",
+      "completed_at": "2026-04-17T14:56:55.169154+00:00",
+      "pages_total": 158,
+      "pages_done": 158,
+      "chunks_extracted": 158,
+      "images_extracted": 88,
+      "parse_method": null,
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": [],
+      "ocr_engine": "native"
+    },
+    "audit": {
+      "status": "done",
+      "started_at": "2026-04-17T14:56:55.256086+00:00",
+      "completed_at": "2026-04-17T15:01:39.530086+00:00",
+      "chunks_total": 158,
+      "chunks_tagged": 158,
+      "chunks_skipped": 0,
+      "ollama_available": true,
+      "consecutive_failures_hit": false,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "done",
+      "started_at": "2026-04-17T15:01:39.533260+00:00",
+      "completed_at": "2026-04-17T15:03:17.035622+00:00",
+      "chunks_total": 158,
+      "chunks_done": 158,
+      "vectors_per_minute": 99.9,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-17T15:03:17.025373+00:00",
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "done",
+      "started_at": "2026-04-17T15:03:17.040107+00:00",
+      "completed_at": "2026-04-17T15:03:17.273374+00:00",
+      "chunks_inserted": 158,
+      "collection": "medical_library"
+    }
+  },
+  "image_extraction_enabled": true,
+  "parse_retry_count": 0
+}

@@ -297,7 +297,11 @@
       "image_source": "epub",
       "image_priority": "high",
       "image_priority_override": null,
-      "image_evaluated": false
+      "image_evaluated": false,
+      "server_path": "/root/medical-rag/books/medical_literature/Anatomy Trains_ Myofascial Meridians for Manual and Movement Therapists_nodrm.epub",
+      "server_filename": "Anatomy Trains_ Myofascial Meridians for Manual and Movement Therapists_nodrm.epub",
+      "ingested": true,
+      "ingested_at": "2026-04-17T14:38:20.634060+00:00"
     },
     "guyton": {
       "k": 1,
@@ -1088,6 +1092,34 @@
       "ingested_at": "2026-04-17T11:46:51.671853+00:00",
       "filename_patterns": [
         "QRS 101 Operating Manual.pdf"
+      ],
+      "notes": "Auto-added \u2014 needs manual K/A/I classification"
+    },
+    "unclassified_Bates' Guide To Physical Exami": {
+      "k": 2,
+      "a": 2,
+      "i": 2,
+      "role": "unclassified",
+      "server_path": "/root/medical-rag/books/medical_literature/Bates' Guide To Physical Examination and History Taking_nodrm.epub",
+      "server_filename": "Bates' Guide To Physical Examination and History Taking_nodrm.epub",
+      "ingested": true,
+      "ingested_at": "2026-04-17T14:56:49.960796+00:00",
+      "filename_patterns": [
+        "Bates' Guide To Physical Examination and History Taking_nodrm.epub"
+      ],
+      "notes": "Auto-added \u2014 needs manual K/A/I classification"
+    },
+    "unclassified_Quantum-Touch 2.0 - The New Hu": {
+      "k": 2,
+      "a": 2,
+      "i": 2,
+      "role": "unclassified",
+      "server_path": "/root/medical-rag/books/medical_literature/Quantum-Touch 2.0 - The New Human_ Discovering and Becoming_nodrm.epub",
+      "server_filename": "Quantum-Touch 2.0 - The New Human_ Discovering and Becoming_nodrm.epub",
+      "ingested": true,
+      "ingested_at": "2026-04-17T15:03:17.278374+00:00",
+      "filename_patterns": [
+        "Quantum-Touch 2.0 - The New Human_ Discovering and Becoming_nodrm.epub"
       ],
       "notes": "Auto-added \u2014 needs manual K/A/I classification"
     }

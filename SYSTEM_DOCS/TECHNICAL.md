@@ -115,17 +115,19 @@ State machine per boek: `data/ingest_cache/{book_hash}/state.json`
 
 - **Engine:** Whisper (lokaal)
 - **Queue:** `/tmp/transcription_queue.json` — sequentieel (1 video tegelijk)
-- **Huidige staat:** actief, 19 video's in queue
+- **Huidige staat:** 21 video's klaar; service herstart automatisch elke 30s (Restart=always)
+- **Grote bestanden:** `_split_video_if_needed()` — ffmpeg opsplitsen in 20-min segmenten bij >400 MB; segmenten opgeslagen in `videos/{type}/{stem}_segments/`; transcripties worden gecombineerd
 - **Skip mechanisme:**
   ```json
   // config/settings.json (gitignored)
   "transcription": {
     "skip_files": ["1.Upper_Body_Techniques.mp4"],
-    "max_file_size_mb": 400
+    "max_file_size_mb": 2000
   }
   ```
 - **ETA model:** `data/transcription_stats.json` — gewogen gemiddelde sec/MB (recency-weighted: w = 1/(days+1))
 - **Pauze:** touch `/tmp/transcription_pause`
+- **systemd:** `Restart=always RestartSec=30` — nieuwe uploads worden automatisch opgepikt na max 30s
 
 ---
 
@@ -258,7 +260,6 @@ Fase 5 drawer: `not_applicable` → "N.v.t.", `running` → "Bezig" + progressba
 | `/` | Dashboard — CPU/RAM/services/Qdrant stats |
 | `/library` | Catalogus — legenda bovenaan (K/A/I, gebruiksprofiel, audit score), K/A/I badges met inline beschrijving (verticaal gestapeld), 6 tabs, chunk counts, delete |
 | `/library/ingest` | Upload + ingest queue + voortgang widget |
-| `/library/overview` | Literatuuroverzicht met audit scores |
 | `/search` | RAG zoeken + afbeelding zoeken + streaming |
 | `/images` | Afbeeldingen browser + goedkeuring |
 | `/videos` | Upload + transcriptie queue |

@@ -220,6 +220,65 @@ def _update_stats(filename: str, video_path: Path, duration_seconds: float) -> N
         log.warning(f"Stats write failed: {exc}")
 
 
+# ── video splitting ────────────────────────────────────────────────────────────
+
+def _split_video_if_needed(
+    video_path: Path,
+    max_mb: int = 400,
+    segment_minutes: int = 20,
+) -> list[Path]:
+    """
+    Split video into segments if larger than max_mb.
+    Returns list of segment paths (or [video_path] if no split needed).
+    Uses ffmpeg stream copy (no re-encoding — fast).
+    """
+    size_mb = video_path.stat().st_size / 1024 / 1024
+    if size_mb <= max_mb:
+        return [video_path]
+
+    segment_dir = video_path.parent / f"{video_path.stem}_segments"
+    existing = sorted(segment_dir.glob(f"{video_path.stem}_part*.mp4"))
+    if existing:
+        log.info("Using existing segments for %s: %d parts", video_path.name, len(existing))
+        return existing
+
+    segment_dir.mkdir(exist_ok=True)
+    log.info("Splitting %s (%.0f MB) into %d-min segments", video_path.name, size_mb, segment_minutes)
+    segment_pattern = str(segment_dir / f"{video_path.stem}_part%03d.mp4")
+    cmd = [
+        "ffmpeg", "-i", str(video_path),
+        "-c", "copy", "-map", "0",
+        "-segment_time", str(segment_minutes * 60),
+        "-f", "segment", "-reset_timestamps", "1",
+        "-y", segment_pattern,
+    ]
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        log.error("ffmpeg split failed for %s: %s", video_path.name, result.stderr[-500:])
+        return [video_path]
+    segments = sorted(segment_dir.glob(f"{video_path.stem}_part*.mp4"))
+    log.info("Split %s into %d segments", video_path.name, len(segments))
+    return segments
+
+
+def _transcribe_segment(seg_path: Path, content_type: str) -> str:
+    """Run transcribe_videos.py on a single file/segment. Returns stdout text."""
+    result = subprocess.run(
+        [
+            "python3", str(BASE / "scripts" / "transcribe_videos.py"),
+            "--file", str(seg_path),
+            "--content-type", content_type,
+            "--stdout-only",
+        ],
+        cwd=BASE,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        log.error("Segment transcription failed %s: %s", seg_path.name, result.stderr[-400:])
+    return result.stdout
+
+
 # ── transcription ─────────────────────────────────────────────────────────────
 
 def _transcribe_one(item: dict) -> bool:
@@ -242,12 +301,6 @@ def _transcribe_one(item: dict) -> bool:
         log.warning(f"Skipping {vtype}/{filename} (in skip_files list)")
         return False
 
-    if file_mb > max_mb:
-        log.warning(
-            f"Skipping {vtype}/{filename} ({file_mb:.0f} MB > limit {max_mb:.0f} MB)"
-        )
-        return False
-
     stem = Path(filename).stem
     if (TRANS_DIR / f"{stem}.json").exists():
         log.info(f"Already transcribed, skipping: {filename}")
@@ -262,9 +315,41 @@ def _transcribe_one(item: dict) -> bool:
         "started": datetime.now().isoformat(),
     }))
 
-    log.info(f"START  {vtype}/{filename}")
+    log.info(f"START  {vtype}/{filename}  ({file_mb:.0f} MB)")
     t0 = time.time()
 
+    segments = _split_video_if_needed(video_path, max_mb=400, segment_minutes=20)
+    if len(segments) > 1:
+        log.info("Transcribing %d segments for %s", len(segments), filename)
+        results = []
+        for seg in segments:
+            result = subprocess.run(
+                [
+                    "python3", str(BASE / "scripts" / "transcribe_videos.py"),
+                    "--file", str(seg),
+                    "--content-type", content_type,
+                ],
+                cwd=BASE,
+                capture_output=True,
+                text=True,
+            )
+            results.append(result)
+            if result.returncode != 0:
+                log.error("Segment FAIL %s: %s", seg.name, result.stderr[-400:])
+
+        elapsed = time.time() - t0
+        success = all(r.returncode == 0 for r in results)
+        if success:
+            log.info(f"DONE   {vtype}/{filename}  ({elapsed:.0f}s, {len(segments)} segments)")
+            _update_stats(filename, video_path, elapsed)
+        else:
+            log.error(f"FAIL   {vtype}/{filename}  ({elapsed:.0f}s) — one or more segments failed")
+        Path(f"/tmp/transcribe_{filename}.log").write_text(
+            "\n\n".join(f"=== {s.name} ===\n{r.stdout}\n{r.stderr}" for s, r in zip(segments, results))
+        )
+        return success
+
+    # Single file (no split needed)
     result = subprocess.run(
         [
             "python3", str(BASE / "scripts" / "transcribe_videos.py"),

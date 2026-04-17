@@ -1,0 +1,50 @@
+{
+  "book": "Quantum-Touch 2.0 - The New Human_ Discovering and Becoming_nodrm.epub",
+  "collection": "medical_library",
+  "audited_at": "2026-04-17T15:01:39.523838+00:00",
+  "total_chunks": 158,
+  "structural": {
+    "total_chunks": 158,
+    "avg_chunk_words": 417.5,
+    "short_chunks": 0,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 0,
+    "images_extracted": 88,
+    "translation_applied": false,
+    "epub_strategy": "ebooklib",
+    "pdf_type": null
+  },
+  "llm_audit": {
+    "sample_size": 15,
+    "avg_coherence": 4.14,
+    "avg_completeness": 3.71,
+    "avg_terminology": 5.0,
+    "avg_translation": 5.0,
+    "quality_score": 4.46,
+    "flagged_chunks": 4,
+    "suggestion": "The chunk could be divided into two separate chunks, one discussing the purpose and benefits of meditation (first half) and another explaining how to quiet the mind using heart energy and the power of choice/allowance (second half)."
+  },
+  "auto_classification": {
+    "primary_use": [
+      "anatomy",
+      "physiology"
+    ],
+    "secondary_use": [],
+    "image_quality": "none",
+    "image_type": "text",
+    "recommended_collection": [],
+    "confidence": 0.5
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}
