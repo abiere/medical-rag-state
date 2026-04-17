@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 06:16:36 UTC**
+> Last update: **2026-04-17 06:18:23 UTC**
 
 ## Services
 | Service | Status |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `16_Expanded__Revised__and_New_Techniques.mp4` (32 min) |
+| Current job | `16_Expanded__Revised__and_New_Techniques.mp4` (34 min) |
 | Queued | 18 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 7.17 GB / 32.86 GB (22%) |
-| CPU | 99.9% |
+| RAM used | 7.36 GB / 32.86 GB (22%) |
+| CPU | 98.1% |
 | Disk used | 58.8 GB / 322.3 GB (19%) |
-| Uptime | up 41 minutes |
+| Uptime | up 43 minutes |
 
 ## Recent markers
 - `2026-04-17T05:44:05` **transcription_failed** — 1.Upper_Body_Techniques.mp4 FAILED (16/19)
