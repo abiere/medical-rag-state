@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 22:47:16 UTC**
+> Last update: **2026-04-17 22:52:16 UTC**
 
 ## Services
 | Service | Status |
@@ -14,18 +14,18 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Bates Guide to Physical Examination 14e editie - Bickley.epub` (38 min) |
-| Queued | 11 |
+| Current job | `CranioSacral Therapy Study Guide - Upledger.pdf` (3 min) |
+| Queued | 10 |
 | Total books | 37 |
 | Ingested | 63 |
-| Vectors in medical_library | 12345 |
+| Vectors in medical_library | 13596 |
 | Images pending approval | 2026 |
 | Images approved | 0 |
 
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (6 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (11 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 9.35 GB / 32.86 GB (28%) |
-| CPU | 99.9% |
-| Disk used | 69.7 GB / 322.3 GB (23%) |
-| Uptime | up 17 hours, 11 minutes |
+| RAM used | 11.65 GB / 32.86 GB (36%) |
+| CPU | 98.6% |
+| Disk used | 69.9 GB / 322.3 GB (23%) |
+| Uptime | up 17 hours, 16 minutes |
 
 ## Recent markers
+- `2026-04-17T22:48:20.513980+00:00` **book_ingested** — Bates Guide to Physical Examination 14e editie - Bickley.epub → medical_library: 1251 chunks
 - `2026-04-17T22:41:16.080646+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-17T22:11:15.512026+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-17T22:09:11.097173+00:00` **book_ingested** — Applied Kinesiology - Frost.pdf → medical_library: 409 chunks
 - `2026-04-17T21:41:15.153527+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
-- `2026-04-17T21:37:46.288534+00:00` **book_ingested** — An Introduction to Craniosacral Therapy - Kern.pdf → medical_library: 124 chunks
 
 ## Nightly Consistency
 ```
