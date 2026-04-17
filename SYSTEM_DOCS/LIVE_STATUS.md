@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 19:07:12 UTC**
+> Last update: **2026-04-17 19:11:48 UTC**
 
 ## Services
 | Service | Status |
@@ -14,10 +14,10 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Sobotta Atlas of Anatomy, Vol.1, 17th ed., English_Latin_ General anatomy and Musculoskeletal System_nodrm.epub` (21 min) |
+| Current job | `Sobotta Atlas of Anatomy, Vol.1, 17th ed., English_Latin_ General anatomy and Musculoskeletal System_nodrm.epub` (26 min) |
 | Queued | 4 |
-| Total books | 64 |
-| Ingested | 50 |
+| Total books | 18 |
+| Ingested | 51 |
 | Vectors in medical_library | 9226 |
 | Images pending approval | 2026 |
 | Images approved | 0 |
@@ -25,18 +25,18 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (26 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (2 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
-| Vectors in video_transcripts | 241 |
+| Vectors in video_transcripts | ? |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 14.8 GB / 32.86 GB (45%) |
-| CPU | 98.5% |
-| Disk used | 67.1 GB / 322.3 GB (22%) |
-| Uptime | up 13 hours, 31 minutes |
+| RAM used | 15.31 GB / 32.86 GB (47%) |
+| CPU | 99.9% |
+| Disk used | 67.2 GB / 322.3 GB (22%) |
+| Uptime | up 13 hours, 36 minutes |
 
 ## Recent markers
 - `2026-04-17T18:45:38.452192+00:00` **book_ingested** — Sobotta Atlas of Anatomy, Vol. 3, 17th ed., English_Latin_ Head, Neck and Neuroanatomy_nodrm.epub → medical_library: 381 chunks
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-17 18:11:11,501  INFO      Startup scan: 14 untranscribed video(s) found, 0 new entry/entries added to queue
-2026-04-17 18:11:11,501  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
-2026-04-17 18:11:11,502  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
-2026-04-17 18:11:11,502  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
-2026-04-17 18:41:12,013  INFO      ────────────────────────────────────────────────────────────
-2026-04-17 18:41:12,013  INFO      Transcription queue manager started
 2026-04-17 18:41:12,014  INFO      Startup scan: 14 untranscribed video(s) found, 0 new entry/entries added to queue
 2026-04-17 18:41:12,014  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
 2026-04-17 18:41:12,015  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
 2026-04-17 18:41:12,015  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
+2026-04-17 19:09:12,065  INFO      ────────────────────────────────────────────────────────────
+2026-04-17 19:09:12,066  INFO      Transcription queue manager started
+2026-04-17 19:09:12,067  INFO      Startup scan: 14 untranscribed video(s) found, 0 new entry/entries added to queue
+2026-04-17 19:09:12,068  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
+2026-04-17 19:09:12,069  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
+2026-04-17 19:09:12,069  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
 ```
