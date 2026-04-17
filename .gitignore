@@ -44,3 +44,4 @@ build/
 *.swo
 .idea/
 .vscode/
+config/google_vision_key.json

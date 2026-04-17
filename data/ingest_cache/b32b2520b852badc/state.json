@@ -5,7 +5,7 @@
   "collection": "medical_library",
   "library_category": "medical_literature",
   "started_at": null,
-  "updated_at": "2026-04-17T05:47:21.075146+00:00",
+  "updated_at": "2026-04-17T05:58:10.036932+00:00",
   "completed_at": null,
   "phases": {
     "parse": {
@@ -14,7 +14,7 @@
       "completed_at": null,
       "error": null,
       "pages_total": 460,
-      "pages_done": 10,
+      "pages_done": 360,
       "chunks_extracted": null,
       "output_file": "phase1_chunks.json",
       "warnings": []
