@@ -5,12 +5,12 @@
   "collection": "device_documentation",
   "library_category": "device",
   "started_at": "2026-04-16T20:26:05.263751+00:00",
-  "updated_at": "2026-04-17T08:32:00.936042+00:00",
+  "updated_at": "2026-04-17T11:00:44.497476+00:00",
   "completed_at": null,
   "phases": {
     "parse": {
       "status": "failed",
-      "started_at": "2026-04-17T08:31:42.013954+00:00",
+      "started_at": "2026-04-17T10:59:44.486021+00:00",
       "completed_at": null,
       "pages_total": 1,
       "pages_done": 0,
@@ -58,5 +58,9 @@
       "last_run": null,
       "note": "Nightly job — does not block main pipeline"
     }
-  }
+  },
+  "parse_retry_count": 3,
+  "status": "permanently_failed",
+  "permanently_failed_at": "2026-04-17T11:00:44.497464+00:00",
+  "permanently_failed_reason": "Parse failed 3 times — manual intervention required"
 }

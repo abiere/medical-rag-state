@@ -1,0 +1,51 @@
+{
+  "book": "QRS101 Quick start - English.pdf",
+  "collection": "device_documentation",
+  "audited_at": "2026-04-17T11:39:47.466604+00:00",
+  "total_chunks": 1,
+  "structural": {
+    "total_chunks": 1,
+    "avg_chunk_words": 100.0,
+    "short_chunks": 0,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 0,
+    "images_extracted": 9,
+    "translation_applied": false,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 1
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 1,
+    "quality_score": null,
+    "flagged_chunks": 0,
+    "error": "All LLM calls failed"
+  },
+  "auto_classification": {
+    "primary_use": [
+      "nrt_treatment"
+    ],
+    "secondary_use": [],
+    "image_quality": "none",
+    "image_type": "text-only instructions for using a device, likely containing diagrams",
+    "recommended_collection": "device_documentation",
+    "confidence": 1.0
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "low_quality"
+}

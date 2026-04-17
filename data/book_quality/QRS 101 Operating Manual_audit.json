@@ -1,0 +1,48 @@
+{
+  "book": "QRS 101 Operating Manual.pdf",
+  "collection": "device_documentation",
+  "audited_at": "2026-04-17T11:46:43.403040+00:00",
+  "total_chunks": 3,
+  "structural": {
+    "total_chunks": 3,
+    "avg_chunk_words": 285.3,
+    "short_chunks": 0,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 0,
+    "images_extracted": 12,
+    "translation_applied": false,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 3
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 3,
+    "avg_coherence": 5.0,
+    "avg_completeness": 5.0,
+    "avg_terminology": 5.0,
+    "avg_translation": 5.0,
+    "quality_score": 5.0,
+    "flagged_chunks": 0,
+    "suggestion": "none"
+  },
+  "auto_classification": {
+    "error": "classification failed"
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

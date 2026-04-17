@@ -1,0 +1,56 @@
+{
+  "filename": "QRS 101 Indication Settings English.pdf",
+  "book_hash": "85b943d93c95e78b",
+  "filepath": "/root/medical-rag/books/device/QRS 101 Indication Settings English.pdf",
+  "collection": "device_documentation",
+  "library_category": "device",
+  "started_at": "2026-04-17T11:39:53.788537+00:00",
+  "updated_at": "2026-04-17T11:44:43.512334+00:00",
+  "completed_at": "2026-04-17T11:44:43.512321+00:00",
+  "phases": {
+    "parse": {
+      "status": "done",
+      "started_at": "2026-04-17T11:39:53.923441+00:00",
+      "completed_at": "2026-04-17T11:39:54.460612+00:00",
+      "pages_total": 8,
+      "pages_done": 8,
+      "chunks_extracted": 9,
+      "images_extracted": 11,
+      "parse_method": null,
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": [],
+      "ocr_engine": "native"
+    },
+    "audit": {
+      "status": "done",
+      "started_at": "2026-04-17T11:39:54.462368+00:00",
+      "completed_at": "2026-04-17T11:44:30.126290+00:00",
+      "chunks_total": 9,
+      "chunks_tagged": 9,
+      "chunks_skipped": 0,
+      "ollama_available": true,
+      "consecutive_failures_hit": false,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "done",
+      "started_at": "2026-04-17T11:44:30.127101+00:00",
+      "completed_at": "2026-04-17T11:44:43.433311+00:00",
+      "chunks_total": 9,
+      "chunks_done": 9,
+      "vectors_per_minute": 50.3,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-17T11:44:43.432126+00:00",
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "done",
+      "started_at": "2026-04-17T11:44:43.434497+00:00",
+      "completed_at": "2026-04-17T11:44:43.510733+00:00",
+      "chunks_inserted": 9,
+      "collection": "device_documentation"
+    }
+  },
+  "parse_retry_count": 0
+}

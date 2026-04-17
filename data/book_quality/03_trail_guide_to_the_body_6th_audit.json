@@ -1,0 +1,53 @@
+{
+  "book": "03_trail_guide_to_the_body_6th.pdf",
+  "collection": "medical_library",
+  "audited_at": "2026-04-17T10:42:21.236834+00:00",
+  "total_chunks": 473,
+  "structural": {
+    "total_chunks": 473,
+    "avg_chunk_words": 259.8,
+    "short_chunks": 9,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 0,
+    "images_extracted": 473,
+    "translation_applied": true,
+    "epub_strategy": null,
+    "pdf_type": "scanned",
+    "ocr_statistics": {
+      "total_pages": 460,
+      "readable_pages": 453,
+      "unreadable_pages": 7,
+      "engine_usage": {
+        "rapidocr": 452,
+        "none": 7,
+        "tesseract": 1
+      },
+      "avg_confidence": 0.975
+    }
+  },
+  "llm_audit": {
+    "sample_size": 15,
+    "avg_coherence": 5.0,
+    "avg_completeness": 4.33,
+    "avg_terminology": 5.0,
+    "avg_translation": 5.0,
+    "quality_score": 4.83,
+    "flagged_chunks": 0,
+    "suggestion": "Include more details about the function or role of each muscle group to increase completeness."
+  },
+  "auto_classification": {
+    "error": "classification failed"
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

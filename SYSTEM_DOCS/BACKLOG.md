@@ -69,6 +69,20 @@
 
 ---
 
+## ✅ Afgerond — sessie 2026-04-17 (vision bbox image extraction rewrite)
+
+- [x] **`image_extractor.py` volledig herschreven** — vision bbox approach:
+      Tier 1 (≤50 PyMuPDF chars + var>500): rasterized diagram → full-page capture
+      Tier 2 (>2000 PyMuPDF chars): dense text page → skip Vision API (kostenbesparend)
+      Tier 3 (50-2000 chars): Vision text-sparse zone detectie via 60×60 BFS grid
+- [x] **`_find_figure_regions()`** — BFS op lege cellen; filtert op area≥5%, h≥8%, w≥15%, density≥0.55
+- [x] **`_extract_alt_text()`** — tekst boven/onder figure zone als alt-tekst
+- [x] **`_get_vision_response()`** — helper voor Vision document_text_detection
+- [x] **`max_pages` parameter** — test-limiet voor `extract_figures_from_pdf()`
+- [x] **Re-extractie gestart** — Deadman + Travell opnieuw in gang gezet met nieuw algoritme
+
+---
+
 ## ✅ Afgerond — sessie 2026-04-17 (image extraction toggle)
 
 - [x] **`_blank_state()` in book_ingest_queue.py** — `image_extraction_enabled: True` standaard

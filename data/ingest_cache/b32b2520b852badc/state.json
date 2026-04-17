@@ -5,49 +5,51 @@
   "collection": "medical_library",
   "library_category": "medical_literature",
   "started_at": null,
-  "updated_at": "2026-04-17T09:42:57.719163+00:00",
-  "completed_at": null,
+  "updated_at": "2026-04-17T10:49:49.777884+00:00",
+  "completed_at": "2026-04-17T10:49:49.777875+00:00",
   "phases": {
     "parse": {
-      "status": "running",
+      "status": "done",
       "started_at": "2026-04-17T08:50:42.348849+00:00",
-      "completed_at": null,
+      "completed_at": "2026-04-17T10:33:32.193774+00:00",
       "error": "No chunks produced",
       "pages_total": 460,
-      "pages_done": 260,
-      "chunks_extracted": null,
+      "pages_done": 460,
+      "chunks_extracted": 473,
       "output_file": "phase1_chunks.json",
-      "warnings": []
+      "warnings": [],
+      "images_extracted": 473,
+      "ocr_engine": "rapidocr"
     },
     "audit": {
-      "status": "pending",
-      "started_at": null,
-      "completed_at": null,
-      "chunks_total": null,
-      "chunks_tagged": 0,
+      "status": "done",
+      "started_at": "2026-04-17T10:33:32.204734+00:00",
+      "completed_at": "2026-04-17T10:42:21.248647+00:00",
+      "chunks_total": 473,
+      "chunks_tagged": 473,
       "chunks_skipped": 0,
-      "ollama_available": null,
+      "ollama_available": true,
       "consecutive_failures_hit": false,
       "output_file": "phase2_audited.json"
     },
     "embed": {
-      "status": "pending",
-      "started_at": null,
-      "completed_at": null,
+      "status": "done",
+      "started_at": "2026-04-17T10:42:21.258583+00:00",
+      "completed_at": "2026-04-17T10:49:48.212609+00:00",
       "error": null,
-      "chunks_total": null,
-      "chunks_done": 0,
-      "vectors_per_minute": null,
-      "eta_minutes": null,
-      "last_progress_at": null,
+      "chunks_total": 473,
+      "chunks_done": 473,
+      "vectors_per_minute": 64.0,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-17T10:49:48.180609+00:00",
       "output_file": "phase3_vectors.npy"
     },
     "qdrant": {
-      "status": "pending",
-      "started_at": null,
-      "completed_at": null,
+      "status": "done",
+      "started_at": "2026-04-17T10:49:48.237583+00:00",
+      "completed_at": "2026-04-17T10:49:49.768600+00:00",
       "error": null,
-      "chunks_inserted": 0,
+      "chunks_inserted": 473,
       "collection": "medical_library"
     },
     "image_screen": {
@@ -60,5 +62,5 @@
     }
   },
   "status": "pending",
-  "parse_retry_count": 1
+  "parse_retry_count": 0
 }
