@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 19:27:12 UTC**
+> Last update: **2026-04-17 19:32:12 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Sobotta Tables of Muscles, Joints and Nerves, English_Latin_ Tables to 17th ed. of the Sobotta Atlas_nodrm.epub` (9 min) |
+| Current job | `Sobotta Tables of Muscles, Joints and Nerves, English_Latin_ Tables to 17th ed. of the Sobotta Atlas_nodrm.epub` (14 min) |
 | Queued | 3 |
 | Total books | 18 |
 | Ingested | 51 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (18 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (23 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in video_transcripts | ? |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 14.64 GB / 32.86 GB (45%) |
+| RAM used | 14.82 GB / 32.86 GB (45%) |
 | CPU | 100.0% |
 | Disk used | 67.3 GB / 322.3 GB (22%) |
-| Uptime | up 13 hours, 51 minutes |
+| Uptime | up 13 hours, 56 minutes |
 
 ## Recent markers
 - `2026-04-17T19:17:21.581653+00:00` **book_ingested** — Sobotta Atlas of Anatomy, Vol.1, 17th ed., English_Latin_ General anatomy and Musculoskeletal System_nodrm.epub → medical_library: 372 chunks
