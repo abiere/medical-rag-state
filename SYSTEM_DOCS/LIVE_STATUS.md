@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 11:21:44 UTC**
+> Last update: **2026-04-17 11:26:44 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `QRS-101-Home-System-Brochure.pdf` (14 min) |
+| Current job | `QRS-101-Home-System-Brochure.pdf` (19 min) |
 | Queued | 4 |
 | Total books | 49 |
 | Ingested | 37 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `16_Expanded__Revised__and_New_Techniques.mp4` (1 min) |
+| Current job | `16_Expanded__Revised__and_New_Techniques.mp4` (6 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 7.85 GB / 32.86 GB (24%) |
+| RAM used | 14.55 GB / 32.86 GB (44%) |
 | CPU | 100.0% |
-| Disk used | 59.3 GB / 322.3 GB (19%) |
-| Uptime | up 5 hours, 46 minutes |
+| Disk used | 59.4 GB / 322.3 GB (19%) |
+| Uptime | up 5 hours, 51 minutes |
 
 ## Recent markers
 - `2026-04-17T11:20:45.066077+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
