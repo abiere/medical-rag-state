@@ -1,6 +1,6 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-17 — library speed + video splitting + cleanup
+> Laatste update: 2026-04-17 — /images pagina volledige rewrite
 
 ---
 
@@ -64,6 +64,23 @@
 - [ ] Officiële Deadman digitale versie aanschaffen (DRM-vrij via Eastland Press)
 - [ ] Consistentie guardian cross-collectie
 - [ ] Protocol pre-validatie (Ollama checkt dekking voor generatie)
+
+---
+
+## ✅ Afgerond — sessie 2026-04-17 (/images pagina volledige rewrite)
+
+- [x] **`/images` pagina volledig herschreven** — server rendert alleen collapsed book rows; thumbnails laden via JS on demand
+      Root cause blank thumbnails: `img.get("file","")` → correct: `img.get("filename","")` (alle metadata gebruikt `"filename"` key)
+      Nieuwe endpoint: `GET /api/images/book/{book_hash}?offset=0&limit=50&filter=all|with_alt|without_alt`
+      Retourneert: `total`, `total_with_alt`, `total_without_alt`, paginered `images[]` met `url`, `filename`, `alt_text`
+      Nieuw endpoint: `POST /api/images/book/{book_hash}/delete` — verwijdert geselecteerde afbeeldingen van schijf + metadata
+      Lazy loading: eerste boek auto-expanded; "Meer laden" knop per boek (50 per keer)
+      Lightbox: klik op 🔍 icoon opent overlay met volledig formaat afbeelding + alt-tekst
+      Multi-select: checkbox per thumbnail, "Verwijder geselecteerde" knop verschijnt bij selectie
+      Filter per boek: Alle | Met ALT | Zonder ALT (live, geen page reload)
+      Sortering: meeste afbeeldingen eerst (Bates 1498, Anatomy Trains 531, etc.)
+      Prioriteit dropdown: behouden, via bestaand `POST /api/images/priority` endpoint
+      Performance: 1498-image Bates laadt in <100ms vs eerder server-side pre-render van 20 caps
 
 ---
 
