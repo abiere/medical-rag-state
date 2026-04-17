@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 18:55:43 UTC**
+> Last update: **2026-04-17 18:57:12 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Sobotta Atlas of Anatomy, Vol.1, 17th ed., English_Latin_ General anatomy and Musculoskeletal System_nodrm.epub` (10 min) |
+| Current job | `Sobotta Atlas of Anatomy, Vol.1, 17th ed., English_Latin_ General anatomy and Musculoskeletal System_nodrm.epub` (11 min) |
 | Queued | 4 |
 | Total books | 64 |
 | Ingested | 50 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (14 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (16 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in video_transcripts | 241 |
@@ -34,9 +34,9 @@
 | Metric | Value |
 |---|---|
 | RAM used | 14.36 GB / 32.86 GB (44%) |
-| CPU | 99.5% |
+| CPU | 100.0% |
 | Disk used | 67.1 GB / 322.3 GB (22%) |
-| Uptime | up 13 hours, 20 minutes |
+| Uptime | up 13 hours, 21 minutes |
 
 ## Recent markers
 - `2026-04-17T18:45:38.452192+00:00` **book_ingested** — Sobotta Atlas of Anatomy, Vol. 3, 17th ed., English_Latin_ Head, Neck and Neuroanatomy_nodrm.epub → medical_library: 381 chunks
