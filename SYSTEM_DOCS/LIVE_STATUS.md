@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 01:37:37 UTC**
+> Last update: **2026-04-17 01:42:37 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `03_trail_guide_to_the_body_6th.pdf` (591 min) |
+| Current job | `03_trail_guide_to_the_body_6th.pdf` (596 min) |
 | Queued | 4 |
 | Total books | 43 |
 | Ingested | 35 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` (27 min) |
+| Current job | `1.Upper_Body_Techniques.mp4` (2 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 7.71 GB / 32.86 GB (24%) |
-| CPU | 100.0% |
-| Disk used | 59.6 GB / 322.3 GB (19%) |
-| Uptime | up 2 days, 15 hours, 54 minutes |
+| RAM used | 7.45 GB / 32.86 GB (23%) |
+| CPU | 99.2% |
+| Disk used | 59.7 GB / 322.3 GB (19%) |
+| Uptime | up 2 days, 15 hours, 59 minutes |
 
 ## Recent markers
+- `2026-04-17T01:40:37.484283+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-17T01:10:36.937634+00:00` **watchdog_restart** — transcription-queue hung (37 min stale) — restarted successfully
 - `2026-04-17T00:36:30.945139+00:00` **book_ingested** — test_acupuncture.pdf → medical_library: 2 chunks
 - `2026-04-16T21:35:10.096134+00:00` **book_ingested** — NRT UB Techniques and Fundamentals - Times.pdf → device_documentation: 2 chunks
 - `2026-04-16T21:33:03.579644+00:00` **book_ingested** — NRT LB Techniques and Fundamentals - Times.pdf → device_documentation: 2 chunks
-- `2026-04-16T21:30:47.966575+00:00` **book_ingested** — how-flexbeam-works-for-your-body.pdf → device_documentation: 44 chunks
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-17 00:31:17,976  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-17 00:31:47,976  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-17 00:32:17,977  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-17 00:32:47,977  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-17 00:33:17,978  INFO      Queue paused (pause flag set) — waiting 30s
 2026-04-17 00:33:47,979  INFO      START  nrt/1.Upper_Body_Techniques.mp4
 2026-04-17 01:10:36,974  INFO      ────────────────────────────────────────────────────────────
 2026-04-17 01:10:36,974  INFO      Transcription queue manager started
 2026-04-17 01:10:36,975  INFO      Startup scan: 19 untranscribed video(s) found, 0 new entry/entries added to queue
 2026-04-17 01:10:36,976  INFO      START  nrt/1.Upper_Body_Techniques.mp4
+2026-04-17 01:40:37,523  INFO      ────────────────────────────────────────────────────────────
+2026-04-17 01:40:37,523  INFO      Transcription queue manager started
+2026-04-17 01:40:37,524  INFO      Startup scan: 19 untranscribed video(s) found, 0 new entry/entries added to queue
+2026-04-17 01:40:37,525  INFO      START  nrt/1.Upper_Body_Techniques.mp4
 ```
