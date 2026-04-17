@@ -22,9 +22,7 @@
       Vereiste: Deadman chunks in Qdrant (kai_a=1)
       Test: `python3 /root/medical-rag/scripts/generate_protocol.py "Etalagebenen"`
 
-- [ ] **1.Upper_Body_Techniques.mp4 verwijderen uit skip_files + opnieuw transcriberen**
-      Staat in `skip_files` in settings.json — nu dat ffmpeg splitting werkt kan dit opgepakt worden
-      Verwijder uit skip_files → transcription-queue pikt het op bij herstart
+- [x] **1.Upper_Body_Techniques.mp4 verwijderen uit skip_files** ✅ — verwijderd uit settings.json; transcription-queue geherstart; 14 videos in queue waaronder dit bestand
 
 ---
 

@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 15:07:08 UTC**
+> Last update: **2026-04-17 15:07:18 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Quantum-Touch Core Transformation_ A New Way to Heal and Alter Reality_nodrm.epub` (3 min) |
+| Current job | `Quantum-Touch Core Transformation_ A New Way to Heal and Alter Reality_nodrm.epub` (4 min) |
 | Queued | 4 |
 | Total books | 57 |
 | Ingested | 43 |
@@ -33,7 +33,7 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 14.92 GB / 32.86 GB (45%) |
+| RAM used | 13.77 GB / 32.86 GB (42%) |
 | CPU | 100.0% |
 | Disk used | 62.1 GB / 322.3 GB (20%) |
 | Uptime | up 9 hours, 31 minutes |
