@@ -1823,6 +1823,10 @@ def _compute_book_status(state: dict) -> str:
     if skipped > 0:
         return "audit_lopend"
 
+    # Explicitly disabled by user → treat as klaar
+    if not state.get("image_extraction_enabled", True):
+        return "klaar"
+
     # Check images
     book_hash    = state.get("book_hash", "")
     filename     = state.get("filename", "")
@@ -1895,14 +1899,16 @@ def _book_status(filename: str) -> dict:
             "book_hash": ""}
 
 
-def _enqueue_book(filename: str, filepath: str, collection: str, category: str, fmt: str) -> None:
+def _enqueue_book(filename: str, filepath: str, collection: str, category: str, fmt: str,
+                  image_extraction_enabled: bool = True) -> None:
     entry = {
-        "filename":        filename,
-        "filepath":        filepath,
-        "collection":      collection,
-        "source_category": category,
-        "format":          fmt,
-        "requested":       datetime.now().isoformat(),
+        "filename":                 filename,
+        "filepath":                 filepath,
+        "collection":               collection,
+        "source_category":          category,
+        "format":                   fmt,
+        "requested":                datetime.now().isoformat(),
+        "image_extraction_enabled": image_extraction_enabled,
     }
     try:
         q = json.loads(BOOK_QUEUE_FILE.read_text()) if BOOK_QUEUE_FILE.exists() else []
@@ -2053,6 +2059,14 @@ def _library_section_html(section_key: str) -> str:
     <form id="form-{section_key}" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
       <input type="file" name="file" accept=".pdf,.epub" multiple
              style="flex:1;min-width:200px" required>
+      <div style="flex-basis:100%;display:flex;align-items:center;gap:8px;margin-top:4px">
+        <input type="checkbox" id="enable-images-{section_key}" name="enable_images" checked
+               style="width:14px;height:14px;cursor:pointer">
+        <label for="enable-images-{section_key}"
+               style="font-size:13px;color:#6b7280;cursor:pointer">
+          Afbeeldingen extraheren na verwerking
+        </label>
+      </div>
       <button type="button" onclick="uploadBook('{section_key}')"
               class="btn btn-primary">Uploaden + ingesteren</button>
       <span id="upload-msg-{section_key}" style="font-size:13px;color:#059669"></span>
@@ -2547,6 +2561,7 @@ async function toggleBookDetail(row, bookHash) {
       itemTitle:  item.title      || '',
       itemColl:   item.collection || '',
       chunkCount: item.chunk_count || 0,
+      bookHash:   bookHash,
     });
   } catch(e) {
     placeholder.innerHTML = '<div style="font-size:12px;color:#dc2626;padding:6px 0">Fout: ' + e + '</div>';
@@ -2774,6 +2789,12 @@ function buildPhaseTable(d, meta) {
         ieccol   = '#d1d5db';
         ieicon   = '\u2014';
       }
+    } else if (ieSt === 'disabled') {
+      iePillLb = 'Uit';
+      iePillSt = 'background:#f3f4f6;color:#6b7280';
+      ieccol   = '#d1d5db';
+      ieicon   = '\u2014';
+      ieDetail = 'Afbeeldingen extractie uitgeschakeld';
     }
     const ieRunning = ieSt === 'running';
     const iePill  = `<span style="${iePillSt};border-radius:999px;padding:2px 8px;font-size:11px;font-weight:600">${iePillLb}</span>`;
@@ -2800,6 +2821,28 @@ function buildPhaseTable(d, meta) {
   }
 
   html += '</tbody></table>';
+
+  // ── Image extraction toggle row ───────────────────────────────────────────────
+  {
+    const imgHash    = meta.bookHash || '';
+    const imgEnabled = d.image_extraction_enabled !== false;
+    const toggleId   = 'img-toggle-' + imgHash;
+    if (imgHash) {
+      html += '<div style="padding:10px 0 6px;border-top:0.5px solid #e2e8f0;'
+        + 'display:flex;align-items:center;justify-content:space-between">'
+        + '<span style="font-size:12px;color:#6b7280">Afbeeldingen extraheren</span>'
+        + '<label style="display:flex;align-items:center;gap:6px;cursor:pointer">'
+          + '<input type="checkbox" id="' + escHtml(toggleId) + '"'
+            + (imgEnabled ? ' checked' : '')
+            + ' onchange="confirmImageToggle(\'' + escJs(imgHash) + '\',this.checked,this)"'
+            + ' style="width:14px;height:14px;cursor:pointer">'
+          + '<span id="' + escHtml(toggleId) + '-lbl" style="font-size:12px;color:#6b7280">'
+            + (imgEnabled ? 'Aan' : 'Uit')
+          + '</span>'
+        + '</label>'
+        + '</div>';
+    }
+  }
 
   // Delete button at drawer bottom — use data attributes to avoid quote escaping issues
   const delItemId = meta.itemId     || '';
@@ -2862,6 +2905,35 @@ async function confirmDelete() {
   } finally {
     btn.disabled = false;
     btn.textContent = 'Verwijder';
+  }
+}
+
+async function confirmImageToggle(hash, enabled, checkbox) {
+  const msg = enabled
+    ? 'Afbeeldingen extractie wordt gestart voor dit boek. Doorgaan?'
+    : 'Alle ge\u00ebxtraheerde afbeeldingen worden definitief verwijderd van de server. Doorgaan?';
+  if (!confirm(msg)) {
+    checkbox.checked = !enabled;
+    return;
+  }
+  try {
+    const r = await fetch('/api/library/book/' + hash + '/toggle-images', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({enabled})
+    });
+    const d = await r.json();
+    if (d.ok) {
+      const lbl = document.getElementById('img-toggle-' + hash + '-lbl');
+      if (lbl) lbl.textContent = enabled ? 'Aan' : 'Uit';
+      loadItems();
+    } else {
+      alert('Fout: ' + (d.error || 'onbekend'));
+      checkbox.checked = !enabled;
+    }
+  } catch(e) {
+    alert('Fout: ' + e);
+    checkbox.checked = !enabled;
   }
 }
 
@@ -3068,7 +3140,8 @@ async def api_library_book_detail(book_hash: str):
             "category_scores": category_scores, "chunk_count": chunk_count,
             "claude_api_enabled": claude_api_enabled,
             "image_extraction": image_extraction,
-            "computed_status": computed_status}
+            "computed_status": computed_status,
+            "image_extraction_enabled": state.get("image_extraction_enabled", True)}
 
 
 # ── DELETE /api/library/items/{item_id} ────────────────────────────────────────
@@ -3201,6 +3274,8 @@ async function uploadBook(category) {{
     const fd = new FormData();
     fd.append('file',       files[i]);
     fd.append('collection', category);
+    const _imgChk = document.getElementById('enable-images-' + category);
+    fd.append('enable_images', _imgChk ? (_imgChk.checked ? 'true' : 'false') : 'true');
     try {{
       const r = await fetch('/library/upload', {{ method: 'POST', body: fd }});
       const d = await r.json();
@@ -3431,8 +3506,9 @@ async def library_status(filename: str):
 
 @app.post("/library/upload")
 async def library_upload(
-    file:       UploadFile = File(...),
-    collection: str        = Form(...),   # section key (medical_literature/nrt_qat/device)
+    file:          UploadFile = File(...),
+    collection:    str        = Form(...),   # section key (medical_literature/nrt_qat/device)
+    enable_images: str        = Form("true"),
 ):
     section_key = collection
     if section_key not in SECTION_MAP:
@@ -3454,9 +3530,12 @@ async def library_upload(
     content = await file.read()
     dest.write_bytes(content)
 
-    _enqueue_book(fname, str(dest), qdrant_collection, source_category, ext.lstrip("."))
+    image_extraction_enabled = enable_images.lower() == "true"
+    _enqueue_book(fname, str(dest), qdrant_collection, source_category, ext.lstrip("."),
+                  image_extraction_enabled=image_extraction_enabled)
 
-    return {"status": "queued", "filename": fname, "collection": qdrant_collection, "section": section_key}
+    return {"status": "queued", "filename": fname, "collection": qdrant_collection,
+            "section": section_key, "image_extraction_enabled": image_extraction_enabled}
 
 
 # ── GET /library/audit/{filename} ─────────────────────────────────────────────
@@ -4892,12 +4971,28 @@ def _load_state(state_file: Path) -> dict | None:
         return None
 
 
+def _save_state(state_file: Path, state: dict) -> None:
+    """Write state dict atomically (tmp-then-rename)."""
+    state["updated_at"] = datetime.now(timezone.utc).isoformat()
+    try:
+        tmp = state_file.with_suffix(".tmp")
+        tmp.write_text(json.dumps(state, indent=2, ensure_ascii=False))
+        tmp.replace(state_file)
+    except Exception as exc:
+        import logging as _logging
+        _logging.getLogger(__name__).warning("Could not write state: %s", exc)
+
+
 def _build_image_extraction_info(book_hash: str, state: dict, filename: str) -> dict:
     """Build image_extraction status dict for drawer and progress widget display."""
     image_source = _get_book_image_source(filename)
 
     if image_source in ("none", None, ""):
         return {"status": "not_applicable", "source": "none",
+                "figures_found": 0, "pages_processed": None, "pages_total": None}
+
+    if not state.get("image_extraction_enabled", True):
+        return {"status": "disabled", "source": image_source,
                 "figures_found": 0, "pages_processed": None, "pages_total": None}
 
     # ALWAYS check live progress FIRST — takes priority over stale metadata
@@ -5031,6 +5126,58 @@ async def api_re_extract_images(book_hash: str):
 
     threading.Thread(target=_run, daemon=True).start()
     return {"status": "started", "book_hash": book_hash, "file": book_path.name}
+
+
+# ── POST /api/library/book/{book_hash}/toggle-images ─────────────────────────
+
+@app.post("/api/library/book/{book_hash}/toggle-images")
+async def api_toggle_images(book_hash: str, body: dict):
+    """Enable or disable image extraction for a book. Disabling deletes extracted images."""
+    safe = re.sub(r"[^a-f0-9]", "", book_hash)[:16]
+    sf   = CACHE_DIR / safe / "state.json"
+    state = _load_state(sf)
+    if state is None:
+        return JSONResponse({"error": "not found"}, status_code=404)
+
+    enabled = bool(body.get("enabled", True))
+    state["image_extraction_enabled"] = enabled
+
+    if not enabled:
+        img_dir = IMAGES_DIR / safe
+        if img_dir.exists():
+            import shutil
+            shutil.rmtree(img_dir)
+        state["image_extraction_disabled_at"] = datetime.now(timezone.utc).isoformat()
+        _save_state(sf, state)
+        return {"ok": True, "action": "disabled_and_deleted"}
+
+    # Re-enable
+    state.pop("image_extraction_disabled_at", None)
+    _save_state(sf, state)
+
+    filepath = state.get("filepath", "")
+    if filepath and Path(filepath).exists():
+        import threading, sys as _sys
+        _sys.path.insert(0, str(BASE / "scripts"))
+        from image_extractor import (
+            extract_figures_from_pdf, extract_images_from_epub, IMAGES_OUT as _IMAGES_OUT
+        )
+        suffix = Path(filepath).suffix.lower()
+
+        def _run_toggle():
+            try:
+                if suffix == ".pdf":
+                    extract_figures_from_pdf(Path(filepath), safe, _IMAGES_OUT)
+                elif suffix in (".epub",):
+                    extract_images_from_epub(Path(filepath), safe, _IMAGES_OUT)
+            except Exception as exc:
+                import logging
+                logging.getLogger(__name__).warning("toggle re-extract failed: %s", exc)
+
+        threading.Thread(target=_run_toggle, daemon=True).start()
+        return {"ok": True, "action": "enabled_and_started"}
+
+    return {"ok": True, "action": "enabled_no_file"}
 
 
 # ── GET /videos/progress ──────────────────────────────────────────────────────

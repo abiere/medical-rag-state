@@ -1,6 +1,6 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-17 — afb_bezig status + 10-fixes sessie
+> Laatste update: 2026-04-17 — image extraction toggle feature
 
 ---
 
@@ -66,6 +66,23 @@
 - [ ] Officiële Deadman digitale versie aanschaffen (DRM-vrij via Eastland Press)
 - [ ] Consistentie guardian cross-collectie
 - [ ] Protocol pre-validatie (Ollama checkt dekking voor generatie)
+
+---
+
+## ✅ Afgerond — sessie 2026-04-17 (image extraction toggle)
+
+- [x] **`_blank_state()` in book_ingest_queue.py** — `image_extraction_enabled: True` standaard
+      `process_book()` propageert vlag uit queue-entry naar nieuwe state
+- [x] **`_compute_book_status()` DEEL B** — `if not image_extraction_enabled → klaar` (vóór image check)
+- [x] **`_build_image_extraction_info()` DEEL C** — `disabled` status teruggeven als vlag false
+- [x] **Upload form checkbox DEEL D** — "Afbeeldingen extraheren na verwerking" (standaard aan)
+      FormData stuurt `enable_images`; `/library/upload` leest het; `_enqueue_book()` aanvaard parameter
+- [x] **`_save_state()` helper** — atomisch schrijven via tmp-bestand
+- [x] **Drawer toggle DEEL E** — checkbox met label Aan/Uit, `confirmImageToggle()` JS functie
+      Confirmatie popup bij uitschakelen (meldt verwijdering); bookHash via meta object doorgegeven
+- [x] **`POST /api/library/book/{hash}/toggle-images` DEEL F** — disabled→verwijdert images dir;
+      enabled→herstart extractie in thread
+- [x] **Fase 5 `disabled` status DEEL G** — badge "Uit" (grijs), detail "uitgeschakeld"
 
 ---
 
