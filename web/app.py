@@ -2850,7 +2850,7 @@ function buildPhaseTable(d, meta) {
         + '<label style="display:flex;align-items:center;gap:6px;cursor:pointer">'
           + '<input type="checkbox" id="' + escHtml(toggleId) + '"'
             + (imgEnabled ? ' checked' : '')
-            + ' onchange="confirmImageToggle(\'' + escJs(imgHash) + '\',this.checked,this)"'
+            + ' onchange="confirmImageToggle(\\'' + escJs(imgHash) + '\\',this.checked,this)"'
             + ' style="width:14px;height:14px;cursor:pointer">'
           + '<span id="' + escHtml(toggleId) + '-lbl" style="font-size:12px;color:#6b7280">'
             + (imgEnabled ? 'Aan' : 'Uit')

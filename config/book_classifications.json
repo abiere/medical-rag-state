@@ -1122,6 +1122,20 @@
         "Quantum-Touch 2.0 - The New Human_ Discovering and Becoming_nodrm.epub"
       ],
       "notes": "Auto-added \u2014 needs manual K/A/I classification"
+    },
+    "unclassified_Quantum-Touch Core Transformat": {
+      "k": 2,
+      "a": 2,
+      "i": 2,
+      "role": "unclassified",
+      "server_path": "/root/medical-rag/books/medical_literature/Quantum-Touch Core Transformation_ A New Way to Heal and Alter Reality_nodrm.epub",
+      "server_filename": "Quantum-Touch Core Transformation_ A New Way to Heal and Alter Reality_nodrm.epub",
+      "ingested": true,
+      "ingested_at": "2026-04-17T15:13:36.044218+00:00",
+      "filename_patterns": [
+        "Quantum-Touch Core Transformation_ A New Way to Heal and Alter Reality_nodrm.epub"
+      ],
+      "notes": "Auto-added \u2014 needs manual K/A/I classification"
     }
   },
   "query_profiles": {
