@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 10:46:44 UTC**
+> Last update: **2026-04-17 10:51:44 UTC**
 
 ## Services
 | Service | Status |
@@ -14,18 +14,18 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `03_trail_guide_to_the_body_6th.pdf` |
-| Queued | 4 |
+| Current job | `How to Use FlexBeam on Neck - Recharge Health.pdf` (857 min) |
+| Queued | 2 |
 | Total books | 43 |
 | Ingested | 36 |
-| Vectors in medical_library | 2775 |
+| Vectors in medical_library | 3248 |
 | Images pending approval | 2026 |
 | Images approved | 0 |
 
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `16_Expanded__Revised__and_New_Techniques.mp4` (26 min) |
+| Current job | `16_Expanded__Revised__and_New_Techniques.mp4` (1 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 8.42 GB / 32.86 GB (26%) |
-| CPU | 100.0% |
-| Disk used | 59.2 GB / 322.3 GB (19%) |
-| Uptime | up 5 hours, 11 minutes |
+| RAM used | 9.38 GB / 32.86 GB (29%) |
+| CPU | 99.9% |
+| Disk used | 59.3 GB / 322.3 GB (19%) |
+| Uptime | up 5 hours, 16 minutes |
 
 ## Recent markers
+- `2026-04-17T10:50:44.521401+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
+- `2026-04-17T10:49:54.673786+00:00` **book_ingested** — 03_trail_guide_to_the_body_6th.pdf → medical_library: 473 chunks
 - `2026-04-17T10:20:43.823985+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-17T09:50:43.375272+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-17T09:20:43.098659+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
-- `2026-04-17T08:50:42.339221+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
-- `2026-04-17T08:20:41.806276+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-17 09:20:43,146  INFO      Startup scan: 19 untranscribed video(s) found, 0 new entry/entries added to queue
-2026-04-17 09:20:43,147  INFO      START  nrt/16_Expanded__Revised__and_New_Techniques.mp4
-2026-04-17 09:50:43,426  INFO      ────────────────────────────────────────────────────────────
-2026-04-17 09:50:43,427  INFO      Transcription queue manager started
 2026-04-17 09:50:43,428  INFO      Startup scan: 19 untranscribed video(s) found, 0 new entry/entries added to queue
 2026-04-17 09:50:43,428  INFO      START  nrt/16_Expanded__Revised__and_New_Techniques.mp4
 2026-04-17 10:20:43,888  INFO      ────────────────────────────────────────────────────────────
 2026-04-17 10:20:43,888  INFO      Transcription queue manager started
 2026-04-17 10:20:43,889  INFO      Startup scan: 19 untranscribed video(s) found, 0 new entry/entries added to queue
 2026-04-17 10:20:43,890  INFO      START  nrt/16_Expanded__Revised__and_New_Techniques.mp4
+2026-04-17 10:50:44,557  INFO      ────────────────────────────────────────────────────────────
+2026-04-17 10:50:44,558  INFO      Transcription queue manager started
+2026-04-17 10:50:44,559  INFO      Startup scan: 19 untranscribed video(s) found, 0 new entry/entries added to queue
+2026-04-17 10:50:44,559  INFO      START  nrt/16_Expanded__Revised__and_New_Techniques.mp4
 ```
