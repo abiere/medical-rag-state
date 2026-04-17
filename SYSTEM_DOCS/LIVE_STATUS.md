@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 21:02:14 UTC**
+> Last update: **2026-04-17 21:07:14 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Acupuncture Point Combinations - Deadman e.a..pdf` (3 min) |
+| Current job | `Acupuncture Point Combinations - Deadman e.a..pdf` (8 min) |
 | Queued | 15 |
 | Total books | 37 |
 | Ingested | 58 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (21 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (26 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 15.26 GB / 32.86 GB (46%) |
+| RAM used | 15.28 GB / 32.86 GB (46%) |
 | CPU | 99.6% |
 | Disk used | 68.7 GB / 322.3 GB (22%) |
-| Uptime | up 15 hours, 26 minutes |
+| Uptime | up 15 hours, 31 minutes |
 
 ## Recent markers
 - `2026-04-17T20:59:11.362723+00:00` **book_ingested** — Acupuncture in Practice - Campbell.pdf → medical_library: 225 chunks
