@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 18:32:11 UTC**
+> Last update: **2026-04-17 18:37:11 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Sobotta Atlas of Anatomy, Vol. 3, 17th ed., English_Latin_ Head, Neck and Neuroanatomy_nodrm.epub` (13 min) |
+| Current job | `Sobotta Atlas of Anatomy, Vol. 3, 17th ed., English_Latin_ Head, Neck and Neuroanatomy_nodrm.epub` (18 min) |
 | Queued | 5 |
 | Total books | 64 |
 | Ingested | 49 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (21 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (26 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in video_transcripts | 241 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 14.76 GB / 32.86 GB (45%) |
-| CPU | 97.7% |
+| RAM used | 14.85 GB / 32.86 GB (45%) |
+| CPU | 99.5% |
 | Disk used | 66.6 GB / 322.3 GB (22%) |
-| Uptime | up 12 hours, 56 minutes |
+| Uptime | up 13 hours, 1 minute |
 
 ## Recent markers
 - `2026-04-17T18:18:47.244936+00:00` **book_ingested** — Orthopedic Physical Assessment_nodrm.epub → medical_library: 1566 chunks
