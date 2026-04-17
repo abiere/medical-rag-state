@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 20:17:13 UTC**
+> Last update: **2026-04-17 20:22:13 UTC**
 
 ## Services
 | Service | Status |
@@ -14,10 +14,10 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Whole Brain Living_ The Anatomy of Choice and the Four Characters That Drive Our Life_nodrm.epub` (6 min) |
-| Queued | 0 |
-| Total books | 18 |
-| Ingested | 54 |
+| Current job | `Whole Brain Living_ The Anatomy of Choice and the Four Characters That Drive Our Life_nodrm.epub` (11 min) |
+| Queued | 19 |
+| Total books | 37 |
+| Ingested | 55 |
 | Vectors in medical_library | 10428 |
 | Images pending approval | 2026 |
 | Images approved | 0 |
@@ -25,18 +25,18 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (6 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (11 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
-| Vectors in video_transcripts | ? |
+| Vectors in nrt_video_transcripts | 241 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 14.84 GB / 32.86 GB (45%) |
-| CPU | 99.6% |
-| Disk used | 67.8 GB / 322.3 GB (22%) |
-| Uptime | up 14 hours, 41 minutes |
+| RAM used | 15.78 GB / 32.86 GB (48%) |
+| CPU | 100.0% |
+| Disk used | 68.6 GB / 322.3 GB (22%) |
+| Uptime | up 14 hours, 46 minutes |
 
 ## Recent markers
 - `2026-04-17T20:11:13.440274+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
