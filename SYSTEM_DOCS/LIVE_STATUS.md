@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 17:22:10 UTC**
+> Last update: **2026-04-17 17:27:10 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Sobotta Atlas of Anatomy, Vol. 2, 17th ed., English_Latin_ Internal Organs_nodrm.epub` (19 min) |
+| Current job | `Sobotta Atlas of Anatomy, Vol. 2, 17th ed., English_Latin_ Internal Organs_nodrm.epub` (24 min) |
 | Queued | 7 |
 | Total books | 64 |
 | Ingested | 47 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (11 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (16 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in video_transcripts | 241 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 14.41 GB / 32.86 GB (44%) |
-| CPU | 99.5% |
+| RAM used | 14.76 GB / 32.86 GB (45%) |
+| CPU | 100.0% |
 | Disk used | 65.3 GB / 322.3 GB (21%) |
-| Uptime | up 11 hours, 46 minutes |
+| Uptime | up 11 hours, 51 minutes |
 
 ## Recent markers
 - `2026-04-17T17:11:10.480306+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
