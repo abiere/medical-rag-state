@@ -43,12 +43,13 @@ Results are written to `SYSTEM_DOCS/TEST_REPORT.md`. Do not deploy if any test h
 | Qdrant | 6333 | ✅ Healthy |
 | Ollama (llama3.1:8b) | 11434 | ✅ Active |
 | book-ingest-queue | — | ✅ Active (systemd) |
-| transcription-queue | — | ⏸ Paused (35 videos waiting) |
+| transcription-queue | — | ✅ Active (19 videos in queue) |
 | ttyd terminal | 7682 | ✅ Active |
 | sync-status.timer | — | ✅ Every 5 min |
 | queue-watchdog.timer | — | ✅ Every 10 min |
 
 Restart web only: `systemctl restart medical-rag-web`
+**NEVER** restart book-ingest-queue during embedding — vectors will be lost.
 
 ## Qdrant collections
 
@@ -159,3 +160,49 @@ Always update `config/pipeline_diagrams.json`:
 The PostToolUse hook `.claude/hooks/update_pipeline_diagrams.sh` calls
 `GET /api/pipeline-diagrams/refresh` automatically, but also update
 `pipeline_diagrams.json` manually when adding new engines or phases.
+
+## SYSTEM_DOCS bestanden
+
+| Bestand | Doel | Beheerder |
+|---|---|---|
+| `CONTEXT.md` | Session loader (max 150 regels) | Claude Code (handmatig) |
+| `TECHNICAL.md` | Technische referentie pipeline + stack | Claude Code (handmatig) |
+| `OPERATIONS.md` | Dagelijks gebruik + procedures | Claude Code (handmatig) |
+| `BACKLOG.md` | Geprioriteerde takenlijst | Claude Code (handmatig) |
+| `LIVE_STATUS.md` | Services + queue status | Auto: sync_status.timer (5 min) |
+| `MAINTENANCE_REPORT.md` | Nachtrun rapport | Auto: nightly_maintenance.py |
+| `TEST_REPORT.md` | Test resultaten | Auto: run_tests.py |
+| `WATCHDOG_LOG.md` | Watchdog events | Auto: queue-watchdog.timer |
+| `PRACTICE_CONTEXT.md` | Praktijk beschrijving + behandelwijzen | Handmatig bij praktijkwijzigingen |
+
+**Orphan-vrij beleid:** Elk MD bestand heeft een duidelijke trigger hieronder of is auto-gegenereerd. Maak nooit een nieuw MD bestand zonder trigger toe te voegen aan deze sectie.
+
+## Documentatie triggers
+
+**Na ELKE significante taak:**
+- Altijd: `SYSTEM_DOCS/BACKLOG.md` bijwerken (✅ item toevoegen aan Afgerond)
+- Altijd: `SYSTEM_DOCS/LIVE_STATUS.md` via `python3 scripts/sync_status.py`
+
+**Bij server/service wijzigingen:**
+- `SYSTEM_DOCS/CONTEXT.md` → services tabel, Qdrant collectie stats bijwerken
+
+**Bij pipeline codewijzigingen** (`parse_pdf.py`, `claude_audit.py`, `audit_book.py`, `nightly_maintenance.py`, `transcription_queue.py`):
+- `SYSTEM_DOCS/TECHNICAL.md` → relevante sectie (§1 parse, §2 transcriptie, §3 nachtrun)
+- `config/pipeline_diagrams.json` → via `/api/pipeline-diagrams/refresh`
+
+**Bij UI/procedure wijzigingen** (`web/app.py`, routes, settings.json structuur):
+- `SYSTEM_DOCS/OPERATIONS.md` → relevante procedure sectie
+- `SYSTEM_DOCS/TECHNICAL.md` § 8 Web UI Pagina's
+
+**Bij configuratie wijzigingen** (settings.json velden, book_classifications.json velden):
+- `SYSTEM_DOCS/TECHNICAL.md` § 5 Configuratie Bestanden
+
+**Bij nieuwe bekende issues of oplossingen:**
+- `SYSTEM_DOCS/TECHNICAL.md` § 9 Bekende Issues & Oplossingen
+
+**Bij praktijkwijzigingen** (behandelwijzen, QAT balancepunten, terminologie):
+- `SYSTEM_DOCS/PRACTICE_CONTEXT.md`
+- `SYSTEM_DOCS/CONTEXT.md` § Terminologie / QAT Balancepunten
+- ⚠️ QAT Balancepunten zijn definitief april 2026 — NIET WIJZIGEN zonder expliciete instructie
+
+**NOOIT** een nieuw orphan MD bestand aanmaken zonder trigger toe te voegen aan deze sectie.

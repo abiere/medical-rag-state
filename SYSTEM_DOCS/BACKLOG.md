@@ -1,195 +1,125 @@
 # BACKLOG — Medical RAG
-> Auto-updated by Claude Code after each session.
-> Last updated: 2026-04-16 — parse speed fix: PyMuPDF for native PDFs (377× faster), RapidOCR first in cascade
+> Bijgewerkt door Claude Code na elke sessie.
+> Laatste update: 2026-04-17 — documentatie overhaul + Trail Guide Google Vision + git secret removal
+
+---
 
 ## 🔴 Prioriteit — volgende sessie
 
-- [ ] Deadman + Travell+Simons + Trail Guide valideren na ingest (alle 3 boeken in queue)
-      Check: curl localhost:6333/collections/medical_library | grep points_count
-      Verwacht: 1000+ chunks per boek — Deadman (673p), Travell (838p), Trail Guide
+- [ ] **Trail Guide ingest valideren** — Google Vision resultaat controleren
+      ```bash
+      curl localhost:6333/collections/medical_library | python3 -c \
+        "import json,sys; d=json.load(sys.stdin); print(d['result']['points_count'])"
+      journalctl -u book-ingest-queue --no-pager -n 50 | grep -E "trail|Produced|chunks"
+      ```
+      Verwacht: 500+ chunks (460 pagina's, atlas-stijl)
 
-- [ ] Eerste protocol genereren via /protocols pagina
-      Klacht: "Etalagebenen" (gold standard beschikbaar als referentie)
+- [ ] **Deadman + Travell chunk counts valideren in Qdrant**
+      Verwacht: Deadman 1000+ chunks (673p), Travell 800+ chunks (838p)
+
+- [ ] **Eerste protocol genereren via /protocols** (Etalagebenen als testklacht)
       Vereiste: Deadman chunks in Qdrant (kai_a=1)
-      Test: python3 /root/medical-rag/scripts/generate_protocol.py "Etalagebenen"
-      Vergelijk output met /data/protocols/gold_standard referentie
+      Test: `python3 /root/medical-rag/scripts/generate_protocol.py "Etalagebenen"`
 
-## 🟡 Backlog — gepland
+- [ ] **1.Upper_Body_Techniques.mp4 opsplitsen + herverwerken**
+      Bestand: 525MB — te groot voor Whisper in één pass
+      Oplossing: ffmpeg opsplitsen in 400MB segmenten
 
-- [ ] Video transcriptie hervatten
-      systemctl start transcription-queue
-      20 NRT + 15 QAT videos wachten — eerst na boek verwerking
+---
 
-- [ ] QAT curriculum uploaden (Axel)
-      Upload via /library → nrt_qat_curriculum collectie
-      Sectie 4 protocol generator wordt dan gevuld
+## 🟡 Gepland
 
-- [ ] Interactieve afbeelding selectie UI
-      Per weefselrij: 3-5 kandidaat afbeeldingen tonen (groter dan thumbnails)
-      Axel selecteert 0-3 per weefsel, fullscreen knop
-      AI geeft waarschijnlijkheidsscore per kandidaat
-      Per boek aan/uit schakelaar bruikbaarheid
+- [ ] **Playwright regressietests** — 8 nav-items + kritieke pagina's automatisch testen
+- [ ] **QAT curriculum valideren** — 546 vectors in nrt_qat_curriculum — zijn dit de juiste chunks?
+- [ ] **Afbeelding screening Travell+Simons** — ~12 nachten resterend bij 200/nacht limiet
+- [ ] **Video transcriptie 19 NRT video's** — queue actief, 1.Upper_Body overgeslagen
+- [ ] **Meer boeken uploaden:**
+      - Sobotta Vol 1/2/3 (EPUB) — kai_k=1 kai_i=1 primaire anatomie
+      - Maciocia TCM 3 boeken — kai_k=1 kai_a=1 volledigste TCM bron
+      - Campbell acupunctuurpuntenbrug — kai_k=1 kai_a=2
+      - AnatomyTrains (EPUB) — kai_k=1 kai_i=1 fascia
+- [ ] **gstack installeren** — `/cso`, `/investigate`, `/careful`, `/guard` skills
+- [ ] **/search pagina verbeteren** — RAG query interface UI
+- [ ] **Protocol taal optie** — standaard NL, optie EN
+- [ ] **Streaming protocol generatie** — SSE progress events per sectie
+- [ ] **Python-docx skill** — voor protocol generator alternatieven
 
-- [ ] Streaming protocol generatie
-      SSE progress events per sectie
-      UI toont "Genereren klachtbeeld... ✅ Genereren oorzaken..."
+---
 
-- [ ] Meer boeken uploaden
-      Sobotta Vol 1/2/3 (EPUB) — kai_k=1 kai_i=1 primaire anatomie
-      Maciocia TCM 3 boeken — kai_k=1 kai_a=1 volledigste TCM bron
-      Campbell acupunctuur — kai_k=1 kai_a=2 anatomy-acupuncture bridge
-      AnatomyTrains (EPUB) — kai_k=1 kai_i=1 fascia
-      Magee orthopedic assessment
+## ⚙️ Hardware (gepland)
 
-- [ ] /search testen met echte Deadman data
-      Verwacht: ST-36 Zusanli chunks bij "acupunctuur been"
+- [ ] **Mac Studio M5 Max** — verwacht WWDC juni 2026
+      ~€2.299-€2.499 | 96/128GB RAM | 546 GB/s bandbreedte
+      Hetzner CX53 blijft als backup/Tailscale endpoint + nachtrun server
 
-- [ ] Protocol taal optie
-      Standaard: Nederlands
-      Optie: Amerikaans Engels
-
-- [ ] Protocol versie management
-      v1, v2 naast elkaar bewaren
-      Versiegeschiedenis tonen in /protocols tab
-
-- [ ] Protocol regeneratie per sectie
-      Alleen één sectie opnieuw genereren zonder alles te herschrijven
-
-- [ ] Nightly AI review transcripts + chunks kwaliteitsrapport
+---
 
 ## 🟢 Ideeën — nog niet besloten
 
-- [ ] Officiële Deadman digitale versie aanschaffen
-      Huidige versie is een scan — officieel betere kwaliteit
-      Eastland Press — controleer of DRM-vrij beschikbaar
-
-- [ ] PEMF/RLT documentatie uploaden
-      FlexBeam behandelplannen (Axel downloadt van recharge.health)
-
+- [ ] Interactieve afbeelding selectie UI (3-5 kandidaten per weefselrij)
+- [ ] Protocol regeneratie per sectie (alleen één sectie herschrijven)
+- [ ] Protocol versie management (v1/v2 naast elkaar)
+- [ ] Blog generator NRT-Amsterdam.nl (RAG → Ollama → WordPress MCP)
+- [ ] Visueel zoeken (upload afbeelding → zoek vergelijkbare)
+- [ ] Officiële Deadman digitale versie aanschaffen (DRM-vrij via Eastland Press)
 - [ ] Consistentie guardian cross-collectie
-
 - [ ] Protocol pre-validatie (Ollama checkt dekking voor generatie)
 
-- [ ] Blog generator NRT-Amsterdam.nl
-      RAG query → Ollama → WordPress MCP post
+---
 
-- [ ] Visueel zoeken — upload afbeelding, vind vergelijkbare
+## ✅ Afgerond — sessie 2026-04-17
 
-- [ ] Scraper recharge.health blog (publieke content)
+- [x] **git filter-branch** — google_vision_key.json volledig uit git history verwijderd
+      700 commits herschreven, force push geslaagd, GitHub push protection opgeheven
+- [x] **Trail Guide force_ocr_engine** — google_vision override in book_classifications.json
+      EasyOCR kalibratie cache gewist, state gereset, Google Vision parallel mode actief
+- [x] **Transcriptie skip mechanisme** — settings.json transcription.skip_files + max_file_size_mb
+      1.Upper_Body_Techniques.mp4 (525MB) overgeslagen, queue hervat met 16_Expanded...
+- [x] **Documentatie overhaul** — CONTEXT/TECHNICAL/OPERATIONS volledig herschreven
+      BACKLOG bijgewerkt, CLAUDE.md documentatie triggers toegevoegd
+      Orphan bestanden verwijderd (ARCHITECTURE/CHANGELOG/REQUIREMENTS/TECHNICAL_DESIGN/PROJECT_STATE)
 
-## ✅ Afgerond sessie 2026-04-16 (parse speed fix)
+---
 
-### Parse Speed Optimalisatie
-- [x] FIX A — Native PDFs: PyMuPDF als primaire parser i.p.v. Docling
-      Deadman: 2753s (45.9 min) → 7.3s (< 10 sec) — 377× sneller, 92 pagina's/sec
-      Getest: 673 pagina's, tekst correct (eerste alinea: "A Manual of ACUPUNCTURE")
-- [x] FIX B — Scanned PDFs: RapidOCR als eerste engine in cascade
-      rapidocr-onnxruntime geïnstalleerd, _ocr_rapidocr() + _lazy_rapidocr() toegevoegd
-      Cascade nu: RapidOCR → EasyOCR → Surya → Tesseract (bevestigd in Trail Guide logs)
-- [x] Reset Deadman + Travell parse fase (beide stonden op "running" met Docling)
-      Queue herstart — Trail Guide (scanned) eerst met RapidOCR, daarna Deadman + Travell
+## ✅ Afgerond — sessie 2026-04-16 (parse speed fix)
 
-## ✅ Afgerond sessie 2026-04-16 (pipeline rebuild)
+- [x] Native PDFs: PyMuPDF als primaire parser i.p.v. Docling (377× sneller, 92 pag/sec)
+- [x] Scanned PDFs: RapidOCR als eerste engine in cascade
+- [x] Deadman + Travell parse fase gereset (stonden op "running" met Docling)
 
-### Complete Pipeline Rebuild
-- [x] State machine per boek — state.json + fase-bestanden + resume logic
-- [x] ollama_manager.py — OllamaManager singleton met health checks + auto-restart
-- [x] Image screening volledig ontkoppeld van hoofdpipeline
-- [x] screen_images_background() in audit_book.py (nightly job)
+---
+
+## ✅ Afgerond — sessie 2026-04-16 (pipeline rebuild)
+
+- [x] State machine per boek (state.json + fase-bestanden + resume logic)
+- [x] ollama_manager.py (OllamaManager singleton met health checks + auto-restart)
+- [x] Image screening ontkoppeld van hoofdpipeline (nightly job)
 - [x] Autonoom watchdog service (watchdog.py + book-ingest-watchdog.service)
-- [x] WATCHDOG_LOG.md — auto-bijgewerkt door watchdog, gesynchroniseerd naar GitHub
-- [x] sync_status.py — WATCHDOG_LOG.md toegevoegd aan git sync
-- [x] /api/library/progress/active + /all + /{book_hash} endpoints
-- [x] Progress widget — fase-voor-fase display (parse → audit → embed → qdrant)
-- [x] nightly_maintenance.py — image screening batch fase
-- [x] nightly_maintenance.py — state integriteit controle (Qdrant vs state.json)
-- [x] nightly_maintenance.py — cache cleanup (fase-bestanden >30 dagen)
-- [x] STAP 0 schone start — collection deleted, caches cleared, PDFs hernoemd 01/02/03
-- [x] 33/33 tests geslaagd
+- [x] WATCHDOG_LOG.md auto-bijgewerkt en gesynchroniseerd naar GitHub
+- [x] Progress widget fase-voor-fase display (parse → audit → embed → qdrant)
+- [x] nightly_maintenance.py volledige implementatie (7 fasen)
+- [x] STAP 0 schone start (collection deleted, caches cleared, PDFs hernoemd 01/02/03)
 
-## ✅ Afgerond sessie 2026-04-15/16
+---
 
-### OCR & Ingest Pipeline
-- [x] Smart PDF type detectie (native/mixed/scanned via pdfplumber sampling)
-- [x] OCR cascade fallback (EasyOCR → Surya → Tesseract)
-- [x] OCR pre-processing (deskew, denoise, CLAHE, Otsu binarization)
-- [x] OCR kalibratie per boek via Ollama (5 steekproefpagina's)
-- [x] Adaptive DPI per pagina
-- [x] Ollama OCR post-correctie (rule-based + LLM voor lage confidence)
-- [x] Cross-boek learning log
-- [x] Book ingest queue (systemd, heartbeat, startup guard)
-- [x] Watchdog fix — BOOK_STALE=120min (was 30min — doodde Docling)
-- [x] Audit non-blocking bij Ollama timeout
-- [x] Embedding fix — BAAI/bge-large voor RAG (was nomic-embed-text)
-- [x] Auto-split PDFs >30MB via pypdf (Travell+Simons)
+## ✅ Afgerond — sessies 2026-04-14/15/16
 
-### Monitoring
-- [x] Voortgang library + videos (pagina X/Y, fase, chunks, 10s polling)
-- [x] Pause/resume knoppen videos + boeken (schone database bij pauze)
-- [x] Sync retry logic (3 pogingen, error log bij totaalmislukking)
-- [x] Queue watchdog (auto-restart stale queues elke 10 min)
-- [x] Nightly consistency check (Qdrant vs disk)
-- [x] LIVE_STATUS.md sync betrouwbaar (HOME=/root fix in systemd)
-
-### K/A/I Systeem
-- [x] book_classifications.json (30+ boeken geclassificeerd met K/A/I)
-- [x] Auto-link bij ingest (exact server filepath → classificatie)
-- [x] Unclassified detection met waarschuwing
-- [x] K/A/I query profielen voor protocol generator
-- [x] Chunk-niveau K/A/I payload in Qdrant
-
-### Acupunctuurpunten
-- [x] 476 Deadman punt afbeeldingen geüpload
-- [x] point_index.json aangemaakt (code → filepath + meridiaan)
-- [x] Bladder Channel mappen samengevoegd
+- [x] OCR cascade (RapidOCR → EasyOCR → Surya → Tesseract → Google Vision)
+- [x] OCR preprocessing (deskew, denoise, CLAHE, Otsu)
+- [x] Per-boek OCR kalibratie via Ollama (kalibratiecache)
+- [x] Smart PDF type detectie (native/mixed/scanned)
+- [x] K/A/I classificatiesysteem (35+ boeken, chunk-niveau payload)
+- [x] Protocol generator (RAG + K/A/I filter + Ollama + Word .docx)
+- [x] 476 Deadman punt afbeeldingen + point_index.json
 - [x] normalize_points.py (alle varianten → Deadman standaard)
-- [x] meridian_mapping.md (QAT balancepunten + conversietabel)
-
-### Protocol Generator
-- [x] /protocols tab (NRT standaard protocol v3 bekijken + bewerken)
-- [x] Auto-commit bij opslaan naar GitHub
-- [x] generate_protocol.py (RAG + K/A/I filter + Ollama + Word output)
-- [x] Word .docx via Node.js (exacte Etalagebenen v1.1 stijl)
-- [x] Deadman punt afbeeldingen automatisch per puntcode
-- [x] QAT balancepunten automatisch berekend per meridiaan
-- [x] /protocols/generate + /protocols/download web endpoints
-- [x] protocol_metadata.py (literatuur tracking + earmarking)
-- [x] Earmarking bij nieuwe literatuur (needs_review badge)
-- [x] Dashboard oranje banner bij verouderde protocollen
-- [x] 8 gold standard protocol metadata records
-
-### Developer Tooling & Hooks
-- [x] PostToolUse hook — py_syntax_check.sh (python3 -m py_compile na elke Write/Edit)
-- [x] PreToolUse hook — security_check.sh (secrets/injection scan, non-blocking, exit 0)
-- [x] Stop hook — mempalace_save.sh (auto-mine SYSTEM_DOCS in MemPalace na sessie)
-- [x] MemPalace MCP server — .mcp.json, palace /root/.mempalace/medical-rag (116 drawers)
-- [x] Playwright MCP server — headless Chromium, alle 8 nav items geverifieerd
-- [x] GitHub MCP server — @modelcontextprotocol/server-github v0.6.2, gh auth token
-- [x] nrt-ui-standards Claude Code skill — design tokens + schrijfregels
-- [x] Design audit — #2563eb vervangen door #1A6B72 teal in alle pagina's
-- [x] CLAUDE.md herschreven — accurate server info, services, MCPs, hooks, skills, routes
-- [x] CONTEXT.md bijgewerkt — 158 video vectors, transcriptie active, .claude/ paden
-
-### Video Upload
-- [x] Multi-file upload /videos — bestandslijst met naam+grootte, per-file status, X/Y teller
-
-### Bibliotheek Catalogus
-- [x] /library cataloguspagina — 6 categorie-tabs, zoekbalk, sortering
-- [x] /api/library/items — JSON met K/A/I, chunk count, status (35 boeken)
-- [x] DELETE /api/library/items/{id} — Qdrant-verwijdering met dry-run
-- [x] book_classifications.json v1.1 — library_category voor alle 35 boeken
-- [x] Retroaudit nightly phase in nightly_maintenance.py
-- [x] Heraudit knop per boek in /library/ingest (POST /library/reaudit/{filename})
-
-### Eerder afgerond
-- [x] FastAPI web interface + dashboard
-- [x] Sequentiële transcriptie queue (systemd)
-- [x] Whisper --task translate → Engels transcripts
-- [x] Auto-ingest transcripts → Qdrant video_transcripts
-- [x] Browser terminal (ttyd poort 7682)
-- [x] Live status sync GitHub (LIVE_STATUS.md)
-- [x] /search pagina RAG + image search + streaming
-- [x] Video transcript zoeken met timestamp
-- [x] Image approval systeem /images
-- [x] Literatuuroverzicht /library/overview
-- [x] Browser terminal iframe (ttyd poort 7682) — bevestigd werkend in browser
+- [x] MemPalace MCP server (116+ drawers)
+- [x] Playwright MCP server
+- [x] nrt-ui-standards skill (design tokens + schrijfregels)
+- [x] PostToolUse hook (py_syntax_check.sh)
+- [x] PreToolUse hook (security_check.sh)
+- [x] Stop hook (mempalace_save.sh)
+- [x] Design audit (#2563eb → #1A6B72 teal in alle pagina's)
+- [x] Video transcriptie queue (systemd, Whisper)
+- [x] /library catalogus (6 tabs, K/A/I badges, zoekbalk, sortering)
+- [x] FastAPI web interface volledig (9 routes)
+- [x] Live status sync GitHub (LIVE_STATUS.md elke 5 min)

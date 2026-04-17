@@ -1,193 +1,112 @@
 # CONTEXT — Session Loader
-> Read at start of every session. Full detail in BACKLOG.md + LIVE_STATUS.md.
+> Lees dit aan het begin van elke sessie. Max 150 regels.
+> Volledige technische detail: SYSTEM_DOCS/TECHNICAL.md
 
-## What this system is
-Private, fully-local RAG system for medical/acupuncture literature.
-Tailscale only (100.66.194.55). All inference on Hetzner server.
-Outputs: Word behandelprotocollen | NRT-Amsterdam.nl blog | Ad hoc Q&A
+## Wat dit systeem is
+Privé, volledig lokaal RAG-systeem voor medische en acupunctuurliteratuur.
+Alleen via Tailscale (100.66.194.55). Outputs: behandelprotocollen, blogteksten, Q&A.
 
 ## Server
-| Property | Value |
+| Eigenschap | Waarde |
 |---|---|
-| Host | Hetzner CX53 — Tailscale 100.66.194.55 |
-| vCPUs / RAM / Disk | 16 / 32 GiB / 322 GB |
-| Python | 3.12 — pip install --break-system-packages |
-| Node.js | 18+ — npm install -g docx |
+| SSH | `ssh root@100.66.194.55` |
+| Web | `http://100.66.194.55:8000` |
+| Terminal | `http://100.66.194.55:7682` |
+| Hardware | Hetzner CX53 — 16 vCPU, 32GB RAM, 301GB SSD |
+| OS | Ubuntu 24.04 — kernel 6.8.0-107-generic (reboot 2026-04-17) |
+| Python | 3.12 — `pip install --break-system-packages` |
 
-## Running services
-| Service | Port | State |
+## Draaiende services
+| Service | Poort | Status |
 |---|---|---|
 | FastAPI (medical-rag-web) | 8000 | ✅ Active |
 | Qdrant | 6333 | ✅ Healthy |
 | Ollama (llama3.1:8b) | 11434 | ✅ Active |
 | book-ingest-queue | — | ✅ Active (systemd) |
-| transcription-queue | — | ✅ Active (35 videos in queue) |
+| transcription-queue | — | ✅ Active (19 video's in queue) |
 | ttyd terminal | 7682 | ✅ Active |
-| sync-status.timer | — | ✅ Every 5 min |
-| queue-watchdog.timer | — | ✅ Every 10 min (BOOK=120min, TRANS=30min) |
+| sync-status.timer | — | ✅ Elke 5 min |
+| queue-watchdog.timer | — | ✅ Elke 10 min |
 
-## Book Ingest Queue
-| Slot | Book | Status |
+## Qdrant collecties (stand 2026-04-17)
+| Collectie | Vectors | Gebruik |
 |---|---|---|
-| Processing | Travell+Simons Vol 1 (63MB) | Native PDF via Docling |
-| Queue #1 | Trail Guide to the Body (108MB) | Waiting |
-| Queue #2 | Deadman — Manual of Acupuncture (47MB) | Re-queued after audit fix |
+| medical_library | 2.775 | Boekchunks (PDF/EPUB) |
+| video_transcripts | 158 | Whisper transcripties |
+| nrt_qat_curriculum | 546 | QAT curriculum |
+| device_documentation | 164 | PEMF/RLT docs |
 
-Note: Deadman had 987 chunks but audit blocked embedding (Ollama timeout).
-Fix applied: audit non-blocking. Deadman re-queued for clean reprocessing.
+## Stack
+- **Embedding:** BAAI/bge-large-en-v1.5 (1024 dim) — NOOIT nomic-embed-text
+- **LLM:** Ollama llama3.1:8b (lokaal)
+- **Audit:** Claude Haiku API of Ollama (instelbaar in settings.json)
+- **Vector DB:** Qdrant (4 collecties)
+- **Web:** FastAPI poort 8000
+- **OCR cascade:** RapidOCR → EasyOCR → Surya → Tesseract → Google Vision
+- **Native PDF:** PyMuPDF (~92 pag/sec)
+- **Transcriptie:** Whisper (lokaal)
+- **Parse drempel:** ≥50 woorden/pag = native | ≥15 = mixed | <15 = scanned
 
-## Qdrant Collections
-| Collection | Vectors | Notes |
-|---|---|---|
-| medical_library | 2 (test only) | Filling as books complete |
-| video_transcripts | 158 | NRT + QAT transcripts |
-| nrt_qat_curriculum | 0 | Awaiting QAT curriculum upload |
-| device_documentation | 0 | Awaiting PEMF/RLT docs |
+## Rolverdeling
+- **Lead Architect (deze chat):** bepaalt wat gebouwd wordt
+- **Claude Code (op server):** lost problemen volledig zelf op
 
-## Key paths
+## Sleutelpaden
+```
 /root/medical-rag/
-├── books/medical_literature/     ← PDFs being ingested
-├── videos/nrt/ + qat/            ← 35 videos (transcription active)
+├── books/medical_literature/       ← PDF/EPUB bestanden
 ├── data/
-│   ├── transcripts/              ← Whisper JSON
-│   ├── acupuncture_points/       ← 476 Deadman PNGs + point_index.json
-│   ├── extracted_images/         ← Book figures
-│   ├── book_quality/             ← Audit reports + calibration_cache.json
-│   ├── protocols/                ← Generated protocols + metadata JSON
-│   └── image_approvals.json
+│   ├── ingest_cache/{hash}/        ← state.json + fase-bestanden per boek
+│   ├── transcripts/                ← Whisper JSON
+│   ├── acupuncture_points/         ← 476 Deadman PNGs + point_index.json
+│   ├── extracted_images/           ← Boekafbeeldingen
+│   ├── book_quality/               ← Audit rapporten + calibration_cache.json
+│   └── protocols/                  ← Gegenereerde .docx + metadata
 ├── config/
-│   ├── book_classifications.json ← K/A/I per book (35 books, v1.1)
-│   └── ai_instructions/
-│       ├── nrt_standaard_protocol_v3.md ← Full NRT treatment protocol
-│       ├── meridian_mapping.md   ← Deadman standard + QAT conversion
-│       ├── tagging_rules.md      ← K/A/I system
-│       ├── learning_log.md       ← OCR learning log
-│       └── feedback_history.md
-├── scripts/
-│   ├── transcription_queue.py
-│   ├── book_ingest_queue.py      ← Heartbeat + startup guard
-│   ├── parse_pdf.py              ← Native: Docling / Scan: cascade OCR
-│   ├── parse_epub.py
-│   ├── ocr_preprocess.py         ← Deskew, denoise, CLAHE, Otsu
-│   ├── ocr_calibrate.py          ← Per-book OCR calibration via Ollama
-│   ├── ocr_postcorrect.py        ← Ollama OCR post-correction
-│   ├── audit_book.py             ← Non-blocking audit (skips on timeout)
-│   ├── normalize_points.py       ← All notations → Deadman standard
-│   ├── protocol_metadata.py      ← Literature tracking + earmarking
-│   ├── generate_protocol.py      ← Protocol generator (RAG→Ollama→Word)
-│   ├── ingest_transcript.py
-│   ├── rag_query.py
-│   ├── queue_watchdog.py
-│   ├── nightly_maintenance.py    ← Consistency check + retroactive audit
-│   └── sync_status.py            ← GitHub sync (3 retries)
-├── web/app.py                    ← FastAPI all routes
+│   ├── settings.json               ← gitignored (Claude API, nachtrun, transcriptie)
+│   ├── book_classifications.json   ← K/A/I per boek (v1.1)
+│   └── pipeline_diagrams.json      ← Schema's tab data
+├── scripts/                        ← Alle pipeline scripts
+├── web/app.py                      ← FastAPI + alle UI routes
+├── SYSTEM_DOCS/                    ← Alle documentatie
+│   ├── CONTEXT.md                  ← Dit bestand (session loader)
+│   ├── TECHNICAL.md                ← Volledige technische referentie
+│   ├── OPERATIONS.md               ← Procedures + dagelijks gebruik
+│   ├── BACKLOG.md                  ← Geprioriteerde takenlijst
+│   └── LIVE_STATUS.md              ← Auto-bijgewerkt elke 5 min
 └── .claude/
-    ├── settings.json             ← Hooks (PreToolUse, PostToolUse, Stop)
-    ├── skills/nrt-ui-standards/  ← Design system skill
+    ├── settings.json               ← Hooks config
+    ├── skills/nrt-ui-standards/    ← Design systeem skill
     └── hooks/
-        ├── security_check.sh     ← PreToolUse: secrets scan (non-blocking)
-        ├── py_syntax_check.sh    ← PostToolUse: python3 -m py_compile
-        └── mempalace_save.sh     ← Stop: mine SYSTEM_DOCS into MemPalace
+        ├── py_syntax_check.sh      ← PostToolUse: py_compile
+        └── security_check.sh       ← PreToolUse: secrets scan
+```
 
-## Web Interface Routes
-| Route | Status | Description |
-|---|---|---|
-| / | ✅ | Dashboard — CPU/RAM/services/vectors |
-| /library | ✅ | Catalog — 6 tabs, K/A/I badges, chunk counts, delete |
-| /library/ingest | ✅ | Upload + ingest queue + progress |
-| /library/overview | ✅ | Literature overview with K/A/I scores |
-| /search | ✅ | RAG search + image search + streaming |
-| /images | ✅ | Image browser + approval |
-| /videos | ✅ | Multi-file upload + transcription queue |
-| /protocols | ✅ | NRT protocol v3 + behandelprotocollen + generator |
-| /terminal | ✅ | ttyd browser terminal (port 7682) |
+## Na elke significante taak
+```bash
+cd /root/medical-rag && \
+git add -A && \
+git commit -m "state: [beschrijving]" && \
+git push && \
+python3 /root/medical-rag/scripts/sync_status.py
+```
 
-## Active Claude Code tooling
-| Type | Name | Purpose |
-|---|---|---|
-| Skill | nrt-ui-standards | Design tokens — read before every UI task |
-| Hook PreToolUse | security_check.sh | Secrets/injection scan on Write/Edit |
-| Hook PostToolUse | py_syntax_check.sh | Syntax check every .py file |
-| Hook Stop | mempalace_save.sh | Auto-mine SYSTEM_DOCS into MemPalace |
-| MCP | mempalace | Persistent memory (116 drawers) |
-| MCP | playwright | Headless UI testing (Chromium) |
+## Terminologie
+- **NRT-Amsterdam.nl** (altijd met koppelteken + .nl)
+- NRT = Neural Reset Therapy | QAT = Quantum Alignment Technique
+- GTR = Golgi Tendon Reflex | PEMF = Pulsed Electromagnetic Field | RLT = Red Light Therapy
+- Acupunctuur: **HE / KID / LIV / P / SJ** (Deadman standaard — NOOIT HT/KI/LV/PC/TW)
 
-## PDF/OCR Pipeline
-Native (≥50 words/page): pdfplumber detect → Docling (do_ocr=False)
-Scanned (<15 words/page): PyMuPDF → ocr_preprocess → ocr_calibrate →
-  cascade OCR (EasyOCR → Surya → Tesseract) → ocr_postcorrect
-Mixed: per-page decision
+## QAT Balancepunten (definitief april 2026 — NIET WIJZIGEN)
+```
+CV=SP-21R | GV=SP-21L | BL=BL-58  | SJ=SJ-5  | KID=KID-4 | P=P-6
+GB=GB-37  | ST=ST-40  | LI=LI-6   | SI=SI-7  | LU=LU-7   | SP=SP-4
+HE=HE-5   | LIV=LIV-5
+```
 
-Audit: Ollama sampling. Non-blocking: 3× timeout →
-  audit_status="skipped_ollama_timeout" → chunk still embedded
-  Retroactive audit: nightly_maintenance.py (max 200 chunks/night)
-
-## K/A/I Classification (Hybrid)
-Book-level static: config/book_classifications.json (35 books, v1.1)
-Chunk-level dynamic: Ollama override during audit
-
-Protocol query profiles:
-  §2 Tissue: kai_k=1 → Sobotta, Travell, AnatomyTrains, Guyton, Trail Guide
-  §3 Acupuncture: kai_a=1 → Deadman (primary), Cecil-Sterman, Maciocia
-  Images: kai_i=1 → Sobotta, AnatomyTrains, Travell
-
-## Acupuncture Points
-476 Deadman PNGs in /data/acupuncture_points/ — point_index.json
-normalize_points.py: all notations → Deadman standard
-QAT→Deadman: HT→HE, KI→KID, LV→LIV, PC→P, TW→SJ
-
-QAT Balance Points (verified April 2026 — DO NOT CHANGE):
-  CV=SP-21r, GV=SP-21l, BL=BL-58, SJ=SJ-5, KID=KID-4, P=P-6
-  GB=GB-37, ST=ST-40, LI=LI-6, SI=SI-7, LU=LU-7, SP=SP-4
-  HE=HE-5, LIV=LIV-5
-
-## Protocol Generator
-generate_protocol.py — fully built:
-  Input: klacht name (NL or EN)
-  RAG queries with K/A/I filtering (BAAI/bge-large-en-v1.5)
-  Section-by-section via Ollama
-  Output: Word .docx via Node.js docx library
-
-Word style (exact Etalagebenen v1.1):
-  Colors: #1A6B72 (teal), #FCE4D6 (orange), #FFF2CC (yellow)
-  Columns: 1500|1900|4706|2200 DXA
-
-9 gold standard protocols available as reference.
-Literature tracking: protocol_metadata.py
-Earmarking: auto-flag when new literature added (needs_review=true)
-
-## Critical: Embedding Model
-BAAI/bge-large-en-v1.5 (1024 dims) — used for BOTH ingest AND search
-NOT nomic-embed-text (caused 0 RAG results)
-
-## Terminology
-NRT-Amsterdam.nl (always with hyphen + .nl)
-NRT=Neural Reset Therapy | QAT=Quantum Alignment Technique
-GTR=Golgi Tendon Reflex | PEMF=Pulsed Electromagnetic Field | RLT=Red Light Therapy
-Deadman notation: HE | KID | LIV | P | SJ (not HT/KI/LV/PC/TW)
-
-## Git / State Tracking
-Repo: https://github.com/abiere/medical-rag-state (private)
-/root/medical-rag IS the state repo (same remote)
-/root/medical-rag-state is a symlink to /root/medical-rag
-
-After every task:
-  cd /root/medical-rag && git add -A && \
-  git commit -m "state: [description]" && git push
-  python3 /root/medical-rag/scripts/sync_status.py
-
----
-
-## Maintenance status
-
-**Laatste run:** 17-04-2026 00:30 (186.9s)  
-**Uitslag:** ⚠️ WARNING — 2 waarschuwing(en), 6 OK  
-
-
----
-
-## Test status
-
-**Laatste run:** 17-04-2026 00:00 (18.4s)  
-**Uitslag:** ❌ MISLUKT — 32/33 geslaagd, 1 mislukt, 0 overgeslagen  
-**Mislukt:** `test_anthropic_api_key_set`
+## Kritieke regels
+1. **Nav:** `NAV_ITEMS` is de enige source of truth — nooit hardcoded in pagina's
+2. **Embedding:** Altijd `BAAI/bge-large-en-v1.5` — nooit nomic-embed-text
+3. **Kleur:** `#1A6B72` teal — nooit `#2563eb` voor primaire knoppen/headers
+4. **Destructief:** Altijd confirmation dialog met chunk count eerst
+5. **UI taken:** Lees eerst `.claude/skills/nrt-ui-standards/SKILL.md` via Read tool
