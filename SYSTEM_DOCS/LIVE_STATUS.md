@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 15:03:39 UTC**
+> Last update: **2026-04-17 15:07:08 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Quantum-Touch Core Transformation_ A New Way to Heal and Alter Reality_nodrm.epub` |
+| Current job | `Quantum-Touch Core Transformation_ A New Way to Heal and Alter Reality_nodrm.epub` (3 min) |
 | Queued | 4 |
 | Total books | 57 |
 | Ingested | 43 |
@@ -25,18 +25,18 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (1 min) |
-| Queued | 13 |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` |
+| Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in video_transcripts | 241 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 13.79 GB / 32.86 GB (42%) |
-| CPU | 99.9% |
-| Disk used | 62.0 GB / 322.3 GB (20%) |
-| Uptime | up 9 hours, 28 minutes |
+| RAM used | 14.92 GB / 32.86 GB (45%) |
+| CPU | 100.0% |
+| Disk used | 62.1 GB / 322.3 GB (20%) |
+| Uptime | up 9 hours, 31 minutes |
 
 ## Recent markers
 - `2026-04-17T15:03:17.284001+00:00` **book_ingested** — Quantum-Touch 2.0 - The New Human_ Discovering and Becoming_nodrm.epub → medical_library: 158 chunks
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-17 14:18:06,846  INFO      Queue empty — 14 video(s) processed. Exiting.
-2026-04-17 14:18:06,911  INFO      Transcription queue manager done
-2026-04-17 15:02:27,109  INFO      ────────────────────────────────────────────────────────────
-2026-04-17 15:02:27,109  INFO      Transcription queue manager started
-2026-04-17 15:02:27,110  INFO      Startup scan: 14 untranscribed video(s) found, 14 new entry/entries added to queue
-2026-04-17 15:02:27,110  WARNING   Skipping nrt/1.Upper_Body_Techniques.mp4 (in skip_files list)
 2026-04-17 15:02:27,176  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
 2026-04-17 15:02:27,176  INFO      Splitting 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 (1060 MB) into 20-min segments
 2026-04-17 15:02:31,352  INFO      Split 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 into 2 segments
 2026-04-17 15:02:31,352  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
+2026-04-17 15:06:54,240  INFO      ────────────────────────────────────────────────────────────
+2026-04-17 15:06:54,241  INFO      Transcription queue manager started
+2026-04-17 15:06:54,242  INFO      Startup scan: 14 untranscribed video(s) found, 1 new entry/entries added to queue
+2026-04-17 15:06:54,243  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
+2026-04-17 15:06:54,244  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
+2026-04-17 15:06:54,244  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
 ```
