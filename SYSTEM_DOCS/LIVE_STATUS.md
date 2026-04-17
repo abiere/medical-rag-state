@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 12:41:51 UTC**
+> Last update: **2026-04-17 12:46:53 UTC**
 
 ## Services
 | Service | Status |
@@ -25,25 +25,25 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | idle |
-| Queued | 16 |
+| Current job | `3.Why_People_Hurt.mp4` (4 min) |
+| Queued | 15 |
 | Done | 19 / 35 |
-| Vectors in video_transcripts | 189 |
+| Vectors in video_transcripts | 208 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 3.59 GB / 32.86 GB (11%) |
-| CPU | 90.3% |
-| Disk used | 59.4 GB / 322.3 GB (19%) |
-| Uptime | up 7 hours, 6 minutes |
+| RAM used | 6.71 GB / 32.86 GB (20%) |
+| CPU | 98.9% |
+| Disk used | 59.5 GB / 322.3 GB (19%) |
+| Uptime | up 7 hours, 11 minutes |
 
 ## Recent markers
+- `2026-04-17T12:42:00` **transcription_failed** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 FAILED (19/19)
+- `2026-04-17T12:42:00` **transcription_done** — 2.Upper_Body_Fundamentals.mp4 complete (19/19)
+- `2026-04-17T12:42:00` **transcript_ingested** — 2.Upper_Body_Fundamentals.mp4 ingested into Qdrant
 - `2026-04-17T12:21:57` **transcription_done** — 2.Lower_Body_Fundamentals.mp4 complete (18/19)
 - `2026-04-17T12:21:57` **transcript_ingested** — 2.Lower_Body_Fundamentals.mp4 ingested into Qdrant
-- `2026-04-17T12:04:36` **transcription_done** — 16_Expanded__Revised__and_New_Techniques.mp4 complete (17/19)
-- `2026-04-17T12:04:36` **transcript_ingested** — 16_Expanded__Revised__and_New_Techniques.mp4 ingested into Qdrant
-- `2026-04-17T11:50:45.413111+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-17 12:21:39,619  INFO      Stats updated: 2.Lower_Body_Fundamentals.mp4 — 3.7s/MB  rate=2.9s/MB (2 samples)
-2026-04-17 12:21:39,620  INFO      INGEST nrt/2.Lower_Body_Fundamentals.mp4
-2026-04-17 12:21:57,263  INFO        [ingest] 2.Lower_Body_Fundamentals.json: 621 segments → 19 chunks
-2026-04-17 12:21:57,263  INFO        [ingest] Loading embedding model …
-2026-04-17 12:21:57,263  INFO        [ingest]   Ingested chunk 19/19 for 2.Lower_Body_Fundamentals.mp4
-2026-04-17 12:21:57,264  INFO        [ingest] Done: 19 chunks ingested, 0 skipped (already exists)
 2026-04-17 12:21:57,360  INFO      START  nrt/2.Upper_Body_Fundamentals.mp4
 2026-04-17 12:41:42,253  INFO      DONE   nrt/2.Upper_Body_Fundamentals.mp4  (1185s)
 2026-04-17 12:41:42,254  INFO      Stats updated: 2.Upper_Body_Fundamentals.mp4 — 3.7s/MB  rate=3.2s/MB (3 samples)
 2026-04-17 12:41:42,254  INFO      INGEST nrt/2.Upper_Body_Fundamentals.mp4
+2026-04-17 12:42:00,352  INFO        [ingest] 2.Upper_Body_Fundamentals.json: 758 segments → 22 chunks
+2026-04-17 12:42:00,352  INFO        [ingest] Loading embedding model …
+2026-04-17 12:42:00,352  INFO        [ingest]   Ingested chunk 19/19 for 2.Upper_Body_Fundamentals.mp4
+2026-04-17 12:42:00,352  INFO        [ingest] Done: 19 chunks ingested, 3 skipped (already exists)
+2026-04-17 12:42:00,482  WARNING   Skipping nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 (1060 MB > limit 400 MB)
+2026-04-17 12:42:00,547  INFO      START  nrt/3.Why_People_Hurt.mp4
 ```
