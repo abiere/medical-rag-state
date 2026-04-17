@@ -74,6 +74,9 @@ State machine per boek: `data/ingest_cache/{book_hash}/state.json`
 - **Primair:** Claude Haiku API (instelbaar — `settings.json claude_api.enabled`)
 - **Fallback:** Ollama llama3.1:8b — non-blocking: 3× timeout → `audit_status="skipped_ollama_timeout"` → chunk toch geëmbed
 - **Retroaudit:** `nightly_maintenance.py` — verwerkt overgeslagen chunks on-demand via UI widget
+- **Permanente fallback:** Chunks met lege tekst (<10 chars) → `tagged_claude_default` (k=3,a=3,i=3) zonder API-aanroep
+  Chunks die 3× falen → `tagged_claude_default` automatisch. Geen chunk blijft permanent in skipped status.
+- **retroaudit_skipped()** verwerkt ook chunks zonder `audit_status` (bijv. `<none>`) en gebruikt index-gebaseerde merge voor chunks zonder `chunk_id`
 
 ### 1.5 OCR Hulpmodules
 | Module | Functie |

@@ -2313,15 +2313,18 @@ function buildPhaseTable(d, meta) {
       const ct = info.chunks_tagged  || 0;
       const cx = info.chunks_total   || 0;
       if (cs > 0) {
-        const nights = Math.ceil(cs / 200);
-        const doneDate = new Date();
-        doneDate.setDate(doneDate.getDate() + nights);
-        const doneDateStr = doneDate.toLocaleDateString('nl-NL', {day:'2-digit', month:'long'});
-        detail = fmt(ct) + ' getagd \u00b7 ' + fmt(cs) + ' overgeslagen \u00b7 nachtrun vereist'
-          + '<div style="background:#fde68a;border-radius:6px;padding:4px 8px;font-size:11px;'
-          + 'color:#78350f;margin-top:5px">Nachtrun: 200 chunks/nacht \u00b7 ~' + nights
-          + ' nachten resterend \u00b7 klaar ~' + doneDateStr + '</div>';
-        ccol = '#d97706';
+        const claudeOn = !!d.claude_api_enabled;
+        let infoBox;
+        if (claudeOn) {
+          infoBox = '<div style="background:#EEEDFE;border-radius:6px;padding:4px 8px;font-size:11px;'
+            + 'color:#3C3489;margin-top:5px">Claude API actief \u2014 run \u2018Nu uitvoeren\u2019 voor directe verwerking</div>';
+        } else {
+          infoBox = '<div style="background:#fde68a;border-radius:6px;padding:4px 8px;font-size:11px;'
+            + 'color:#78350f;margin-top:5px">Nachtrun verwerkt overgeslagen chunks binnen tijdvenster'
+            + ' (02:00\u201307:00 Amsterdam) \u2014 proportioneel budget</div>';
+        }
+        detail = fmt(ct) + ' getagd \u00b7 ' + fmt(cs) + ' overgeslagen' + infoBox;
+        ccol = claudeOn ? '#7c3aed' : '#d97706';
         icon = '\u263D';
       } else {
         detail = fmt(cx) + ' chunks';
@@ -2619,8 +2622,16 @@ async def api_library_book_detail(book_hash: str):
             except Exception:
                 pass
 
+    claude_api_enabled = False
+    try:
+        settings = json.loads(SETTINGS_PATH.read_text())
+        claude_api_enabled = bool(settings.get("claude_api", {}).get("enabled", False))
+    except Exception:
+        pass
+
     return {**state, "audit_score": audit_score,
-            "category_scores": category_scores, "chunk_count": chunk_count}
+            "category_scores": category_scores, "chunk_count": chunk_count,
+            "claude_api_enabled": claude_api_enabled}
 
 
 # ── DELETE /api/library/items/{item_id} ────────────────────────────────────────

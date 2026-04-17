@@ -72,6 +72,18 @@ def get_client():
 def audit_chunk(client, model: str, max_tokens: int, chunk: dict) -> dict:
     """Audit a single chunk. Returns updated chunk with kai tags."""
     text = chunk.get("text", "")[:2000]  # cap at 2000 chars
+
+    # Immediate fallback for empty or too-short text — no API call needed
+    if not text or len(text.strip()) < 10:
+        chunk["kai_k"]        = 3
+        chunk["kai_a"]        = 3
+        chunk["kai_i"]        = 3
+        chunk["tags"]         = []
+        chunk["summary"]      = "Lege of te korte chunk"
+        chunk["audit_status"] = "tagged_claude_default"
+        chunk["audit_engine"] = "claude_api"
+        return chunk
+
     try:
         response = client.messages.create(
             model=model,
@@ -97,10 +109,23 @@ def audit_chunk(client, model: str, max_tokens: int, chunk: dict) -> dict:
         chunk["audit_status"]  = "tagged_claude"
         chunk["audit_engine"]  = "claude_api"
     except Exception as e:
-        logger.warning("Claude audit failed for chunk %s: %s",
-                       chunk.get("chunk_id", "?"), e)
-        chunk["audit_status"] = "skipped_claude_error"
-        chunk["audit_engine"] = "claude_api"
+        retry_count = chunk.get("_retry_count", 0) + 1
+        chunk["_retry_count"] = retry_count
+        logger.warning("Claude audit failed for chunk %s (attempt %d): %s",
+                       chunk.get("chunk_id", "?"), retry_count, e)
+        if retry_count >= 3:
+            chunk["kai_k"]        = 3
+            chunk["kai_a"]        = 3
+            chunk["kai_i"]        = 3
+            chunk["tags"]         = []
+            chunk["summary"]      = "Automatisch getagd na herhaald falen"
+            chunk["audit_status"] = "tagged_claude_default"
+            chunk["audit_engine"] = "claude_api"
+            logger.warning("Chunk %s assigned default tags after %d failures: %s",
+                           chunk.get("chunk_id", "?"), retry_count, repr(text[:100]))
+        else:
+            chunk["audit_status"] = "skipped_claude_error"
+            chunk["audit_engine"] = "claude_api"
     return chunk
 
 
@@ -191,7 +216,8 @@ def _update_state_after_retroaudit(phase2_path: Path,
 
 def retroaudit_skipped(phase2_path: Path, progress_fn=None) -> tuple[int, int]:
     """
-    Re-audit all chunks with audit_status starting with 'skipped' using Claude API.
+    Re-audit all chunks that haven't been successfully tagged yet.
+    Includes chunks with status starting with 'skipped' and chunks with no status.
     Updates phase2_path in-place (atomic write) and syncs state.json.
     Returns (tagged_count, error_count).
     """
@@ -199,28 +225,43 @@ def retroaudit_skipped(phase2_path: Path, progress_fn=None) -> tuple[int, int]:
         return 0, 0
 
     chunks = json.loads(phase2_path.read_text())
-    skipped = [c for c in chunks
-               if (c.get("audit_status") or "").startswith("skipped")]
 
-    if not skipped:
+    # Collect (original_index, chunk) for everything not yet tagged
+    skipped_map = [
+        (i, c) for i, c in enumerate(chunks)
+        if not (c.get("audit_status") or "").startswith("tagged")
+    ]
+
+    if not skipped_map:
         return 0, 0
 
-    logger.info("Claude retroaudit: %d skipped chunks in %s", len(skipped), phase2_path.name)
-    updated = audit_chunks_parallel(skipped, progress_fn=progress_fn)
+    skipped_list = [x[1] for x in skipped_map]
+    logger.info("Claude retroaudit: %d chunks needing audit in %s",
+                len(skipped_list), phase2_path.name)
+    updated = audit_chunks_parallel(skipped_list, progress_fn=progress_fn)
 
-    # Merge back by chunk_id
-    id_to_updated = {c.get("chunk_id"): c for c in updated if c.get("chunk_id")}
+    # Merge back: prefer chunk_id match, fallback to positional index for no-id chunks
+    id_to_result: dict = {}
+    for j, (orig_idx, _) in enumerate(skipped_map):
+        upd = updated[j]
+        cid = upd.get("chunk_id")
+        if cid:
+            id_to_result[cid] = upd
+        else:
+            chunks[orig_idx] = upd  # direct index update — no chunk_id available
+
     for i, chunk in enumerate(chunks):
         cid = chunk.get("chunk_id")
-        if cid and cid in id_to_updated:
-            chunks[i] = id_to_updated[cid]
+        if cid and cid in id_to_result:
+            chunks[i] = id_to_result[cid]
 
     # Atomic write of phase2 file
     tmp = phase2_path.with_suffix(".tmp")
     tmp.write_text(json.dumps(chunks, ensure_ascii=False, indent=2))
     tmp.replace(phase2_path)
 
-    tagged = sum(1 for c in updated if c.get("audit_status") == "tagged_claude")
+    tagged = sum(1 for c in updated
+                 if str(c.get("audit_status", "")).startswith("tagged"))
     errors = len(updated) - tagged
 
     # Sync state.json with ground-truth counts from updated phase2 file

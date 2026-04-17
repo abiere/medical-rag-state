@@ -1,6 +1,6 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-17 — image extractie verplaatst uit nachtrun naar dagtijd pipeline
+> Laatste update: 2026-04-17 — audit fallback + retroaudit fix: 2773 chunks getagd
 
 ---
 
@@ -65,6 +65,19 @@
 - [ ] Officiële Deadman digitale versie aanschaffen (DRM-vrij via Eastland Press)
 - [ ] Consistentie guardian cross-collectie
 - [ ] Protocol pre-validatie (Ollama checkt dekking voor generatie)
+
+---
+
+## ✅ Afgerond — sessie 2026-04-17 (audit fallback + retroaudit)
+
+- [x] **audit_chunk() permanente fallback** — lege tekst (<10 chars) → `tagged_claude_default` direct
+      Na 3× falen → `tagged_claude_default` (k=3,a=3,i=3) + log warning met chunk preview
+- [x] **retroaudit_skipped() fix** — vangt ook `<none>` status chunks op (niet alleen `startswith("skipped")`)
+      Index-gebaseerde merge voor chunks zonder chunk_id
+- [x] **Drawer info box** — Claude API aan → paars "Nu uitvoeren" bericht; uit → amber met tijdvenster zonder "200/nacht"
+      `claude_api_enabled` toegevoegd aan `/api/library/book/{hash}/detail` response
+- [x] **2773 chunks getagd** — Deadman 1013/1013 + Travell 1760/1760 volledig getagd na retroaudit
+      Waren allemaal `skipped_ollama_timeout` of `<none>` — state.json gecorrigeerd
 
 ---
 
