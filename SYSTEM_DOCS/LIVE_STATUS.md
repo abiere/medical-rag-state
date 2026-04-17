@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 15:12:08 UTC**
+> Last update: **2026-04-17 15:17:08 UTC**
 
 ## Services
 | Service | Status |
@@ -14,18 +14,18 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Quantum-Touch Core Transformation_ A New Way to Heal and Alter Reality_nodrm.epub` (8 min) |
-| Queued | 4 |
+| Current job | `Quantum-Touch_ The Power to Heal_nodrm.epub` (3 min) |
+| Queued | 3 |
 | Total books | 57 |
 | Ingested | 44 |
-| Vectors in medical_library | 5089 |
+| Vectors in medical_library | 5230 |
 | Images pending approval | 2026 |
 | Images approved | 0 |
 
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (5 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (10 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in video_transcripts | 241 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 14.88 GB / 32.86 GB (45%) |
-| CPU | 100.0% |
+| RAM used | 14.26 GB / 32.86 GB (43%) |
+| CPU | 99.7% |
 | Disk used | 62.1 GB / 322.3 GB (20%) |
-| Uptime | up 9 hours, 36 minutes |
+| Uptime | up 9 hours, 41 minutes |
 
 ## Recent markers
+- `2026-04-17T15:13:36.045632+00:00` **book_ingested** — Quantum-Touch Core Transformation_ A New Way to Heal and Alter Reality_nodrm.epub → medical_library: 141 chunks
 - `2026-04-17T15:03:17.284001+00:00` **book_ingested** — Quantum-Touch 2.0 - The New Human_ Discovering and Becoming_nodrm.epub → medical_library: 158 chunks
 - `2026-04-17T15:02:27` **transcription_failed** — 1.Upper_Body_Techniques.mp4 FAILED (21/14)
 - `2026-04-17T14:56:49.962201+00:00` **book_ingested** — Bates' Guide To Physical Examination and History Taking_nodrm.epub → medical_library: 1251 chunks
 - `2026-04-17T14:38:20.635476+00:00` **book_ingested** — Anatomy Trains_ Myofascial Meridians for Manual and Movement Therapists_nodrm.epub → medical_library: 432 chunks
-- `2026-04-17T14:18:06` **queue_empty** — All 14 videos transcribed
 
 ## Nightly Consistency
 ```
