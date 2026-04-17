@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 05:02:40 UTC**
+> Last update: **2026-04-17 05:07:41 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `03_trail_guide_to_the_body_6th.pdf` (796 min) |
+| Current job | `03_trail_guide_to_the_body_6th.pdf` (801 min) |
 | Queued | 4 |
 | Total books | 43 |
 | Ingested | 35 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` (22 min) |
+| Current job | `1.Upper_Body_Techniques.mp4` (27 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -34,9 +34,9 @@
 | Metric | Value |
 |---|---|
 | RAM used | 7.63 GB / 32.86 GB (23%) |
-| CPU | 99.1% |
+| CPU | 98.5% |
 | Disk used | 60.6 GB / 322.3 GB (20%) |
-| Uptime | up 2 days, 19 hours, 19 minutes |
+| Uptime | up 2 days, 19 hours, 24 minutes |
 
 ## Recent markers
 - `2026-04-17T04:40:40.581705+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
