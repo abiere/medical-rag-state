@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 07:16:40 UTC**
+> Last update: **2026-04-17 07:21:40 UTC**
 
 ## Services
 | Service | Status |
@@ -19,13 +19,13 @@
 | Total books | 43 |
 | Ingested | 35 |
 | Vectors in medical_library | 2775 |
-| Images pending approval | 0 |
+| Images pending approval | 416 |
 | Images approved | 0 |
 
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `16_Expanded__Revised__and_New_Techniques.mp4` (26 min) |
+| Current job | `16_Expanded__Revised__and_New_Techniques.mp4` (1 min) |
 | Queued | 19 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 14.22 GB / 32.86 GB (43%) |
-| CPU | 99.1% |
-| Disk used | 58.9 GB / 322.3 GB (19%) |
-| Uptime | up 1 hour, 41 minutes |
+| RAM used | 12.89 GB / 32.86 GB (39%) |
+| CPU | 99.9% |
+| Disk used | 59.0 GB / 322.3 GB (19%) |
+| Uptime | up 1 hour, 46 minutes |
 
 ## Recent markers
+- `2026-04-17T07:20:40.911856+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-17T06:50:39.257058+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-17T06:20:36.837379+00:00` **watchdog_restart** — transcription-queue hung (37 min stale) — restarted successfully
 - `2026-04-17T05:44:05` **transcription_failed** — 1.Upper_Body_Techniques.mp4 FAILED (16/19)
 - `2026-04-17T05:10:41.112457+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
-- `2026-04-17T04:40:40.581705+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-17 05:44:05,768  WARNING   Skipping nrt/1.Upper_Body_Techniques.mp4 (in skip_files list)
-2026-04-17 05:44:05,836  INFO      START  nrt/16_Expanded__Revised__and_New_Techniques.mp4
-2026-04-17 06:20:36,877  INFO      ────────────────────────────────────────────────────────────
-2026-04-17 06:20:36,878  INFO      Transcription queue manager started
 2026-04-17 06:20:36,879  INFO      Startup scan: 19 untranscribed video(s) found, 1 new entry/entries added to queue
 2026-04-17 06:20:36,880  INFO      START  nrt/16_Expanded__Revised__and_New_Techniques.mp4
 2026-04-17 06:50:39,300  INFO      ────────────────────────────────────────────────────────────
 2026-04-17 06:50:39,300  INFO      Transcription queue manager started
 2026-04-17 06:50:39,301  INFO      Startup scan: 19 untranscribed video(s) found, 0 new entry/entries added to queue
 2026-04-17 06:50:39,301  INFO      START  nrt/16_Expanded__Revised__and_New_Techniques.mp4
+2026-04-17 07:20:40,958  INFO      ────────────────────────────────────────────────────────────
+2026-04-17 07:20:40,958  INFO      Transcription queue manager started
+2026-04-17 07:20:40,960  INFO      Startup scan: 19 untranscribed video(s) found, 0 new entry/entries added to queue
+2026-04-17 07:20:40,960  INFO      START  nrt/16_Expanded__Revised__and_New_Techniques.mp4
 ```
