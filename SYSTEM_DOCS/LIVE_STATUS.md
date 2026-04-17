@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 21:27:14 UTC**
+> Last update: **2026-04-17 21:32:14 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `An Introduction to Craniosacral Therapy - Kern.pdf` |
+| Current job | `An Introduction to Craniosacral Therapy - Kern.pdf` (5 min) |
 | Queued | 13 |
 | Total books | 37 |
 | Ingested | 60 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (16 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (21 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 9.78 GB / 32.86 GB (30%) |
-| CPU | 98.9% |
+| RAM used | 15.13 GB / 32.86 GB (46%) |
+| CPU | 100.0% |
 | Disk used | 68.8 GB / 322.3 GB (22%) |
-| Uptime | up 15 hours, 51 minutes |
+| Uptime | up 15 hours, 56 minutes |
 
 ## Recent markers
 - `2026-04-17T21:26:49.298895+00:00` **book_ingested** — Advanced Acupuncture - Cecil-Sterman.pdf → medical_library: 482 chunks
