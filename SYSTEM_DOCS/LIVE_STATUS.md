@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 15:17:08 UTC**
+> Last update: **2026-04-17 15:18:33 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Quantum-Touch_ The Power to Heal_nodrm.epub` (3 min) |
+| Current job | `Quantum-Touch_ The Power to Heal_nodrm.epub` (4 min) |
 | Queued | 3 |
 | Total books | 57 |
 | Ingested | 44 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (10 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (11 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in video_transcripts | 241 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 14.26 GB / 32.86 GB (43%) |
-| CPU | 99.7% |
+| RAM used | 14.28 GB / 32.86 GB (44%) |
+| CPU | 100.0% |
 | Disk used | 62.1 GB / 322.3 GB (20%) |
-| Uptime | up 9 hours, 41 minutes |
+| Uptime | up 9 hours, 43 minutes |
 
 ## Recent markers
 - `2026-04-17T15:13:36.045632+00:00` **book_ingested** — Quantum-Touch Core Transformation_ A New Way to Heal and Alter Reality_nodrm.epub → medical_library: 141 chunks

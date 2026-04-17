@@ -67,6 +67,16 @@
 
 ---
 
+## ✅ Afgerond — sessie 2026-04-17 (JS syntax fix + library speed + video splitting + cleanup)
+
+- [x] **`/library` JS syntax error gefixt** — `\'` in Python `"""..."""` string werd door Python omgezet naar `'`
+      waardoor `\''` → `''` in de gerenderde JavaScript = twee aaneengesloten lege string literals → `SyntaxError: Unexpected string`
+      Gevolg: gehele `<script>` block laadde niet → `loadItems()` werd nooit aangeroepen → eeuwige "Laden…"
+      Fix: `\''` → `\\'` zodat Python `\'` uitvoert in het JavaScript (correct JS escape voor single-quote)
+      Regel: `app.py:2853` — `confirmImageToggle` onclick handler in `buildPhaseTable()`
+
+---
+
 ## ✅ Afgerond — sessie 2026-04-17 (library speed + video splitting + cleanup)
 
 - [x] **`/api/library/items` versneld** — bottleneck was 60 afzonderlijke `httpx.AsyncClient` instanties per Qdrant-query
