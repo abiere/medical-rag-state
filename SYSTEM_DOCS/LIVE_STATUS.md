@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 12:26:50 UTC**
+> Last update: **2026-04-17 12:31:50 UTC**
 
 ## Services
 | Service | Status |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2.Upper_Body_Fundamentals.mp4` (4 min) |
+| Current job | `2.Upper_Body_Fundamentals.mp4` (9 min) |
 | Queued | 17 |
 | Done | 18 / 35 |
 | Vectors in video_transcripts | 189 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 6.76 GB / 32.86 GB (21%) |
-| CPU | 95.7% |
+| RAM used | 6.78 GB / 32.86 GB (21%) |
+| CPU | 99.4% |
 | Disk used | 59.5 GB / 322.3 GB (19%) |
-| Uptime | up 6 hours, 51 minutes |
+| Uptime | up 6 hours, 56 minutes |
 
 ## Recent markers
 - `2026-04-17T12:21:57` **transcription_done** — 2.Lower_Body_Fundamentals.mp4 complete (18/19)
