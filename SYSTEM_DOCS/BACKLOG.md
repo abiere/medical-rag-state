@@ -9,6 +9,10 @@
 - [x] **OPDRACHT B (UI) voltooid** ✅ — zie Afgerond hieronder
 - [x] **Domain MDs aangemaakt** ✅ — zie Afgerond hieronder (Domain-QAT, NRT, RLT, PEMF, Klinisch skeleton)
 
+- [ ] **Domain-Klinisch.md invullen** — samen met Axel: behandelvolgorde, GTR/Tit Tar, QAT balancepunten, casusvoorbeelden
+- [ ] **Appendices aanmaken** — Appendix-Autoimmuun, NervusVagus, Endocrien, Sympathicus (na klinisch gesprek)
+- [ ] **Domain MDs in /protocollen UI** — tab "Domain Knowledge" voor weergave/bewerking van alle Domain MDs
+- [ ] **Protocol generator** — Domain MD context-injectie per paragraaf bij generatie
 
 - [ ] **Trail Guide ingest valideren** — RapidOCR run actief (gestart 08:32)
       ```bash
@@ -68,6 +72,36 @@
 - [ ] Officiële Deadman digitale versie aanschaffen (DRM-vrij via Eastland Press)
 - [ ] Consistentie guardian cross-collectie
 - [ ] Protocol pre-validatie (Ollama checkt dekking voor generatie)
+
+---
+
+## ✅ Afgerond — sessie 2026-04-17 (Domain MDs kennissyntheselaag)
+
+- [x] **Domain-QAT.md aangemaakt** — /data/domain_mds/Domain-QAT.md
+      Inhoud: werkingsmechanisme, apparaten (pads/clips/greens/rood), spiertesten, neurologische desorganisatie,
+      TNT, CTB, pair balancing, 14 meridianen + tabel, ETT, infused salt, pendants, contra-indicaties
+      Bronnen: 125 chunks uit qat_curriculum (QAT_2025, Home Study, 3× pendant PDFs)
+
+- [x] **Domain-NRT.md aangemaakt** — /data/domain_mds/Domain-NRT.md
+      Inhoud: wetenschappelijke basis (reciproke inhibitie, mechanoreceptoren), instrumenten,
+      contra-indicaties, ERS 321 spieren (volledig numbered), UB/LB zones + anatomische referenties,
+      specifieke reset-technieken, MS, Times-documenten tabel
+      Bronnen: 425 chunks uit nrt_curriculum (UB 157, LB 132, Advanced 126, Times 10)
+
+- [x] **Domain-RLT.md aangemaakt** — /data/domain_mds/Domain-RLT.md
+      Inhoud: PBM werkingsmechanisme, golflengten, cellulaire effecten, FlexBeam specs, klinische tabel,
+      programma's, placement-protocollen per lichaamsdeel, contra-indicaties, combinaties NRT/QAT, historische timeline
+      Bronnen: 160 chunks uit rlt_flexbeam (22 bronnen)
+
+- [x] **Domain-PEMF.md aangemaakt** — /data/domain_mds/Domain-PEMF.md
+      Inhoud: transmembranale potentiaal, elektroporatie, QRS-101 componenten, indicatietabel met settings,
+      dosis-richtlijnen op bloeddruk/pols, sessiestructuur, EC-certificering, combinaties
+      Bronnen: 64 chunks uit pemf_qrs (QRS-101 Manual, Indication Settings, Home System, Operating Manual)
+
+- [x] **Domain-Klinisch.md skeleton aangemaakt** — /data/domain_mds/Domain-Klinisch.md
+      Status: skeleton — handmatig in te vullen met Axel
+      Kaders: behandelfilosofie, klachtpatronen, weefselspecifieke keuzes, sessiestructuur,
+      acupunctuurpunten notatie, GTR/Tit Tar, Appendices planning
 
 ---
 
