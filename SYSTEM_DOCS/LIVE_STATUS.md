@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 05:46:35 UTC**
+> Last update: **2026-04-17 05:47:58 UTC**
 
 ## Services
 | Service | Status |
@@ -15,7 +15,7 @@
 | Metric | Value |
 |---|---|
 | Current job | `03_trail_guide_to_the_body_6th.pdf` |
-| Queued | 0 |
+| Queued | 4 |
 | Total books | 43 |
 | Ingested | 35 |
 | Vectors in medical_library | 2775 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `16_Expanded__Revised__and_New_Techniques.mp4` (2 min) |
+| Current job | `16_Expanded__Revised__and_New_Techniques.mp4` (3 min) |
 | Queued | 18 |
 | Done | 16 / 35 |
 | Vectors in video_transcripts | 158 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 6.47 GB / 32.86 GB (20%) |
-| CPU | 100.0% |
+| RAM used | 7.1 GB / 32.86 GB (22%) |
+| CPU | 99.5% |
 | Disk used | 58.9 GB / 322.3 GB (19%) |
-| Uptime | up 11 minutes |
+| Uptime | up 12 minutes |
 
 ## Recent markers
 - `2026-04-17T05:44:05` **transcription_failed** — 1.Upper_Body_Techniques.mp4 FAILED (16/19)
