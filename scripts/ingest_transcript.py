@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Ingest a Whisper JSON transcript into Qdrant collection "video_transcripts".
+Ingest a Whisper JSON transcript into Qdrant.
+Routes to nrt_video_transcripts (nrt) or qat_video_transcripts (qat) based on --video-type.
 
 Usage:
     python3 ingest_transcript.py --file data/transcripts/Foo.json --video-type qat
@@ -15,9 +16,16 @@ import sys
 import uuid
 from pathlib import Path
 
-QDRANT_URL      = "http://localhost:6333"
-COLLECTION_NAME = "video_transcripts"
-EMBED_MODEL     = "BAAI/bge-large-en-v1.5"
+QDRANT_URL  = "http://localhost:6333"
+EMBED_MODEL = "BAAI/bge-large-en-v1.5"
+
+# Route video_type to Qdrant collection
+_VIDEO_COLLECTION_MAP = {
+    "nrt":  "nrt_video_transcripts",
+    "qat":  "qat_video_transcripts",
+    "pemf": "nrt_video_transcripts",  # legacy — fallback
+    "rlt":  "nrt_video_transcripts",  # legacy — fallback
+}
 VECTOR_DIM      = 1024
 TARGET_WORDS    = 300
 OVERLAP_SEGS    = 2
@@ -58,23 +66,23 @@ def _point_id(chunk_hash: str) -> str:
 
 # ── qdrant helpers ────────────────────────────────────────────────────────────
 
-def _ensure_collection(client) -> None:
+def _ensure_collection(client, collection_name: str) -> None:
     from qdrant_client.models import Distance, VectorParams
     existing = {c.name for c in client.get_collections().collections}
-    if COLLECTION_NAME not in existing:
+    if collection_name not in existing:
         client.create_collection(
-            collection_name=COLLECTION_NAME,
+            collection_name=collection_name,
             vectors_config=VectorParams(size=VECTOR_DIM, distance=Distance.COSINE),
         )
-        print(f"Created collection '{COLLECTION_NAME}'")
+        print(f"Created collection '{collection_name}'")
 
 
-def _existing_ids(client, point_ids: list[str]) -> set[str]:
+def _existing_ids(client, collection_name: str, point_ids: list[str]) -> set[str]:
     """Return the subset of point_ids that already exist in Qdrant."""
     if not point_ids:
         return set()
     results = client.retrieve(
-        collection_name=COLLECTION_NAME,
+        collection_name=collection_name,
         ids=point_ids,
         with_payload=False,
         with_vectors=False,
@@ -117,7 +125,9 @@ def main() -> None:
     from qdrant_client.models import PointStruct
 
     client = QdrantClient(url=QDRANT_URL, timeout=30)
-    _ensure_collection(client)
+    collection_name = _VIDEO_COLLECTION_MAP.get(args.video_type, "nrt_video_transcripts")
+    print(f"Target collection: {collection_name}")
+    _ensure_collection(client, collection_name)
 
     # ── prepare payloads ──────────────────────────────────────────────────────
     records = []
@@ -138,7 +148,7 @@ def main() -> None:
 
     # ── idempotency check ─────────────────────────────────────────────────────
     all_ids  = [r["pid"] for r in records]
-    seen_ids = _existing_ids(client, all_ids)
+    seen_ids = _existing_ids(client, collection_name, all_ids)
 
     to_insert = [r for r in records if r["pid"] not in seen_ids]
     skipped   = len(records) - len(to_insert)
@@ -172,7 +182,7 @@ def main() -> None:
     BATCH = 64
     for start in range(0, len(points), BATCH):
         batch = points[start:start + BATCH]
-        client.upsert(collection_name=COLLECTION_NAME, points=batch)
+        client.upsert(collection_name=collection_name, points=batch)
         done_so_far = min(start + BATCH, len(points))
         print(f"  Ingested chunk {done_so_far}/{len(points)} for {source_file}")
 

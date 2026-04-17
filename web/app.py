@@ -30,19 +30,33 @@ SECTION_MAP = {
         "category":    "medical_literature",
         "description": "Upload PDF of EPUB — AI analyseert automatisch bruikbaarheid",
     },
-    "nrt_qat": {
-        "label":       "NRT & QAT Curriculum",
-        "color":       "#7c3aed",
-        "collection":  "nrt_qat_curriculum",
-        "category":    "nrt_qat",
-        "description": "Eigen behandelmethode documentatie",
+    "nrt_curriculum": {
+        "label":       "NRT Curriculum",
+        "color":       "#1A6B72",
+        "collection":  "nrt_curriculum",
+        "category":    "nrt_curriculum",
+        "description": "NRT trainingmateriaal, technieken en seminar handleidingen",
     },
-    "device": {
-        "label":       "Apparatuur",
+    "qat_curriculum": {
+        "label":       "QAT Curriculum",
+        "color":       "#7c3aed",
+        "collection":  "qat_curriculum",
+        "category":    "qat_curriculum",
+        "description": "QAT 2025 curriculum, Life Pendant en Brain Connect documentatie",
+    },
+    "rlt_flexbeam": {
+        "label":       "RLT (FlexBeam)",
+        "color":       "#dc2626",
+        "collection":  "rlt_flexbeam",
+        "category":    "rlt_flexbeam",
+        "description": "FlexBeam Red Light Therapy handleidingen en protocollen",
+    },
+    "pemf_qrs": {
+        "label":       "PEMF (QRS)",
         "color":       "#059669",
-        "collection":  "device_documentation",
-        "category":    "device",
-        "description": "PEMF en RLT apparatuur documentatie",
+        "collection":  "pemf_qrs",
+        "category":    "pemf_qrs",
+        "description": "QRS-101 PEMF apparatuur handleidingen en instellingen",
     },
 }
 USABILITY_TAGS_FILE  = BASE / "config" / "usability_tags.json"
@@ -1263,7 +1277,10 @@ setInterval(_refreshBookProgress, 10000);
 async def videos_page():
     sections_html = ""
 
-    for vtype, vname in VIDEO_TYPES.items():
+    # Only NRT and QAT have training video content; pemf/rlt are device types
+    VIDEO_UPLOAD_TYPES = {"nrt": VIDEO_TYPES["nrt"], "qat": VIDEO_TYPES["qat"]}
+
+    for vtype, vname in VIDEO_UPLOAD_TYPES.items():
         color    = VIDEO_TYPE_COLORS[vtype]
         videos   = _list_videos(vtype)
         n_done   = sum(1 for v in videos if v["transcribed"])
@@ -1620,7 +1637,8 @@ async def status_snapshot():
         "qdrant_collections": {
             col["name"]: col.get("vectors", 0)
             for col in qdrant_info.get("collections", [])
-            if col["name"] in ("medical_library", "video_transcripts")
+            if col["name"] in ("medical_library", "nrt_curriculum", "qat_curriculum",
+                               "rlt_flexbeam", "pemf_qrs", "nrt_video_transcripts")
         },
         "transcription": {
             "current": current_file,
@@ -2108,20 +2126,28 @@ def _book_display(filename: str, classifications: dict) -> tuple:
 _CAT_LABELS = {
     "medical_literature": "Medische Literatuur",
     "acupuncture":        "Acupunctuur",
-    "nrt_kinesiology":    "NRT/Kinesiologie",
+    "nrt_curriculum":     "NRT Curriculum",
     "qat_curriculum":     "QAT Curriculum",
+    "rlt_flexbeam":       "RLT (FlexBeam)",
+    "pemf_qrs":           "PEMF (QRS)",
+    # legacy keys kept for backward-compat display
+    "nrt_kinesiology":    "NRT/Kinesiologie",
     "device":             "Apparatuur",
     "videos":             "Video's",
 }
-_CAT_ORDER = list(_CAT_LABELS.keys())
+_CAT_ORDER = ["medical_literature", "acupuncture", "nrt_curriculum",
+              "qat_curriculum", "rlt_flexbeam", "pemf_qrs"]
 
 _CAT_COLLECTION = {
     "medical_literature": "medical_library",
     "acupuncture":        "medical_library",
-    "nrt_kinesiology":    "nrt_qat_curriculum",
-    "qat_curriculum":     "nrt_qat_curriculum",
-    "device":             "device_documentation",
-    "videos":             "video_transcripts",
+    "nrt_kinesiology":    "nrt_curriculum",
+    "nrt_curriculum":     "nrt_curriculum",
+    "qat_curriculum":     "qat_curriculum",
+    "rlt_flexbeam":       "rlt_flexbeam",
+    "pemf_qrs":           "pemf_qrs",
+    "device":             "rlt_flexbeam",          # legacy
+    "videos":             "nrt_video_transcripts",  # legacy
 }
 
 _KAI_COLORS = {1: "#16a34a", 2: "#d97706", 3: "#9ca3af"}
@@ -2387,12 +2413,16 @@ const CAT_LABELS = {
   all:              'Alles',
   medical_literature: 'Medische Literatuur',
   acupuncture:      'Acupunctuur',
-  nrt_kinesiology:  'NRT/Kinesiologie',
+  nrt_curriculum:   'NRT Curriculum',
   qat_curriculum:   'QAT Curriculum',
+  rlt_flexbeam:     'RLT (FlexBeam)',
+  pemf_qrs:         'PEMF (QRS)',
+  // legacy
+  nrt_kinesiology:  'NRT/Kinesiologie',
   device:           'Apparatuur',
   videos:           "Video's",
 };
-const CAT_ORDER = ['all','medical_literature','acupuncture','nrt_kinesiology','qat_curriculum','device','videos'];
+const CAT_ORDER = ['all','medical_literature','acupuncture','nrt_curriculum','qat_curriculum','rlt_flexbeam','pemf_qrs'];
 const KAI_COLORS = {1:'#16a34a', 2:'#ea580c', 3:'#6b7280'};
 const STATUS_PILLS = {
   in_wachtrij:   {label:'In wachtrij',      bg:'#f3f4f6', color:'#374151'},
@@ -5877,9 +5907,13 @@ _QUICK_QUERIES = [
 ]
 
 _COLL_OPTIONS = [
-    ("medical_library",     "Medische Literatuur",   "#1A6B72"),
-    ("nrt_qat_curriculum",  "NRT & QAT Curriculum",  "#7c3aed"),
-    ("video_transcripts",   "Video Transcripts",      "#059669"),
+    ("medical_library",        "Medische Literatuur",   "#1A6B72"),
+    ("nrt_curriculum",         "NRT Curriculum",        "#1A6B72"),
+    ("qat_curriculum",         "QAT Curriculum",        "#7c3aed"),
+    ("rlt_flexbeam",           "RLT (FlexBeam)",        "#dc2626"),
+    ("pemf_qrs",               "PEMF (QRS)",            "#059669"),
+    ("nrt_video_transcripts",  "NRT Video Transcripts", "#1A6B72"),
+    ("qat_video_transcripts",  "QAT Video Transcripts", "#7c3aed"),
 ]
 
 _TAG_COLORS = {
@@ -6261,7 +6295,7 @@ async function doImgSearch() {{
 async def search_query(request: Request):
     body = await request.json()
     query       = (body.get("query") or "").strip()
-    collections = body.get("collections") or ["medical_library", "nrt_qat_curriculum", "video_transcripts"]
+    collections = body.get("collections") or ["medical_library", "nrt_curriculum", "qat_curriculum", "nrt_video_transcripts"]
     if not query:
         return JSONResponse({"error": "query required"}, status_code=400)
 
@@ -6991,8 +7025,8 @@ def _run_reaudit_job(job_id: str, filename: str) -> None:
 # ─── GLOBAL RETROAUDIT (Claude API, all books) ────────────────────────────────
 
 # Collections that contain chunked text requiring KAI tagging.
-# video_transcripts is excluded — transcriptions use a different schema.
-_AUDIT_COLLECTIONS = ["medical_library", "nrt_qat_curriculum", "device_documentation"]
+# video collections are excluded — transcriptions use a different schema.
+_AUDIT_COLLECTIONS = ["medical_library", "nrt_curriculum", "qat_curriculum", "rlt_flexbeam", "pemf_qrs"]
 
 
 def _clear_skipped_in_state(

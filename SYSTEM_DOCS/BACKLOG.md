@@ -6,10 +6,7 @@
 
 ## 🔴 Prioriteit — volgende sessie
 
-- [ ] **OPDRACHT B (UI) uitvoeren** — SECTION_MAP uitbreiden in web/app.py met 6 nieuwe collecties,
-      tabs per collectie in /library, /videos upload splits, verwijdering legacy collecties na verificatie
-      Vereiste: Opdracht A ✅ voltooid, alle nieuwe collecties gevuld
-
+- [x] **OPDRACHT B (UI) voltooid** ✅ — zie Afgerond hieronder
 
 
 - [ ] **Trail Guide ingest valideren** — RapidOCR run actief (gestart 08:32)
@@ -70,6 +67,22 @@
 - [ ] Officiële Deadman digitale versie aanschaffen (DRM-vrij via Eastland Press)
 - [ ] Consistentie guardian cross-collectie
 - [ ] Protocol pre-validatie (Ollama checkt dekking voor generatie)
+
+---
+
+## ✅ Afgerond — sessie 2026-04-17 (Opdracht B: UI collectie-architectuur)
+
+- [x] **SECTION_MAP vervangen** (3 → 5 secties): medical_literature, nrt_curriculum, qat_curriculum, rlt_flexbeam, pemf_qrs
+- [x] **`_CAT_LABELS` + `_CAT_ORDER`** bijgewerkt — tabs in /library tonen nieuwe collecties
+- [x] **JS `CAT_LABELS` + `CAT_ORDER`** bijgewerkt — filterbuttons tonen NRT/QAT/RLT/PEMF tabs
+- [x] **`_CAT_COLLECTION`** bijgewerkt — chunk counts en delete werken op juiste collecties
+- [x] **`_COLL_OPTIONS`** bijgewerkt — zoekpagina toont 7 collecties (incl. video)
+- [x] **`_AUDIT_COLLECTIONS`** bijgewerkt — retroaudit werkt op 5 text-collecties
+- [x] **Search default collections** bijgewerkt — medical_library + nrt_curriculum + qat_curriculum + nrt_video_transcripts
+- [x] **`/videos` pagina** — toont alleen NRT en QAT upload-groepen (pemf/rlt verborgen)
+- [x] **`ingest_transcript.py`** — dynamische collectie-routing: nrt→nrt_video_transcripts, qat→qat_video_transcripts
+- [x] **Boekbestanden verplaatst** — 46 bestanden naar nieuwe directories (nrt_curriculum, qat_curriculum, rlt_flexbeam, pemf_qrs)
+- [x] **Legacy Qdrant collecties verwijderd** — nrt_qat_curriculum, device_documentation, video_transcripts
 
 ---
 

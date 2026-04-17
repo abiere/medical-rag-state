@@ -201,15 +201,7 @@ Query profielen:
 | nrt_video_transcripts | 241 | 1024 | 21 NRT trainingsvideo transcripties |
 | qat_video_transcripts | 0 | 1024 | QAT video transcripties (leeg — geen videos getranscribeerd) |
 
-### 6.2 Legacy collecties (backup — nog NIET verwijderd)
-
-| Collectie | Punten | Status |
-|---|---|---|
-| nrt_qat_curriculum | 546 | Backup — verwijderen na UI-verificatie (OPDRACHT B) |
-| device_documentation | 228 | Backup — verwijderen na UI-verificatie (OPDRACHT B) |
-| video_transcripts | 241 | Backup — verwijderen na UI-verificatie (OPDRACHT B) |
-
-### 6.3 Migratiedetails
+### 6.2 Migratiedetails (OPDRACHT A + B voltooid 2026-04-17)
 
 - Migratiemethode: vector-copy (upsert met `with_vectors=True`) — geen re-embedding
 - Payload uitgebreid met: `migrated_from` (old collection), `collection` (new collection)
