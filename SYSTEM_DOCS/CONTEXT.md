@@ -115,5 +115,5 @@ HE=HE-5   | LIV=LIV-5
 
 ## Test status
 
-**Laatste run:** 17-04-2026 15:57 (21.6s)  
-**Uitslag:** ✅ GESLAAGD — 33/33 geslaagd, 0 overgeslagen  
+**Laatste run:** 17-04-2026 17:20 (19.4s)  
+**Uitslag:** ✅ GESLAAGD — 33/33 geslaagd, 0 overgeslagen
