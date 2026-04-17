@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 14:17:05 UTC**
+> Last update: **2026-04-17 14:22:06 UTC**
 
 ## Services
 | Service | Status |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 2.67 GB / 32.86 GB (8%) |
-| CPU | 0.5% |
+| RAM used | 2.64 GB / 32.86 GB (8%) |
+| CPU | 0.1% |
 | Disk used | 59.4 GB / 322.3 GB (19%) |
-| Uptime | up 8 hours, 41 minutes |
+| Uptime | up 8 hours, 46 minutes |
 
 ## Recent markers
-- `2026-04-17T13:09:22` **queue_empty** — All 19 videos transcribed
-- `2026-04-17T13:09:22` **transcription_failed** — 1.Upper_Body_Techniques.mp4 FAILED (21/19)
-- `2026-04-17T13:09:22` **transcription_failed** — NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.mp4 FAILED (21/19)
-- `2026-04-17T13:09:22` **transcription_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 FAILED (21/19)
-- `2026-04-17T13:09:22` **transcription_failed** — NRT_Fascial_Activation_Application_Method.mp4 FAILED (21/19)
+- `2026-04-17T14:18:06` **queue_empty** — All 14 videos transcribed
+- `2026-04-17T14:18:06` **transcription_failed** — NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.mp4 FAILED (21/14)
+- `2026-04-17T14:18:06` **transcription_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 FAILED (21/14)
+- `2026-04-17T14:18:06` **transcription_failed** — NRT_Fascial_Activation_Application_Method.mp4 FAILED (21/14)
+- `2026-04-17T14:18:06` **transcription_failed** — NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4 FAILED (21/14)
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-17 13:09:21,803  WARNING   Skipping nrt/How_to_Reset_23_More_Muscles.mp4 (412 MB > limit 400 MB)
-2026-04-17 13:09:21,868  WARNING   Skipping nrt/Miraculous_Sequence_-_Part_1.mp4 (689 MB > limit 400 MB)
-2026-04-17 13:09:21,934  WARNING   Skipping nrt/Miraculous_Sequence_-_Part_2.mp4 (664 MB > limit 400 MB)
-2026-04-17 13:09:22,000  WARNING   Skipping nrt/NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4 (990 MB > limit 400 MB)
-2026-04-17 13:09:22,065  WARNING   Skipping nrt/NRT_Fascial_Activation_Application_Method.mp4 (1871 MB > limit 400 MB)
-2026-04-17 13:09:22,130  WARNING   Skipping nrt/NRT_Sports_Specific_or_Universal_Reset.mp4 (957 MB > limit 400 MB)
-2026-04-17 13:09:22,195  WARNING   Skipping nrt/NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.mp4 (639 MB > limit 400 MB)
-2026-04-17 13:09:22,261  WARNING   Skipping nrt/1.Upper_Body_Techniques.mp4 (in skip_files list)
-2026-04-17 13:09:22,325  INFO      Queue empty — 19 video(s) processed. Exiting.
-2026-04-17 13:09:22,390  INFO      Transcription queue manager done
+2026-04-17 14:18:06,352  WARNING   Skipping nrt/Everything_Reset_Sequence_-_Part_4.mp4 (690 MB > limit 400 MB)
+2026-04-17 14:18:06,417  WARNING   Skipping nrt/Everything_Reset_Sequence_-_Part_5.mp4 (618 MB > limit 400 MB)
+2026-04-17 14:18:06,482  WARNING   Skipping nrt/Miraculous_Sequence_-_Part_1.mp4 (689 MB > limit 400 MB)
+2026-04-17 14:18:06,548  WARNING   Skipping nrt/Miraculous_Sequence_-_Part_2.mp4 (664 MB > limit 400 MB)
+2026-04-17 14:18:06,613  WARNING   Skipping nrt/NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4 (990 MB > limit 400 MB)
+2026-04-17 14:18:06,678  WARNING   Skipping nrt/NRT_Fascial_Activation_Application_Method.mp4 (1871 MB > limit 400 MB)
+2026-04-17 14:18:06,748  WARNING   Skipping nrt/NRT_Sports_Specific_or_Universal_Reset.mp4 (957 MB > limit 400 MB)
+2026-04-17 14:18:06,814  WARNING   Skipping nrt/NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.mp4 (639 MB > limit 400 MB)
+2026-04-17 14:18:06,846  INFO      Queue empty — 14 video(s) processed. Exiting.
+2026-04-17 14:18:06,911  INFO      Transcription queue manager done
 ```
