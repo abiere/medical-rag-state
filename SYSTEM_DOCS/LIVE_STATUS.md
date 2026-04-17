@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 13:01:54 UTC**
+> Last update: **2026-04-17 13:06:55 UTC**
 
 ## Services
 | Service | Status |
@@ -25,25 +25,25 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | idle |
-| Queued | 14 |
+| Current job | `Healing_Organs_with_NRT.mp4` (4 min) |
+| Queued | 9 |
 | Done | 20 / 35 |
-| Vectors in video_transcripts | 208 |
+| Vectors in video_transcripts | 231 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 3.01 GB / 32.86 GB (9%) |
-| CPU | 6.3% |
+| RAM used | 6.7 GB / 32.86 GB (20%) |
+| CPU | 96.4% |
 | Disk used | 59.4 GB / 322.3 GB (19%) |
-| Uptime | up 7 hours, 26 minutes |
+| Uptime | up 7 hours, 31 minutes |
 
 ## Recent markers
-- `2026-04-17T12:42:00` **transcription_failed** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 FAILED (19/19)
-- `2026-04-17T12:42:00` **transcription_done** — 2.Upper_Body_Fundamentals.mp4 complete (19/19)
-- `2026-04-17T12:42:00` **transcript_ingested** — 2.Upper_Body_Fundamentals.mp4 ingested into Qdrant
-- `2026-04-17T12:21:57` **transcription_done** — 2.Lower_Body_Fundamentals.mp4 complete (18/19)
-- `2026-04-17T12:21:57` **transcript_ingested** — 2.Lower_Body_Fundamentals.mp4 ingested into Qdrant
+- `2026-04-17T13:02:09` **transcription_failed** — Everything_Reset_Sequence_-_Part_5.mp4 FAILED (20/19)
+- `2026-04-17T13:02:09` **transcription_failed** — Everything_Reset_Sequence_-_Part_4.mp4 FAILED (20/19)
+- `2026-04-17T13:02:09` **transcription_failed** — Everything_Reset_Sequence_-_Part_3.mp4 FAILED (20/19)
+- `2026-04-17T13:02:09` **transcription_failed** — Everything_Reset_Sequence_-_Part_2.mp4 FAILED (20/19)
+- `2026-04-17T13:02:09` **transcription_failed** — Everything_Reset_Sequence_-_Part_1.mp4 FAILED (20/19)
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-17 12:41:42,254  INFO      INGEST nrt/2.Upper_Body_Fundamentals.mp4
-2026-04-17 12:42:00,352  INFO        [ingest] 2.Upper_Body_Fundamentals.json: 758 segments → 22 chunks
-2026-04-17 12:42:00,352  INFO        [ingest] Loading embedding model …
-2026-04-17 12:42:00,352  INFO        [ingest]   Ingested chunk 19/19 for 2.Upper_Body_Fundamentals.mp4
-2026-04-17 12:42:00,352  INFO        [ingest] Done: 19 chunks ingested, 3 skipped (already exists)
-2026-04-17 12:42:00,482  WARNING   Skipping nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 (1060 MB > limit 400 MB)
-2026-04-17 12:42:00,547  INFO      START  nrt/3.Why_People_Hurt.mp4
-2026-04-17 13:01:49,770  INFO      DONE   nrt/3.Why_People_Hurt.mp4  (1189s)
-2026-04-17 13:01:49,771  INFO      Stats updated: 3.Why_People_Hurt.mp4 — 6.4s/MB  rate=4.0s/MB (4 samples)
-2026-04-17 13:01:49,772  INFO      INGEST nrt/3.Why_People_Hurt.mp4
+2026-04-17 13:02:09,065  INFO        [ingest] 3.Why_People_Hurt.json: 867 segments → 23 chunks
+2026-04-17 13:02:09,065  INFO        [ingest] Loading embedding model …
+2026-04-17 13:02:09,065  INFO        [ingest]   Ingested chunk 23/23 for 3.Why_People_Hurt.mp4
+2026-04-17 13:02:09,066  INFO        [ingest] Done: 23 chunks ingested, 0 skipped (already exists)
+2026-04-17 13:02:09,194  WARNING   Skipping nrt/Everything_Reset_Sequence_-_Part_1.mp4 (649 MB > limit 400 MB)
+2026-04-17 13:02:09,259  WARNING   Skipping nrt/Everything_Reset_Sequence_-_Part_2.mp4 (499 MB > limit 400 MB)
+2026-04-17 13:02:09,324  WARNING   Skipping nrt/Everything_Reset_Sequence_-_Part_3.mp4 (565 MB > limit 400 MB)
+2026-04-17 13:02:09,389  WARNING   Skipping nrt/Everything_Reset_Sequence_-_Part_4.mp4 (690 MB > limit 400 MB)
+2026-04-17 13:02:09,454  WARNING   Skipping nrt/Everything_Reset_Sequence_-_Part_5.mp4 (618 MB > limit 400 MB)
+2026-04-17 13:02:09,520  INFO      START  nrt/Healing_Organs_with_NRT.mp4
 ```
