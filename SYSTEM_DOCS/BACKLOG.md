@@ -1,6 +1,6 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-17 — 5e fase-rij afbeeldingen + audit_score diagnose
+> Laatste update: 2026-04-17 — audit_score + category_scores Deadman/Travell gefixed
 
 ---
 
@@ -65,6 +65,19 @@
 - [ ] Officiële Deadman digitale versie aanschaffen (DRM-vrij via Eastland Press)
 - [ ] Consistentie guardian cross-collectie
 - [ ] Protocol pre-validatie (Ollama checkt dekking voor generatie)
+
+---
+
+## ✅ Afgerond — sessie 2026-04-17 (audit_score + category_scores fix)
+
+- [x] **GitHub CONTEXT.md sync check** — lokaal en GitHub waren identiek, geen actie nodig
+- [x] **audit_score Deadman + Travell** — was `None`/fout door Ollama timeouts; Claude API quality scorer gerund op 15 sample chunks
+      Deadman: `quality_score=2.6` | Travell: `quality_score=2.56`
+- [x] **category_scores beide boeken** — was `{}` door architectuurmismatch (Claude API zet `tags/kai_*`, Ollama zet `usability_tags`)
+      Fix: KAI-derived usability profile synthetisch berekend uit kai_k/kai_a/kai_i chunk-verdeling
+      Deadman: `protocol=5, diagnose=5, anatomie=5, literatuur=5`
+      Travell: `protocol=5, diagnose=2, anatomie=5, literatuur=5`
+- [x] **Background audit_book.py process gekilld** — voorkomen dat het Claude-scores overschreef na Ollama-timeouts
 
 ---
 

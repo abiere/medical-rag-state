@@ -5,7 +5,7 @@
   "collection": "medical_library",
   "library_category": "medical_literature",
   "started_at": null,
-  "updated_at": "2026-04-16T20:14:56.516152+00:00",
+  "updated_at": "2026-04-17T07:46:14.089500+00:00",
   "completed_at": "2026-04-16T17:08:48.698361+00:00",
   "phases": {
     "parse": {
@@ -26,11 +26,12 @@
       "started_at": "2026-04-16T16:37:47.916284+00:00",
       "completed_at": "2026-04-16T16:47:18.699037+00:00",
       "chunks_total": 1013,
-      "chunks_tagged": 1010,
-      "chunks_skipped": 3,
+      "chunks_tagged": 1013,
+      "chunks_skipped": 0,
       "ollama_available": false,
       "consecutive_failures_hit": true,
-      "output_file": "phase2_audited.json"
+      "output_file": "phase2_audited.json",
+      "retroaudit_completed_at": "2026-04-17T07:46:14.089475+00:00"
     },
     "embed": {
       "status": "done",
@@ -51,7 +52,7 @@
       "collection": "medical_library"
     },
     "image_screen": {
-      "status": "done"
+      "status": "pending"
     }
   }
 }

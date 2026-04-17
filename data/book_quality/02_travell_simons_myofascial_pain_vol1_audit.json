@@ -23,21 +23,34 @@
   },
   "llm_audit": {
     "sample_size": 15,
-    "avg_coherence": 4.4,
-    "avg_completeness": 5.0,
-    "avg_terminology": 5.0,
-    "avg_translation": 5.0,
-    "quality_score": 4.85,
-    "flagged_chunks": 0,
-    "suggestion": "none"
+    "avg_coherence": 1.93,
+    "avg_completeness": 1.87,
+    "avg_terminology": 3.87,
+    "quality_score": 2.56,
+    "flagged_chunks": 15
   },
   "auto_classification": {
     "error": "classification failed"
   },
   "usability_profile": {
-    "scores": {},
-    "counts": {},
-    "total_tagged": 0
+    "scores": {
+      "acupuncture_point_indication": 0.3,
+      "acupuncture_point_location": 0.3,
+      "tcm_diagnosis": 2.3,
+      "anatomy": 4.7,
+      "treatment_protocol": 4.7,
+      "literature_reference": 5
+    },
+    "counts": {
+      "acupuncture_point_indication": 106,
+      "acupuncture_point_location": 106,
+      "tcm_diagnosis": 810,
+      "anatomy": 1654,
+      "treatment_protocol": 1654,
+      "literature_reference": 1760
+    },
+    "total_tagged": 1760,
+    "source": "kai_derived"
   },
   "remediation": {
     "issues": [],
