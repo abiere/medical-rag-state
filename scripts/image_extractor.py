@@ -387,6 +387,39 @@ def extract_figures_from_pdf(
     return results
 
 
+def _extract_img_caption(img_tag) -> str:
+    """Extract caption text for a BS4 img element from surrounding HTML context."""
+    parent = img_tag.parent
+
+    # 1. figcaption anywhere inside parent (handles <figure> and div wrappers)
+    if parent:
+        fig_cap = parent.find("figcaption")
+        if fig_cap:
+            text = fig_cap.get_text(strip=True)
+            if text:
+                return text[:200]
+
+    # 2. Next sibling <p> starting with "Figure" / "Fig." / "Fig "
+    next_sib = img_tag.find_next_sibling()
+    if next_sib is None and parent:
+        next_sib = parent.find_next_sibling()
+    if next_sib and hasattr(next_sib, "get_text"):
+        text = next_sib.get_text(strip=True)
+        if text and (
+            text.lower().startswith("figure")
+            or text.lower().startswith("fig.")
+            or text.lower().startswith("fig ")
+        ):
+            return text[:200]
+
+    # 3. Alt attribute fallback — skip trivial values (≤ 3 chars)
+    alt = img_tag.get("alt", "").strip()
+    if alt and len(alt) > 3:
+        return alt[:200]
+
+    return ""
+
+
 def extract_images_from_epub(
     epub_path:  Path,
     book_hash:  str,
@@ -406,22 +439,20 @@ def extract_images_from_epub(
 
     book = epub.read_epub(str(epub_path))
 
-    # Build caption map: image filename → caption or alt text
+    # Build caption map using context-aware extraction
     caption_map: dict[str, str] = {}
     for item in book.get_items_of_type(ebooklib.ITEM_DOCUMENT):
         try:
             soup = BeautifulSoup(item.get_content(), "html.parser")
-            for fig in soup.find_all("figure"):
-                img = fig.find("img")
-                cap = fig.find("figcaption")
-                if img and cap:
-                    src = img.get("src", "")
-                    caption_map[Path(src).name] = cap.get_text(strip=True)
             for img_tag in soup.find_all("img"):
-                alt = img_tag.get("alt", "")
                 src = img_tag.get("src", "")
-                if alt and src and Path(src).name not in caption_map:
-                    caption_map[Path(src).name] = alt
+                if not src:
+                    continue
+                basename = Path(src.split("?")[0]).name
+                if basename and basename not in caption_map:
+                    cap = _extract_img_caption(img_tag)
+                    if cap:
+                        caption_map[basename] = cap
         except Exception:
             pass
 

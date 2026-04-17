@@ -5362,12 +5362,6 @@ async def images_page(filter: str = "all"):
          onclick="event.stopPropagation()">
       {_priority_badge(bd['priority'], bd['override'])}
       {_eval_badge(bd['evaluated'])}
-      <button class="img-filter-btn active" data-hash="{bh}" data-filter="all"
-              onclick="setImgFilter('{bh}','all',this)">Alle</button>
-      <button class="img-filter-btn" data-hash="{bh}" data-filter="with_alt"
-              onclick="setImgFilter('{bh}','with_alt',this)">Met ALT</button>
-      <button class="img-filter-btn" data-hash="{bh}" data-filter="without_alt"
-              onclick="setImgFilter('{bh}','without_alt',this)">Zonder ALT</button>
       <div style="position:relative">
         <button onclick="togglePrioMenu('{bh}')"
                 class="btn btn-secondary" style="font-size:12px;padding:4px 10px">
@@ -5381,18 +5375,32 @@ async def images_page(filter: str = "all"):
           {_prio_dropdown_items(bh, ck, cur)}
         </div>
       </div>
-      <button id="del-btn-{bh}"
-              onclick="event.stopPropagation();deleteSelected('{bh}')"
-              style="display:none;padding:5px 12px;background:#fee2e2;
-                     color:#991b1b;border:1px solid #fca5a5;border-radius:6px;
-                     font-size:12px;cursor:pointer">
-        Verwijder geselecteerde
-      </button>
     </div>
     <span id="chev-{bh}"
           style="font-size:18px;color:#9ca3af;transition:transform 0.2s">&#9658;</span>
   </div>
   <div id="grid-{bh}" style="display:none;padding:0 18px 16px">
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+                padding:10px 0 8px;border-bottom:1px solid #e2e8f0;margin-bottom:4px">
+      <button class="img-filter-btn active" data-hash="{bh}" data-filter="all"
+              onclick="setImgFilter('{bh}','all',this)">Alle</button>
+      <button class="img-filter-btn" data-hash="{bh}" data-filter="with_alt"
+              onclick="setImgFilter('{bh}','with_alt',this)">Met Caption</button>
+      <button class="img-filter-btn" data-hash="{bh}" data-filter="without_alt"
+              onclick="setImgFilter('{bh}','without_alt',this)">Zonder Caption</button>
+      <div style="width:1px;height:20px;background:#e2e8f0;margin:0 2px"></div>
+      <button onclick="selectAllVisible('{bh}')"
+              style="padding:4px 10px;border-radius:6px;font-size:12px;
+                     border:1px solid #e2e8f0;background:transparent;
+                     cursor:pointer;color:#6b7280">Alles selecteren</button>
+      <button id="del-btn-{bh}"
+              onclick="deleteSelected('{bh}')"
+              style="display:none;padding:4px 12px;background:#fee2e2;
+                     color:#991b1b;border:1px solid #fca5a5;border-radius:6px;
+                     font-size:12px;cursor:pointer">
+        Verwijder geselecteerde
+      </button>
+    </div>
     <div id="imgs-{bh}"
          style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
                 gap:10px;margin-top:10px">
@@ -5496,6 +5504,29 @@ async function loadImgs(hash, reset) {
 
 async function loadMoreImgs(hash) { await loadImgs(hash, false); }
 
+function selectAllVisible(hash) {
+  if (!_selectedImgs[hash]) _selectedImgs[hash] = new Set();
+  const container = document.getElementById('imgs-' + hash);
+  const thumbs = container.querySelectorAll('[data-filename]');
+  const allSelected = [...thumbs].every(
+    t => _selectedImgs[hash].has(t.dataset.filename)
+  );
+  thumbs.forEach(wrap => {
+    const fn = wrap.dataset.filename;
+    const cb = wrap.querySelector('input[type=checkbox]');
+    if (allSelected) {
+      _selectedImgs[hash].delete(fn);
+      wrap.style.borderColor = 'transparent';
+      if (cb) cb.checked = false;
+    } else {
+      _selectedImgs[hash].add(fn);
+      wrap.style.borderColor = '#1A6B72';
+      if (cb) cb.checked = true;
+    }
+  });
+  _updateDelBtn(hash);
+}
+
 const _selectedImgs = {};
 
 function _makeThumb(hash, img) {
@@ -5569,7 +5600,7 @@ function _updateDelBtn(hash) {
   const btn = document.getElementById('del-btn-' + hash);
   if (!btn) return;
   const n = (_selectedImgs[hash] || new Set()).size;
-  btn.style.display = n > 0 ? 'block' : 'none';
+  btn.style.display = n > 0 ? 'inline-block' : 'none';
   if (n > 0) btn.textContent = 'Verwijder ' + n + ' geselecteerde';
 }
 
