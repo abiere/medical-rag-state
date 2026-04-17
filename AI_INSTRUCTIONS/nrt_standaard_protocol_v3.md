@@ -1,5 +1,5 @@
-# NRT-Amsterdam.nl — Standaard Behandelprotocol v3.1
-> Versie 3.1 — Maart 2026 — Axel Biere
+# NRT-Amsterdam.nl — Standaard Behandelprotocol v3.2
+> Versie 3.2 — Maart 2026 — Axel Biere
 > Dit protocol is de basis voor ALLE behandelprotocollen.
 > Wijzigingen hier worden automatisch gesyncet naar GitHub.
 
@@ -203,7 +203,7 @@ GTR alleen in zeldzame gevallen.
 |---|---|
 | Volgorde | Altijd voeten → hoofd, voorzijde voor achterzijde |
 | Weefsel | Bot → Botvlies → Gewrichten → Spieren → Fascia |
-| QAT plaatjes | Groen (meridianen/zenuwen) → Blauw (weefsel/brain/inflammation) → Rood (inflammation) |
+| QAT plaatjes | Groen (meridianen/zenuwen) → Blauw (4x) en Clips (6x) (weefsel/brain/inflammation) → Rood (inflammation) |
 | Hoofd techniek | QAT primair. NRT leidend bij nek en bekken. GTR laatste resort. |
 | Ruggegraat | Als geheel — NRT losmaken + QAT detail |
 | Zenuwen | Groene QAT. N. vagus + sympathicus standaard bij nek. |
