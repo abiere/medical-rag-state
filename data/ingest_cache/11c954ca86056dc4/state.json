@@ -2,7 +2,7 @@
   "filename": "How to Use FlexBeam on Neck - Recharge Health.pdf",
   "book_hash": "11c954ca86056dc4",
   "filepath": "/root/medical-rag/books/device/How to Use FlexBeam on Neck - Recharge Health.pdf",
-  "collection": "device_documentation",
+  "collection": "rlt_flexbeam",
   "library_category": "device",
   "started_at": "2026-04-16T20:33:52.308031+00:00",
   "updated_at": "2026-04-17T11:00:44.498254+00:00",
@@ -56,11 +56,11 @@
       "images_done": 0,
       "images_useful": 0,
       "last_run": null,
-      "note": "Nightly job — does not block main pipeline"
+      "note": "Nightly job \u2014 does not block main pipeline"
     }
   },
   "parse_retry_count": 3,
   "status": "permanently_failed",
   "permanently_failed_at": "2026-04-17T11:00:44.498245+00:00",
-  "permanently_failed_reason": "Parse failed 3 times — manual intervention required"
+  "permanently_failed_reason": "Parse failed 3 times \u2014 manual intervention required"
 }

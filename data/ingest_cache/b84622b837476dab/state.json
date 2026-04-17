@@ -1,0 +1,57 @@
+{
+  "filename": "Sobotta Atlas of Anatomy, Vol. 3, 17th ed., English_Latin_ Head, Neck and Neuroanatomy_nodrm.epub",
+  "book_hash": "b84622b837476dab",
+  "filepath": "/root/medical-rag/books/medical_literature/Sobotta Atlas of Anatomy, Vol. 3, 17th ed., English_Latin_ Head, Neck and Neuroanatomy_nodrm.epub",
+  "collection": "medical_library",
+  "library_category": "medical_literature",
+  "started_at": "2026-04-17T18:18:47.262526+00:00",
+  "updated_at": "2026-04-17T18:45:38.448928+00:00",
+  "completed_at": "2026-04-17T18:45:38.448904+00:00",
+  "phases": {
+    "parse": {
+      "status": "done",
+      "started_at": "2026-04-17T18:18:47.266407+00:00",
+      "completed_at": "2026-04-17T18:30:28.962646+00:00",
+      "pages_total": 381,
+      "pages_done": 381,
+      "chunks_extracted": 381,
+      "images_extracted": 10668,
+      "parse_method": null,
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": [],
+      "ocr_engine": "native"
+    },
+    "audit": {
+      "status": "done",
+      "started_at": "2026-04-17T18:30:28.975276+00:00",
+      "completed_at": "2026-04-17T18:39:10.825392+00:00",
+      "chunks_total": 381,
+      "chunks_tagged": 381,
+      "chunks_skipped": 0,
+      "ollama_available": true,
+      "consecutive_failures_hit": false,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "done",
+      "started_at": "2026-04-17T18:39:10.836844+00:00",
+      "completed_at": "2026-04-17T18:45:37.932452+00:00",
+      "chunks_total": 381,
+      "chunks_done": 381,
+      "vectors_per_minute": 59.5,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-17T18:45:37.905292+00:00",
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "done",
+      "started_at": "2026-04-17T18:45:37.955262+00:00",
+      "completed_at": "2026-04-17T18:45:38.430097+00:00",
+      "chunks_inserted": 381,
+      "collection": "medical_library"
+    }
+  },
+  "image_extraction_enabled": true,
+  "parse_retry_count": 0
+}

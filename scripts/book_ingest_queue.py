@@ -46,10 +46,15 @@ BOOK_EXTS         = {".pdf", ".epub"}
 MIN_QUALITY_SCORE = 3.5
 
 # Section → Qdrant collection mapping (mirrors web/app.py SECTION_MAP)
+# Legacy keys kept for backward compatibility; new keys for split collections
 SECTION_COLLECTION_MAP = {
     "medical_literature": "medical_library",
-    "nrt_qat":            "nrt_qat_curriculum",
-    "device":             "device_documentation",
+    "nrt_qat":            "nrt_qat_curriculum",   # legacy — keep until UI migrated
+    "device":             "device_documentation",  # legacy — keep until UI migrated
+    "nrt_curriculum":     "nrt_curriculum",
+    "qat_curriculum":     "qat_curriculum",
+    "rlt_flexbeam":       "rlt_flexbeam",
+    "pemf_qrs":           "pemf_qrs",
 }
 
 # ── logging ────────────────────────────────────────────────────────────────────

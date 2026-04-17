@@ -1,0 +1,57 @@
+{
+  "filename": "Sobotta Anatomy Textbook_nodrm.epub",
+  "book_hash": "18aeefea7a46d3bf",
+  "filepath": "/root/medical-rag/books/medical_literature/Sobotta Anatomy Textbook_nodrm.epub",
+  "collection": "medical_library",
+  "library_category": "medical_literature",
+  "started_at": "2026-04-17T15:23:28.332940+00:00",
+  "updated_at": "2026-04-17T16:23:13.712787+00:00",
+  "completed_at": "2026-04-17T16:23:13.712770+00:00",
+  "phases": {
+    "parse": {
+      "status": "done",
+      "started_at": "2026-04-17T15:23:28.335199+00:00",
+      "completed_at": "2026-04-17T15:55:10.479688+00:00",
+      "pages_total": 1096,
+      "pages_done": 1096,
+      "chunks_extracted": 1096,
+      "images_extracted": 9864,
+      "parse_method": null,
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": [],
+      "ocr_engine": "native"
+    },
+    "audit": {
+      "status": "done",
+      "started_at": "2026-04-17T15:55:10.497172+00:00",
+      "completed_at": "2026-04-17T16:05:14.967104+00:00",
+      "chunks_total": 1096,
+      "chunks_tagged": 1096,
+      "chunks_skipped": 0,
+      "ollama_available": true,
+      "consecutive_failures_hit": false,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "done",
+      "started_at": "2026-04-17T16:05:14.987630+00:00",
+      "completed_at": "2026-04-17T16:23:12.500583+00:00",
+      "chunks_total": 1096,
+      "chunks_done": 1096,
+      "vectors_per_minute": 61.2,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-17T16:23:12.460375+00:00",
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "done",
+      "started_at": "2026-04-17T16:23:12.530341+00:00",
+      "completed_at": "2026-04-17T16:23:13.690299+00:00",
+      "chunks_inserted": 1096,
+      "collection": "medical_library"
+    }
+  },
+  "image_extraction_enabled": true,
+  "parse_retry_count": 0
+}

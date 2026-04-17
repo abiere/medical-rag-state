@@ -2,7 +2,7 @@
   "filename": "Levels Mat, Pillow, Pen.pdf",
   "book_hash": "00804fc4573d0453",
   "filepath": "/root/medical-rag/books/device/Levels Mat, Pillow, Pen.pdf",
-  "collection": "device_documentation",
+  "collection": "pemf_qrs",
   "library_category": "device",
   "started_at": "2026-04-16T21:30:47.968097+00:00",
   "updated_at": "2026-04-17T11:01:50.478006+00:00",
@@ -56,11 +56,11 @@
       "images_done": 0,
       "images_useful": 0,
       "last_run": null,
-      "note": "Nightly job — does not block main pipeline"
+      "note": "Nightly job \u2014 does not block main pipeline"
     }
   },
   "parse_retry_count": 4,
   "status": "permanently_failed",
   "permanently_failed_at": "2026-04-17T11:00:44.499904+00:00",
-  "permanently_failed_reason": "Parse failed 3 times — manual intervention required"
+  "permanently_failed_reason": "Parse failed 3 times \u2014 manual intervention required"
 }

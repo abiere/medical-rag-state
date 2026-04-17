@@ -187,14 +187,35 @@ Query profielen:
 
 ---
 
-## 6. Qdrant Collecties (stand 2026-04-17)
+## 6. Qdrant Collecties (stand 2026-04-17 — nieuwe architectuur)
 
-| Collectie | Vectoren | Embedding dims | Gebruik |
+### 6.1 Actieve collecties (post-migratie 2026-04-17)
+
+| Collectie | Punten | Dims | Gebruik |
 |---|---|---|---|
-| medical_library | 2.775 | 1024 | Boekchunks (PDF/EPUB) |
-| video_transcripts | 158 | 1024 | NRT/QAT transcripties |
-| nrt_qat_curriculum | 546 | 1024 | QAT curriculum |
-| device_documentation | 164 | 1024 | PEMF/RLT handleidingen |
+| medical_library | 9.226 | 1024 | Boekchunks PDF/EPUB (anatomie, acupunctuur, kinesio) |
+| nrt_curriculum | 425 | 1024 | NRT trainingmateriaal + Advanced Seminar + Sequences |
+| qat_curriculum | 125 | 1024 | QAT 2025, Home Study, Pendant docs |
+| rlt_flexbeam | 160 | 1024 | FlexBeam / Red Light Therapy handleidingen |
+| pemf_qrs | 64 | 1024 | QRS-101 PEMF handleidingen |
+| nrt_video_transcripts | 241 | 1024 | 21 NRT trainingsvideo transcripties |
+| qat_video_transcripts | 0 | 1024 | QAT video transcripties (leeg — geen videos getranscribeerd) |
+
+### 6.2 Legacy collecties (backup — nog NIET verwijderd)
+
+| Collectie | Punten | Status |
+|---|---|---|
+| nrt_qat_curriculum | 546 | Backup — verwijderen na UI-verificatie (OPDRACHT B) |
+| device_documentation | 228 | Backup — verwijderen na UI-verificatie (OPDRACHT B) |
+| video_transcripts | 241 | Backup — verwijderen na UI-verificatie (OPDRACHT B) |
+
+### 6.3 Migratiedetails
+
+- Migratiemethode: vector-copy (upsert met `with_vectors=True`) — geen re-embedding
+- Payload uitgebreid met: `migrated_from` (old collection), `collection` (new collection)
+- NRT LB/UB Techniques: gecorrigeerd van device_documentation → nrt_curriculum
+- book_classifications.json: alle 65 entries hebben nu `library_category` ≠ `?`
+- SECTION_COLLECTION_MAP in book_ingest_queue.py uitgebreid met nieuwe collectie-keys
 
 **Embedding model:** `BAAI/bge-large-en-v1.5` (1024 dim) — NOOIT nomic-embed-text.
 

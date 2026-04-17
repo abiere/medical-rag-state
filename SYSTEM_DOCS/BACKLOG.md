@@ -1,10 +1,16 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-17 — EPUB re-extractie met figcaption gestart
+> Laatste update: 2026-04-17 — Collectie-architectuur migratie (Opdracht A voltooid)
 
 ---
 
 ## 🔴 Prioriteit — volgende sessie
+
+- [ ] **OPDRACHT B (UI) uitvoeren** — SECTION_MAP uitbreiden in web/app.py met 6 nieuwe collecties,
+      tabs per collectie in /library, /videos upload splits, verwijdering legacy collecties na verificatie
+      Vereiste: Opdracht A ✅ voltooid, alle nieuwe collecties gevuld
+
+
 
 - [ ] **Trail Guide ingest valideren** — RapidOCR run actief (gestart 08:32)
       ```bash
@@ -64,6 +70,26 @@
 - [ ] Officiële Deadman digitale versie aanschaffen (DRM-vrij via Eastland Press)
 - [ ] Consistentie guardian cross-collectie
 - [ ] Protocol pre-validatie (Ollama checkt dekking voor generatie)
+
+---
+
+## ✅ Afgerond — sessie 2026-04-17 (Opdracht A: Collectie-architectuur migratie)
+
+- [x] **6 nieuwe Qdrant collecties aangemaakt** (1024-dim Cosine, identiek aan bestaande)
+      `nrt_curriculum`, `qat_curriculum`, `rlt_flexbeam`, `pemf_qrs`,
+      `nrt_video_transcripts`, `qat_video_transcripts`
+- [x] **Alle 1015 chunks gemigreerd** (vector-copy, geen re-embedding)
+      nrt_qat_curriculum(546) → nrt_curriculum(421) + qat_curriculum(125) ✅
+      device_documentation(228) → nrt_curriculum(4) + rlt_flexbeam(160) + pemf_qrs(64) ✅
+      video_transcripts(241) → nrt_video_transcripts(241) ✅
+      Correctie: NRT LB/UB Techniques (waren fout in device_documentation) → nrt_curriculum ✅
+- [x] **46 state.json ingest_cache bestanden bijgewerkt** met nieuwe collection-naam
+- [x] **book_classifications.json volledig geclassificeerd** — 0 entries met `?`
+      Alle 65 entries hebben nu geldige `library_category` (nrt_curriculum/qat_curriculum/rlt_flexbeam/pemf_qrs/medical_literature/acupuncture)
+      nrt_kinesiology → nrt_curriculum (7 entries), device → rlt_flexbeam (1 entry)
+- [x] **book_ingest_queue.py SECTION_COLLECTION_MAP uitgebreid** met 4 nieuwe keys
+- [x] **Legacy collecties BEWAARD** als backup: nrt_qat_curriculum, device_documentation, video_transcripts
+      Verwijderen na OPDRACHT B (UI) verificatie
 
 ---
 

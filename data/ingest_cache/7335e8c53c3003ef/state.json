@@ -1,0 +1,57 @@
+{
+  "filename": "Orthopedic Physical Assessment_nodrm.epub",
+  "book_hash": "7335e8c53c3003ef",
+  "filepath": "/root/medical-rag/books/medical_literature/Orthopedic Physical Assessment_nodrm.epub",
+  "collection": "medical_library",
+  "library_category": "medical_literature",
+  "started_at": "2026-04-17T17:33:18.973785+00:00",
+  "updated_at": "2026-04-17T18:18:47.235100+00:00",
+  "completed_at": "2026-04-17T18:18:47.235073+00:00",
+  "phases": {
+    "parse": {
+      "status": "done",
+      "started_at": "2026-04-17T17:33:18.975396+00:00",
+      "completed_at": "2026-04-17T17:41:25.281263+00:00",
+      "pages_total": 1566,
+      "pages_done": 1566,
+      "chunks_extracted": 1566,
+      "images_extracted": 39150,
+      "parse_method": null,
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": [],
+      "ocr_engine": "native"
+    },
+    "audit": {
+      "status": "done",
+      "started_at": "2026-04-17T17:41:25.311657+00:00",
+      "completed_at": "2026-04-17T17:52:33.463940+00:00",
+      "chunks_total": 1566,
+      "chunks_tagged": 1566,
+      "chunks_skipped": 0,
+      "ollama_available": true,
+      "consecutive_failures_hit": false,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "done",
+      "started_at": "2026-04-17T17:52:33.512691+00:00",
+      "completed_at": "2026-04-17T18:18:45.498925+00:00",
+      "chunks_total": 1566,
+      "chunks_done": 1566,
+      "vectors_per_minute": 59.9,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-17T18:18:45.424229+00:00",
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "done",
+      "started_at": "2026-04-17T18:18:45.546652+00:00",
+      "completed_at": "2026-04-17T18:18:47.207721+00:00",
+      "chunks_inserted": 1566,
+      "collection": "medical_library"
+    }
+  },
+  "image_extraction_enabled": true,
+  "parse_retry_count": 0
+}

@@ -5,8 +5,8 @@
   "collection": "medical_library",
   "library_category": "medical_literature",
   "started_at": "2026-04-17T15:13:36.048042+00:00",
-  "updated_at": "2026-04-17T15:13:38.039803+00:00",
-  "completed_at": null,
+  "updated_at": "2026-04-17T15:23:28.324357+00:00",
+  "completed_at": "2026-04-17T15:23:28.324345+00:00",
   "phases": {
     "parse": {
       "status": "done",
@@ -23,32 +23,32 @@
       "ocr_engine": "native"
     },
     "audit": {
-      "status": "running",
+      "status": "done",
       "started_at": "2026-04-17T15:13:38.039487+00:00",
-      "completed_at": null,
+      "completed_at": "2026-04-17T15:21:02.621884+00:00",
       "chunks_total": 142,
-      "chunks_tagged": 0,
+      "chunks_tagged": 142,
       "chunks_skipped": 0,
-      "ollama_available": null,
+      "ollama_available": true,
       "consecutive_failures_hit": false,
       "output_file": "phase2_audited.json"
     },
     "embed": {
-      "status": "pending",
-      "started_at": null,
-      "completed_at": null,
-      "chunks_total": null,
-      "chunks_done": 0,
-      "vectors_per_minute": null,
-      "eta_minutes": null,
-      "last_progress_at": null,
+      "status": "done",
+      "started_at": "2026-04-17T15:21:02.624853+00:00",
+      "completed_at": "2026-04-17T15:23:28.124540+00:00",
+      "chunks_total": 142,
+      "chunks_done": 142,
+      "vectors_per_minute": 59.6,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-17T15:23:28.118551+00:00",
       "output_file": "phase3_vectors.npy"
     },
     "qdrant": {
-      "status": "pending",
-      "started_at": null,
-      "completed_at": null,
-      "chunks_inserted": 0,
+      "status": "done",
+      "started_at": "2026-04-17T15:23:28.127797+00:00",
+      "completed_at": "2026-04-17T15:23:28.317055+00:00",
+      "chunks_inserted": 142,
       "collection": "medical_library"
     }
   },
