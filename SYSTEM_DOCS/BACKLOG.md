@@ -1,6 +1,6 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-17 — image extraction toggle feature
+> Laatste update: 2026-04-17 — library speed + video splitting + cleanup
 
 ---
 
@@ -22,9 +22,9 @@
       Vereiste: Deadman chunks in Qdrant (kai_a=1)
       Test: `python3 /root/medical-rag/scripts/generate_protocol.py "Etalagebenen"`
 
-- [ ] **1.Upper_Body_Techniques.mp4 opsplitsen + herverwerken**
-      Bestand: 525MB — te groot voor Whisper in één pass
-      Oplossing: ffmpeg opsplitsen in 400MB segmenten
+- [ ] **1.Upper_Body_Techniques.mp4 verwijderen uit skip_files + opnieuw transcriberen**
+      Staat in `skip_files` in settings.json — nu dat ffmpeg splitting werkt kan dit opgepakt worden
+      Verwijder uit skip_files → transcription-queue pikt het op bij herstart
 
 ---
 
@@ -66,6 +66,25 @@
 - [ ] Officiële Deadman digitale versie aanschaffen (DRM-vrij via Eastland Press)
 - [ ] Consistentie guardian cross-collectie
 - [ ] Protocol pre-validatie (Ollama checkt dekking voor generatie)
+
+---
+
+## ✅ Afgerond — sessie 2026-04-17 (library speed + video splitting + cleanup)
+
+- [x] **`/api/library/items` versneld** — bottleneck was 60 afzonderlijke `httpx.AsyncClient` instanties per Qdrant-query
+      Fix A: `_qdrant_count_source()` accepteert optionele `client=` parameter
+      Fix B: `api_library_items()` maakt één gedeelde `httpx.AsyncClient` voor alle 60 queries via `asyncio.gather`
+      Fix C: 10-seconden TTL response cache (`_ITEMS_CACHE`) — cache hit = 9ms vs 591ms (cache miss) vs 1.6s (was)
+      Fix D: `_invalidate_items_cache()` aangeroepen na upload
+- [x] **Upload logging verbeterd** — structured logging in `library_upload()`: received, size, saved, enqueued, errors met traceback
+      2GB upload limiet toegevoegd; `_invalidate_items_cache()` na enqueue
+- [x] **Literatuuroverzicht verwijderd** — route `GET /library/overview` + `library_overview()` verwijderd
+      Nav-links verwijderd in `/library` (regel ~2162) en `/library/ingest` (incl. "→ alle boeken" span)
+- [x] **Video ffmpeg splitting** — `_split_video_if_needed()` in `transcription_queue.py`
+      Segmenteert video's >400MB in 20-min stukken via `ffmpeg -c copy` (geen re-encoding)
+      `max_file_size_mb` verhoogd naar 2000 in settings.json (splitting handelt grote bestanden intern af)
+- [x] **transcription-queue systemd** — `Restart=always` (was `on-failure`) — service herstart nu altijd na exit
+      Nieuwe uploads worden automatisch opgepikt na max 30s (RestartSec=30)
 
 ---
 

@@ -1,11 +1,11 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-17 15:02:07 UTC**
+> Last update: **2026-04-17 15:03:39 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ❌ inactive |
+| transcription-queue | ✅ active |
 | book-ingest-queue | ✅ active |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
@@ -14,36 +14,36 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Quantum-Touch 2.0 - The New Human_ Discovering and Becoming_nodrm.epub` (5 min) |
-| Queued | 5 |
+| Current job | `Quantum-Touch Core Transformation_ A New Way to Heal and Alter Reality_nodrm.epub` |
+| Queued | 4 |
 | Total books | 57 |
 | Ingested | 43 |
-| Vectors in medical_library | 4931 |
+| Vectors in medical_library | 5089 |
 | Images pending approval | 2026 |
 | Images approved | 0 |
 
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | idle |
-| Queued | 0 |
-| Done | 21 / 35 |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (1 min) |
+| Queued | 13 |
+| Done | 21 / 37 |
 | Vectors in video_transcripts | 241 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 10.6 GB / 32.86 GB (32%) |
-| CPU | 95.2% |
-| Disk used | 60.8 GB / 322.3 GB (20%) |
-| Uptime | up 9 hours, 26 minutes |
+| RAM used | 13.79 GB / 32.86 GB (42%) |
+| CPU | 99.9% |
+| Disk used | 62.0 GB / 322.3 GB (20%) |
+| Uptime | up 9 hours, 28 minutes |
 
 ## Recent markers
+- `2026-04-17T15:03:17.284001+00:00` **book_ingested** — Quantum-Touch 2.0 - The New Human_ Discovering and Becoming_nodrm.epub → medical_library: 158 chunks
+- `2026-04-17T15:02:27` **transcription_failed** — 1.Upper_Body_Techniques.mp4 FAILED (21/14)
 - `2026-04-17T14:56:49.962201+00:00` **book_ingested** — Bates' Guide To Physical Examination and History Taking_nodrm.epub → medical_library: 1251 chunks
 - `2026-04-17T14:38:20.635476+00:00` **book_ingested** — Anatomy Trains_ Myofascial Meridians for Manual and Movement Therapists_nodrm.epub → medical_library: 432 chunks
 - `2026-04-17T14:18:06` **queue_empty** — All 14 videos transcribed
-- `2026-04-17T14:18:06` **transcription_failed** — NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.mp4 FAILED (21/14)
-- `2026-04-17T14:18:06` **transcription_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 FAILED (21/14)
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-17 14:18:06,352  WARNING   Skipping nrt/Everything_Reset_Sequence_-_Part_4.mp4 (690 MB > limit 400 MB)
-2026-04-17 14:18:06,417  WARNING   Skipping nrt/Everything_Reset_Sequence_-_Part_5.mp4 (618 MB > limit 400 MB)
-2026-04-17 14:18:06,482  WARNING   Skipping nrt/Miraculous_Sequence_-_Part_1.mp4 (689 MB > limit 400 MB)
-2026-04-17 14:18:06,548  WARNING   Skipping nrt/Miraculous_Sequence_-_Part_2.mp4 (664 MB > limit 400 MB)
-2026-04-17 14:18:06,613  WARNING   Skipping nrt/NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4 (990 MB > limit 400 MB)
-2026-04-17 14:18:06,678  WARNING   Skipping nrt/NRT_Fascial_Activation_Application_Method.mp4 (1871 MB > limit 400 MB)
-2026-04-17 14:18:06,748  WARNING   Skipping nrt/NRT_Sports_Specific_or_Universal_Reset.mp4 (957 MB > limit 400 MB)
-2026-04-17 14:18:06,814  WARNING   Skipping nrt/NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.mp4 (639 MB > limit 400 MB)
 2026-04-17 14:18:06,846  INFO      Queue empty — 14 video(s) processed. Exiting.
 2026-04-17 14:18:06,911  INFO      Transcription queue manager done
+2026-04-17 15:02:27,109  INFO      ────────────────────────────────────────────────────────────
+2026-04-17 15:02:27,109  INFO      Transcription queue manager started
+2026-04-17 15:02:27,110  INFO      Startup scan: 14 untranscribed video(s) found, 14 new entry/entries added to queue
+2026-04-17 15:02:27,110  WARNING   Skipping nrt/1.Upper_Body_Techniques.mp4 (in skip_files list)
+2026-04-17 15:02:27,176  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
+2026-04-17 15:02:27,176  INFO      Splitting 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 (1060 MB) into 20-min segments
+2026-04-17 15:02:31,352  INFO      Split 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 into 2 segments
+2026-04-17 15:02:31,352  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
 ```
