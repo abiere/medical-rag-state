@@ -9,10 +9,16 @@ from __future__ import annotations
 import json
 import logging
 import os
+import sys
 import tempfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent))
+from ai_client import AIClient
+
+_ai = AIClient()
 
 logger = logging.getLogger(__name__)
 
@@ -69,7 +75,7 @@ def get_client():
     return anthropic.Anthropic(api_key=key)
 
 
-def audit_chunk(client, model: str, max_tokens: int, chunk: dict) -> dict:
+def audit_chunk(chunk: dict) -> dict:
     """Audit a single chunk. Returns updated chunk with kai tags."""
     text = chunk.get("text", "")[:2000]  # cap at 2000 chars
 
@@ -81,19 +87,15 @@ def audit_chunk(client, model: str, max_tokens: int, chunk: dict) -> dict:
         chunk["tags"]         = []
         chunk["summary"]      = "Lege of te korte chunk"
         chunk["audit_status"] = "tagged_claude_default"
-        chunk["audit_engine"] = "claude_api"
+        chunk["audit_engine"] = "ai_client"
         return chunk
 
     try:
-        response = client.messages.create(
-            model=model,
-            max_tokens=max_tokens,
-            messages=[{
-                "role": "user",
-                "content": AUDIT_PROMPT.format(text=text),
-            }],
-        )
-        raw = response.content[0].text.strip()
+        raw = _ai.generate(
+            "chunk_tagging",
+            AUDIT_PROMPT.format(text=text),
+            max_tokens=300,
+        ).strip()
         # Strip markdown fences if present
         if raw.startswith("```"):
             raw = raw.split("```")[1]
@@ -107,7 +109,7 @@ def audit_chunk(client, model: str, max_tokens: int, chunk: dict) -> dict:
         chunk["tags"]          = result.get("tags", [])[:3]
         chunk["summary"]       = str(result.get("summary", ""))[:200]
         chunk["audit_status"]  = "tagged_claude"
-        chunk["audit_engine"]  = "claude_api"
+        chunk["audit_engine"]  = "ai_client"
     except Exception as e:
         retry_count = chunk.get("_retry_count", 0) + 1
         chunk["_retry_count"] = retry_count
@@ -120,18 +122,18 @@ def audit_chunk(client, model: str, max_tokens: int, chunk: dict) -> dict:
             chunk["tags"]         = []
             chunk["summary"]      = "Automatisch getagd na herhaald falen"
             chunk["audit_status"] = "tagged_claude_default"
-            chunk["audit_engine"] = "claude_api"
+            chunk["audit_engine"] = "ai_client"
             logger.warning("Chunk %s assigned default tags after %d failures: %s",
                            chunk.get("chunk_id", "?"), retry_count, repr(text[:100]))
         else:
             chunk["audit_status"] = "skipped_claude_error"
-            chunk["audit_engine"] = "claude_api"
+            chunk["audit_engine"] = "ai_client"
     return chunk
 
 
 def audit_chunks_parallel(chunks: list, progress_fn=None) -> list:
     """
-    Audit all chunks in parallel using Claude API.
+    Audit all chunks in parallel via AIClient (provider from ai_settings.json).
     Returns updated chunks list (same order as input).
     """
     if not chunks:
@@ -139,17 +141,14 @@ def audit_chunks_parallel(chunks: list, progress_fn=None) -> list:
 
     s = load_settings()
     cfg = s.get("claude_api", {})
-    model      = cfg.get("model",       "claude-haiku-4-5-20251001")
     max_workers = cfg.get("max_workers", 10)
-    max_tokens  = cfg.get("max_tokens",  300)
 
-    client  = get_client()
     results = [None] * len(chunks)
     completed = 0
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         future_to_idx = {
-            executor.submit(audit_chunk, client, model, max_tokens, chunk): i
+            executor.submit(audit_chunk, chunk): i
             for i, chunk in enumerate(chunks)
         }
         for future in as_completed(future_to_idx):

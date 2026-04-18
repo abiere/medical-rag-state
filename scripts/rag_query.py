@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import sys
 import time
 import urllib.request
 from pathlib import Path
@@ -27,6 +28,10 @@ IMAGE_APPROVALS = BASE / "data" / "image_approvals.json"
 QDRANT_URL   = "http://localhost:6333"
 OLLAMA_URL   = "http://localhost:11434"
 OLLAMA_MODEL = "llama3.1:8b"
+
+sys.path.insert(0, str(BASE / "scripts"))
+from ai_client import AIClient
+_ai = AIClient()
 
 ALL_COLLECTIONS = ["medical_library", "nrt_curriculum", "qat_curriculum", "rlt_flexbeam", "pemf_qrs", "nrt_video_transcripts", "qat_video_transcripts"]
 
@@ -236,21 +241,8 @@ def _build_prompt(query: str, sources: list[dict]) -> str:
 # ── Ollama ─────────────────────────────────────────────────────────────────────
 
 def _ollama_generate(prompt: str, system: str = "", timeout: int = 180) -> str:
-    body = json.dumps({
-        "model":  OLLAMA_MODEL,
-        "prompt": prompt,
-        "system": system,
-        "stream": False,
-    }).encode()
-    req = urllib.request.Request(
-        f"{OLLAMA_URL}/api/generate",
-        data=body,
-        headers={"Content-Type": "application/json"},
-    )
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
-            data = json.loads(resp.read())
-            return data.get("response", "").strip()
+        return _ai.generate("rag_answering", prompt, system=system or None)
     except Exception as e:
         return f"[Antwoord genereren mislukt: {e}]"
 

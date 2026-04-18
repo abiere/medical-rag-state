@@ -54,7 +54,8 @@ class AIClient:
 
     def generate(self, use_case: str, prompt: str,
                  system: Optional[str] = None,
-                 max_tokens: int = 1000) -> str:
+                 max_tokens: int = 1000,
+                 extra_options: Optional[dict] = None) -> str:
         """
         Generate text using the configured provider for use_case.
         Returns the response text or raises an exception.
@@ -67,7 +68,7 @@ class AIClient:
                  use_case, provider, model)
 
         if provider == "ollama":
-            return self._ollama_generate(model, prompt, system, max_tokens)
+            return self._ollama_generate(model, prompt, system, max_tokens, extra_options)
         elif provider == "anthropic":
             return self._anthropic_generate(model, prompt, system, max_tokens)
         elif provider == "gemini":
@@ -100,25 +101,50 @@ class AIClient:
             return self._gemini_vision(model, image_path, prompt, max_tokens)
         elif provider == "anthropic":
             return self._anthropic_vision(model, image_path, prompt, max_tokens)
+        elif provider == "ollama":
+            return self._ollama_vision(model, image_path, prompt, max_tokens)
         else:
             raise ValueError(f"Provider '{provider}' does not support vision")
 
     # ── Ollama ────────────────────────────────────────────────────────────────
 
     def _ollama_generate(self, model: str, prompt: str,
-                         system: Optional[str], max_tokens: int) -> str:
+                         system: Optional[str], max_tokens: int,
+                         extra_options: Optional[dict] = None) -> str:
         import httpx
         base_url = self.get_providers().get("ollama", {}).get(
             "base_url", "http://localhost:11434"
         )
+        options = {"num_predict": max_tokens}
+        if extra_options:
+            options.update(extra_options)
         payload = {
             "model":   model,
             "prompt":  prompt,
             "stream":  False,
-            "options": {"num_predict": max_tokens},
+            "options": options,
         }
         if system:
             payload["system"] = system
+        r = httpx.post(f"{base_url}/api/generate", json=payload, timeout=120)
+        r.raise_for_status()
+        return r.json().get("response", "")
+
+    def _ollama_vision(self, model: str, image_path: Path,
+                       prompt: str, max_tokens: int) -> str:
+        import base64
+        import httpx
+        base_url = self.get_providers().get("ollama", {}).get(
+            "base_url", "http://localhost:11434"
+        )
+        img_b64 = base64.b64encode(image_path.read_bytes()).decode()
+        payload = {
+            "model":   model,
+            "prompt":  prompt,
+            "images":  [img_b64],
+            "stream":  False,
+            "options": {"num_predict": max_tokens},
+        }
         r = httpx.post(f"{base_url}/api/generate", json=payload, timeout=120)
         r.raise_for_status()
         return r.json().get("response", "")
@@ -230,3 +256,54 @@ def save_ai_settings(settings: dict) -> None:
     tmp = AI_SETTINGS_PATH.with_suffix(".tmp")
     tmp.write_text(json.dumps(settings, indent=2, ensure_ascii=False))
     tmp.replace(AI_SETTINGS_PATH)
+
+
+# ── AI_STATUS.md generator ─────────────────────────────────────────────────────
+
+AI_STATUS_PATH = Path("/root/medical-rag/SYSTEM_DOCS/AI_STATUS.md")
+
+_PROVIDER_LABEL = {
+    "ollama":    "Ollama (lokaal)",
+    "anthropic": "Anthropic Claude",
+    "gemini":    "Google Gemini",
+}
+
+
+def update_ai_status_md() -> None:
+    """Write SYSTEM_DOCS/AI_STATUS.md with current use-case routing."""
+    try:
+        settings  = json.loads(AI_SETTINGS_PATH.read_text())
+        use_cases = settings.get("use_cases", {})
+        from datetime import datetime, timezone
+        now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+
+        lines = [
+            "# AI Status",
+            f"_Gegenereerd: {now}_",
+            "",
+            "## Use-case routing",
+            "",
+            "| Use case | Label | Provider | Model |",
+            "|---|---|---|---|",
+        ]
+        for key, uc in use_cases.items():
+            provider = uc.get("provider", "?")
+            label    = _PROVIDER_LABEL.get(provider, provider)
+            lines.append(
+                f"| `{key}` | {uc.get('label', key)} | {label} | `{uc.get('model', '?')}` |"
+            )
+
+        lines += ["", "## Provider keys", ""]
+        for prov, env_key in [
+            ("anthropic", "ANTHROPIC_API_KEY"),
+            ("gemini",    "GEMINI_API_KEY"),
+        ]:
+            present = "aanwezig" if os.environ.get(env_key) else "ONTBREEKT"
+            lines.append(f"- **{prov}** ({env_key}): {present}")
+        lines.append("- **ollama**: lokaal, geen key vereist")
+        lines.append("")
+
+        AI_STATUS_PATH.write_text("\n".join(lines))
+        log.debug("AI_STATUS.md updated")
+    except Exception as e:
+        log.warning("update_ai_status_md failed: %s", e)

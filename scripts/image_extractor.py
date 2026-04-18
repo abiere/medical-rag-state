@@ -29,6 +29,7 @@ IMAGES_OUT    = BASE / "data" / "extracted_images"
 CREDS_FILE    = BASE / "config" / "google_vision_key.json"
 _PROGRESS_DIR = Path("/tmp")
 
+# Google Cloud Vision — not migrated to AIClient (bounding-box API, not generative)
 if CREDS_FILE.exists() and "GOOGLE_APPLICATION_CREDENTIALS" not in os.environ:
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = str(CREDS_FILE)
 

@@ -18,11 +18,14 @@ from __future__ import annotations
 import json
 import logging
 import re
+import sys
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
-OLLAMA_URL   = "http://localhost:11434"
-OLLAMA_MODEL = "llama3.1:8b"
+sys.path.insert(0, str(Path(__file__).parent))
+from ai_client import AIClient
+_ai = AIClient()
 
 # OCR quality thresholds
 CORRECTION_CONFIDENCE_THRESHOLD = 0.65
@@ -62,11 +65,9 @@ def needs_correction(text: str, confidence: float) -> bool:
 
 def correct_with_ollama(text: str) -> str:
     """
-    Send text to Ollama for medical OCR error correction.
+    Send text to AIClient for medical OCR error correction.
     Falls back to rule_correct on any error.
     """
-    import urllib.request
-
     if len(text.split()) < MIN_WORDS_FOR_CORRECTION:
         return rule_correct(text)
 
@@ -78,26 +79,16 @@ def correct_with_ollama(text: str) -> str:
         "Return only the corrected text, nothing else.\n\n"
         f"{text[:MAX_CHARS_PER_CALL]}"
     )
-    body = json.dumps({
-        "model":   OLLAMA_MODEL,
-        "prompt":  prompt,
-        "stream":  False,
-        "options": {"temperature": 0.1, "num_predict": 600},
-    }).encode()
-    req = urllib.request.Request(
-        f"{OLLAMA_URL}/api/generate",
-        data=body,
-        headers={"Content-Type": "application/json"},
-    )
     try:
-        with urllib.request.urlopen(req, timeout=90) as resp:
-            data      = json.loads(resp.read())
-            corrected = data.get("response", "").strip()
-            if corrected and len(corrected.split()) >= MIN_WORDS_FOR_CORRECTION // 2:
-                return corrected
-            logger.debug("Ollama returned empty/short result — using rules only")
+        corrected = _ai.generate(
+            "ocr_correction", prompt, max_tokens=600,
+            extra_options={"temperature": 0.1},
+        ).strip()
+        if corrected and len(corrected.split()) >= MIN_WORDS_FOR_CORRECTION // 2:
+            return corrected
+        logger.debug("AI returned empty/short result — using rules only")
     except Exception as e:
-        logger.warning("Ollama correction failed (%s) — rules only", e)
+        logger.warning("AI correction failed (%s) — rules only", e)
 
     return rule_correct(text)
 

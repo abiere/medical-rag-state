@@ -63,6 +63,27 @@
       "label": "Afbeelding captioning",
       "description": "Medische captions genereren voor afbeeldingen uit boeken. Zichtbaar in /afbeeldingen.",
       "supports_vision": true
+    },
+    "ocr_correction": {
+      "provider": "ollama",
+      "model": "llama3.1:8b",
+      "label": "OCR correctie",
+      "description": "OCR-fouten corrigeren in gescande medische tekst (garbled chars, split words, acupunctuurpuntnotatie).",
+      "supports_vision": false
+    },
+    "image_description": {
+      "provider": "gemini",
+      "model": "gemini-2.5-flash",
+      "label": "Afbeelding beschrijving (ingest)",
+      "description": "Korte 1-zin beschrijving van medische/anatomische afbeeldingen tijdens boekimport.",
+      "supports_vision": true
+    },
+    "chunk_audit": {
+      "provider": "ollama",
+      "model": "llama3.1:8b",
+      "label": "Chunk kwaliteitsaudit",
+      "description": "Kwaliteitscheck van parsed chunks: leesbaarheid, volledigheid, coherentie. Wordt uitgevoerd tijdens audit_book.",
+      "supports_vision": false
     }
   }
 }

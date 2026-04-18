@@ -1,0 +1,21 @@
+# AI Status
+_Gegenereerd: 2026-04-18 18:01 UTC_
+
+## Use-case routing
+
+| Use case | Label | Provider | Model |
+|---|---|---|---|
+| `chunk_tagging` | K/A/I chunk tagging | Ollama (lokaal) | `llama3.1:8b` |
+| `rag_answering` | RAG zoekantwoorden | Ollama (lokaal) | `llama3.1:8b` |
+| `protocol_generation` | Behandelprotocol generatie | Ollama (lokaal) | `llama3.1:8b` |
+| `book_metadata` | Boek metadata extractie | Google Gemini | `gemini-2.5-flash` |
+| `image_captioning` | Afbeelding captioning | Google Gemini | `gemini-2.5-flash` |
+| `ocr_correction` | OCR correctie | Ollama (lokaal) | `llama3.1:8b` |
+| `image_description` | Afbeelding beschrijving (ingest) | Google Gemini | `gemini-2.5-flash` |
+| `chunk_audit` | Chunk kwaliteitsaudit | Ollama (lokaal) | `llama3.1:8b` |
+
+## Provider keys
+
+- **anthropic** (ANTHROPIC_API_KEY): aanwezig
+- **gemini** (GEMINI_API_KEY): ONTBREEKT
+- **ollama**: lokaal, geen key vereist

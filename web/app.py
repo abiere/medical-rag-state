@@ -4342,6 +4342,88 @@ async def api_settings_test_claude():
         return JSONResponse({"ok": False, "error": str(e)[:200]})
 
 
+# ── GET/POST /api/ai/settings ─────────────────────────────────────────────────
+
+AI_SETTINGS_PATH = BASE / "config" / "ai_settings.json"
+
+
+def _load_ai_settings() -> dict:
+    try:
+        return json.loads(AI_SETTINGS_PATH.read_text())
+    except Exception:
+        return {"providers": {}, "use_cases": {}}
+
+
+@app.get("/api/ai/settings")
+async def api_ai_settings_get():
+    return _load_ai_settings()
+
+
+@app.post("/api/ai/settings")
+async def api_ai_settings_post(request: Request):
+    try:
+        body = await request.json()
+        current = _load_ai_settings()
+        use_cases = current.get("use_cases", {})
+        for uc_key, uc_update in body.get("use_cases", {}).items():
+            if uc_key in use_cases:
+                use_cases[uc_key].update(uc_update)
+        current["use_cases"] = use_cases
+        tmp = AI_SETTINGS_PATH.with_suffix(".tmp")
+        tmp.write_text(json.dumps(current, indent=2, ensure_ascii=False))
+        tmp.replace(AI_SETTINGS_PATH)
+        import sys as _sys
+        _sys.path.insert(0, str(BASE / "scripts"))
+        try:
+            from ai_client import AIClient as _AIC
+            _AIC().reload()
+        except Exception:
+            pass
+        return {"ok": True}
+    except Exception as e:
+        return JSONResponse({"ok": False, "error": str(e)[:300]}, status_code=400)
+
+
+@app.get("/api/ai/test-providers")
+async def api_ai_test_providers():
+    import sys as _sys, time
+    _sys.path.insert(0, str(BASE / "scripts"))
+    from ai_client import AIClient as _AIC
+    client = _AIC()
+    results = {}
+
+    def _test(provider: str, fn):
+        t0 = time.time()
+        try:
+            fn()
+            return {"ok": True, "latency_ms": round((time.time() - t0) * 1000)}
+        except Exception as e:
+            return {"ok": False, "error": str(e)[:200]}
+
+    # Ollama
+    results["ollama"] = _test("ollama", lambda: client._ollama_generate(
+        client.get_use_case("rag_answering").get("model", "llama3.1:8b"),
+        "Reply with one word: OK", None, 5,
+    ))
+    # Anthropic
+    if os.environ.get("ANTHROPIC_API_KEY"):
+        results["anthropic"] = _test("anthropic", lambda: client._anthropic_generate(
+            "claude-haiku-4-5-20251001", "Reply with one word: OK", None, 5,
+        ))
+    else:
+        results["anthropic"] = {"ok": False, "error": "ANTHROPIC_API_KEY niet ingesteld"}
+
+    # Gemini
+    if os.environ.get("GEMINI_API_KEY"):
+        results["gemini"] = _test("gemini", lambda: client._gemini_generate(
+            "gemini-2.5-flash", "Reply with one word: OK", None, 5,
+        ))
+    else:
+        results["gemini"] = {"ok": False, "error": "GEMINI_API_KEY niet ingesteld"}
+
+    return results
+
+
 # ── GET /api/pipeline-diagrams ────────────────────────────────────────────────
 
 PIPELINE_DIAGRAMS_PATH = BASE / "config" / "pipeline_diagrams.json"
@@ -4460,6 +4542,11 @@ async def settings_page():
       style="padding:10px 22px;border:none;background:none;cursor:pointer;font-size:14px;
              font-weight:400;color:#6b7280;border-bottom:2px solid transparent;margin-bottom:-1px">
       Schema's
+    </button>
+    <button type="button" id="tab-ai" onclick="switchSettingsTab('ai')"
+      style="padding:10px 22px;border:none;background:none;cursor:pointer;font-size:14px;
+             font-weight:400;color:#6b7280;border-bottom:2px solid transparent;margin-bottom:-1px">
+      AI Modellen
     </button>
   </div>
 
@@ -4660,6 +4747,40 @@ async def settings_page():
     </div>
   </div>
 
+  <!-- TAB 3: AI Modellen -->
+  <div id="pane-ai" style="display:none;max-width:880px">
+
+    <!-- Provider status card -->
+    <div class="section" style="margin-bottom:20px">
+      <div class="section-head">
+        <span class="section-title">Provider status</span>
+        <button onclick="testAllProviders()"
+          style="padding:6px 14px;background:#1A6B72;color:#fff;border:none;
+                 border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">
+          Alle testen
+        </button>
+      </div>
+      <div id="provider-status-grid"
+           style="padding:16px 24px;display:flex;gap:16px;flex-wrap:wrap">
+        <div style="color:#6b7280;font-size:13px">Klik &ldquo;Alle testen&rdquo; om verbinding te controleren\u2026</div>
+      </div>
+    </div>
+
+    <!-- Use case cards -->
+    <div id="ai-use-cases-container">
+      <div style="color:#6b7280;font-size:13px;padding:20px 0">AI-instellingen laden\u2026</div>
+    </div>
+
+    <div style="margin-top:16px">
+      <button onclick="saveAllUseCases()"
+        style="padding:10px 24px;background:#1A6B72;color:#fff;border:none;
+               border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">
+        Alle wijzigingen opslaan
+      </button>
+      <span id="ai-save-msg" style="margin-left:12px;font-size:13px;color:#059669"></span>
+    </div>
+  </div>
+
 </div><!-- /wrap -->
 
 <script>
@@ -4667,7 +4788,7 @@ async def settings_page():
 // TAB SWITCHING
 // ═══════════════════════════════════════════════════════════
 function switchSettingsTab(tab) {
-  ['params','schemas'].forEach(t => {
+  ['params','schemas','ai'].forEach(t => {
     document.getElementById('pane-' + t).style.display = t === tab ? 'block' : 'none';
     const btn = document.getElementById('tab-' + t);
     const active = t === tab;
@@ -4676,6 +4797,7 @@ function switchSettingsTab(tab) {
     btn.style.borderBottom   = active ? '2px solid #1A6B72' : '2px solid transparent';
   });
   if (tab === 'schemas' && !window._diagramsLoaded) loadDiagrams();
+  if (tab === 'ai' && !window._aiLoaded) loadAiSettings();
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -4814,6 +4936,168 @@ function showToast(msg, isError) {
     + 'background:' + (isError ? '#dc2626' : '#059669');
   document.body.appendChild(t);
   setTimeout(() => t.remove(), 2800);
+}
+
+// ═══════════════════════════════════════════════════════════
+// AI MODELLEN TAB
+// ═══════════════════════════════════════════════════════════
+let _aiSettings = {};
+
+async function loadAiSettings() {
+  try {
+    const r = await fetch('/api/ai/settings');
+    _aiSettings = await r.json();
+    renderUseCases(_aiSettings);
+    window._aiLoaded = true;
+  } catch(e) {
+    document.getElementById('ai-use-cases-container').innerHTML =
+      '<div style="color:#dc2626;font-size:13px">Laden mislukt: ' + e + '</div>';
+  }
+}
+
+function renderUseCases(settings) {
+  const providers = settings.providers || {};
+  const useCases  = settings.use_cases || {};
+  const cont = document.getElementById('ai-use-cases-container');
+  cont.innerHTML = '';
+
+  const table = document.createElement('table');
+  table.style.cssText = 'width:100%;border-collapse:collapse;background:#fff;'
+    + 'border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;font-size:14px';
+
+  const thead = table.createTHead();
+  const hr = thead.insertRow();
+  ['Use case', 'Omschrijving', 'Provider', 'Model'].forEach(h => {
+    const th = document.createElement('th');
+    th.textContent = h;
+    th.style.cssText = 'background:#1A6B72;color:#fff;padding:10px 14px;text-align:left;font-size:13px';
+    hr.appendChild(th);
+  });
+
+  const tbody = table.createTBody();
+  const PROVIDER_MODELS = {
+    ollama:    (providers.ollama    || {}).models || ['llama3.1:8b'],
+    anthropic: (providers.anthropic || {}).models || ['claude-haiku-4-5-20251001','claude-sonnet-4-6'],
+    gemini:    (providers.gemini    || {}).models || ['gemini-2.5-flash','gemini-2.5-pro'],
+  };
+
+  Object.entries(useCases).forEach(([key, uc], i) => {
+    const tr = tbody.insertRow();
+    tr.style.background = i % 2 === 0 ? '#fff' : '#f8fafc';
+
+    const tdKey = tr.insertCell();
+    tdKey.innerHTML = '<span style="font-weight:600;color:#1a1a2e">' + (uc.label || key) + '</span>'
+      + '<br><code style="font-size:11px;color:#6b7280">' + key + '</code>';
+    tdKey.style.padding = '10px 14px';
+
+    const tdDesc = tr.insertCell();
+    tdDesc.textContent = uc.description || '';
+    tdDesc.style.cssText = 'padding:10px 14px;color:#4a5568;font-size:13px;max-width:280px';
+
+    const tdProv = tr.insertCell();
+    tdProv.style.padding = '10px 14px';
+    const provSel = document.createElement('select');
+    provSel.id = 'prov-' + key;
+    provSel.style.cssText = 'padding:6px 10px;border:1px solid #d1d5db;border-radius:6px;'
+      + 'font-size:13px;background:#fff;cursor:pointer';
+    provSel.onchange = () => refreshModelOptions(key, provSel.value);
+    ['ollama','anthropic','gemini'].forEach(p => {
+      const opt = document.createElement('option');
+      opt.value = p; opt.textContent = p;
+      if (p === uc.provider) opt.selected = true;
+      provSel.appendChild(opt);
+    });
+    tdProv.appendChild(provSel);
+
+    const tdModel = tr.insertCell();
+    tdModel.style.padding = '10px 14px';
+    const modSel = document.createElement('select');
+    modSel.id = 'model-' + key;
+    modSel.style.cssText = 'padding:6px 10px;border:1px solid #d1d5db;border-radius:6px;'
+      + 'font-size:13px;background:#fff;cursor:pointer;min-width:180px';
+    (PROVIDER_MODELS[uc.provider] || [uc.model]).forEach(m => {
+      const opt = document.createElement('option');
+      opt.value = m; opt.textContent = m;
+      if (m === uc.model) opt.selected = true;
+      modSel.appendChild(opt);
+    });
+    tdModel.appendChild(modSel);
+  });
+
+  cont.appendChild(table);
+
+  window._PROVIDER_MODELS = PROVIDER_MODELS;
+}
+
+function refreshModelOptions(ucKey, provider) {
+  const modSel = document.getElementById('model-' + ucKey);
+  const models = (window._PROVIDER_MODELS || {})[provider] || [];
+  modSel.innerHTML = '';
+  models.forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m; opt.textContent = m;
+    modSel.appendChild(opt);
+  });
+}
+
+async function saveAllUseCases() {
+  const useCases = _aiSettings.use_cases || {};
+  const updates  = {};
+  Object.keys(useCases).forEach(key => {
+    const provSel  = document.getElementById('prov-'  + key);
+    const modSel   = document.getElementById('model-' + key);
+    if (provSel && modSel) {
+      const newProv = provSel.value;
+      const supportsVision = (newProv === 'gemini' || newProv === 'anthropic' || newProv === 'ollama')
+        && (useCases[key].supports_vision !== undefined ? useCases[key].supports_vision : false);
+      updates[key] = {
+        provider: newProv,
+        model: modSel.value,
+        supports_vision: supportsVision,
+      };
+    }
+  });
+  const r = await fetch('/api/ai/settings', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({use_cases: updates}),
+  });
+  const d = await r.json();
+  const msg = document.getElementById('ai-save-msg');
+  if (d.ok) {
+    msg.textContent = '\u2713 Opgeslagen';
+    msg.style.color = '#059669';
+    await loadAiSettings();
+  } else {
+    msg.textContent = '\u2717 Fout: ' + (d.error || '?');
+    msg.style.color = '#dc2626';
+  }
+  setTimeout(() => { msg.textContent = ''; }, 3000);
+}
+
+async function testAllProviders() {
+  const grid = document.getElementById('provider-status-grid');
+  grid.innerHTML = '<div style="color:#6b7280;font-size:13px">Testen\u2026</div>';
+  try {
+    const r = await fetch('/api/ai/test-providers');
+    const results = await r.json();
+    grid.innerHTML = '';
+    const labels = {ollama: 'Ollama', anthropic: 'Anthropic', gemini: 'Gemini'};
+    Object.entries(results).forEach(([prov, res]) => {
+      const ok = res.ok;
+      const card = document.createElement('div');
+      card.style.cssText = 'display:flex;flex-direction:column;gap:4px;padding:12px 16px;'
+        + 'border-radius:8px;border:1px solid ' + (ok ? '#16a34a' : '#d1d5db') + ';'
+        + 'background:' + (ok ? '#dcfce7' : '#f3f4f6') + ';min-width:160px';
+      card.innerHTML = '<span style="font-weight:600;font-size:13px;color:' + (ok ? '#16a34a' : '#6b7280') + '">'
+        + (ok ? '\u2713' : '\u2717') + ' ' + (labels[prov] || prov) + '</span>'
+        + '<span style="font-size:12px;color:#4a5568">'
+        + (ok ? res.latency_ms + 'ms' : (res.error || 'fout')) + '</span>';
+      grid.appendChild(card);
+    });
+  } catch(e) {
+    grid.innerHTML = '<div style="color:#dc2626;font-size:13px">Test mislukt: ' + e + '</div>';
+  }
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -6946,6 +7230,7 @@ async def search_query(request: Request):
 
         answer_text = ""
         try:
+            # Streaming Ollama call — not migrated to AIClient (requires async streaming)
             async with httpx.AsyncClient(timeout=120) as client:
                 async with client.stream(
                     "POST",

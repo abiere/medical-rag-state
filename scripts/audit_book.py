@@ -17,10 +17,12 @@ import json
 import logging
 import random
 import sys
-import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+
+sys.path.insert(0, str(Path(__file__).parent))
+from ai_client import AIClient
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
@@ -33,11 +35,11 @@ QUALITY_DIR      = BASE / "data" / "book_quality"
 CACHE_DIR        = BASE / "data" / "ingest_cache"
 TAGS_FILE        = BASE / "config" / "usability_tags.json"
 AI_INSTRUCTIONS  = BASE / "config" / "ai_instructions"
-OLLAMA_URL       = "http://localhost:11434"
-OLLAMA_MODEL     = "llama3.1:8b"
 AUDIT_SAMPLE     = 15
 TAG_BATCH        = 5
 MIN_QUALITY      = 3.5
+
+_ai = AIClient()
 
 
 def _load_ai_instruction(filename: str) -> str:
@@ -48,32 +50,18 @@ def _load_ai_instruction(filename: str) -> str:
         return ""
 
 
-# ── Ollama helper ─────────────────────────────────────────────────────────────
+# ── AI helper ─────────────────────────────────────────────────────────────────
 
 def _ollama(prompt: str, timeout: int = 30) -> dict | None:
-    body = json.dumps({
-        "model":  OLLAMA_MODEL,
-        "prompt": prompt,
-        "stream": False,
-        "format": "json",
-    }).encode()
-    req = urllib.request.Request(
-        f"{OLLAMA_URL}/api/generate",
-        data=body,
-        headers={"Content-Type": "application/json"},
-    )
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
-            data = json.loads(resp.read())
-            raw = data.get("response", "").strip()
-            # Strip markdown code fences if present
-            raw = raw.lstrip("```json").lstrip("```").rstrip("```").strip()
-            return json.loads(raw)
+        raw = _ai.generate("chunk_audit", prompt, max_tokens=500).strip()
+        raw = raw.lstrip("```json").lstrip("```").rstrip("```").strip()
+        return json.loads(raw)
     except json.JSONDecodeError as e:
-        logger.warning("Ollama JSON parse error: %s", e)
+        logger.warning("AI JSON parse error: %s", e)
         return None
     except Exception as e:
-        logger.warning("Ollama request failed: %s", e)
+        logger.warning("AI request failed: %s", e)
         return None
 
 

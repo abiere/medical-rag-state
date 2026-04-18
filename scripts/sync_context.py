@@ -182,6 +182,14 @@ def main():
     context = generate_context()
     CONTEXT_PATH.write_text(context)
     print(f"Written: {CONTEXT_PATH}")
+    try:
+        import sys as _sys
+        _sys.path.insert(0, str(BASE / "scripts"))
+        from ai_client import update_ai_status_md
+        update_ai_status_md()
+        print("Written: SYSTEM_DOCS/AI_STATUS.md")
+    except Exception as e:
+        print(f"AI_STATUS.md update skipped: {e}")
 
 
 if __name__ == "__main__":

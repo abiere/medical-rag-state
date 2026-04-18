@@ -40,10 +40,15 @@ import io
 import json
 import logging
 import re
+import sys
 import urllib.error
 import urllib.request
 from pathlib import Path
 from typing import Any
+
+sys.path.insert(0, str(Path(__file__).parent))
+from ai_client import AIClient
+_ai = AIClient()
 
 logging.basicConfig(
     level=logging.INFO,
@@ -217,29 +222,19 @@ def _classify_image_type(is_table: bool, figure_labels: list[str]) -> str:
 
 def _describe_image_ollama(img_path: Path) -> str:
     """
-    Generate a 1-sentence description via an Ollama vision model (LLaVA).
-    Returns 'pending' immediately if no vision model is loaded.
+    Generate a 1-sentence description via AIClient (image_description use case).
+    Returns 'pending' on failure.
     """
-    vision_model = _get_ollama_vision_model()
-    if not vision_model:
-        return "pending"
     try:
-        img_b64 = base64.b64encode(img_path.read_bytes()).decode()
-        payload = json.dumps({
-            "model":  vision_model,
-            "prompt": "Describe this medical or anatomical image in one concise sentence.",
-            "images": [img_b64],
-            "stream": False,
-        }).encode()
-        req = urllib.request.Request(
-            f"{OLLAMA_BASE_URL}/api/generate",
-            data=payload,
-            headers={"Content-Type": "application/json"},
-        )
-        with urllib.request.urlopen(req, timeout=60) as resp:
-            return json.loads(resp.read()).get("response", "").strip()
+        result = _ai.generate_vision(
+            "image_description",
+            img_path,
+            "Describe this medical or anatomical image in one concise sentence.",
+            max_tokens=100,
+        ).strip()
+        return result if result else "pending"
     except Exception as exc:
-        logger.debug("Ollama vision failed for %s: %s", img_path.name, exc)
+        logger.debug("AI vision failed for %s: %s", img_path.name, exc)
         return "pending"
 
 

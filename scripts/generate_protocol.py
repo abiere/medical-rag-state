@@ -14,6 +14,11 @@ import sys
 from pathlib import Path
 from datetime import datetime, timezone
 
+sys.path.insert(0, str(Path(__file__).parent))
+from ai_client import AIClient
+
+_ai = AIClient()
+
 log = logging.getLogger(__name__)
 
 BASE           = Path("/root/medical-rag")
@@ -133,26 +138,11 @@ def qdrant_search(query: str, kai_filter: dict, limit: int = 8) -> list:
 
 
 def ollama_generate(prompt: str, system: str = None, max_tokens: int = 1500) -> str:
-    """Call Ollama for text generation. Returns empty string on failure."""
+    """Generate text via AIClient (protocol_generation use case). Returns empty string on failure."""
     try:
-        messages = []
-        if system:
-            messages.append({"role": "system", "content": system})
-        messages.append({"role": "user", "content": prompt})
-
-        resp = requests.post(
-            f"{OLLAMA_URL}/api/chat",
-            json={
-                "model":   OLLAMA_MODEL,
-                "messages": messages,
-                "stream":  False,
-                "options": {"num_predict": max_tokens},
-            },
-            timeout=180,
-        )
-        return resp.json()["message"]["content"].strip()
+        return _ai.generate("protocol_generation", prompt, system=system, max_tokens=max_tokens)
     except Exception as e:
-        log.warning("Ollama generation failed: %s", e)
+        log.warning("AI generation failed: %s", e)
         return ""
 
 
