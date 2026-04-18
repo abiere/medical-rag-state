@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 10:27:44 UTC**
+> Last update: **2026-04-18 10:32:44 UTC**
 
 ## Services
 | Service | Status |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `Everything_Reset_Sequence_-_Part_5.mp4` |
+| Current job | `Everything_Reset_Sequence_-_Part_5.mp4` (5 min) |
 | Queued | 9 |
 | Done | 34 / 51 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 2.54 GB / 32.86 GB (8%) |
-| CPU | 6.3% |
+| RAM used | 6.58 GB / 32.86 GB (20%) |
+| CPU | 96.2% |
 | Disk used | 77.2 GB / 322.3 GB (25%) |
-| Uptime | up 1 day, 4 hours, 52 minutes |
+| Uptime | up 1 day, 4 hours, 57 minutes |
 
 ## Recent markers
 - `2026-04-18T10:27:32` **transcription_done** — Everything_Reset_Sequence_-_Part_4.mp4 complete (34/14)
