@@ -598,25 +598,6 @@
       "ingested": true,
       "ingested_at": "2026-04-17T20:47:29.730296+00:00"
     },
-    "polyvagal_theory": {
-      "k": 2,
-      "a": 3,
-      "i": 3,
-      "library_category": "nrt_curriculum",
-      "role": "nervous_system",
-      "full_title": "The Polyvagal Theory",
-      "authors": "Porges",
-      "format": "pdf",
-      "filename_patterns": [
-        "Polyvagal Theory",
-        "Polyvagal"
-      ],
-      "notes": "Autonomic nervous system — vagus nerve, safety and threat responses",
-      "image_source": "pdf_cropped",
-      "image_priority": "normal",
-      "image_priority_override": null,
-      "image_evaluated": false
-    },
     "body_keeps_score": {
       "k": 2,
       "a": 3,
