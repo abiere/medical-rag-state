@@ -329,7 +329,14 @@ def main() -> None:
         for f in AI_INSTRUCTIONS_SRC.glob("*.md"):
             shutil.copy2(f, AI_INSTRUCTIONS_DST / f.name)
 
-    files_to_add = ["SYSTEM_DOCS/LIVE_STATUS.md"]
+    # Also update CONTEXT.md every sync cycle
+    import subprocess as _sp
+    _sp.run(
+        ["python3", "/root/medical-rag/scripts/sync_context.py"],
+        capture_output=True,
+    )
+
+    files_to_add = ["SYSTEM_DOCS/LIVE_STATUS.md", "SYSTEM_DOCS/CONTEXT.md"]
     backlog = BASE / "SYSTEM_DOCS" / "BACKLOG.md"
     if backlog.exists():
         files_to_add.append("SYSTEM_DOCS/BACKLOG.md")

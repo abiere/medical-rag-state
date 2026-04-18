@@ -1,7 +1,82 @@
-# CONTEXT — Session Loader
+#!/usr/bin/env python3
+"""
+sync_context.py — Auto-generates SYSTEM_DOCS/CONTEXT.md from live server data.
+Called by: post-commit hook + sync_status.py (every 5 min)
+"""
+
+import json
+import re
+import urllib.request
+from datetime import datetime, timezone
+from pathlib import Path
+
+BASE         = Path("/root/medical-rag")
+CONTEXT_PATH = BASE / "SYSTEM_DOCS" / "CONTEXT.md"
+BACKLOG_PATH = BASE / "SYSTEM_DOCS" / "BACKLOG.md"
+
+QDRANT_COLLECTIONS = [
+    ("medical_library",       "Boekchunks (PDF/EPUB)"),
+    ("nrt_curriculum",        "NRT curriculum (Lawrence Woods)"),
+    ("qat_curriculum",        "QAT curriculum"),
+    ("rlt_flexbeam",          "Red Light Therapy docs"),
+    ("pemf_qrs",              "PEMF QRS-101 docs"),
+    ("nrt_video_transcripts", "NRT video transcripties"),
+    ("qat_video_transcripts", "QAT video transcripties"),
+]
+
+
+def _qdrant_count(collection: str) -> str:
+    try:
+        req = urllib.request.Request(f"http://localhost:6333/collections/{collection}")
+        with urllib.request.urlopen(req, timeout=4) as resp:
+            d = json.loads(resp.read())
+            n = d.get("result", {}).get("points_count", 0)
+            return f"{n:,}".replace(",", ".")
+    except Exception:
+        return "?"
+
+
+def _open_issues() -> str:
+    """Extract top open ([ ]) items from the 🔴 priority section of BACKLOG.md."""
+    try:
+        text = BACKLOG_PATH.read_text()
+        items = []
+        in_prio = False
+        for line in text.splitlines():
+            if re.search(r"Prioriteit|🔴", line) and line.startswith("##"):
+                in_prio = True
+                continue
+            if line.startswith("## ") and in_prio:
+                in_prio = False
+            if in_prio and re.match(r"\s*- \[ \]", line):
+                item = re.sub(r"^\s*- \[ \]\s*\*\*(.+?)\*\*.*", r"\1", line)
+                if item == line:
+                    item = re.sub(r"^\s*- \[ \]\s*", "", line)
+                clean = f"- {item[:120].strip()}"
+                if clean not in items:
+                    items.append(clean)
+                if len(items) >= 6:
+                    break
+        return "\n".join(items) if items else "- Geen open prioriteiten"
+    except Exception:
+        return "- (BACKLOG.md niet leesbaar)"
+
+
+def generate_context() -> str:
+    now  = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+    qdrant_rows = ""
+    for col, desc in QDRANT_COLLECTIONS:
+        count = _qdrant_count(col)
+        qdrant_rows += f"| {col} | {count} | {desc} |\n"
+
+    issues_text = _open_issues()
+
+    return f"""# CONTEXT — Session Loader
 > Lees dit aan het begin van elke sessie. Max 150 regels.
 > Volledige technische detail: SYSTEM_DOCS/TECHNICAL.md
-> **Auto-gegenereerd:** 2026-04-18 10:52 UTC
+> **Auto-gegenereerd:** {now}
 
 ## Wat dit systeem is
 Privé, volledig lokaal RAG-systeem voor medische en acupunctuurliteratuur.
@@ -29,17 +104,10 @@ Alleen via Tailscale (100.66.194.55). Outputs: behandelprotocollen, blogteksten,
 | sync-status.timer | — | ✅ Elke 5 min |
 | queue-watchdog.timer | — | ✅ Elke 10 min |
 
-## Qdrant collecties (stand 2026-04-18)
+## Qdrant collecties (stand {date})
 | Collectie | Vectors | Gebruik |
 |---|---|---|
-| medical_library | 19.572 | Boekchunks (PDF/EPUB) |
-| nrt_curriculum | 425 | NRT curriculum (Lawrence Woods) |
-| qat_curriculum | 125 | QAT curriculum |
-| rlt_flexbeam | 160 | Red Light Therapy docs |
-| pemf_qrs | 64 | PEMF QRS-101 docs |
-| nrt_video_transcripts | 241 | NRT video transcripties |
-| qat_video_transcripts | 123 | QAT video transcripties |
-
+{qdrant_rows}
 ## Stack
 - **Embedding:** BAAI/bge-large-en-v1.5 (1024 dim) — NOOIT nomic-embed-text
 - **LLM:** Ollama llama3.1:8b (lokaal)
@@ -58,7 +126,7 @@ Alleen via Tailscale (100.66.194.55). Outputs: behandelprotocollen, blogteksten,
 │   ├── rlt_flexbeam/          ← FlexBeam RLT bronnen
 │   └── pemf_qrs/              ← PEMF QRS-101 bronnen
 ├── data/
-│   ├── ingest_cache/{hash}/  ← state.json + fase-bestanden per boek
+│   ├── ingest_cache/{{hash}}/  ← state.json + fase-bestanden per boek
 │   ├── extracted_images/       ← Boekafbeeldingen
 │   ├── book_quality/           ← Audit rapporten
 │   └── protocols/              ← Gegenereerde .docx + metadata
@@ -94,12 +162,7 @@ HE=HE-5   | LIV=LIV-5
 
 ## Open issues (uit BACKLOG.md)
 
-- Trail Guide ingest valideren
-- Deadman + Travell chunk counts valideren in Qdrant
-- Eerste protocol genereren via /protocols
-- Bestaande protocollen draaien door nieuwe setup valideren
-- Bibliotheek verder opbouwen — nieuwe boeken en transcripties
-- Appendix-Autoimmuun.md
+{issues_text}
 
 ---
 
@@ -112,3 +175,14 @@ Lees ALTIJD deze bestanden aan het begin van elke sessie:
 - TECHNICAL.md → volledige technische documentatie
 
 URL: https://raw.githubusercontent.com/abiere/medical-rag-state/main/SYSTEM_DOCS/
+"""
+
+
+def main():
+    context = generate_context()
+    CONTEXT_PATH.write_text(context)
+    print(f"Written: {CONTEXT_PATH}")
+
+
+if __name__ == "__main__":
+    main()
