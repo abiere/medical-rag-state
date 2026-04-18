@@ -354,6 +354,57 @@ def parse_epub(
     return chunks
 
 
+# ── metadata extractors ───────────────────────────────────────────────────────
+
+def _extract_epub_dc_metadata(epub_path: Path) -> dict:
+    """Extract Dublin Core metadata (ISBN, ASIN, title, creator, publisher, date) from EPUB."""
+    try:
+        import ebooklib
+        from ebooklib import epub as epublib
+        book = epublib.read_epub(str(epub_path), options={"ignore_ncx": True})
+        meta: dict = {}
+        for field in ["title", "creator", "publisher", "date", "identifier", "language"]:
+            vals = book.get_metadata("DC", field)
+            if not vals:
+                continue
+            if field == "identifier":
+                for v, attrs in vals:
+                    scheme = (attrs or {}).get("opf:scheme", "").lower()
+                    v_str = str(v).strip()
+                    if "isbn" in scheme or "isbn" in v_str.lower():
+                        meta["isbn"] = v_str
+                    elif "asin" in v_str.lower() or v_str.startswith("urn:asin:"):
+                        meta["asin"] = v_str.replace("urn:asin:", "").strip()
+                    else:
+                        meta.setdefault("identifier", v_str)
+            else:
+                meta[field] = vals[0][0].strip() if vals else ""
+        return meta
+    except Exception:
+        return {}
+
+
+def _extract_pdf_metadata(pdf_path: Path) -> dict:
+    """Extract metadata from PDF file via PyMuPDF."""
+    try:
+        import fitz
+        doc = fitz.open(str(pdf_path))
+        raw = doc.metadata or {}
+        doc.close()
+        meta: dict = {}
+        if raw.get("title"):
+            meta["title"] = raw["title"]
+        if raw.get("author"):
+            meta["creator"] = raw["author"]
+        if raw.get("producer"):
+            meta["publisher"] = raw["producer"]
+        if raw.get("creationDate"):
+            meta["date"] = raw["creationDate"][:4]
+        return meta
+    except Exception:
+        return {}
+
+
 # ── CLI ───────────────────────────────────────────────────────────────────────
 
 def main():

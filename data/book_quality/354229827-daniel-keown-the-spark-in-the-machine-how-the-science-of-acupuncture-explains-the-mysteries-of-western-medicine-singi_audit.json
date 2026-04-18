@@ -1,0 +1,48 @@
+{
+  "book": "354229827-daniel-keown-the-spark-in-the-machine-how-the-science-of-acupuncture-explains-the-mysteries-of-western-medicine-singi.pdf",
+  "collection": "medical_library",
+  "audited_at": "2026-04-17T20:42:35.851258+00:00",
+  "total_chunks": 314,
+  "structural": {
+    "total_chunks": 314,
+    "avg_chunk_words": 297.7,
+    "short_chunks": 15,
+    "long_chunks": 0,
+    "point_codes_found": 76,
+    "figure_refs_found": 0,
+    "images_extracted": 28,
+    "translation_applied": true,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 314
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 15,
+    "avg_coherence": 3.89,
+    "avg_completeness": 4.44,
+    "avg_terminology": 4.78,
+    "avg_translation": 5.0,
+    "quality_score": 4.53,
+    "flagged_chunks": 2,
+    "suggestion": "Consider splitting the chunk into two smaller ones, one describing the doctor's experience and another focusing on the recipient's mother's statement."
+  },
+  "auto_classification": {
+    "error": "classification failed"
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

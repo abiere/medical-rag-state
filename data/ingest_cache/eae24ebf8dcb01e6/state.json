@@ -55,5 +55,9 @@
       "status": "pending"
     }
   },
-  "image_extraction_enabled": true
+  "image_extraction_enabled": true,
+  "book_metadata": {
+    "publisher": "Adobe Acrobat 6.0 Paper Capture Plug-in",
+    "date": "D:20"
+  }
 }

@@ -57,7 +57,13 @@
       "images_done": 0,
       "images_useful": 0,
       "last_run": null,
-      "note": "Nightly job — does not block main pipeline"
+      "note": "Nightly job \u2014 does not block main pipeline"
     }
+  },
+  "book_metadata": {
+    "title": "untitled",
+    "creator": "anonymous",
+    "publisher": "ReportLab PDF Library - (opensource)",
+    "date": "D:20"
   }
 }

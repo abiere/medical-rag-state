@@ -1,7 +1,7 @@
 {
   "book": "How to Use FlexBeam on Elbows - Recharge Health.pdf",
-  "collection": "device_documentation",
-  "audited_at": "2026-04-16T20:30:17.101051+00:00",
+  "collection": "rlt_flexbeam",
+  "audited_at": "2026-04-18T07:35:40.139989+00:00",
   "total_chunks": 3,
   "structural": {
     "total_chunks": 3,
@@ -23,24 +23,12 @@
   },
   "llm_audit": {
     "sample_size": 3,
-    "avg_coherence": 2.67,
-    "avg_completeness": 1.0,
-    "avg_terminology": 5.0,
-    "avg_translation": 5.0,
-    "quality_score": 3.42,
-    "flagged_chunks": 3,
-    "suggestion": "The chunk starts with a promotional offer and ends with a disclaimer, which makes it feel like two separate concepts. Consider splitting this into two chunks or rephrasing the ending to better connect with the beginning."
+    "quality_score": null,
+    "flagged_chunks": 0,
+    "error": "All LLM calls failed"
   },
   "auto_classification": {
-    "primary_use": [
-      "device_settings",
-      "nrt_treatment"
-    ],
-    "secondary_use": [],
-    "image_quality": "none",
-    "image_type": "textual instructions and promotional content",
-    "recommended_collection": "device_documentation",
-    "confidence": 0.5
+    "error": "classification failed"
   },
   "usability_profile": {
     "scores": {},
@@ -48,13 +36,9 @@
     "total_tagged": 0
   },
   "remediation": {
-    "issues": [
-      "quality_score 3.42 < 3.5"
-    ],
-    "suggestions": [
-      "retry with different chunking parameters"
-    ],
-    "remediation_needed": true
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
   },
   "status": "low_quality"
 }

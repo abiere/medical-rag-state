@@ -1,0 +1,61 @@
+{
+  "filename": "Mobilizing the Myofascial System - Killens, Lee.pdf",
+  "book_hash": "45a342376b1f001f",
+  "filepath": "/root/medical-rag/books/medical_literature/Mobilizing the Myofascial System - Killens, Lee.pdf",
+  "collection": "medical_library",
+  "library_category": "medical_literature",
+  "started_at": "2026-04-18T05:54:49.288444+00:00",
+  "updated_at": "2026-04-18T06:13:47.805472+00:00",
+  "completed_at": "2026-04-18T06:13:47.805450+00:00",
+  "phases": {
+    "parse": {
+      "status": "done",
+      "started_at": "2026-04-18T05:54:50.241891+00:00",
+      "completed_at": "2026-04-18T05:57:02.541283+00:00",
+      "pages_total": 296,
+      "pages_done": 296,
+      "chunks_extracted": 379,
+      "images_extracted": 1353,
+      "parse_method": null,
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": [],
+      "ocr_engine": "native"
+    },
+    "audit": {
+      "status": "done",
+      "started_at": "2026-04-18T05:57:02.556395+00:00",
+      "completed_at": "2026-04-18T06:05:55.900531+00:00",
+      "chunks_total": 379,
+      "chunks_tagged": 379,
+      "chunks_skipped": 0,
+      "ollama_available": true,
+      "consecutive_failures_hit": false,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "done",
+      "started_at": "2026-04-18T06:05:55.911694+00:00",
+      "completed_at": "2026-04-18T06:13:47.279993+00:00",
+      "chunks_total": 379,
+      "chunks_done": 379,
+      "vectors_per_minute": 48.6,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-18T06:13:47.261296+00:00",
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "done",
+      "started_at": "2026-04-18T06:13:47.295419+00:00",
+      "completed_at": "2026-04-18T06:13:47.794823+00:00",
+      "chunks_inserted": 379,
+      "collection": "medical_library"
+    }
+  },
+  "image_extraction_enabled": true,
+  "parse_retry_count": 0,
+  "book_metadata": {
+    "publisher": "Adobe PDF Library 15.0",
+    "date": "D:20"
+  }
+}

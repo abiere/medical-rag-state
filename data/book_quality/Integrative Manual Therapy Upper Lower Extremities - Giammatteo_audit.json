@@ -1,0 +1,48 @@
+{
+  "book": "Integrative Manual Therapy Upper Lower Extremities - Giammatteo.pdf",
+  "collection": "medical_library",
+  "audited_at": "2026-04-18T05:51:19.201208+00:00",
+  "total_chunks": 170,
+  "structural": {
+    "total_chunks": 170,
+    "avg_chunk_words": 267.9,
+    "short_chunks": 6,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 17,
+    "images_extracted": 282,
+    "translation_applied": false,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 170
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 15,
+    "avg_coherence": 3.67,
+    "avg_completeness": 4.33,
+    "avg_terminology": 5.0,
+    "avg_translation": 5.0,
+    "quality_score": 4.5,
+    "flagged_chunks": 1,
+    "suggestion": "Consider adding a transitional sentence to connect this chunk with the previous one."
+  },
+  "auto_classification": {
+    "error": "classification failed"
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

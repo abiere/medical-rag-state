@@ -1,0 +1,58 @@
+{
+  "filename": "dokumen.pub_the-practice-of-chinese-medicine-the-treatment-of-diseases-with-acupuncture-and-chinese-herbs-2nd-ed-9780443074905-2152393805-0443074909.pdf",
+  "book_hash": "feccd089bff49473",
+  "filepath": "/root/medical-rag/books/medical_literature/dokumen.pub_the-practice-of-chinese-medicine-the-treatment-of-diseases-with-acupuncture-and-chinese-herbs-2nd-ed-9780443074905-2152393805-0443074909.pdf",
+  "collection": "medical_library",
+  "library_category": "medical_literature",
+  "started_at": "2026-04-18T01:42:19.870403+00:00",
+  "updated_at": "2026-04-18T07:40:19.364657+00:00",
+  "completed_at": null,
+  "phases": {
+    "parse": {
+      "status": "done",
+      "started_at": "2026-04-18T01:42:19.871550+00:00",
+      "completed_at": "2026-04-18T03:33:25.146229+00:00",
+      "pages_total": 1528,
+      "pages_done": 1528,
+      "chunks_extracted": 1693,
+      "images_extracted": 103,
+      "parse_method": null,
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": [],
+      "ocr_engine": "tesseract"
+    },
+    "audit": {
+      "status": "running",
+      "started_at": "2026-04-18T07:40:19.364093+00:00",
+      "completed_at": null,
+      "chunks_total": 1693,
+      "chunks_tagged": 0,
+      "chunks_skipped": 0,
+      "ollama_available": null,
+      "consecutive_failures_hit": false,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "chunks_total": null,
+      "chunks_done": 0,
+      "vectors_per_minute": null,
+      "eta_minutes": null,
+      "last_progress_at": null,
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "chunks_inserted": 0,
+      "collection": "medical_library"
+    }
+  },
+  "image_extraction_enabled": true,
+  "parse_retry_count": 0,
+  "book_metadata": {}
+}

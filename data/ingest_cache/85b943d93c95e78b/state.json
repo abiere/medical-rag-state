@@ -52,5 +52,9 @@
       "collection": "device_documentation"
     }
   },
-  "parse_retry_count": 0
+  "parse_retry_count": 0,
+  "book_metadata": {
+    "publisher": "GPL Ghostscript 9.27",
+    "date": "D:20"
+  }
 }

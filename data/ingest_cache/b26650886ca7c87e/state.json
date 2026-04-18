@@ -53,5 +53,13 @@
     }
   },
   "image_extraction_enabled": true,
-  "parse_retry_count": 0
+  "parse_retry_count": 0,
+  "book_metadata": {
+    "title": "Whole Brain Living",
+    "creator": "Bolte Taylor PhD, Jill",
+    "publisher": "Hay House",
+    "date": "2021-05-11",
+    "asin": "B08W29Q2CR",
+    "language": "en"
+  }
 }

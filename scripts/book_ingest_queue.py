@@ -835,6 +835,15 @@ def process_book(item: dict) -> bool:
     if state is None:
         state = _blank_state(filename, filepath, collection, category)
         state["image_extraction_enabled"] = item.get("image_extraction_enabled", True)
+        try:
+            from parse_epub import _extract_epub_dc_metadata, _extract_pdf_metadata
+            state["book_metadata"] = (
+                _extract_epub_dc_metadata(filepath) if fmt == "epub"
+                else _extract_pdf_metadata(filepath)
+            )
+        except Exception as _meta_err:
+            logger.debug("Metadata extraction failed (non-fatal): %s", _meta_err)
+            state["book_metadata"] = {}
         _write_state(state)
         logger.info("Created new state for %s (hash=%s)", filename, bh)
     else:

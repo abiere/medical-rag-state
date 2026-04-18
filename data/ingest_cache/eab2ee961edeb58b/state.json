@@ -1,0 +1,63 @@
+{
+  "filename": "QRS101 Quick start - English.pdf",
+  "book_hash": "eab2ee961edeb58b",
+  "filepath": "/root/medical-rag/books/pemf_qrs/QRS101 Quick start - English.pdf",
+  "collection": "pemf_qrs",
+  "library_category": "pemf_qrs",
+  "started_at": "2026-04-18T07:39:16.355328+00:00",
+  "updated_at": "2026-04-18T07:40:18.927508+00:00",
+  "completed_at": "2026-04-18T07:40:18.927500+00:00",
+  "phases": {
+    "parse": {
+      "status": "done",
+      "started_at": "2026-04-18T07:39:16.363231+00:00",
+      "completed_at": "2026-04-18T07:39:16.889069+00:00",
+      "pages_total": 1,
+      "pages_done": 1,
+      "chunks_extracted": 1,
+      "images_extracted": 9,
+      "parse_method": null,
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": [],
+      "ocr_engine": "native"
+    },
+    "audit": {
+      "status": "done",
+      "started_at": "2026-04-18T07:39:16.893825+00:00",
+      "completed_at": "2026-04-18T07:40:12.726774+00:00",
+      "chunks_total": 1,
+      "chunks_tagged": 1,
+      "chunks_skipped": 0,
+      "ollama_available": true,
+      "consecutive_failures_hit": false,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "done",
+      "started_at": "2026-04-18T07:40:12.727665+00:00",
+      "completed_at": "2026-04-18T07:40:18.878123+00:00",
+      "chunks_total": 1,
+      "chunks_done": 1,
+      "vectors_per_minute": 17.5,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-18T07:40:18.873038+00:00",
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "done",
+      "started_at": "2026-04-18T07:40:18.879219+00:00",
+      "completed_at": "2026-04-18T07:40:18.926221+00:00",
+      "chunks_inserted": 1,
+      "collection": "pemf_qrs"
+    }
+  },
+  "image_extraction_enabled": true,
+  "parse_retry_count": 0,
+  "book_metadata": {
+    "title": "QRS101 Quick start - English",
+    "creator": "Anwender",
+    "publisher": "GPL Ghostscript 8.70",
+    "date": "D:20"
+  }
+}

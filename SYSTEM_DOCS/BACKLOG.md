@@ -4,6 +4,24 @@
 
 ---
 
+## ✅ Afgerond — 2026-04-18
+
+- [x] **Duplicaatdetectie feature** — gebouwd (deel A–D)
+      - A: `_extract_epub_dc_metadata` + `_extract_pdf_metadata` in parse_epub.py
+      - A3: book_metadata veld in state.json bij elke ingest (epub + pdf)
+      - A4: backfill uitgevoerd — 93 bestaande boeken bijgewerkt
+      - B: `_find_duplicates()` + `_duplicate_score()` + `GET /api/library/duplicates`
+      - B3: duplicaatcheck bij upload (fuzzy stem matching, dup_warning in response)
+      - C: `DELETE /api/library/book/{hash}` + `POST /api/library/duplicates/resolve`
+      - D: amber banner in /library UI met "Bewaar dit" knoppen
+      - Resultaat: 2 bevestigde ASIN-duplicaten gevonden (Bates + Magee)
+      - Minimale pagina-drempel (≥20 pagina's) voorkomt false positives voor kleine pamfletten
+- [x] **Bug fix /images prio dropdown** — cls_key leeg → nuttige foutmelding, geen crash
+- [x] **Bug fix /images overflow** — overflow:hidden → position:relative op outer div
+- [x] **sobotta_vol2 + vol3 filename_patterns** — gecorrigeerd (Vol. 2 / Vol. 3 met komma+spatie)
+
+---
+
 ## 🔴 Prioriteit — volgende sessie
 
 - [x] **OPDRACHT B (UI) voltooid** ✅ — zie Afgerond hieronder

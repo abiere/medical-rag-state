@@ -2162,6 +2162,128 @@ def _invalidate_items_cache() -> None:
     _ITEMS_CACHE["ts"] = 0.0
 
 
+def _get_cls_key_for_book(filename: str) -> str:
+    """Return cls_key for a book filename by pattern match."""
+    try:
+        cfg = json.loads(CLASSIFICATIONS_PATH.read_text())
+        for k, entry in cfg.get("classifications", {}).items():
+            for pat in entry.get("filename_patterns", []):
+                if pat.lower() in filename.lower():
+                    return k
+    except Exception:
+        pass
+    return ""
+
+
+def _duplicate_score(b1: dict, b2: dict) -> tuple:
+    """Return (score 0-3, reason). Score >= 2 = likely duplicate."""
+    if b1["isbn"] and b1["isbn"] == b2["isbn"]:
+        return 3, f"Zelfde ISBN: {b1['isbn']}"
+    if b1["asin"] and b1["asin"] == b2["asin"]:
+        return 3, f"Zelfde ASIN: {b1['asin']}"
+    if (b1["pages"] >= 20 and
+            b1["pages"] == b2["pages"] and
+            b1["chunks"] == b2["chunks"] and
+            b1["images"] == b2["images"] and
+            b1["images"] > 0):
+        return 2, f"Identieke pagina's ({b1['pages']}), chunks en afbeeldingen"
+    if (b1["pages"] >= 20 and
+            b1["pages"] == b2["pages"] and
+            b1["chunks"] == b2["chunks"] and
+            b1["images"] > 0 and b2["images"] > 0):
+        diff = abs(b1["images"] - b2["images"]) / max(b1["images"], b2["images"])
+        if diff < 0.20:
+            return 2, (f"Identieke pagina's/chunks, afbeeldingen ~gelijk "
+                       f"({b1['images']} vs {b2['images']})")
+    return 0, ""
+
+
+def _find_duplicates() -> list:
+    """Scan all ingested books and return groups of likely duplicates."""
+    img_base = BASE / "data" / "extracted_images"
+    books = []
+
+    for d in sorted(CACHE_DIR.iterdir()):
+        sp = d / "state.json"
+        if not sp.exists():
+            continue
+        try:
+            s = json.loads(sp.read_text())
+        except Exception:
+            continue
+        fn = s.get("filename", "")
+        if not fn:
+            continue
+        bh = s.get("book_hash", "")
+        parse = s.get("phases", {}).get("parse", {})
+        meta = s.get("book_metadata", {})
+
+        img_count = caption_count = 0
+        img_meta = img_base / bh / "images_metadata.json"
+        if img_meta.exists():
+            try:
+                imgs = json.loads(img_meta.read_text()).get("images", [])
+                img_count = len(imgs)
+                caption_count = sum(
+                    1 for i in imgs if (i.get("alt_text") or "").strip()
+                )
+            except Exception:
+                pass
+
+        size_mb = 0.0
+        for fp in BOOKS_DIR.rglob(fn):
+            try:
+                size_mb = round(fp.stat().st_size / 1024 / 1024, 1)
+            except Exception:
+                pass
+            break
+
+        books.append({
+            "filename":     fn,
+            "book_hash":    bh,
+            "collection":   s.get("collection", ""),
+            "pages":        parse.get("pages_total") or 0,
+            "chunks":       parse.get("chunks_extracted") or 0,
+            "images":       img_count,
+            "captions":     caption_count,
+            "ocr_engine":   parse.get("ocr_engine", "?"),
+            "size_mb":      size_mb,
+            "isbn":         meta.get("isbn", ""),
+            "asin":         meta.get("asin", ""),
+            "publisher":    meta.get("publisher", ""),
+            "pub_date":     (meta.get("date") or "")[:4],
+            "meta_title":   meta.get("title", ""),
+            "meta_creator": meta.get("creator", ""),
+            "cls_key":      _get_cls_key_for_book(fn),
+            "ingested_at":  (parse.get("started_at") or "")[:10],
+        })
+
+    groups: list = []
+    matched: set = set()
+
+    for i, b1 in enumerate(books):
+        if i in matched:
+            continue
+        group = [dict(b1)]
+        for j, b2 in enumerate(books):
+            if j <= i or j in matched:
+                continue
+            score, reason = _duplicate_score(b1, b2)
+            if score >= 2:
+                entry = dict(b2)
+                entry["dup_score"] = score
+                entry["dup_reason"] = reason
+                group.append(entry)
+                matched.add(j)
+        if len(group) > 1:
+            group[0]["dup_score"] = group[1]["dup_score"]
+            group[0]["dup_reason"] = group[1]["dup_reason"]
+            groups.append(group)
+            matched.add(i)
+
+    return groups
+
+
 async def _qdrant_count_source(
     collection: str,
     source_file: str,
@@ -2188,8 +2310,99 @@ async def _qdrant_count_source(
 
 # ── GET /library ───────────────────────────────────────────────────────────────
 
+def _render_dup_banner(groups: list) -> str:
+    """Render the amber duplicates banner for /library. Returns '' if no groups."""
+    if not groups:
+        return ""
+
+    rows_html = ""
+    for g in groups:
+        score_label = "Bevestigd" if g[0].get("dup_score", 0) >= 3 else "Waarschijnlijk"
+        score_color = "#92400e" if g[0].get("dup_score", 0) >= 3 else "#854d0e"
+        score_bg    = "#fef3c7" if g[0].get("dup_score", 0) >= 3 else "#fef9c3"
+        reason_html = f'<div style="font-size:11px;color:#78350f;margin-bottom:10px">{g[0].get("dup_reason","")}</div>'
+        cols = ""
+        for book in g:
+            bh = book["book_hash"]
+            others = [b["book_hash"] for b in g if b["book_hash"] != bh]
+            delete_hash = others[0] if others else ""
+            confirm_msg = (
+                f"Bewaar '{book['filename'][:40]}' en verwijder de andere? "
+                f"Dit verwijdert vectorchunks, afbeeldingen en het bestand definitief."
+            )
+            keep_btn = (
+                f'<button onclick="resolveDup(\'{bh}\',\'{delete_hash}\',"'
+                f'{confirm_msg}'
+                f'")" style="margin-top:8px;padding:5px 12px;background:#1A6B72;'
+                f'color:#fff;border:none;border-radius:6px;font-size:12px;'
+                f'cursor:pointer;font-weight:600">Bewaar dit ✓</button>'
+                if delete_hash else ""
+            )
+            cap_note = f" · {book['captions']} captions" if book["captions"] else ""
+            asin_note = f'<div style="font-size:11px;color:#6b7280">ASIN: {book["asin"]}</div>' if book["asin"] else ""
+            isbn_note = f'<div style="font-size:11px;color:#6b7280">ISBN: {book["isbn"]}</div>' if book["isbn"] else ""
+            cols += f"""
+<div style="flex:1;min-width:220px;background:#fff;border:1px solid #e2e8f0;
+            border-radius:8px;padding:12px 14px">
+  <div style="font-size:13px;font-weight:600;color:#1a1a2e;margin-bottom:4px;
+              word-break:break-word">{book['filename']}</div>
+  {asin_note}{isbn_note}
+  <div style="font-size:12px;color:#6b7280;margin-top:4px">
+    {book['pages']} pagina's · {book['chunks']} chunks · {book['images']} afb{cap_note}
+  </div>
+  <div style="font-size:12px;color:#6b7280">{book['size_mb']} MB · {book['ingested_at']}</div>
+  {keep_btn}
+</div>"""
+        rows_html += f"""
+<div style="margin-bottom:14px">
+  <span style="display:inline-block;background:{score_bg};color:{score_color};
+               font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;
+               margin-bottom:6px">{score_label}</span>
+  {reason_html}
+  <div style="display:flex;gap:12px;flex-wrap:wrap">{cols}</div>
+</div>"""
+
+    banner = f"""
+<div id="dup-banner" style="background:#fffbeb;border:1px solid #f59e0b;
+     border-radius:10px;margin-bottom:16px;overflow:visible">
+  <div onclick="document.getElementById('dup-panel').style.display=
+       document.getElementById('dup-panel').style.display==='none'?'block':'none'"
+       style="cursor:pointer;display:flex;align-items:center;gap:10px;
+              padding:12px 16px">
+    <span style="font-size:15px">&#9888;</span>
+    <span style="font-weight:600;color:#92400e;font-size:14px">
+      {len(groups)} duplicaatpaar(en) gevonden
+    </span>
+    <span style="margin-left:auto;font-size:12px;color:#92400e">Bekijk &#9660;</span>
+  </div>
+  <div id="dup-panel" style="display:none;padding:0 16px 16px">
+    {rows_html}
+  </div>
+</div>
+<script>
+async function resolveDup(keepHash, deleteHash, msg) {{
+  if (!confirm(msg)) return;
+  try {{
+    const r = await fetch('/api/library/duplicates/resolve', {{
+      method: 'POST',
+      headers: {{'Content-Type':'application/json'}},
+      body: JSON.stringify({{keep_hash: keepHash, delete_hash: deleteHash}})
+    }});
+    const d = await r.json();
+    if (d.error) {{ alert('Fout: ' + d.error); return; }}
+    alert('Verwijderd. Pagina wordt herladen.');
+    location.reload();
+  }} catch(e) {{ alert('Fout: ' + e); }}
+}}
+</script>"""
+    return banner
+
+
 @app.get("/library", response_class=HTMLResponse)
 async def library_page():
+    dup_groups = _find_duplicates()
+    dup_banner = _render_dup_banner(dup_groups)
+
     body = """
 <style>
 .book-row { transition: background 0.12s; }
@@ -3000,6 +3213,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 </script>"""
+    if dup_banner:
+        body = body.replace('<div class="wrap">', '<div class="wrap">\n  ' + dup_banner, 1)
     return _page_shell("Bibliotheek", "/library", body)
 
 
@@ -3247,6 +3462,137 @@ async def api_library_delete(item_id: str, dry_run: bool = True):
                 )
     except Exception as e:
         return JSONResponse({"error": str(e)[:300]}, status_code=500)
+
+
+# ── GET /api/library/duplicates ───────────────────────────────────────────────
+
+@app.get("/api/library/duplicates")
+async def api_library_duplicates():
+    """Return groups of likely duplicate books."""
+    groups = _find_duplicates()
+    return {"groups": groups, "total_groups": len(groups)}
+
+
+# ── DELETE /api/library/book/{book_hash} ──────────────────────────────────────
+
+@app.delete("/api/library/book/{book_hash}")
+async def api_library_delete_book(book_hash: str):
+    """
+    Permanently delete a book and all its data:
+    Qdrant vectors, extracted images, ingest cache, book file,
+    and unclassified_* classification entries.
+    """
+    import shutil as _shutil
+    import logging as _log
+    _dlog = _log.getLogger(__name__)
+
+    result: dict = {
+        "book_hash":         book_hash,
+        "qdrant_deleted":    0,
+        "images_deleted":    False,
+        "cache_deleted":     False,
+        "file_deleted":      False,
+        "cls_entry_removed": False,
+    }
+
+    # Find state.json
+    state_path = state_data = None
+    for d in CACHE_DIR.iterdir():
+        sp = d / "state.json"
+        if not sp.exists():
+            continue
+        try:
+            s = json.loads(sp.read_text())
+            if s.get("book_hash") == book_hash:
+                state_path = sp
+                state_data = s
+                break
+        except Exception:
+            pass
+
+    if not state_path or not state_data:
+        return JSONResponse({"error": f"Book hash {book_hash} not found"}, status_code=404)
+
+    filename   = state_data.get("filename", "")
+    collection = state_data.get("collection", "medical_library")
+
+    # 1. Delete from Qdrant
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            r = await client.post(
+                f"http://localhost:6333/collections/{collection}/points/delete",
+                json={"filter": {"must": [{"key": "source_file", "match": {"value": filename}}]}},
+            )
+            result["qdrant_deleted"] = (
+                state_data.get("phases", {}).get("qdrant", {}).get("chunks_inserted", 0)
+            )
+    except Exception as e:
+        result["qdrant_error"] = str(e)[:200]
+
+    # 2. Delete extracted images directory
+    img_dir = BASE / "data" / "extracted_images" / book_hash
+    if img_dir.exists():
+        _shutil.rmtree(img_dir)
+        result["images_deleted"] = True
+
+    # 3. Delete ingest cache directory
+    cache_dir = state_path.parent
+    if cache_dir.exists():
+        _shutil.rmtree(cache_dir)
+        result["cache_deleted"] = True
+
+    # 4. Delete book file from disk
+    if filename:
+        for fp in BOOKS_DIR.rglob(filename):
+            try:
+                fp.unlink()
+                result["file_deleted"] = True
+            except Exception:
+                pass
+            break
+
+    # 5. Remove unclassified_* entries from classifications
+    try:
+        cfg = json.loads(CLASSIFICATIONS_PATH.read_text())
+        cls = cfg.get("classifications", {})
+        to_remove = [
+            k for k, v in cls.items()
+            if k.startswith("unclassified_") and
+            any(filename.lower() in pat.lower()
+                for pat in v.get("filename_patterns", []))
+        ]
+        for k in to_remove:
+            del cls[k]
+        if to_remove:
+            cfg["classifications"] = cls
+            tmp = CLASSIFICATIONS_PATH.with_suffix(".tmp")
+            tmp.write_text(json.dumps(cfg, indent=2, ensure_ascii=False))
+            tmp.replace(CLASSIFICATIONS_PATH)
+            result["cls_entry_removed"] = True
+    except Exception as e:
+        result["cls_error"] = str(e)[:200]
+
+    _invalidate_items_cache()
+    _dlog.info("DELETED book %s (%s): %s", filename, book_hash, result)
+    return result
+
+
+# ── POST /api/library/duplicates/resolve ─────────────────────────────────────
+
+@app.post("/api/library/duplicates/resolve")
+async def api_resolve_duplicate(body: dict):
+    """Keep one book, delete the other. Delegates to api_library_delete_book."""
+    keep_hash   = body.get("keep_hash", "")
+    delete_hash = body.get("delete_hash", "")
+    if not keep_hash or not delete_hash:
+        return JSONResponse({"error": "keep_hash and delete_hash required"}, status_code=400)
+    if keep_hash == delete_hash:
+        return JSONResponse({"error": "Cannot delete and keep same hash"}, status_code=400)
+    result = await api_library_delete_book(delete_hash)
+    if isinstance(result, dict):
+        result["kept"] = keep_hash
+    _invalidate_items_cache()
+    return result
 
 
 # ── GET /library/ingest ────────────────────────────────────────────────────────
@@ -3612,9 +3958,27 @@ async def library_upload(
         _ulog.error("UPLOAD enqueue failed for %s:\n%s", fname, _tb.format_exc())
         return JSONResponse({"error": "Wachtrij mislukt"}, status_code=500)
 
+    # Quick duplicate check based on filename stem similarity
+    dup_warning: list = []
+    try:
+        import re as _re
+        cfg = json.loads(CLASSIFICATIONS_PATH.read_text())
+        stem1 = _re.sub(r"(_nodrm|_drm|nodrm|\d+e?_editie)", "",
+                        Path(fname).stem, flags=_re.I).lower().strip()
+        for entry in cfg.get("classifications", {}).values():
+            for pat in entry.get("filename_patterns", []):
+                stem2 = _re.sub(r"(_nodrm|_drm|nodrm|\d+e?_editie)", "",
+                                Path(pat).stem, flags=_re.I).lower().strip()
+                if stem1 and stem2 and (stem1 in stem2 or stem2 in stem1):
+                    dup_warning.append(pat)
+                    break
+    except Exception:
+        pass
+
     _invalidate_items_cache()
     return {"status": "queued", "filename": fname, "collection": qdrant_collection,
-            "section": section_key, "image_extraction_enabled": image_extraction_enabled}
+            "section": section_key, "image_extraction_enabled": image_extraction_enabled,
+            "duplicate_warning": dup_warning[:3]}
 
 
 # ── GET /library/audit/{filename} ─────────────────────────────────────────────

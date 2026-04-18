@@ -58,9 +58,13 @@
       "images_done": 0,
       "images_useful": 0,
       "last_run": null,
-      "note": "Nightly job — does not block main pipeline"
+      "note": "Nightly job \u2014 does not block main pipeline"
     }
   },
   "status": "pending",
-  "parse_retry_count": 0
+  "parse_retry_count": 0,
+  "book_metadata": {
+    "publisher": "iLovePDF",
+    "date": "D:20"
+  }
 }

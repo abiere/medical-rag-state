@@ -62,5 +62,10 @@
   "parse_retry_count": 3,
   "status": "permanently_failed",
   "permanently_failed_at": "2026-04-17T11:00:44.498970+00:00",
-  "permanently_failed_reason": "Parse failed 3 times \u2014 manual intervention required"
+  "permanently_failed_reason": "Parse failed 3 times \u2014 manual intervention required",
+  "book_metadata": {
+    "title": "How to Use FlexBeam on Stomach - Recharge Health",
+    "publisher": "Skia/PDF m146",
+    "date": "D:20"
+  }
 }

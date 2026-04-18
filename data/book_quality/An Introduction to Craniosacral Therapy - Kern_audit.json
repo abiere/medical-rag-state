@@ -1,0 +1,48 @@
+{
+  "book": "An Introduction to Craniosacral Therapy - Kern.pdf",
+  "collection": "medical_library",
+  "audited_at": "2026-04-17T21:35:28.006851+00:00",
+  "total_chunks": 124,
+  "structural": {
+    "total_chunks": 124,
+    "avg_chunk_words": 281.5,
+    "short_chunks": 2,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 39,
+    "images_extracted": 62,
+    "translation_applied": false,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 124
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 15,
+    "avg_coherence": 5.0,
+    "avg_completeness": 5.0,
+    "avg_terminology": 4.88,
+    "avg_translation": 5.0,
+    "quality_score": 4.97,
+    "flagged_chunks": 0,
+    "suggestion": "Specify the relationship between 'endosteal layer' and 'periosteum of the inner skull' for clarity."
+  },
+  "auto_classification": {
+    "error": "classification failed"
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

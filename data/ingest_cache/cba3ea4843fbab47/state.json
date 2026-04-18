@@ -1,0 +1,63 @@
+{
+  "filename": "354229827-daniel-keown-the-spark-in-the-machine-how-the-science-of-acupuncture-explains-the-mysteries-of-western-medicine-singi.pdf",
+  "book_hash": "cba3ea4843fbab47",
+  "filepath": "/root/medical-rag/books/medical_literature/354229827-daniel-keown-the-spark-in-the-machine-how-the-science-of-acupuncture-explains-the-mysteries-of-western-medicine-singi.pdf",
+  "collection": "medical_library",
+  "library_category": "medical_literature",
+  "started_at": "2026-04-17T20:31:16.281319+00:00",
+  "updated_at": "2026-04-17T20:47:29.526507+00:00",
+  "completed_at": "2026-04-17T20:47:29.526481+00:00",
+  "phases": {
+    "parse": {
+      "status": "done",
+      "started_at": "2026-04-17T20:31:16.640494+00:00",
+      "completed_at": "2026-04-17T20:34:22.152238+00:00",
+      "pages_total": 306,
+      "pages_done": 306,
+      "chunks_extracted": 314,
+      "images_extracted": 28,
+      "parse_method": null,
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": [],
+      "ocr_engine": "native"
+    },
+    "audit": {
+      "status": "done",
+      "started_at": "2026-04-17T20:34:22.161050+00:00",
+      "completed_at": "2026-04-17T20:42:35.864775+00:00",
+      "chunks_total": 314,
+      "chunks_tagged": 314,
+      "chunks_skipped": 0,
+      "ollama_available": true,
+      "consecutive_failures_hit": false,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "done",
+      "started_at": "2026-04-17T20:42:35.873256+00:00",
+      "completed_at": "2026-04-17T20:47:29.133458+00:00",
+      "chunks_total": 314,
+      "chunks_done": 314,
+      "vectors_per_minute": 64.8,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-17T20:47:29.119232+00:00",
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "done",
+      "started_at": "2026-04-17T20:47:29.147345+00:00",
+      "completed_at": "2026-04-17T20:47:29.512823+00:00",
+      "chunks_inserted": 314,
+      "collection": "medical_library"
+    }
+  },
+  "image_extraction_enabled": true,
+  "parse_retry_count": 0,
+  "book_metadata": {
+    "title": "The Spark in the Machine",
+    "creator": "Keown, Daniel.",
+    "publisher": "Adobe PDF Library 10.0.1",
+    "date": "D:20"
+  }
+}

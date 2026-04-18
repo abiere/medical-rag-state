@@ -1,0 +1,61 @@
+{
+  "filename": "Integrative Manual Therapy Upper Lower Extremities - Giammatteo.pdf",
+  "book_hash": "3124d01a4d8466c9",
+  "filepath": "/root/medical-rag/books/medical_literature/Integrative Manual Therapy Upper Lower Extremities - Giammatteo.pdf",
+  "collection": "medical_library",
+  "library_category": "medical_literature",
+  "started_at": "2026-04-18T05:41:22.993362+00:00",
+  "updated_at": "2026-04-18T05:54:46.001161+00:00",
+  "completed_at": "2026-04-18T05:54:46.001136+00:00",
+  "phases": {
+    "parse": {
+      "status": "done",
+      "started_at": "2026-04-18T05:41:23.676029+00:00",
+      "completed_at": "2026-04-18T05:43:22.815471+00:00",
+      "pages_total": 166,
+      "pages_done": 166,
+      "chunks_extracted": 170,
+      "images_extracted": 282,
+      "parse_method": null,
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": [],
+      "ocr_engine": "native"
+    },
+    "audit": {
+      "status": "done",
+      "started_at": "2026-04-18T05:43:22.823763+00:00",
+      "completed_at": "2026-04-18T05:51:19.208137+00:00",
+      "chunks_total": 170,
+      "chunks_tagged": 170,
+      "chunks_skipped": 0,
+      "ollama_available": true,
+      "consecutive_failures_hit": false,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "done",
+      "started_at": "2026-04-18T05:51:19.212916+00:00",
+      "completed_at": "2026-04-18T05:54:45.612784+00:00",
+      "chunks_total": 170,
+      "chunks_done": 170,
+      "vectors_per_minute": 50.1,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-18T05:54:45.589719+00:00",
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "done",
+      "started_at": "2026-04-18T05:54:45.622624+00:00",
+      "completed_at": "2026-04-18T05:54:45.994851+00:00",
+      "chunks_inserted": 170,
+      "collection": "medical_library"
+    }
+  },
+  "image_extraction_enabled": true,
+  "parse_retry_count": 0,
+  "book_metadata": {
+    "publisher": "Adobe Acrobat Pro Extended 9.0.0",
+    "date": "D:20"
+  }
+}

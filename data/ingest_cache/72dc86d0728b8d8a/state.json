@@ -1,0 +1,61 @@
+{
+  "filename": "Explain Pain Supercharged - Moseley, Butler.pdf",
+  "book_hash": "72dc86d0728b8d8a",
+  "filepath": "/root/medical-rag/books/medical_literature/Explain Pain Supercharged - Moseley, Butler.pdf",
+  "collection": "medical_library",
+  "library_category": "medical_literature",
+  "started_at": "2026-04-18T04:41:45.741042+00:00",
+  "updated_at": "2026-04-18T05:06:24.938143+00:00",
+  "completed_at": "2026-04-18T05:06:24.938105+00:00",
+  "phases": {
+    "parse": {
+      "status": "done",
+      "started_at": "2026-04-18T04:41:45.748237+00:00",
+      "completed_at": "2026-04-18T04:48:43.025121+00:00",
+      "pages_total": 246,
+      "pages_done": 246,
+      "chunks_extracted": 399,
+      "images_extracted": 1048,
+      "parse_method": null,
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": [],
+      "ocr_engine": "native"
+    },
+    "audit": {
+      "status": "done",
+      "started_at": "2026-04-18T04:48:43.041941+00:00",
+      "completed_at": "2026-04-18T04:57:23.935060+00:00",
+      "chunks_total": 399,
+      "chunks_tagged": 399,
+      "chunks_skipped": 0,
+      "ollama_available": true,
+      "consecutive_failures_hit": false,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "done",
+      "started_at": "2026-04-18T04:57:23.946051+00:00",
+      "completed_at": "2026-04-18T05:06:24.143772+00:00",
+      "chunks_total": 399,
+      "chunks_done": 399,
+      "vectors_per_minute": 44.5,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-18T05:06:24.120171+00:00",
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "done",
+      "started_at": "2026-04-18T05:06:24.169301+00:00",
+      "completed_at": "2026-04-18T05:06:24.920940+00:00",
+      "chunks_inserted": 399,
+      "collection": "medical_library"
+    }
+  },
+  "image_extraction_enabled": true,
+  "parse_retry_count": 0,
+  "book_metadata": {
+    "publisher": "ABBYY FineReader 12",
+    "date": "D:20"
+  }
+}

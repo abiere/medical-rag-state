@@ -1,7 +1,7 @@
 {
   "book": "QRS101 Quick start - English.pdf",
-  "collection": "device_documentation",
-  "audited_at": "2026-04-17T11:39:47.466604+00:00",
+  "collection": "pemf_qrs",
+  "audited_at": "2026-04-18T07:40:12.725999+00:00",
   "total_chunks": 1,
   "structural": {
     "total_chunks": 1,
@@ -33,9 +33,9 @@
     ],
     "secondary_use": [],
     "image_quality": "none",
-    "image_type": "text-only instructions for using a device, likely containing diagrams",
-    "recommended_collection": "device_documentation",
-    "confidence": 1.0
+    "image_type": null,
+    "recommended_collection": "nrt_curriculum",
+    "confidence": 0.9
   },
   "usability_profile": {
     "scores": {},

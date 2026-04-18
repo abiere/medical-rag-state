@@ -53,5 +53,11 @@
     "image_screen": {
       "status": "done"
     }
+  },
+  "book_metadata": {
+    "title": "(anonymous)",
+    "creator": "(anonymous)",
+    "publisher": "ReportLab PDF Library - (opensource)",
+    "date": "D:20"
   }
 }

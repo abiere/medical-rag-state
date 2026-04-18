@@ -1,0 +1,61 @@
+{
+  "filename": "Integrative Manual Therapy Autonomic Nervous System - Giammatteo.pdf",
+  "book_hash": "6deeeb52b2adeeda",
+  "filepath": "/root/medical-rag/books/medical_literature/Integrative Manual Therapy Autonomic Nervous System - Giammatteo.pdf",
+  "collection": "medical_library",
+  "library_category": "medical_literature",
+  "started_at": "2026-04-18T05:06:29.254486+00:00",
+  "updated_at": "2026-04-18T05:21:56.010257+00:00",
+  "completed_at": "2026-04-18T05:21:56.010237+00:00",
+  "phases": {
+    "parse": {
+      "status": "done",
+      "started_at": "2026-04-18T05:06:34.451505+00:00",
+      "completed_at": "2026-04-18T05:10:04.570460+00:00",
+      "pages_total": 165,
+      "pages_done": 165,
+      "chunks_extracted": 186,
+      "images_extracted": 400,
+      "parse_method": null,
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": [],
+      "ocr_engine": "native"
+    },
+    "audit": {
+      "status": "done",
+      "started_at": "2026-04-18T05:10:04.579600+00:00",
+      "completed_at": "2026-04-18T05:18:09.283824+00:00",
+      "chunks_total": 186,
+      "chunks_tagged": 186,
+      "chunks_skipped": 0,
+      "ollama_available": true,
+      "consecutive_failures_hit": false,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "done",
+      "started_at": "2026-04-18T05:18:09.290668+00:00",
+      "completed_at": "2026-04-18T05:21:55.663847+00:00",
+      "chunks_total": 186,
+      "chunks_done": 186,
+      "vectors_per_minute": 49.9,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-18T05:21:55.644162+00:00",
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "done",
+      "started_at": "2026-04-18T05:21:55.672074+00:00",
+      "completed_at": "2026-04-18T05:21:56.004727+00:00",
+      "chunks_inserted": 186,
+      "collection": "medical_library"
+    }
+  },
+  "image_extraction_enabled": true,
+  "parse_retry_count": 0,
+  "book_metadata": {
+    "publisher": "Adobe Acrobat 9.0 Paper Capture Plug-in with ClearScan",
+    "date": "D:20"
+  }
+}

@@ -53,5 +53,13 @@
     }
   },
   "image_extraction_enabled": true,
-  "parse_retry_count": 0
+  "parse_retry_count": 0,
+  "book_metadata": {
+    "title": "Sobotta Atlas of Anatomy, Vol.1, 17th ed., English/Latin",
+    "creator": "Unknown",
+    "publisher": "Urban & Fischer",
+    "date": "2023-04-18",
+    "asin": "B0C1NYNC9X",
+    "language": "en"
+  }
 }

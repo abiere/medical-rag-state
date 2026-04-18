@@ -54,5 +54,9 @@
     "image_screen": {
       "status": "pending"
     }
+  },
+  "book_metadata": {
+    "publisher": "Adobe Acrobat Pro Extended 9.0.0",
+    "date": "D:20"
   }
 }

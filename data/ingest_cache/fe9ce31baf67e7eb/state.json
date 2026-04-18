@@ -53,5 +53,10 @@
     "image_screen": {
       "status": "pending"
     }
+  },
+  "book_metadata": {
+    "title": "NRT Upper Body",
+    "publisher": "Haru Free PDF Library 2.4.0dev",
+    "date": "D:20"
   }
 }

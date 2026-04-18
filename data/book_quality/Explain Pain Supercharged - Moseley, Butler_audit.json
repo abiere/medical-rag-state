@@ -1,0 +1,48 @@
+{
+  "book": "Explain Pain Supercharged - Moseley, Butler.pdf",
+  "collection": "medical_library",
+  "audited_at": "2026-04-18T04:57:23.917732+00:00",
+  "total_chunks": 399,
+  "structural": {
+    "total_chunks": 399,
+    "avg_chunk_words": 346.4,
+    "short_chunks": 6,
+    "long_chunks": 0,
+    "point_codes_found": 1,
+    "figure_refs_found": 106,
+    "images_extracted": 1048,
+    "translation_applied": true,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 399
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 15,
+    "avg_coherence": 4.67,
+    "avg_completeness": 4.67,
+    "avg_terminology": 5.0,
+    "avg_translation": 5.0,
+    "quality_score": 4.83,
+    "flagged_chunks": 0,
+    "suggestion": "Consider adding more details about Ruffini corpuscles and their role in sensory perception, making the concept complete."
+  },
+  "auto_classification": {
+    "error": "classification failed"
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

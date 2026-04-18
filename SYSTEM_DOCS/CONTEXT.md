@@ -122,6 +122,14 @@ HE=HE-5   | LIV=LIV-5
 
 ---
 
+## Maintenance status
+
+**Laatste run:** 18-04-2026 00:30 (521.1s)  
+**Uitslag:** ⚠️ WARNING — 2 waarschuwing(en), 5 OK  
+
+
+---
+
 ## Test status
 
 **Laatste run:** 18-04-2026 00:00 (28.1s)  

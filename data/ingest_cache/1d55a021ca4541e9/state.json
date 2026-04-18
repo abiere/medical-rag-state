@@ -5,8 +5,8 @@
   "collection": "medical_library",
   "library_category": "medical_literature",
   "started_at": "2026-04-17T20:23:13.483617+00:00",
-  "updated_at": "2026-04-17T20:23:15.008247+00:00",
-  "completed_at": null,
+  "updated_at": "2026-04-17T20:31:11.228453+00:00",
+  "completed_at": "2026-04-17T20:31:11.228443+00:00",
   "phases": {
     "parse": {
       "status": "done",
@@ -23,35 +23,36 @@
       "ocr_engine": "native"
     },
     "audit": {
-      "status": "running",
+      "status": "done",
       "started_at": "2026-04-17T20:23:15.007972+00:00",
-      "completed_at": null,
+      "completed_at": "2026-04-17T20:30:35.492265+00:00",
       "chunks_total": 33,
-      "chunks_tagged": 0,
+      "chunks_tagged": 33,
       "chunks_skipped": 0,
-      "ollama_available": null,
+      "ollama_available": true,
       "consecutive_failures_hit": false,
       "output_file": "phase2_audited.json"
     },
     "embed": {
-      "status": "pending",
-      "started_at": null,
-      "completed_at": null,
-      "chunks_total": null,
-      "chunks_done": 0,
-      "vectors_per_minute": null,
-      "eta_minutes": null,
-      "last_progress_at": null,
+      "status": "done",
+      "started_at": "2026-04-17T20:30:35.493637+00:00",
+      "completed_at": "2026-04-17T20:31:11.124469+00:00",
+      "chunks_total": 33,
+      "chunks_done": 33,
+      "vectors_per_minute": 60.0,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-17T20:31:11.118605+00:00",
       "output_file": "phase3_vectors.npy"
     },
     "qdrant": {
-      "status": "pending",
-      "started_at": null,
-      "completed_at": null,
-      "chunks_inserted": 0,
+      "status": "done",
+      "started_at": "2026-04-17T20:31:11.125986+00:00",
+      "completed_at": "2026-04-17T20:31:11.226724+00:00",
+      "chunks_inserted": 33,
       "collection": "medical_library"
     }
   },
   "image_extraction_enabled": true,
-  "parse_retry_count": 0
+  "parse_retry_count": 0,
+  "book_metadata": {}
 }

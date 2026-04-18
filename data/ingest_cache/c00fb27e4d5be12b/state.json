@@ -53,5 +53,11 @@
     "image_screen": {
       "status": "pending"
     }
+  },
+  "book_metadata": {
+    "title": "QAT_2025_overgenomen",
+    "creator": "Axel Biere",
+    "publisher": "macOS Version 26.3.1 (a) (Build 25D771280a) Quartz PDFContext",
+    "date": "D:20"
   }
 }

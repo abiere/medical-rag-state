@@ -53,5 +53,13 @@
     }
   },
   "image_extraction_enabled": true,
-  "parse_retry_count": 0
+  "parse_retry_count": 0,
+  "book_metadata": {
+    "title": "Quantum-Touch",
+    "creator": "Unknown",
+    "publisher": "North Atlantic Books",
+    "date": "2011-03-22",
+    "asin": "B004JHYRWW",
+    "language": "en"
+  }
 }

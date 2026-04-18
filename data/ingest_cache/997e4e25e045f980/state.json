@@ -52,5 +52,11 @@
       "collection": "device_documentation"
     }
   },
-  "parse_retry_count": 0
+  "parse_retry_count": 0,
+  "book_metadata": {
+    "title": "Anleitung QRS-101.4_D_GB_0510.indd",
+    "creator": "lotharlandau",
+    "publisher": "Acrobat Distiller 11.0 (Windows)",
+    "date": "D:20"
+  }
 }

@@ -53,5 +53,11 @@
     }
   },
   "image_extraction_enabled": true,
-  "parse_retry_count": 0
+  "parse_retry_count": 0,
+  "book_metadata": {
+    "title": "Touch for Health: The Complete Edition: A Practical Guide to Natural Health With Acupressure Touch",
+    "creator": "John Thie & Matthew Thie",
+    "publisher": "pypdf",
+    "date": "D:20"
+  }
 }

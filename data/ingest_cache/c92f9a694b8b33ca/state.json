@@ -53,5 +53,10 @@
     "image_screen": {
       "status": "pending"
     }
+  },
+  "book_metadata": {
+    "title": "Why FlexBeam - Recharge Health",
+    "publisher": "Skia/PDF m139",
+    "date": "D:20"
   }
 }

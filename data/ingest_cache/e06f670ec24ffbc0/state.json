@@ -1,0 +1,61 @@
+{
+  "filename": "Advanced Acupuncture - Cecil-Sterman.pdf",
+  "book_hash": "e06f670ec24ffbc0",
+  "filepath": "/root/medical-rag/books/medical_literature/Advanced Acupuncture - Cecil-Sterman.pdf",
+  "collection": "medical_library",
+  "library_category": "medical_literature",
+  "started_at": "2026-04-17T21:09:21.281778+00:00",
+  "updated_at": "2026-04-17T21:26:47.925554+00:00",
+  "completed_at": "2026-04-17T21:26:47.925532+00:00",
+  "phases": {
+    "parse": {
+      "status": "done",
+      "started_at": "2026-04-17T21:09:23.299103+00:00",
+      "completed_at": "2026-04-17T21:09:38.646709+00:00",
+      "pages_total": 466,
+      "pages_done": 466,
+      "chunks_extracted": 482,
+      "images_extracted": 195,
+      "parse_method": null,
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": [],
+      "ocr_engine": "native"
+    },
+    "audit": {
+      "status": "done",
+      "started_at": "2026-04-17T21:09:38.655890+00:00",
+      "completed_at": "2026-04-17T21:18:32.681672+00:00",
+      "chunks_total": 482,
+      "chunks_tagged": 482,
+      "chunks_skipped": 0,
+      "ollama_available": true,
+      "consecutive_failures_hit": false,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "done",
+      "started_at": "2026-04-17T21:18:32.691951+00:00",
+      "completed_at": "2026-04-17T21:26:47.301918+00:00",
+      "chunks_total": 482,
+      "chunks_done": 482,
+      "vectors_per_minute": 58.8,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-17T21:26:47.274344+00:00",
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "done",
+      "started_at": "2026-04-17T21:26:47.318092+00:00",
+      "completed_at": "2026-04-17T21:26:47.915038+00:00",
+      "chunks_inserted": 482,
+      "collection": "medical_library"
+    }
+  },
+  "image_extraction_enabled": true,
+  "parse_retry_count": 0,
+  "book_metadata": {
+    "publisher": "3-Heights(TM) PDF Security Shell 4.8.25.2 (http://www.pdf-tools.com)",
+    "date": "\u02da:\ufb02\u2026"
+  }
+}

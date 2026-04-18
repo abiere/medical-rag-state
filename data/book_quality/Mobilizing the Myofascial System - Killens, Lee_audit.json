@@ -1,0 +1,48 @@
+{
+  "book": "Mobilizing the Myofascial System - Killens, Lee.pdf",
+  "collection": "medical_library",
+  "audited_at": "2026-04-18T06:05:55.884884+00:00",
+  "total_chunks": 379,
+  "structural": {
+    "total_chunks": 379,
+    "avg_chunk_words": 301.8,
+    "short_chunks": 8,
+    "long_chunks": 0,
+    "point_codes_found": 0,
+    "figure_refs_found": 445,
+    "images_extracted": 1353,
+    "translation_applied": false,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 379
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 15,
+    "avg_coherence": 4.0,
+    "avg_completeness": 5.0,
+    "avg_terminology": 5.0,
+    "avg_translation": 5.0,
+    "quality_score": 4.75,
+    "flagged_chunks": 0,
+    "suggestion": "None"
+  },
+  "auto_classification": {
+    "error": "classification failed"
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

@@ -1,0 +1,48 @@
+{
+  "book": "Applied Kinesiology - Frost.pdf",
+  "collection": "medical_library",
+  "audited_at": "2026-04-17T22:01:50.671201+00:00",
+  "total_chunks": 409,
+  "structural": {
+    "total_chunks": 409,
+    "avg_chunk_words": 291.3,
+    "short_chunks": 44,
+    "long_chunks": 0,
+    "point_codes_found": 1,
+    "figure_refs_found": 0,
+    "images_extracted": 642,
+    "translation_applied": true,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 409
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 15,
+    "avg_coherence": 4.29,
+    "avg_completeness": 5.0,
+    "avg_terminology": 4.86,
+    "avg_translation": 5.0,
+    "quality_score": 4.79,
+    "flagged_chunks": 0,
+    "suggestion": "Consider breaking the chunk into two or three smaller ones for better natural boundaries."
+  },
+  "auto_classification": {
+    "error": "classification failed"
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

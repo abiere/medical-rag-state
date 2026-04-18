@@ -1,0 +1,62 @@
+{
+  "filename": "How to Use FlexBeam on Elbows - Recharge Health.pdf",
+  "book_hash": "fb5d63159d1bd33c",
+  "filepath": "/root/medical-rag/books/rlt_flexbeam/How to Use FlexBeam on Elbows - Recharge Health.pdf",
+  "collection": "rlt_flexbeam",
+  "library_category": "rlt_flexbeam",
+  "started_at": "2026-04-18T07:33:28.261498+00:00",
+  "updated_at": "2026-04-18T07:36:08.923025+00:00",
+  "completed_at": "2026-04-18T07:36:08.922993+00:00",
+  "phases": {
+    "parse": {
+      "status": "done",
+      "started_at": "2026-04-18T07:33:28.264168+00:00",
+      "completed_at": "2026-04-18T07:33:35.855342+00:00",
+      "pages_total": 3,
+      "pages_done": 3,
+      "chunks_extracted": 3,
+      "images_extracted": 2,
+      "parse_method": null,
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": [],
+      "ocr_engine": "native"
+    },
+    "audit": {
+      "status": "done",
+      "started_at": "2026-04-18T07:33:35.858330+00:00",
+      "completed_at": "2026-04-18T07:35:40.141055+00:00",
+      "chunks_total": 3,
+      "chunks_tagged": 3,
+      "chunks_skipped": 0,
+      "ollama_available": true,
+      "consecutive_failures_hit": false,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "done",
+      "started_at": "2026-04-18T07:35:40.141989+00:00",
+      "completed_at": "2026-04-18T07:36:08.384796+00:00",
+      "chunks_total": 3,
+      "chunks_done": 3,
+      "vectors_per_minute": 9.7,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-18T07:36:08.372743+00:00",
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "done",
+      "started_at": "2026-04-18T07:36:08.385933+00:00",
+      "completed_at": "2026-04-18T07:36:08.906158+00:00",
+      "chunks_inserted": 3,
+      "collection": "rlt_flexbeam"
+    }
+  },
+  "image_extraction_enabled": true,
+  "parse_retry_count": 0,
+  "book_metadata": {
+    "title": "How to Use FlexBeam on Elbows - Recharge Health",
+    "publisher": "Skia/PDF m146",
+    "date": "D:20"
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "filename": "dokumen.pub_atlas-of-acupuncture-1nbsped-0443100284-9780443100284.pdf",
+  "book_hash": "e24868d486378fbd",
+  "filepath": "/root/medical-rag/books/medical_literature/dokumen.pub_atlas-of-acupuncture-1nbsped-0443100284-9780443100284.pdf",
+  "collection": "medical_library",
+  "library_category": "medical_literature",
+  "started_at": "2026-04-17T23:42:05.984409+00:00",
+  "updated_at": "2026-04-18T07:29:10.629792+00:00",
+  "completed_at": "2026-04-18T07:29:10.629756+00:00",
+  "phases": {
+    "parse": {
+      "status": "done",
+      "started_at": "2026-04-17T23:42:05.998527+00:00",
+      "completed_at": "2026-04-18T01:23:42.031779+00:00",
+      "pages_total": 721,
+      "pages_done": 721,
+      "chunks_extracted": 879,
+      "images_extracted": 3070,
+      "parse_method": null,
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": [],
+      "ocr_engine": "native"
+    },
+    "audit": {
+      "status": "done",
+      "started_at": "2026-04-18T01:23:42.052861+00:00",
+      "completed_at": "2026-04-18T01:33:21.398348+00:00",
+      "chunks_total": 879,
+      "chunks_tagged": 879,
+      "chunks_skipped": 0,
+      "ollama_available": true,
+      "consecutive_failures_hit": false,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "done",
+      "started_at": "2026-04-18T07:10:06.669855+00:00",
+      "completed_at": "2026-04-18T07:29:09.454294+00:00",
+      "chunks_total": 879,
+      "chunks_done": 879,
+      "vectors_per_minute": 46.3,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-18T07:29:09.404649+00:00",
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "done",
+      "started_at": "2026-04-18T07:29:09.494211+00:00",
+      "completed_at": "2026-04-18T07:29:10.603464+00:00",
+      "chunks_inserted": 879,
+      "collection": "medical_library"
+    }
+  },
+  "image_extraction_enabled": true,
+  "parse_retry_count": 0,
+  "book_metadata": {
+    "title": "Atlas of Acupuncture",
+    "creator": "Claudia Focks MD",
+    "publisher": "A-PDF Merger 2.4.3 (http://www.a-pdf.com)",
+    "date": "D:20"
+  }
+}

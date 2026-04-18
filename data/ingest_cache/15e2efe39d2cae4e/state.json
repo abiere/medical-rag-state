@@ -52,5 +52,11 @@
       "collection": "device_documentation"
     }
   },
-  "parse_retry_count": 0
+  "parse_retry_count": 0,
+  "book_metadata": {
+    "title": "QRS101 Quick start - English",
+    "creator": "Anwender",
+    "publisher": "GPL Ghostscript 8.70",
+    "date": "D:20"
+  }
 }

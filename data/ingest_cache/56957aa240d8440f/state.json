@@ -1,0 +1,61 @@
+{
+  "filename": "QRS-101-Home-System-Brochure.pdf",
+  "book_hash": "56957aa240d8440f",
+  "filepath": "/root/medical-rag/books/pemf_qrs/QRS-101-Home-System-Brochure.pdf",
+  "collection": "pemf_qrs",
+  "library_category": "pemf_qrs",
+  "started_at": "2026-04-18T07:37:57.974296+00:00",
+  "updated_at": "2026-04-18T07:39:12.287410+00:00",
+  "completed_at": "2026-04-18T07:39:12.287402+00:00",
+  "phases": {
+    "parse": {
+      "status": "done",
+      "started_at": "2026-04-18T07:37:57.975136+00:00",
+      "completed_at": "2026-04-18T07:38:09.976337+00:00",
+      "pages_total": 8,
+      "pages_done": 8,
+      "chunks_extracted": 1,
+      "images_extracted": 5,
+      "parse_method": null,
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": [],
+      "ocr_engine": "tesseract"
+    },
+    "audit": {
+      "status": "done",
+      "started_at": "2026-04-18T07:38:09.977691+00:00",
+      "completed_at": "2026-04-18T07:39:05.914084+00:00",
+      "chunks_total": 1,
+      "chunks_tagged": 1,
+      "chunks_skipped": 0,
+      "ollama_available": true,
+      "consecutive_failures_hit": false,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "done",
+      "started_at": "2026-04-18T07:39:05.914902+00:00",
+      "completed_at": "2026-04-18T07:39:12.224909+00:00",
+      "chunks_total": 1,
+      "chunks_done": 1,
+      "vectors_per_minute": 16.5,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-18T07:39:12.220931+00:00",
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "done",
+      "started_at": "2026-04-18T07:39:12.228844+00:00",
+      "completed_at": "2026-04-18T07:39:12.285126+00:00",
+      "chunks_inserted": 1,
+      "collection": "pemf_qrs"
+    }
+  },
+  "image_extraction_enabled": true,
+  "parse_retry_count": 0,
+  "book_metadata": {
+    "creator": "Vipinraj R",
+    "date": "D:20"
+  }
+}

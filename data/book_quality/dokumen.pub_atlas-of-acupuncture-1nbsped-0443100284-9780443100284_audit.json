@@ -1,0 +1,48 @@
+{
+  "book": "dokumen.pub_atlas-of-acupuncture-1nbsped-0443100284-9780443100284.pdf",
+  "collection": "medical_library",
+  "audited_at": "2026-04-18T01:33:21.374301+00:00",
+  "total_chunks": 879,
+  "structural": {
+    "total_chunks": 879,
+    "avg_chunk_words": 271.8,
+    "short_chunks": 0,
+    "long_chunks": 0,
+    "point_codes_found": 3765,
+    "figure_refs_found": 196,
+    "images_extracted": 3070,
+    "translation_applied": true,
+    "epub_strategy": null,
+    "pdf_type": "native",
+    "ocr_statistics": {
+      "engine_usage": {
+        "native": 879
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "llm_audit": {
+    "sample_size": 15,
+    "avg_coherence": 5.0,
+    "avg_completeness": 5.0,
+    "avg_terminology": 5.0,
+    "avg_translation": 5.0,
+    "quality_score": 5.0,
+    "flagged_chunks": 0,
+    "suggestion": "none"
+  },
+  "auto_classification": {
+    "error": "classification failed"
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}

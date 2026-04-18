@@ -1,0 +1,62 @@
+{
+  "filename": "The QAT Connect to the Brain eu.pdf",
+  "book_hash": "6bfaa241a82362f9",
+  "filepath": "/root/medical-rag/books/qat_curriculum/The QAT Connect to the Brain eu.pdf",
+  "collection": "qat_curriculum",
+  "library_category": "qat_curriculum",
+  "started_at": "2026-04-18T07:29:20.198068+00:00",
+  "updated_at": "2026-04-18T07:31:24.947733+00:00",
+  "completed_at": "2026-04-18T07:31:24.947724+00:00",
+  "phases": {
+    "parse": {
+      "status": "done",
+      "started_at": "2026-04-18T07:29:20.207241+00:00",
+      "completed_at": "2026-04-18T07:29:20.446072+00:00",
+      "pages_total": 2,
+      "pages_done": 2,
+      "chunks_extracted": 2,
+      "images_extracted": 0,
+      "parse_method": null,
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": [],
+      "ocr_engine": "native"
+    },
+    "audit": {
+      "status": "done",
+      "started_at": "2026-04-18T07:29:20.447329+00:00",
+      "completed_at": "2026-04-18T07:30:55.032376+00:00",
+      "chunks_total": 2,
+      "chunks_tagged": 2,
+      "chunks_skipped": 0,
+      "ollama_available": true,
+      "consecutive_failures_hit": false,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "done",
+      "started_at": "2026-04-18T07:30:55.033076+00:00",
+      "completed_at": "2026-04-18T07:31:24.844767+00:00",
+      "chunks_total": 2,
+      "chunks_done": 2,
+      "vectors_per_minute": 6.7,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-18T07:31:24.843772+00:00",
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "done",
+      "started_at": "2026-04-18T07:31:24.845275+00:00",
+      "completed_at": "2026-04-18T07:31:24.942347+00:00",
+      "chunks_inserted": 2,
+      "collection": "qat_curriculum"
+    }
+  },
+  "image_extraction_enabled": true,
+  "parse_retry_count": 0,
+  "book_metadata": {
+    "creator": "Lawrence Woods",
+    "publisher": "Microsoft\u00ae Word for Microsoft 365",
+    "date": "D:20"
+  }
+}

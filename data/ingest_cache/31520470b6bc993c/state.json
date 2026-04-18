@@ -53,5 +53,13 @@
     }
   },
   "image_extraction_enabled": true,
-  "parse_retry_count": 0
+  "parse_retry_count": 0,
+  "book_metadata": {
+    "title": "Quantum-Touch 2.0 - The New Human",
+    "creator": "Wickhorst Ph.D., Vickie",
+    "publisher": "North Atlantic Books",
+    "date": "2013-02-12",
+    "asin": "B007RG4JT8",
+    "language": "en"
+  }
 }

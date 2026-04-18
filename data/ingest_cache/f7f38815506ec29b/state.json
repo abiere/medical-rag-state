@@ -1,0 +1,63 @@
+{
+  "filename": "Essentials of Anatomy and Physiology - Scanlon, Sanders.pdf",
+  "book_hash": "f7f38815506ec29b",
+  "filepath": "/root/medical-rag/books/medical_literature/Essentials of Anatomy and Physiology - Scanlon, Sanders.pdf",
+  "collection": "medical_library",
+  "library_category": "medical_literature",
+  "started_at": "2026-04-18T04:08:55.290309+00:00",
+  "updated_at": "2026-04-18T04:41:41.393605+00:00",
+  "completed_at": "2026-04-18T04:41:41.393597+00:00",
+  "phases": {
+    "parse": {
+      "status": "done",
+      "started_at": "2026-04-18T04:08:55.321993+00:00",
+      "completed_at": "2026-04-18T04:11:00.895928+00:00",
+      "pages_total": 622,
+      "pages_done": 622,
+      "chunks_extracted": 941,
+      "images_extracted": 344,
+      "parse_method": null,
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": [],
+      "ocr_engine": "native"
+    },
+    "audit": {
+      "status": "done",
+      "started_at": "2026-04-18T04:11:00.918129+00:00",
+      "completed_at": "2026-04-18T04:20:47.808350+00:00",
+      "chunks_total": 941,
+      "chunks_tagged": 941,
+      "chunks_skipped": 0,
+      "ollama_available": true,
+      "consecutive_failures_hit": false,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "done",
+      "started_at": "2026-04-18T04:20:47.833685+00:00",
+      "completed_at": "2026-04-18T04:41:39.715187+00:00",
+      "chunks_total": 941,
+      "chunks_done": 941,
+      "vectors_per_minute": 45.2,
+      "eta_minutes": 0.0,
+      "last_progress_at": "2026-04-18T04:41:39.681136+00:00",
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "done",
+      "started_at": "2026-04-18T04:41:39.745844+00:00",
+      "completed_at": "2026-04-18T04:41:41.367543+00:00",
+      "chunks_inserted": 941,
+      "collection": "medical_library"
+    }
+  },
+  "image_extraction_enabled": true,
+  "parse_retry_count": 0,
+  "book_metadata": {
+    "title": "Essentials of Anatomy and Physiology",
+    "creator": "Scanlon, Valerie C.; Sanders, Tina",
+    "publisher": "Acrobat Distiller 7.0.5 (Windows)",
+    "date": "D:20"
+  }
+}

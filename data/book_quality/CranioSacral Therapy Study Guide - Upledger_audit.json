@@ -1,0 +1,60 @@
+{
+  "book": "CranioSacral Therapy Study Guide - Upledger.pdf",
+  "collection": "medical_library",
+  "audited_at": "2026-04-17T23:39:03.976932+00:00",
+  "total_chunks": 175,
+  "structural": {
+    "total_chunks": 175,
+    "avg_chunk_words": 118.8,
+    "short_chunks": 58,
+    "long_chunks": 0,
+    "point_codes_found": 6,
+    "figure_refs_found": 2,
+    "images_extracted": 91,
+    "translation_applied": true,
+    "epub_strategy": null,
+    "pdf_type": "mixed",
+    "ocr_statistics": {
+      "total_pages": 233,
+      "readable_pages": 169,
+      "unreadable_pages": 64,
+      "native_pages": 150,
+      "ocr_pages": 83,
+      "engine_usage": {
+        "easyocr": 1,
+        "none": 64,
+        "rapidocr": 11,
+        "tesseract": 7
+      },
+      "avg_confidence": 0.857
+    }
+  },
+  "llm_audit": {
+    "sample_size": 15,
+    "avg_coherence": 4.25,
+    "avg_completeness": 4.5,
+    "avg_terminology": 5.0,
+    "avg_translation": 5.0,
+    "quality_score": 4.69,
+    "flagged_chunks": 2,
+    "suggestion": "Remove irrelevant phone number and website, leaving only essential study guide information"
+  },
+  "auto_classification": {
+    "error": "classification failed"
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [
+      "short_chunks > 20% (33%)"
+    ],
+    "suggestions": [
+      "parsing strategy problem — check parser output"
+    ],
+    "remediation_needed": true
+  },
+  "status": "approved"
+}

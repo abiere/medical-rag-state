@@ -52,5 +52,10 @@
       "collection": "device_documentation"
     }
   },
-  "parse_retry_count": 0
+  "parse_retry_count": 0,
+  "book_metadata": {
+    "creator": "Acountant3",
+    "publisher": "Microsoft\u00ae Excel\u00ae 2010",
+    "date": "D:20"
+  }
 }
