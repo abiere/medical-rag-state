@@ -1,8 +1,18 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-18 — ANTHROPIC_API_KEY toegevoegd aan systemd; alle 3 providers groen
+> Laatste update: 2026-04-18 — "Claude API audit" card verwijderd uit Parameters tab
 
 ---
+
+## ✅ Afgerond — 2026-04-18 (sessie 12)
+
+- [x] **"Claude API audit" card verwijderd uit /settings Parameters tab**
+      - HTML card inclusief API key input, toggle, model dropdown, workers verwijderd
+      - JS: `testClaude()`, `saveSettings()`, `updateStatus()`, `toggleChanged()`, `refreshToggleUI()` verwijderd
+      - `loadSettings()` opgeschoond: claude_api blok verwijderd, nightly + google_vision blijven
+      - Endpoint `POST /api/settings/test-claude` verwijderd (alleen door die card gebruikt)
+      - Endpoints `GET/POST /api/settings` behouden (ook gebruikt door nightly + google_vision)
+      - 37/37 tests geslaagd
 
 ## ✅ Afgerond — 2026-04-18 (sessie 11)
 
