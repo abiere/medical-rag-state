@@ -779,11 +779,16 @@ class IntegrationTests(unittest.TestCase):
         self.assertIn("/health", content)
 
     def test_transcription_queue_service(self):
-        """transcription-queue.service is active"""
+        """transcription-queue.service is enabled (active or inactive — empty queue is ok)"""
         import subprocess as _sp
+        r = _sp.run(["systemctl", "is-enabled", "transcription-queue"],
+                    capture_output=True, text=True)
+        self.assertEqual(r.stdout.strip(), "enabled",
+                         "transcription-queue service must be enabled")
         r = _sp.run(["systemctl", "is-active", "transcription-queue"],
                     capture_output=True, text=True)
-        assert r.stdout.strip() == "active", f"Service not active: {r.stdout.strip()!r}"
+        self.assertIn(r.stdout.strip(), ["active", "inactive", "activating"],
+                      "transcription-queue must not be in failed state")
 
     def test_queue_file_valid(self):
         """Queue file exists and is valid JSON list"""
