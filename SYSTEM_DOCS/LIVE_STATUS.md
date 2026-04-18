@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 04:32:24 UTC**
+> Last update: **2026-04-18 04:37:24 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Essentials of Anatomy and Physiology - Scanlon, Sanders.pdf` (23 min) |
+| Current job | `Essentials of Anatomy and Physiology - Scanlon, Sanders.pdf` (28 min) |
 | Queued | 17 |
 | Total books | 37 |
 | Ingested | 67 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (21 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (26 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 9.5 GB / 32.86 GB (29%) |
+| RAM used | 9.26 GB / 32.86 GB (28%) |
 | CPU | 100.0% |
 | Disk used | 71.7 GB / 322.3 GB (23%) |
-| Uptime | up 22 hours, 57 minutes |
+| Uptime | up 23 hours, 2 minutes |
 
 ## Recent markers
 - `2026-04-18T04:11:23.642722+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
