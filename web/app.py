@@ -2851,7 +2851,7 @@ function renderCard(item) {
   return `<div ${clickable}background:#fff;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.07);
                       padding:14px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
     <div style="flex:1;min-width:200px">
-      <div style="font-weight:600;font-size:15px;color:#111">${escHtml(item.title)}${item.library_category === 'medical_literature' && item.pub_year ? `<span style="font-weight:400;color:#6b7280;font-size:13px"> (${item.pub_year})</span>` : ''}</div>
+      <div style="font-weight:600;font-size:15px;color:#111">${escHtml(item.title)}${item.library_category === 'medical_literature' && item.pub_year ? '<span style="font-weight:400;color:#6b7280;font-size:13px"> (' + item.pub_year + ')</span>' : ''}</div>
       <div style="font-size:12px;color:#6b7280;margin-top:2px">${escHtml(item.authors || '')}</div>
     </div>
     <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
@@ -3371,9 +3371,22 @@ async def api_library_items():
         collection = _CAT_COLLECTION.get(category, "medical_library")
         patterns = info.get("filename_patterns", [])
 
+        # Use actual filename from state.json as Qdrant source_key (exact match)
+        # Fall back to first pattern if no state.json entry found
+        actual_fn, _sm = _resolve_state_entry(patterns, book_id)
+        source_key = actual_fn if actual_fn else (patterns[0] if patterns else book_id)
+
+        # medical_literature → full_title (year suffix added later in JS)
+        # all other sections → actual filename so curators see what's on disk
+        if category == "medical_literature":
+            title = info.get("full_title") or book_id
+        else:
+            fn = actual_fn or (patterns[0] if patterns else "")
+            title = Path(fn).name if fn else (info.get("full_title") or book_id)
+
         items_meta.append({
             "id":               book_id,
-            "title":            info.get("full_title", book_id),
+            "title":            title,
             "authors":          info.get("authors", ""),
             "k":                info.get("k"),
             "a":                info.get("a"),
@@ -3383,10 +3396,6 @@ async def api_library_items():
             "patterns":         patterns,
             "format":           info.get("format", ""),
         })
-        # Use actual filename from state.json as Qdrant source_key (exact match)
-        # Fall back to first pattern if no state.json entry found
-        actual_fn, _sm = _resolve_state_entry(patterns, book_id)
-        source_key = actual_fn if actual_fn else (patterns[0] if patterns else book_id)
         count_args.append((collection, source_key))
 
     # Run all Qdrant count queries in parallel with a single shared HTTP connection
