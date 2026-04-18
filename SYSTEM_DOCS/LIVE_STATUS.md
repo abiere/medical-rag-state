@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 06:12:26 UTC**
+> Last update: **2026-04-18 06:17:26 UTC**
 
 ## Services
 | Service | Status |
@@ -14,18 +14,18 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Mobilizing the Myofascial System - Killens, Lee.pdf` (17 min) |
-| Queued | 12 |
+| Current job | `Orthopedic Physical Assessment 7e editie - Magee, Manske.epub` (3 min) |
+| Queued | 11 |
 | Total books | 37 |
 | Ingested | 72 |
-| Vectors in medical_library | 16306 |
+| Vectors in medical_library | 16685 |
 | Images pending approval | 2026 |
 | Images approved | 0 |
 
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (1 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (6 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 8.24 GB / 32.86 GB (25%) |
-| CPU | 99.9% |
-| Disk used | 72.8 GB / 322.3 GB (24%) |
-| Uptime | up 1 day, 37 minutes |
+| RAM used | 8.46 GB / 32.86 GB (26%) |
+| CPU | 98.9% |
+| Disk used | 73.2 GB / 322.3 GB (24%) |
+| Uptime | up 1 day, 42 minutes |
 
 ## Recent markers
+- `2026-04-18T06:13:48.384840+00:00` **book_ingested** — Mobilizing the Myofascial System - Killens, Lee.pdf → medical_library: 379 chunks
 - `2026-04-18T06:11:26.142009+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-18T05:54:48.659693+00:00` **book_ingested** — Integrative Manual Therapy Upper Lower Extremities - Giammatteo.pdf → medical_library: 170 chunks
 - `2026-04-18T05:41:25.559033+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-18T05:40:02.115208+00:00` **book_ingested** — Integrative Manual Therapy Connective Tissue - Giammatteo.pdf → medical_library: 260 chunks
-- `2026-04-18T05:21:56.019064+00:00` **book_ingested** — Integrative Manual Therapy Autonomic Nervous System - Giammatteo.pdf → medical_library: 186 chunks
 
 ## Nightly Consistency
 ```
