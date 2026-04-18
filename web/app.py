@@ -2331,11 +2331,10 @@ def _render_dup_banner(groups: list) -> str:
                 f"Dit verwijdert vectorchunks, afbeeldingen en het bestand definitief."
             )
             keep_btn = (
-                f'<button onclick="resolveDup(\'{bh}\',\'{delete_hash}\',"'
-                f'{confirm_msg}'
-                f'")" style="margin-top:8px;padding:5px 12px;background:#1A6B72;'
+                f'<button onclick="resolveDup(\'{bh}\',\'{delete_hash}\')"'
+                f' style="margin-top:8px;padding:5px 12px;background:#1A6B72;'
                 f'color:#fff;border:none;border-radius:6px;font-size:12px;'
-                f'cursor:pointer;font-weight:600">Bewaar dit ✓</button>'
+                f'cursor:pointer;font-weight:600">Bewaar dit \u2713</button>'
                 if delete_hash else ""
             )
             cap_note = f" · {book['captions']} captions" if book["captions"] else ""
@@ -2380,8 +2379,8 @@ def _render_dup_banner(groups: list) -> str:
   </div>
 </div>
 <script>
-async function resolveDup(keepHash, deleteHash, msg) {{
-  if (!confirm(msg)) return;
+async function resolveDup(keepHash, deleteHash) {{
+  if (!confirm('Bewaar dit boek en verwijder het duplicaat definitief?\n\nDit verwijdert alle vectorchunks, afbeeldingen en het bestand van schijf. Dit kan niet ongedaan worden gemaakt.')) return;
   try {{
     const r = await fetch('/api/library/duplicates/resolve', {{
       method: 'POST',
