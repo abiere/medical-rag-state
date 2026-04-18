@@ -6,6 +6,15 @@
 
 ## ✅ Afgerond — 2026-04-18
 
+- [x] **"Bewaar dit" knop feedback + timeout** — visuele feedback + elapsed timer toegevoegd
+      - Root cause: `data-delete` attribute bestond, maar JS zocht op `data-keep` (niet aanwezig)
+      - Fix: `data-delete` → `data-keep` + `data-other` op beide knoppen per paar
+      - `data-book-hash` op card div zodat JS cards kan vinden voor groen/rood highlight
+      - Groen (#f0fdf4 + #86efac) voor bewaarde kaart, rood (#fef2f2 + #fca5a5) voor te verwijderen
+      - Beide knoppen disabled + "Bezig..." tekst direct na klik; elapsed timer elke seconde
+      - Reset visuele staat op fout; reload na 800ms bij succes
+      - httpx timeout delete verhoogd van 30s → 120s voor grote boeken
+
 - [x] **Structurele fix onclick — LOW RISK instances** — alle resterende onclick f-string interpolaties naar `data-*` patroon
       - `uploadBook` (library/ingest): `section_key` → `data-section`
       - `resolveDup` (library banner): `bh`+`delete_hash` → `data-hash`+`data-delete`

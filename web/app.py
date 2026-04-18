@@ -2328,12 +2328,9 @@ def _render_dup_banner(groups: list) -> str:
             bh = book["book_hash"]
             others = [b["book_hash"] for b in g if b["book_hash"] != bh]
             delete_hash = others[0] if others else ""
-            confirm_msg = (
-                f"Bewaar '{book['filename'][:40]}' en verwijder de andere? "
-                f"Dit verwijdert vectorchunks, afbeeldingen en het bestand definitief."
-            )
             keep_btn = (
-                f'<button data-hash="{bh}" data-delete="{delete_hash}" onclick="resolveDup(this.dataset.hash,this.dataset.delete)"'
+                f'<button data-hash="{bh}" data-keep="{bh}" data-other="{delete_hash}"'
+                f' onclick="resolveDup(this.dataset.hash,this.dataset.other)"'
                 f' style="margin-top:8px;padding:5px 12px;background:#1A6B72;'
                 f'color:#fff;border:none;border-radius:6px;font-size:12px;'
                 f'cursor:pointer;font-weight:600">Bewaar dit \u2713</button>'
@@ -2343,7 +2340,7 @@ def _render_dup_banner(groups: list) -> str:
             asin_note = f'<div style="font-size:11px;color:#6b7280">ASIN: {book["asin"]}</div>' if book["asin"] else ""
             isbn_note = f'<div style="font-size:11px;color:#6b7280">ISBN: {book["isbn"]}</div>' if book["isbn"] else ""
             cols += f"""
-<div style="flex:1;min-width:220px;background:#fff;border:1px solid #e2e8f0;
+<div data-book-hash="{bh}" style="flex:1;min-width:220px;background:#fff;border:1px solid #e2e8f0;
             border-radius:8px;padding:12px 14px">
   <div style="font-size:13px;font-weight:600;color:#1a1a2e;margin-bottom:4px;
               word-break:break-word">{book['filename']}</div>
@@ -2383,6 +2380,22 @@ def _render_dup_banner(groups: list) -> str:
 <script>
 async function resolveDup(keepHash, deleteHash) {{
   if (!confirm('Bewaar dit boek en verwijder het duplicaat definitief?\n\nDit verwijdert alle vectorchunks, afbeeldingen en het bestand van schijf. Dit kan niet ongedaan worden gemaakt.')) return;
+
+  const keepCard   = document.querySelector('[data-book-hash="' + keepHash   + '"]');
+  const deleteCard = document.querySelector('[data-book-hash="' + deleteHash + '"]');
+  if (keepCard)   {{ keepCard.style.background   = '#f0fdf4'; keepCard.style.border   = '1px solid #86efac'; }}
+  if (deleteCard) {{ deleteCard.style.background = '#fef2f2'; deleteCard.style.border = '1px solid #fca5a5'; }}
+
+  document.querySelectorAll('[data-keep="' + keepHash + '"], [data-keep="' + deleteHash + '"]')
+    .forEach(btn => {{ btn.disabled = true; btn.textContent = 'Bezig...'; btn.style.opacity = '0.6'; }});
+
+  let elapsed = 0;
+  const timer = setInterval(() => {{
+    elapsed++;
+    document.querySelectorAll('[data-keep="' + keepHash + '"]')
+      .forEach(btn => {{ if (btn.disabled) btn.textContent = 'Bezig... ' + elapsed + 's'; }});
+  }}, 1000);
+
   try {{
     const r = await fetch('/api/library/duplicates/resolve', {{
       method: 'POST',
@@ -2390,10 +2403,24 @@ async function resolveDup(keepHash, deleteHash) {{
       body: JSON.stringify({{keep_hash: keepHash, delete_hash: deleteHash}})
     }});
     const d = await r.json();
-    if (d.error) {{ alert('Fout: ' + d.error); return; }}
-    alert('Verwijderd. Pagina wordt herladen.');
-    location.reload();
-  }} catch(e) {{ alert('Fout: ' + e); }}
+    clearInterval(timer);
+    if (d.error) {{
+      alert('Fout: ' + d.error);
+      if (keepCard)   {{ keepCard.style.background   = ''; keepCard.style.border   = ''; }}
+      if (deleteCard) {{ deleteCard.style.background = ''; deleteCard.style.border = ''; }}
+      document.querySelectorAll('[data-keep="' + keepHash + '"], [data-keep="' + deleteHash + '"]')
+        .forEach(btn => {{ btn.disabled = false; btn.textContent = 'Bewaar dit \u2713'; btn.style.opacity = ''; }});
+    }} else {{
+      setTimeout(() => location.reload(), 800);
+    }}
+  }} catch(e) {{
+    clearInterval(timer);
+    alert('Netwerkfout: ' + e);
+    if (keepCard)   {{ keepCard.style.background   = ''; keepCard.style.border   = ''; }}
+    if (deleteCard) {{ deleteCard.style.background = ''; deleteCard.style.border = ''; }}
+    document.querySelectorAll('[data-keep="' + keepHash + '"], [data-keep="' + deleteHash + '"]')
+      .forEach(btn => {{ btn.disabled = false; btn.textContent = 'Bewaar dit \u2713'; btn.style.opacity = ''; }});
+  }}
 }}
 </script>"""
     return banner
@@ -3519,7 +3546,7 @@ async def api_library_delete_book(book_hash: str):
 
     # 1. Delete from Qdrant
     try:
-        async with httpx.AsyncClient(timeout=30) as client:
+        async with httpx.AsyncClient(timeout=120) as client:
             r = await client.post(
                 f"http://localhost:6333/collections/{collection}/points/delete",
                 json={"filter": {"must": [{"key": "source_file", "match": {"value": filename}}]}},
