@@ -4,6 +4,18 @@
 
 ---
 
+## ✅ Afgerond — 2026-04-18 (sessie 2)
+
+- [x] **Catalogus sectie-indeling + publicatiejaar** — /library groepeert nu op sectie met headers
+      - JS `renderItems()` groepeert op `DISPLAY_SECTIONS` (6 secties incl. Acupunctuur)
+      - Sectieheaders: teal `#1A6B72`, font-weight 700, `border-bottom:2px solid #e8f4f5`
+      - Python `_extract_pub_year()` helper: ISO datum + PDF D:YYYYMMDD... formaat
+      - `pub_year` toegevoegd aan `state_map` entry + `items_out` in `api_library_items`
+      - Medische Literatuur: `full_title (jaar)` — 12/25 boeken hebben jaar uit metadata
+      - Overige secties: display naam ongewijzigd (full_title uit classifications)
+      - Structurele test voor JS literal newlines uitgebreid tot volledige 8-state parser
+        (regex literals, template literals, comments — geen false positives meer)
+
 ## ✅ Afgerond — 2026-04-18
 
 - [x] **sync_context.py + post-commit hook** — CONTEXT.md auto-genereert bij elke commit + elke 5 min

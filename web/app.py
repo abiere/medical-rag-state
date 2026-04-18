@@ -2155,6 +2155,27 @@ _CAT_COLLECTION = {
 _KAI_COLORS = {1: "#16a34a", 2: "#d97706", 3: "#9ca3af"}
 _KAI_LABELS = {1: "Primair", 2: "Ondersteunend", 3: "Achtergrond"}
 
+
+def _extract_pub_year(date_str: str) -> str:
+    """Extract 4-digit publication year from state.json book_metadata.date.
+
+    Handles ISO dates (2023-04-18), bare years (2020), and PDF metadata
+    format (D:20230418...) where the year starts at index 2.
+    """
+    if not date_str:
+        return ""
+    s = str(date_str)
+    if s.startswith("D:") and len(s) >= 6:
+        candidate = s[2:6]
+        if candidate.isdigit() and 1900 < int(candidate) < 2100:
+            return candidate
+    m = re.match(r"^(\d{4})", s)
+    if m:
+        year = m.group(1)
+        if 1900 < int(year) < 2100:
+            return year
+    return ""
+
 # ── /api/library/items response cache ────────────────────────────────────────
 _ITEMS_CACHE: dict = {"data": None, "ts": 0.0}
 _ITEMS_TTL = 10  # seconds
@@ -2379,7 +2400,7 @@ def _render_dup_banner(groups: list) -> str:
 </div>
 <script>
 async function resolveDup(keepHash, deleteHash) {{
-  if (!confirm('Bewaar dit boek en verwijder het duplicaat definitief?\n\nDit verwijdert alle vectorchunks, afbeeldingen en het bestand van schijf. Dit kan niet ongedaan worden gemaakt.')) return;
+  if (!confirm('Bewaar dit boek en verwijder het duplicaat definitief?\\n\\nDit verwijdert alle vectorchunks, afbeeldingen en het bestand van schijf. Dit kan niet ongedaan worden gemaakt.')) return;
 
   const keepCard   = document.querySelector('[data-book-hash="' + keepHash   + '"]');
   const deleteCard = document.querySelector('[data-book-hash="' + deleteHash + '"]');
@@ -2664,6 +2685,14 @@ const CAT_LABELS = {
   videos:           "Video's",
 };
 const CAT_ORDER = ['all','medical_literature','acupuncture','nrt_curriculum','qat_curriculum','rlt_flexbeam','pemf_qrs'];
+const DISPLAY_SECTIONS = [
+  {key: 'medical_literature', label: 'Medische Literatuur'},
+  {key: 'acupuncture',        label: 'Acupunctuur'},
+  {key: 'nrt_curriculum',     label: 'NRT Curriculum'},
+  {key: 'qat_curriculum',     label: 'QAT Curriculum'},
+  {key: 'rlt_flexbeam',       label: 'RLT (FlexBeam)'},
+  {key: 'pemf_qrs',           label: 'PEMF (QRS)'},
+];
 const KAI_COLORS = {1:'#16a34a', 2:'#ea580c', 3:'#6b7280'};
 const STATUS_PILLS = {
   in_wachtrij:   {label:'In wachtrij',      bg:'#f3f4f6', color:'#374151'},
@@ -2748,7 +2777,25 @@ function renderItems() {
     return;
   }
 
-  document.getElementById('item-list').innerHTML = items.map(item => renderCard(item)).join('');
+  const knownKeys = new Set(DISPLAY_SECTIONS.map(s => s.key));
+  let html = '';
+  for (const {key, label} of DISPLAY_SECTIONS) {
+    const group = items.filter(it => it.library_category === key);
+    if (!group.length) continue;
+    html += `<div style="font-size:14px;font-weight:700;color:#1A6B72;
+                         padding:14px 0 8px 0;margin-top:8px;
+                         border-bottom:2px solid #e8f4f5">${label}</div>`;
+    html += group.map(item => renderCard(item)).join('');
+  }
+  // Books with categories not in DISPLAY_SECTIONS (e.g. empty category)
+  const others = items.filter(it => !knownKeys.has(it.library_category));
+  if (others.length) {
+    html += `<div style="font-size:14px;font-weight:700;color:#1A6B72;
+                         padding:14px 0 8px 0;margin-top:8px;
+                         border-bottom:2px solid #e8f4f5">Overige</div>`;
+    html += others.map(item => renderCard(item)).join('');
+  }
+  document.getElementById('item-list').innerHTML = html;
 }
 
 function kaiPill(letter, val) {
@@ -2804,7 +2851,7 @@ function renderCard(item) {
   return `<div ${clickable}background:#fff;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.07);
                       padding:14px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
     <div style="flex:1;min-width:200px">
-      <div style="font-weight:600;font-size:15px;color:#111">${escHtml(item.title)}</div>
+      <div style="font-weight:600;font-size:15px;color:#111">${escHtml(item.title)}${item.library_category === 'medical_literature' && item.pub_year ? `<span style="font-weight:400;color:#6b7280;font-size:13px"> (${item.pub_year})</span>` : ''}</div>
       <div style="font-size:12px;color:#6b7280;margin-top:2px">${escHtml(item.authors || '')}</div>
     </div>
     <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
@@ -3297,6 +3344,9 @@ async def api_library_items():
                         "completed_at":    s.get("completed_at") or "",
                         "chunks_inserted": phases.get("qdrant", {}).get("chunks_inserted") or 0,
                         "_full_state":     s,
+                        "pub_year":        _extract_pub_year(
+                            s.get("book_metadata", {}).get("date", "")
+                        ),
                     }
             except Exception:
                 pass
@@ -3378,7 +3428,8 @@ async def api_library_items():
         image_progress = _get_image_progress(book_hash) if status == "afb_bezig" else None
         items_out.append({**meta, "chunk_count": chunk_count, "status": status,
                           "ocr_engine": ocr_engine, "book_hash": book_hash,
-                          "image_progress": image_progress})
+                          "image_progress": image_progress,
+                          "pub_year": sm.get("pub_year", "")})
 
     result = {"items": items_out}
     _ITEMS_CACHE["data"] = result
