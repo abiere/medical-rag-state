@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 05:27:25 UTC**
+> Last update: **2026-04-18 05:32:25 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Integrative Manual Therapy Connective Tissue - Giammatteo.pdf` (5 min) |
+| Current job | `Integrative Manual Therapy Connective Tissue - Giammatteo.pdf` (10 min) |
 | Queued | 14 |
 | Total books | 37 |
 | Ingested | 69 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (16 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (21 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 14.37 GB / 32.86 GB (44%) |
-| CPU | 100.0% |
+| RAM used | 14.54 GB / 32.86 GB (44%) |
+| CPU | 98.2% |
 | Disk used | 72.5 GB / 322.3 GB (23%) |
-| Uptime | up 23 hours, 52 minutes |
+| Uptime | up 23 hours, 57 minutes |
 
 ## Recent markers
 - `2026-04-18T05:21:56.019064+00:00` **book_ingested** — Integrative Manual Therapy Autonomic Nervous System - Giammatteo.pdf → medical_library: 186 chunks
