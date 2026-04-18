@@ -73,7 +73,7 @@ def _validate_isbn13(isbn: str) -> Optional[str]:
 # ── Page rendering ────────────────────────────────────────────────
 
 def _render_title_pages(book_path: Path,
-                        pages: int = 5) -> list[Path]:
+                        pages: int = 10) -> list[Path]:
     """
     Render first N pages of a PDF/EPUB as PNG files (300 DPI).
     Returns list of paths to rendered PNG files.
@@ -581,8 +581,8 @@ def enrich_book(state_path: Path, state: dict) -> bool:
 
     log.info("=== Enriching: %s ===", filename)
 
-    # Step 1: render first 5 pages
-    png_paths = _render_title_pages(book_path, pages=5)
+    # Step 1: render first 10 pages
+    png_paths = _render_title_pages(book_path, pages=10)
     if not png_paths:
         log.error("No pages rendered for %s", filename)
         return False

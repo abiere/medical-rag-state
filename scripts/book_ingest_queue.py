@@ -860,7 +860,7 @@ def _run_fase0_isbn_check(state: dict, book_path: Path) -> bool:
                 _render_title_pages, _extract_metadata_gemini, _validate_isbn13
             )
             import shutil as _shutil
-            _pngs = _render_title_pages(book_path, pages=5)
+            _pngs = _render_title_pages(book_path, pages=10)
             if _pngs:
                 _gmeta = _extract_metadata_gemini(_pngs)
                 _shutil.rmtree(str(_pngs[0].parent), ignore_errors=True)
