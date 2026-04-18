@@ -4,6 +4,15 @@
 
 ---
 
+## ✅ Afgerond — 2026-04-18 (sessie 8)
+
+- [x] **GEMINI_API_KEY toegevoegd aan server + Gemini SDK geïnstalleerd**
+      - `/root/.bashrc` + `/root/.profile`: `export GEMINI_API_KEY="..."` toegevoegd
+      - `/etc/systemd/system/medical-rag-web.service`: `Environment="GEMINI_API_KEY=..."` toegevoegd
+      - `google-genai` 1.73.1 geïnstalleerd (nieuwe SDK — `google-generativeai` is deprecated)
+      - Beschikbaar model: `gemini-2.5-flash` (niet `gemini-2.0-flash` — die is afgesloten voor nieuwe gebruikers)
+      - API test geslaagd: "Gemini connected successfully"
+
 ## ✅ Afgerond — 2026-04-18 (sessie 7)
 
 - [x] **book_classifications.json opschoning — "In wachtrij" stubs opgelost**
