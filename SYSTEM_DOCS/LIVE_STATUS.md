@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 10:57:49 UTC**
+> Last update: **2026-04-18 11:02:49 UTC**
 
 ## Services
 | Service | Status |
@@ -25,18 +25,18 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `How_to_Reset_23_More_Muscles.mp4` (7 min) |
+| Current job | `How_to_Reset_23_More_Muscles.mp4` (12 min) |
 | Queued | 8 |
-| Done | 37 / 53 |
+| Done | 38 / 53 |
 | Vectors in nrt_video_transcripts | 241 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 6.59 GB / 32.86 GB (20%) |
-| CPU | 95.8% |
-| Disk used | 77.7 GB / 322.3 GB (25%) |
-| Uptime | up 1 day, 5 hours, 22 minutes |
+| RAM used | 6.64 GB / 32.86 GB (20%) |
+| CPU | 96.9% |
+| Disk used | 77.6 GB / 322.3 GB (25%) |
+| Uptime | up 1 day, 5 hours, 27 minutes |
 
 ## Recent markers
 - `2026-04-18T10:50:11` **transcription_done** — Everything_Reset_Sequence_-_Part_5.mp4 complete (37/14)
