@@ -180,7 +180,7 @@
       "notes": "Sinew channels, clinical applications — complements Deadman",
       "image_source": "pdf_cropped",
       "image_priority": "normal",
-      "image_priority_override": "low",
+      "image_priority_override": "skip",
       "image_evaluated": true,
       "server_path": "/root/medical-rag/books/medical_literature/Advanced Acupuncture - Cecil-Sterman.pdf",
       "server_filename": "Advanced Acupuncture - Cecil-Sterman.pdf",
@@ -243,7 +243,7 @@
       "notes": "Visual acupuncture atlas — images of point locations",
       "image_source": "pdf_cropped",
       "image_priority": "normal",
-      "image_priority_override": "low",
+      "image_priority_override": "skip",
       "image_evaluated": true,
       "server_path": "/root/medical-rag/books/medical_literature/dokumen.pub_atlas-of-acupuncture-1nbsped-0443100284-9780443100284.pdf",
       "server_filename": "dokumen.pub_atlas-of-acupuncture-1nbsped-0443100284-9780443100284.pdf",
@@ -285,7 +285,7 @@
       "notes": "TCM disease treatment — maps patterns to point prescriptions",
       "image_source": "pdf_cropped",
       "image_priority": "normal",
-      "image_priority_override": "low",
+      "image_priority_override": "skip",
       "image_evaluated": true,
       "server_path": "/root/medical-rag/books/medical_literature/dokumen.pub_the-practice-of-chinese-medicine-the-treatment-of-diseases-with-acupuncture-and-chinese-herbs-2nd-ed-9780443074905-2152393805-0443074909.pdf",
       "server_filename": "dokumen.pub_the-practice-of-chinese-medicine-the-treatment-of-diseases-with-acupuncture-and-chinese-herbs-2nd-ed-9780443074905-2152393805-0443074909.pdf",
@@ -329,7 +329,7 @@
       "notes": "Clinical tests, diagnostics, joint assessment",
       "image_source": "epub",
       "image_priority": "high",
-      "image_priority_override": "low",
+      "image_priority_override": "skip",
       "image_evaluated": true,
       "server_path": "/root/medical-rag/books/medical_literature/Orthopedic Physical Assessment 7e editie - Magee, Manske.epub",
       "server_filename": "Orthopedic Physical Assessment 7e editie - Magee, Manske.epub",
@@ -1071,7 +1071,8 @@
       "image_priority_override": "skip",
       "image_evaluated": true,
       "library_category": "medical_literature",
-      "full_title": "Quantum-Touch Core Transformation"
+      "full_title": "Quantum-Touch Core Transformation",
+      "authors": "Herriott"
     },
     "unclassified_Quantum-Touch_ The Power to He": {
       "k": 2,
@@ -1160,7 +1161,8 @@
       "image_priority_override": "skip",
       "image_evaluated": true,
       "full_title": "800.233.5880",
-      "library_category": "medical_literature"
+      "library_category": "medical_literature",
+      "authors": "Upledger"
     },
     "unclassified_Energetic Kinesiology - Krebs,": {
       "k": 2,
@@ -1192,7 +1194,7 @@
       ],
       "notes": "Auto-added — needs manual K/A/I classification",
       "full_title": "Copyright © 2007 by F. A. Davis.",
-      "image_priority_override": "low",
+      "image_priority_override": "skip",
       "image_evaluated": true,
       "library_category": "medical_literature"
     },
@@ -1212,7 +1214,8 @@
       "image_priority_override": "skip",
       "image_evaluated": true,
       "full_title": "Medicine/Rehabilitation",
-      "library_category": "medical_literature"
+      "library_category": "medical_literature",
+      "authors": "Sharon Giammatteo, Thomas Giammatteo"
     },
     "unclassified_Integrative Manual Therapy Con": {
       "k": 2,
@@ -1248,7 +1251,8 @@
       "image_priority_override": "skip",
       "image_evaluated": true,
       "full_title": "INTEGRATIVE",
-      "library_category": "medical_literature"
+      "library_category": "medical_literature",
+      "authors": "Sharon Giammatteo"
     },
     "unclassified_Mobilizing the Myofascial Syst": {
       "k": 2,

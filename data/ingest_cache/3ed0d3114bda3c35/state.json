@@ -56,10 +56,39 @@
   "parse_retry_count": 0,
   "book_metadata": {
     "title": "Quantum-Touch Core Transformation",
-    "creator": "Herriott, Jody",
+    "creator": [
+      "Herriott"
+    ],
     "publisher": "North Atlantic Books",
     "date": "2013-07-23",
     "asin": "B00D5AL28G",
-    "language": "en-US"
+    "language": "en-US",
+    "metadata_method": "vision_api_merge",
+    "metadata_sources": {
+      "gemini": true,
+      "google": false,
+      "openlibrary": false
+    },
+    "needs_review": [
+      "title",
+      "subtitle",
+      "edition_number",
+      "edition_label",
+      "year",
+      "isbn_13",
+      "publisher",
+      "pages",
+      "description",
+      "cover_url",
+      "language",
+      "subjects"
+    ],
+    "confidence": {
+      "title": "none",
+      "authors": "medium",
+      "edition": "none",
+      "year": "none",
+      "isbn": "none"
+    }
   }
 }

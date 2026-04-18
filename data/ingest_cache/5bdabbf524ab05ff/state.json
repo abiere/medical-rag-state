@@ -60,6 +60,28 @@
     "publisher": "North Atlantic Books",
     "date": "2011-03-22",
     "asin": "B004JHYRWW",
-    "language": "en"
+    "language": "en",
+    "metadata_method": "vision_api_merge",
+    "metadata_sources": {
+      "gemini": false,
+      "google": false,
+      "openlibrary": false
+    },
+    "needs_review": [
+      "title",
+      "subtitle",
+      "authors",
+      "edition_number",
+      "edition_label",
+      "year",
+      "isbn_13",
+      "publisher",
+      "pages",
+      "description",
+      "cover_url",
+      "language",
+      "subjects"
+    ],
+    "confidence": {}
   }
 }

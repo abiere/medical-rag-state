@@ -56,6 +56,28 @@
   "parse_retry_count": 0,
   "book_metadata": {
     "publisher": "Adobe Acrobat Pro 11.0.0 Paper Capture Plug-in",
-    "date": "D"
+    "date": "D",
+    "metadata_method": "vision_api_merge",
+    "metadata_sources": {
+      "gemini": false,
+      "google": false,
+      "openlibrary": false
+    },
+    "needs_review": [
+      "title",
+      "subtitle",
+      "authors",
+      "edition_number",
+      "edition_label",
+      "year",
+      "isbn_13",
+      "publisher",
+      "pages",
+      "description",
+      "cover_url",
+      "language",
+      "subjects"
+    ],
+    "confidence": {}
   }
 }

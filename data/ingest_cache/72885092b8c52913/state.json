@@ -59,6 +59,34 @@
     "creator": "Playfair McMurrich, John",
     "date": "2016-07-14",
     "asin": "B01IGU361U",
-    "language": "en"
+    "language": "en",
+    "metadata_method": "vision_api_merge",
+    "metadata_sources": {
+      "gemini": true,
+      "google": false,
+      "openlibrary": false
+    },
+    "needs_review": [
+      "title",
+      "subtitle",
+      "authors",
+      "edition_number",
+      "edition_label",
+      "year",
+      "isbn_13",
+      "publisher",
+      "pages",
+      "description",
+      "cover_url",
+      "language",
+      "subjects"
+    ],
+    "confidence": {
+      "title": "none",
+      "authors": "none",
+      "edition": "none",
+      "year": "none",
+      "isbn": "none"
+    }
   }
 }

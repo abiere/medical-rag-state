@@ -55,7 +55,48 @@
   "image_extraction_enabled": true,
   "parse_retry_count": 0,
   "book_metadata": {
-    "publisher": "Adobe Acrobat 9.0 Paper Capture Plug-in with ClearScan",
-    "date": "2010"
+    "publisher": "North Atlantic Books",
+    "date": "1998",
+    "title": "Integrative Manual Therapy",
+    "subtitle": "For the Autonomic Nervous System and Related Disorders",
+    "creator": [
+      "Sharon Giammatteo",
+      "Thomas Giammatteo"
+    ],
+    "isbn": "9781556432729",
+    "pages": 168,
+    "cover_url": "https://covers.openlibrary.org/b/id/4821825-M.jpg",
+    "subjects": [
+      "Comic books, strips",
+      "Sexual behavior",
+      "Abuse of",
+      "Sexually abused teenagers",
+      "Teenage girls",
+      "Nervous system, diseases",
+      "Autonomic nervous system",
+      "Diseases",
+      "Manipulation (Therapeutics)",
+      "Treatment"
+    ],
+    "metadata_method": "vision_api_merge",
+    "metadata_sources": {
+      "gemini": true,
+      "google": false,
+      "openlibrary": true
+    },
+    "needs_review": [
+      "edition_number",
+      "edition_label",
+      "description",
+      "language"
+    ],
+    "confidence": {
+      "title": "high",
+      "authors": "high",
+      "edition": "none",
+      "year": "high",
+      "isbn": "high",
+      "publisher": "high"
+    }
   }
 }

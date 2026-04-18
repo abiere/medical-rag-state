@@ -60,6 +60,34 @@
     "publisher": "Urban & Fischer",
     "date": "2018-12-14",
     "asin": "B07LBS87C5",
-    "language": "en"
+    "language": "en",
+    "metadata_method": "vision_api_merge",
+    "metadata_sources": {
+      "gemini": true,
+      "google": false,
+      "openlibrary": false
+    },
+    "needs_review": [
+      "title",
+      "subtitle",
+      "authors",
+      "edition_number",
+      "edition_label",
+      "year",
+      "isbn_13",
+      "publisher",
+      "pages",
+      "description",
+      "cover_url",
+      "language",
+      "subjects"
+    ],
+    "confidence": {
+      "title": "none",
+      "authors": "none",
+      "edition": "none",
+      "year": "none",
+      "isbn": "none"
+    }
   }
 }

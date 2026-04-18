@@ -55,7 +55,36 @@
   "image_extraction_enabled": true,
   "parse_retry_count": 0,
   "book_metadata": {
-    "publisher": "Acrobat Distiller 6.0 for Windows",
-    "date": "2009"
+    "publisher": "Butterworth-Heinemann",
+    "date": "2001",
+    "title": "Acupuncture in Practice",
+    "subtitle": "Beyond Points and Meridians",
+    "creator": [
+      "Campbell"
+    ],
+    "metadata_method": "vision_api_merge",
+    "metadata_sources": {
+      "gemini": true,
+      "google": false,
+      "openlibrary": false
+    },
+    "needs_review": [
+      "edition_number",
+      "edition_label",
+      "isbn_13",
+      "pages",
+      "description",
+      "cover_url",
+      "language",
+      "subjects"
+    ],
+    "confidence": {
+      "title": "high",
+      "authors": "high",
+      "edition": "high",
+      "year": "high",
+      "isbn": "low",
+      "publisher": "high"
+    }
   }
 }

@@ -60,6 +60,34 @@
     "publisher": "Saunders",
     "date": "2020-12-11",
     "asin": "B08TMPM4Q1",
-    "language": "en"
+    "language": "en",
+    "edition_number": 7,
+    "edition_label": "Seventh Edition",
+    "metadata_method": "vision_api_merge",
+    "metadata_sources": {
+      "gemini": true,
+      "google": false,
+      "openlibrary": false
+    },
+    "needs_review": [
+      "title",
+      "subtitle",
+      "authors",
+      "year",
+      "isbn_13",
+      "publisher",
+      "pages",
+      "description",
+      "cover_url",
+      "language",
+      "subjects"
+    ],
+    "confidence": {
+      "title": "none",
+      "authors": "none",
+      "edition": "high",
+      "year": "none",
+      "isbn": "none"
+    }
   }
 }

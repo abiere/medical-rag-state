@@ -55,8 +55,35 @@
   "image_extraction_enabled": true,
   "parse_retry_count": 0,
   "book_metadata": {
-    "publisher": "3-Heights(TM) PDF Security Shell 4.8.25.2 (http://www.pdf-tools.com)",
+    "publisher": "Classical Wellness Press",
     "date": "2018",
-    "isbn": "9781954773011"
+    "isbn": "9781954773011",
+    "title": "Advanced Acupuncture",
+    "subtitle": "A Clinic Manual",
+    "creator": [
+      "Cecil-Sterman"
+    ],
+    "edition_number": 2,
+    "edition_label": "Second edition",
+    "metadata_method": "vision_api_merge",
+    "metadata_sources": {
+      "gemini": true,
+      "google": false,
+      "openlibrary": false
+    },
+    "needs_review": [
+      "pages",
+      "description",
+      "cover_url",
+      "language",
+      "subjects"
+    ],
+    "confidence": {
+      "title": "high",
+      "authors": "high",
+      "edition": "high",
+      "year": "high",
+      "isbn": "high"
+    }
   }
 }

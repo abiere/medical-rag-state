@@ -57,7 +57,44 @@
   },
   "image_extraction_enabled": true,
   "book_metadata": {
-    "publisher": "Adobe Acrobat 6.0 Paper Capture Plug-in",
-    "date": "1998"
+    "publisher": "Journal of Chinese Medicine Publications",
+    "date": "1998",
+    "metadata_method": "vision_api_merge",
+    "metadata_sources": {
+      "gemini": true,
+      "google": false,
+      "openlibrary": true
+    },
+    "needs_review": [
+      "subtitle",
+      "edition_number",
+      "edition_label",
+      "description",
+      "language"
+    ],
+    "confidence": {
+      "title": "high",
+      "authors": "high",
+      "edition": "none",
+      "year": "high",
+      "isbn": "low"
+    },
+    "title": "A Manual of Acupuncture",
+    "creator": [
+      "Peter Deadman",
+      "Kevin Baker - undifferentiated",
+      "Mazin Al-Khafaji"
+    ],
+    "isbn": "9780951054673",
+    "pages": 670,
+    "cover_url": "https://covers.openlibrary.org/b/id/722757-M.jpg",
+    "subjects": [
+      "Acupuncture",
+      "Acupuncture points",
+      "Acupuncture--china",
+      "Acupuncture therapy",
+      "Rm184 .d43 1998",
+      "Wb 369 d278m 1998"
+    ]
   }
 }

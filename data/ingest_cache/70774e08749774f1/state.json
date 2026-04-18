@@ -55,13 +55,34 @@
   "image_extraction_enabled": true,
   "parse_retry_count": 0,
   "book_metadata": {
-    "title": "Anatomy Trains E-Book",
-    "creator": "Myers, Thomas W.",
-    "publisher": "Elsevier Health Sciences",
-    "date": "2013-12-06",
+    "title": "Anatomy Trains",
+    "creator": [
+      "Thomas W. Myers"
+    ],
+    "publisher": "Churchill Livingstone",
+    "date": "2014",
     "asin": "B00HG1QFGE",
     "language": "en",
     "isbn": "9780702046544",
-    "isbn_lookup_source": "google_books"
+    "isbn_lookup_source": "google_books",
+    "subtitle": "Myofascial Meridians for Manual and Movement Therapists",
+    "pages": 317,
+    "cover_url": "http://books.google.com/books/content?id=kHk6lAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "subjects": [
+      "Anatomy, Surgical and topographical"
+    ],
+    "metadata_method": "vision_api_merge",
+    "metadata_sources": {
+      "gemini": false,
+      "google": true,
+      "openlibrary": true
+    },
+    "needs_review": [
+      "edition_number",
+      "edition_label",
+      "isbn_13"
+    ],
+    "confidence": {},
+    "description": "Presents an understanding of the role of fascia in healthy movement and postural distortion which is of vital importance to bodyworkers and movement therapists worldwide. This book presents a 'whole systems' view of myofascial/locomotor anatomy in which the body-wide connections among the muscles within the fascial net are described in detail."
   }
 }

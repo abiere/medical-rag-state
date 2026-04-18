@@ -55,8 +55,35 @@
   "image_extraction_enabled": true,
   "parse_retry_count": 0,
   "book_metadata": {
-    "title": "1. CSI Cover Rev. 02/06",
-    "publisher": "Adobe Acrobat 8.1",
-    "date": "2010"
+    "title": "CranioSacral Therapy I Study Guide",
+    "publisher": "Upledger Institute",
+    "date": "1987",
+    "creator": [
+      "Upledger"
+    ],
+    "metadata_method": "vision_api_merge",
+    "metadata_sources": {
+      "gemini": true,
+      "google": false,
+      "openlibrary": false
+    },
+    "needs_review": [
+      "subtitle",
+      "edition_number",
+      "edition_label",
+      "isbn_13",
+      "pages",
+      "description",
+      "cover_url",
+      "language",
+      "subjects"
+    ],
+    "confidence": {
+      "title": "high",
+      "authors": "high",
+      "edition": "none",
+      "year": "high",
+      "isbn": "none"
+    }
   }
 }
