@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 05:37:25 UTC**
+> Last update: **2026-04-18 05:42:25 UTC**
 
 ## Services
 | Service | Status |
@@ -14,18 +14,18 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Integrative Manual Therapy Connective Tissue - Giammatteo.pdf` (15 min) |
-| Queued | 14 |
+| Current job | `Integrative Manual Therapy Upper Lower Extremities - Giammatteo.pdf` (1 min) |
+| Queued | 13 |
 | Total books | 37 |
 | Ingested | 70 |
-| Vectors in medical_library | 15876 |
+| Vectors in medical_library | 16136 |
 | Images pending approval | 2026 |
 | Images approved | 0 |
 
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (26 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (1 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 15.19 GB / 32.86 GB (46%) |
-| CPU | 100.0% |
-| Disk used | 72.5 GB / 322.3 GB (23%) |
-| Uptime | up 1 day, 2 minutes |
+| RAM used | 7.7 GB / 32.86 GB (23%) |
+| CPU | 98.9% |
+| Disk used | 72.6 GB / 322.3 GB (24%) |
+| Uptime | up 1 day, 7 minutes |
 
 ## Recent markers
+- `2026-04-18T05:41:25.559033+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
+- `2026-04-18T05:40:02.115208+00:00` **book_ingested** — Integrative Manual Therapy Connective Tissue - Giammatteo.pdf → medical_library: 260 chunks
 - `2026-04-18T05:21:56.019064+00:00` **book_ingested** — Integrative Manual Therapy Autonomic Nervous System - Giammatteo.pdf → medical_library: 186 chunks
 - `2026-04-18T05:11:24.896935+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-18T05:06:24.951156+00:00` **book_ingested** — Explain Pain Supercharged - Moseley, Butler.pdf → medical_library: 399 chunks
-- `2026-04-18T04:41:41.396533+00:00` **book_ingested** — Essentials of Anatomy and Physiology - Scanlon, Sanders.pdf → medical_library: 941 chunks
-- `2026-04-18T04:41:24.502537+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-18 04:41:24,548  INFO      Startup scan: 14 untranscribed video(s) found, 0 new entry/entries added to queue
-2026-04-18 04:41:24,549  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
-2026-04-18 04:41:24,550  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
-2026-04-18 04:41:24,550  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
-2026-04-18 05:11:24,957  INFO      ────────────────────────────────────────────────────────────
-2026-04-18 05:11:24,957  INFO      Transcription queue manager started
 2026-04-18 05:11:24,959  INFO      Startup scan: 14 untranscribed video(s) found, 0 new entry/entries added to queue
 2026-04-18 05:11:24,959  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
 2026-04-18 05:11:24,960  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
 2026-04-18 05:11:24,960  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
+2026-04-18 05:41:25,634  INFO      ────────────────────────────────────────────────────────────
+2026-04-18 05:41:25,634  INFO      Transcription queue manager started
+2026-04-18 05:41:25,637  INFO      Startup scan: 14 untranscribed video(s) found, 0 new entry/entries added to queue
+2026-04-18 05:41:25,639  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
+2026-04-18 05:41:25,639  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
+2026-04-18 05:41:25,640  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
 ```
