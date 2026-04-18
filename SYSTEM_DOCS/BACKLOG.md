@@ -4,6 +4,27 @@
 
 ---
 
+## ✅ Afgerond — 2026-04-18 (sessie 9)
+
+- [x] **AI provider abstraction layer — scripts/ai_client.py + config/ai_settings.json**
+      - `AIClient.generate(use_case, prompt)` → Ollama / Anthropic / Gemini
+      - `AIClient.generate_vision(use_case, image_path, prompt)` → Gemini / Anthropic
+      - `ai_settings.json`: 3 providers × 5 use cases (chunk_tagging, rag_answering,
+        protocol_generation, book_metadata, image_captioning)
+      - Gemini fix: `response.text` kan None zijn bij MAX_TOKENS — fallback via candidates
+      - Alle 3 providers getest: ollama ok ✅ gemini ok ✅ anthropic ok ✅
+      - 37/37 tests geslaagd
+
+  AI calls in codebase (nog niet gemigreerd naar AIClient — volgende stap):
+    scripts/audit_book.py:53      — chunk tagging via Ollama (tag_chunks_with_ollama)
+    scripts/claude_audit.py:72    — chunk audit via Anthropic (audit_chunk)
+    scripts/generate_protocol.py:135 — protocol generatie via Ollama
+    scripts/rag_query.py:238      — RAG antwoorden via Ollama
+    scripts/ocr_postcorrect.py:63 — OCR correctie via Ollama
+    scripts/ingest_books.py:218   — image description via Ollama LLaVA (vision)
+    scripts/image_extractor.py:74 — image extractie via Google Cloud Vision API (apart)
+    web/app.py:6952               — RAG streaming via Ollama (direct httpx)
+
 ## ✅ Afgerond — 2026-04-18 (sessie 8)
 
 - [x] **GEMINI_API_KEY toegevoegd aan server + Gemini SDK geïnstalleerd**

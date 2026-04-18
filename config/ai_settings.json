@@ -1,0 +1,68 @@
+{
+  "providers": {
+    "ollama": {
+      "enabled": true,
+      "base_url": "http://localhost:11434",
+      "models": ["llama3.1:8b"],
+      "default_model": "llama3.1:8b",
+      "description": "Lokale LLM — gratis, privé, geen internet vereist"
+    },
+    "anthropic": {
+      "enabled": true,
+      "api_key_env": "ANTHROPIC_API_KEY",
+      "models": [
+        "claude-haiku-4-5-20251001",
+        "claude-sonnet-4-6"
+      ],
+      "default_model": "claude-haiku-4-5-20251001",
+      "description": "Anthropic Claude — snel en nauwkeurig, betaald per token"
+    },
+    "gemini": {
+      "enabled": true,
+      "api_key_env": "GEMINI_API_KEY",
+      "models": [
+        "gemini-2.5-flash",
+        "gemini-2.5-pro"
+      ],
+      "default_model": "gemini-2.5-flash",
+      "description": "Google Gemini — multimodaal, vision ingebouwd, betaald per token"
+    }
+  },
+  "use_cases": {
+    "chunk_tagging": {
+      "provider": "ollama",
+      "model": "llama3.1:8b",
+      "label": "K/A/I chunk tagging",
+      "description": "Medische chunks classificeren als Klinisch, Acupunctuur of Afbeelding tijdens audit. Draait voor elk geïngesteerd boek.",
+      "supports_vision": false
+    },
+    "rag_answering": {
+      "provider": "ollama",
+      "model": "llama3.1:8b",
+      "label": "RAG zoekantwoorden",
+      "description": "Vragen beantwoorden op basis van opgehaalde chunks uit de bibliotheek (/zoeken).",
+      "supports_vision": false
+    },
+    "protocol_generation": {
+      "provider": "ollama",
+      "model": "llama3.1:8b",
+      "label": "Behandelprotocol generatie",
+      "description": "Behandelprotocollen genereren op basis van RAG-resultaten en Domain MDs.",
+      "supports_vision": false
+    },
+    "book_metadata": {
+      "provider": "gemini",
+      "model": "gemini-2.5-flash",
+      "label": "Boek metadata extractie",
+      "description": "Titel, auteur, editie en jaar extraheren uit de titelpagina van een boek (vision). Gebruikt bij elke nieuwe import.",
+      "supports_vision": true
+    },
+    "image_captioning": {
+      "provider": "gemini",
+      "model": "gemini-2.5-flash",
+      "label": "Afbeelding captioning",
+      "description": "Medische captions genereren voor afbeeldingen uit boeken. Zichtbaar in /afbeeldingen.",
+      "supports_vision": true
+    }
+  }
+}
