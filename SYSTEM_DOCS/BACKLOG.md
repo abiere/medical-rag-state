@@ -4,6 +4,13 @@
 
 ---
 
+## ✅ Afgerond — 2026-04-18 (sessie 18)
+
+- [x] **test_acupuncture.pdf volledig verwijderd**
+      - Verwijderd via `DELETE /api/library/book/4619b1ff36fca875`: 2 Qdrant vectors, cache, images, file, classifications entry
+      - Geverifieerd: niet meer in ingest_cache noch book_classifications.json
+      - Nog 10 boeken zonder ISBN (verwacht: 10)
+
 ## ✅ Afgerond — 2026-04-18 (sessie 17)
 
 - [x] **DEEL A: ISBNsearch.org scraper + Library of Congress API**
