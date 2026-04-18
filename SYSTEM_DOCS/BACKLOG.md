@@ -4,6 +4,24 @@
 
 ---
 
+## ✅ Afgerond — 2026-04-18 (sessie 4)
+
+- [x] **ISBN-gebaseerde duplicaatdetectie in ingest pipeline** — Fase 0 gebouwd (4 delen)
+      - **parse_epub.py:** `_get_first_pages_text()`, `_extract_isbn_from_text()`,
+        `_extract_isbn()`, `_lookup_isbn()` (Google Books → OpenLibrary fallback)
+      - **book_ingest_queue.py:** `_run_fase0_isbn_check()` — extraheert ISBN, doet API lookup,
+        scant alle state.json bestanden op zelfde ISBN, pauzeert bij match
+      - `startup_scan()`: skip books met `status='isbn_duplicate_paused'` (wachten op gebruiker)
+      - `process_book()`: Fase 0 vóór Fase 1 (alleen medical_library), skip als skip_isbn_check=True
+      - Post-parse metadata enrichment: ISBN + API lookup voor alle boeken na Fase 1
+      - **web/app.py:** `POST /api/library/book/{hash}/resume` endpoint (sets skip_isbn_check=True, re-queue)
+      - `_compute_book_status()`: `isbn_duplicate_paused` → `"isbn_duplicate_paused"`
+      - `renderCard()`: amber achtergrond (#FAEEDA) + "Mogelijk duplicaat van:" tekst + knoppen
+      - `resumeBook()` + `cancelBook()` JS functies (data-* patroon)
+      - **Backfill:** ISBN lookup op 34 bestaande medical_library boeken:
+        isbn_found=18, api_hit=15, titles_added=6, years_added=2
+      - 36/36 tests geslaagd
+
 ## ✅ Afgerond — 2026-04-18 (sessie 3)
 
 - [x] **Catalogus sectie-indeling, titels en publicatiejaren voltooid** — /library volledig herzien

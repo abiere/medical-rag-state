@@ -54,5 +54,12 @@
   },
   "image_extraction_enabled": true,
   "parse_retry_count": 0,
-  "book_metadata": {}
+  "book_metadata": {
+    "isbn": "9780702052163",
+    "title": "The Foundations of Chinese Medicine: A Comprehensive Text",
+    "date": "2015",
+    "creator": "Giovanni Maciocia",
+    "publisher": "Elsevier Health Sciences",
+    "isbn_lookup_source": "google_books"
+  }
 }

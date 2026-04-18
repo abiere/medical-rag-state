@@ -56,6 +56,10 @@
   "parse_retry_count": 0,
   "book_metadata": {
     "date": "2008",
-    "isbn": "9780443074905"
+    "isbn": "9780443074905",
+    "title": "The practice of Chinese medicine",
+    "creator": "Giovanni Maciocia",
+    "publisher": "Churchill Livingstone/Elsevier",
+    "isbn_lookup_source": "openlibrary"
   }
 }

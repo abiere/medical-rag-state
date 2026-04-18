@@ -764,6 +764,11 @@ def startup_scan() -> int:
                     logger.warning("Skip (permanently failed — manual intervention required): %s", f.name)
                     continue
 
+                # Skip books paused for ISBN duplicate check — user must decide
+                if state.get("status") == "isbn_duplicate_paused":
+                    logger.debug("Skip (isbn_duplicate_paused — awaiting user decision): %s", f.name)
+                    continue
+
                 # Track parse failures — permanently fail after MAX_RETRIES
                 parse_phase = state.get("phases", {}).get("parse", {})
                 if parse_phase.get("status") == "failed":
@@ -807,6 +812,93 @@ def startup_scan() -> int:
     if added:
         _write_queue(queue)
     return added
+
+
+# ── Fase 0: ISBN duplicate check ──────────────────────────────────────────────
+
+def _run_fase0_isbn_check(state: dict, book_path: Path) -> bool:
+    """
+    Fase 0 — ISBN duplicate check for medical_library books.
+    Extracts ISBN from first 10 pages, stores in book_metadata, does API lookup,
+    then scans all existing state.json files for the same ISBN.
+    Returns True if the book should be PAUSED (duplicate found).
+    Returns False if processing should continue normally.
+    """
+    from parse_epub import _extract_isbn, _lookup_isbn
+
+    filename  = state.get("filename", "")
+    book_hash = state.get("book_hash", "")
+    log = logging.getLogger(__name__)
+
+    log.info("Fase 0: ISBN check for %s", filename)
+
+    isbn = _extract_isbn(book_path)
+    if not isbn:
+        log.info("Fase 0: No ISBN found — continuing to Fase 1")
+        return False
+
+    log.info("Fase 0: ISBN found: %s", isbn)
+
+    bm           = state.get("book_metadata", {})
+    bm["isbn"]   = isbn
+    state["book_metadata"] = bm
+
+    # Enrich metadata while we have the ISBN
+    meta = _lookup_isbn(isbn)
+    if meta:
+        for src_f, dst_f in [
+            ("title", "title"), ("date", "date"),
+            ("publisher", "publisher"), ("authors", "creator"),
+        ]:
+            if meta.get(src_f) and not bm.get(dst_f):
+                bm[dst_f] = meta[src_f]
+        if meta.get("source"):
+            bm["isbn_lookup_source"] = meta["source"]
+        log.info("Fase 0: ISBN lookup success (%s): %s",
+                 meta.get("source"), meta.get("title", ""))
+
+    # Scan all existing state.json files for same ISBN
+    duplicate_hash     = ""
+    duplicate_filename = ""
+    duplicate_title    = ""
+    for d in sorted(CACHE_DIR.iterdir()):
+        sp = d / "state.json"
+        if not sp.exists():
+            continue
+        try:
+            existing = json.loads(sp.read_text())
+        except Exception:
+            continue
+        if existing.get("book_hash") == book_hash:
+            continue
+        existing_isbn = existing.get("book_metadata", {}).get("isbn", "")
+        if existing_isbn and existing_isbn == isbn:
+            duplicate_hash     = existing.get("book_hash", "")
+            duplicate_filename = existing.get("filename", "")
+            duplicate_title    = (
+                existing.get("book_metadata", {}).get("title", "")
+                or duplicate_filename
+            )
+            log.info("Fase 0: ISBN %s already exists in %s (%s)",
+                     isbn, duplicate_filename, duplicate_hash)
+            break
+
+    if not duplicate_hash:
+        log.info("Fase 0: ISBN %s is new — continuing to Fase 1", isbn)
+        return False
+
+    state["status"] = "isbn_duplicate_paused"
+    state["isbn_duplicate"] = {
+        "isbn":              isbn,
+        "existing_hash":     duplicate_hash,
+        "existing_filename": duplicate_filename,
+        "existing_title":    duplicate_title,
+    }
+    log.warning(
+        "Fase 0: PAUSED %s — ISBN %s already exists as %s",
+        filename, isbn, duplicate_filename,
+    )
+    return True
 
 
 # ── process one book ───────────────────────────────────────────────────────────
@@ -875,10 +967,48 @@ def process_book(item: dict) -> bool:
             _write_state(state)
             return True
 
+        # ── Fase 0: ISBN duplicate check (medical_library only) ───────────
+        if (resume_phase == "parse"
+                and state.get("collection") == "medical_library"
+                and not state.get("skip_isbn_check")):
+            paused = _run_fase0_isbn_check(state, filepath)
+            _write_state(state)
+            if paused:
+                logger.info("Fase 0: book paused for user decision — skipping")
+                return True  # not an error; awaiting user
+
         # ── Phase 1: Parse ─────────────────────────────────────────────────
         if resume_phase == "parse":
             if not _phase_parse(state, filepath, fmt, collection, category):
                 return False
+
+            # Post-parse: enrich book_metadata with ISBN API lookup if missing
+            bm = state.get("book_metadata", {})
+            if not bm.get("isbn"):
+                try:
+                    from parse_epub import _extract_isbn
+                    isbn = _extract_isbn(filepath)
+                    if isbn:
+                        bm["isbn"] = isbn
+                except Exception as _isbn_err:
+                    logger.debug("ISBN extraction failed (non-fatal): %s", _isbn_err)
+            if bm.get("isbn") and (not bm.get("title") or not bm.get("date")):
+                try:
+                    from parse_epub import _lookup_isbn
+                    api_meta = _lookup_isbn(bm["isbn"])
+                    if api_meta:
+                        for src_f, dst_f in [
+                            ("title", "title"), ("date", "date"),
+                            ("publisher", "publisher"), ("authors", "creator"),
+                        ]:
+                            if api_meta.get(src_f) and not bm.get(dst_f):
+                                bm[dst_f] = api_meta[src_f]
+                        bm.setdefault("isbn_lookup_source", api_meta.get("source", ""))
+                except Exception as _meta_err:
+                    logger.debug("ISBN lookup failed (non-fatal): %s", _meta_err)
+            state["book_metadata"] = bm
+            _write_state(state)
+
             resume_phase = "audit"
 
         # ── Phase 2: Audit ─────────────────────────────────────────────────

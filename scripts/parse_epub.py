@@ -405,6 +405,138 @@ def _extract_pdf_metadata(pdf_path: Path) -> dict:
         return {}
 
 
+# ── ISBN extraction + API lookup ─────────────────────────────────────────────
+
+def _get_first_pages_text(book_path: Path, pages: int = 10) -> str:
+    """Extract plain text from first N pages — PDF or EPUB."""
+    ext = book_path.suffix.lower()
+    try:
+        if ext == ".pdf":
+            import fitz
+            doc  = fitz.open(str(book_path))
+            text = ""
+            for i in range(min(pages, len(doc))):
+                text += doc[i].get_text()
+            doc.close()
+            return text
+        elif ext == ".epub":
+            from ebooklib import epub as _epub
+            from bs4 import BeautifulSoup
+            book  = _epub.read_epub(str(book_path), options={"ignore_ncx": True})
+            text  = ""
+            count = 0
+            for item in book.get_items():
+                if item.get_type() == 9:  # ITEM_DOCUMENT
+                    soup   = BeautifulSoup(item.content, "html.parser")
+                    text  += soup.get_text() + "\n"
+                    count += 1
+                    if count >= pages:
+                        break
+            return text
+    except Exception as e:
+        logging.getLogger(__name__).warning(
+            "First pages extraction failed %s: %s", book_path.name, e
+        )
+    return ""
+
+
+def _extract_isbn_from_text(text: str) -> str:
+    """
+    Extract ISBN-13 from text.
+    Handles labelled forms (ISBN-13, International ISBN-13, etc.)
+    and bare 978/979 prefixed numbers.
+    Returns 13-digit string or empty string.
+    """
+    patterns = [
+        r"(?:ISBN[-\s]?13|International\s+ISBN[-\s]?13?|"
+        r"North\s+American\s+ISBN[-\s]?13?)\s*:?\s*"
+        r"((?:978|979)[\d\s\-]{10,17})",
+        r"ISBN\s*[-:]?\s*((?:978|979)[\d\s\-]{10,17})",
+        r"\b((?:978|979)[\d\-]{10,15})\b",
+    ]
+    for pat in patterns:
+        for m in re.findall(pat, text):
+            clean = re.sub(r"[\s\-]", "", m)
+            if len(clean) == 13 and clean.isdigit():
+                return clean
+    return ""
+
+
+def _extract_isbn(book_path: Path) -> str:
+    """Extract ISBN-13 from first 10 pages of a book file."""
+    text = _get_first_pages_text(book_path, pages=10)
+    return _extract_isbn_from_text(text)
+
+
+def _lookup_isbn(isbn: str) -> dict:
+    """
+    Fetch bibliographic metadata by ISBN-13.
+    Tries Google Books first, then OpenLibrary.
+    Returns dict with: isbn, title, authors, publisher, date, source.
+    Returns empty dict on failure.
+    """
+    import urllib.request as _urlreq
+    if not isbn:
+        return {}
+    log = logging.getLogger(__name__)
+
+    # Google Books
+    try:
+        url = (
+            f"https://www.googleapis.com/books/v1/volumes"
+            f"?q=isbn:{isbn}&maxResults=1"
+        )
+        req = _urlreq.Request(url, headers={"User-Agent": "NRT-Amsterdam-RAG/1.0"})
+        with _urlreq.urlopen(req, timeout=10) as r:
+            data = json.loads(r.read())
+        items = data.get("items", [])
+        if items:
+            info  = items[0].get("volumeInfo", {})
+            m     = re.search(r"\b(\d{4})\b", info.get("publishedDate", ""))
+            year  = m.group(1) if m else ""
+            title = info.get("title", "")
+            sub   = info.get("subtitle", "")
+            return {
+                "isbn":      isbn,
+                "title":     title + (": " + sub if sub else ""),
+                "authors":   ", ".join(info.get("authors", [])),
+                "publisher": info.get("publisher", ""),
+                "date":      year,
+                "source":    "google_books",
+            }
+    except Exception as e:
+        log.warning("Google Books lookup failed isbn=%s: %s", isbn, e)
+
+    # OpenLibrary fallback
+    try:
+        url = (
+            f"https://openlibrary.org/api/books"
+            f"?bibkeys=ISBN:{isbn}&format=json&jscmd=data"
+        )
+        req = _urlreq.Request(url, headers={"User-Agent": "NRT-Amsterdam-RAG/1.0"})
+        with _urlreq.urlopen(req, timeout=10) as r:
+            data = json.loads(r.read())
+        key = f"ISBN:{isbn}"
+        if key in data:
+            book    = data[key]
+            m       = re.search(r"\b(\d{4})\b", book.get("publish_date", ""))
+            year    = m.group(1) if m else ""
+            authors = ", ".join(a.get("name", "") for a in book.get("authors", []))
+            pub     = (book.get("publishers") or [{}])[0].get("name", "")
+            return {
+                "isbn":      isbn,
+                "title":     book.get("title", ""),
+                "authors":   authors,
+                "publisher": pub,
+                "date":      year,
+                "source":    "openlibrary",
+            }
+    except Exception as e:
+        log.warning("OpenLibrary lookup failed isbn=%s: %s", isbn, e)
+
+    return {}
+
+
 # ── CLI ───────────────────────────────────────────────────────────────────────
 
 def main():

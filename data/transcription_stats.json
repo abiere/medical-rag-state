@@ -125,11 +125,18 @@
       "duration_seconds": 649.0,
       "seconds_per_mb": 0.97,
       "completed_at": "2026-04-18T12:53:36.142823+00:00"
+    },
+    {
+      "filename": "1.Upper_Body_Techniques.mp4",
+      "file_size_mb": 550.38,
+      "duration_seconds": 1262.2,
+      "seconds_per_mb": 2.29,
+      "completed_at": "2026-04-18T13:53:32.288592+00:00"
     }
   ],
   "model_rate": {
-    "seconds_per_mb": 1.9,
-    "n_samples": 18,
-    "updated_at": "2026-04-18T12:53:36.142823+00:00"
+    "seconds_per_mb": 1.93,
+    "n_samples": 19,
+    "updated_at": "2026-04-18T13:53:32.288592+00:00"
   }
 }

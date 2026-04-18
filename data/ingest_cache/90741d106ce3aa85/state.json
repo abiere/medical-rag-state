@@ -56,6 +56,10 @@
   "parse_retry_count": 0,
   "book_metadata": {
     "publisher": "ABBYY FineReader 9.0 Professional Edition",
-    "date": "D:20"
+    "date": "D:20",
+    "isbn": "9781556431838",
+    "title": "An Introduction to Craniosacral Therapy: Anatomy, Function, and Treatment",
+    "creator": "Don Cohen",
+    "isbn_lookup_source": "google_books"
   }
 }

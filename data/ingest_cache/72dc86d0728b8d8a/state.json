@@ -56,6 +56,10 @@
   "parse_retry_count": 0,
   "book_metadata": {
     "publisher": "ABBYY FineReader 12",
-    "date": "D:20"
+    "date": "D:20",
+    "isbn": "9780648022701",
+    "title": "Explain Pain Supercharged",
+    "creator": "G. Lorimer Moseley, David Sheridan Butler",
+    "isbn_lookup_source": "google_books"
   }
 }

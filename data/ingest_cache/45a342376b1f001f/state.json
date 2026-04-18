@@ -56,6 +56,10 @@
   "parse_retry_count": 0,
   "book_metadata": {
     "publisher": "Adobe PDF Library 15.0",
-    "date": "D:20"
+    "date": "D:20",
+    "isbn": "9781909141902",
+    "title": "Mobilizing the Myofascial System",
+    "creator": "Doreen Killens",
+    "isbn_lookup_source": "openlibrary"
   }
 }

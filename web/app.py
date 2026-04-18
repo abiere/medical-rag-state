@@ -1789,7 +1789,8 @@ _STATUS_PILLS_PY: dict[str, dict] = {
     "afb_bezig":      {"label": "Afb. bezig\u2026",   "bg": "#ddf2f3", "color": "#085041"},
     "klaar":          {"label": "Klaar",              "bg": "#dcfce7", "color": "#166534"},
     "fout":           {"label": "Fout",               "bg": "#fee2e2", "color": "#991b1b"},
-    "permanent_fout": {"label": "Permanent fout",     "bg": "#fee2e2", "color": "#7f1d1d"},
+    "permanent_fout":          {"label": "Permanent fout",  "bg": "#fee2e2", "color": "#7f1d1d"},
+    "isbn_duplicate_paused":   {"label": "Gepauzeerd",      "bg": "#FAEEDA", "color": "#854F0B"},
 }
 
 
@@ -1819,9 +1820,11 @@ def _get_image_progress(book_hash: str) -> dict | None:
 
 
 def _compute_book_status(state: dict) -> str:
-    """Single source of truth for book status. Returns one of 8 status strings."""
+    """Single source of truth for book status. Returns one of 9 status strings."""
     if state.get("status") == "permanently_failed":
         return "permanent_fout"
+    if state.get("status") == "isbn_duplicate_paused":
+        return "isbn_duplicate_paused"
 
     phases  = state.get("phases", {})
     parse   = phases.get("parse",  {})
@@ -2701,7 +2704,8 @@ const STATUS_PILLS = {
   afb_bezig:     {label:'Afb. bezig\u2026', bg:'#ddf2f3', color:'#085041'},
   klaar:         {label:'Klaar',            bg:'#dcfce7', color:'#166534'},
   fout:          {label:'Fout',             bg:'#fee2e2', color:'#991b1b'},
-  permanent_fout:{label:'Permanent fout',   bg:'#fee2e2', color:'#7f1d1d'},
+  permanent_fout:        {label:'Permanent fout', bg:'#fee2e2', color:'#7f1d1d'},
+  isbn_duplicate_paused: {label:'Gepauzeerd',     bg:'#FAEEDA', color:'#854F0B'},
 };
 
 async function loadItems() {
@@ -2820,7 +2824,8 @@ function ocrBadge(engine) {
 }
 
 function renderCard(item) {
-  const clickable = item.book_hash
+  const isPaused  = item.status === 'isbn_duplicate_paused';
+  const clickable = (!isPaused && item.book_hash)
     ? `class="book-row" onclick="toggleBookDetail(this,'${escJs(item.book_hash)}')" style="cursor:pointer;`
     : 'style="';
 
@@ -2838,11 +2843,30 @@ function renderCard(item) {
     statusHtml += `<div style="font-size:10px;color:#085041;opacity:0.7;margin-top:3px;text-align:right;white-space:nowrap">${pp}/${pt} pagina's &middot; ${ff} fig.</div>`;
   }
 
-  return `<div ${clickable}background:#fff;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.07);
+  let pausedHtml = '';
+  if (isPaused && item.isbn_duplicate) {
+    const dup      = item.isbn_duplicate;
+    const dupTitle = escHtml(dup.existing_title || dup.existing_filename || '');
+    pausedHtml = '<div style="font-size:12px;color:#854F0B;margin-top:4px">Mogelijk duplicaat van: ' + dupTitle + '</div>'
+      + '<div style="display:flex;gap:8px;margin-top:8px">'
+      + '<button data-hash="' + escHtml(item.book_hash) + '" onclick="resumeBook(this.dataset.hash)"'
+      + ' style="font-size:12px;padding:4px 12px;background:#fff;border:1px solid #EF9F27;'
+      + 'color:#854F0B;border-radius:6px;cursor:pointer">Verwerk toch \u25B6</button>'
+      + '<button data-hash="' + escHtml(item.book_hash) + '" onclick="cancelBook(this.dataset.hash)"'
+      + ' style="font-size:12px;padding:4px 12px;background:#FCEBEB;border:1px solid #F09595;'
+      + 'color:#791F1F;border-radius:6px;cursor:pointer">Annuleer</button>'
+      + '</div>';
+  }
+
+  const bgColor  = isPaused ? '#FAEEDA' : '#fff';
+  const bdrStyle = isPaused ? 'border:1px solid #EF9F27;' : '';
+
+  return `<div ${clickable}background:${bgColor};${bdrStyle}border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.07);
                       padding:14px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
     <div style="flex:1;min-width:200px">
       <div style="font-weight:600;font-size:15px;color:#111">${escHtml(item.title)}${item.library_category === 'medical_literature' && item.pub_year ? '<span style="font-weight:400;color:#6b7280;font-size:13px"> (' + item.pub_year + ')</span>' : ''}</div>
       <div style="font-size:12px;color:#6b7280;margin-top:2px">${escHtml(item.authors || '')}</div>
+      ${pausedHtml}
     </div>
     <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
       ${kaiBadges}
@@ -3198,6 +3222,32 @@ function escJs(s) {
   return String(s).replace(/\\\\/g,'\\\\\\\\').replace(/'/g,"\\\\'");
 }
 
+function resumeBook(hash) {
+  if (!confirm('Boek terugzetten in wachtrij? ISBN check wordt overgeslagen.'))
+    return;
+  const btns = document.querySelectorAll('[data-hash="' + hash + '"]');
+  btns.forEach(b => { b.disabled = true; b.textContent = 'Bezig\u2026'; });
+  fetch('/api/library/book/' + hash + '/resume', {method:'POST'})
+    .then(r => r.json())
+    .then(d => {
+      if (d.error) alert('Fout: ' + d.error);
+      else setTimeout(() => location.reload(), 600);
+    })
+    .catch(e => alert('Netwerkfout: ' + e));
+}
+
+function cancelBook(hash) {
+  if (!confirm('Import annuleren? Het bestand wordt verwijderd.'))
+    return;
+  fetch('/api/library/book/' + hash, {method:'DELETE'})
+    .then(r => r.json())
+    .then(d => {
+      if (d.error) alert('Fout: ' + d.error);
+      else setTimeout(() => location.reload(), 600);
+    })
+    .catch(e => alert('Netwerkfout: ' + e));
+}
+
 let _delItem = null;
 function openDelModal(id, title, chunks, collection) {
   _delItem = {id, title, chunks, collection};
@@ -3425,10 +3475,12 @@ async def api_library_items():
                 status = "in_wachtrij"
 
         image_progress = _get_image_progress(book_hash) if status == "afb_bezig" else None
+        isbn_duplicate = full_state.get("isbn_duplicate") if full_state else None
         items_out.append({**meta, "chunk_count": chunk_count, "status": status,
                           "ocr_engine": ocr_engine, "book_hash": book_hash,
                           "image_progress": image_progress,
-                          "pub_year": sm.get("pub_year", "")})
+                          "pub_year": sm.get("pub_year", ""),
+                          "isbn_duplicate": isbn_duplicate})
 
     result = {"items": items_out}
     _ITEMS_CACHE["data"] = result
@@ -3671,6 +3723,69 @@ async def api_resolve_duplicate(body: dict):
         result["kept"] = keep_hash
     _invalidate_items_cache()
     return result
+
+
+# ── POST /api/library/book/{book_hash}/resume ─────────────────────────────────
+
+@app.post("/api/library/book/{book_hash}/resume")
+async def api_library_resume_book(book_hash: str):
+    """
+    Resume a book that was paused by Fase 0 ISBN duplicate check.
+    Sets skip_isbn_check=True, clears isbn_duplicate, and re-queues the book.
+    """
+    state_path: Path | None = None
+    state: dict = {}
+    for d in CACHE_DIR.iterdir():
+        sp = d / "state.json"
+        if not sp.exists():
+            continue
+        try:
+            s = json.loads(sp.read_text())
+            if s.get("book_hash") == book_hash:
+                state_path = sp
+                state = s
+                break
+        except Exception:
+            pass
+
+    if not state_path:
+        return JSONResponse({"error": f"Book {book_hash} not found"}, status_code=404)
+
+    if state.get("status") != "isbn_duplicate_paused":
+        return JSONResponse({"error": "Book is not paused for ISBN check"}, status_code=400)
+
+    filename   = state.get("filename", "")
+    filepath   = state.get("filepath", "")
+    collection = state.get("collection", "medical_library")
+    category   = state.get("library_category", "medical_literature")
+    fmt        = Path(filepath).suffix.lstrip(".").lower() if filepath else "pdf"
+
+    state["status"]          = "queued"
+    state["skip_isbn_check"] = True
+    state["isbn_duplicate"]  = None
+
+    tmp = state_path.with_suffix(".tmp")
+    tmp.write_text(json.dumps(state, indent=2))
+    tmp.replace(state_path)
+
+    # Re-add to ingest queue (uses BOOKS_DIR to locate file if filepath absent)
+    if not filepath and filename:
+        for fp in BOOKS_DIR.rglob(filename):
+            filepath = str(fp)
+            break
+
+    if not filepath:
+        return JSONResponse({"error": "Book file path not found"}, status_code=500)
+
+    _enqueue_book(filename, filepath, collection, category, fmt)
+    _invalidate_items_cache()
+
+    return {
+        "status":    "resumed",
+        "book_hash": book_hash,
+        "filename":  filename,
+        "message":   "Boek terug in wachtrij — ISBN check overgeslagen",
+    }
 
 
 # ── GET /library/ingest ────────────────────────────────────────────────────────

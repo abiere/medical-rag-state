@@ -56,6 +56,10 @@
   "parse_retry_count": 0,
   "book_metadata": {
     "publisher": "Adobe Acrobat 9.0 Paper Capture Plug-in with ClearScan",
-    "date": "D:20"
+    "date": "D:20",
+    "isbn": "9781556433740",
+    "title": "Applied kinesiology",
+    "creator": "Robert Frost",
+    "isbn_lookup_source": "openlibrary"
   }
 }
