@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 12:18:10 UTC**
+> Last update: **2026-04-18 12:23:11 UTC**
 
 ## Services
 | Service | Status |
@@ -25,18 +25,18 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `NRT_Fascial_Activation_Application_Method.mp4` (19 min) |
+| Current job | `NRT_Fascial_Activation_Application_Method.mp4` (24 min) |
 | Queued | 4 |
-| Done | 46 / 62 |
+| Done | 47 / 62 |
 | Vectors in nrt_video_transcripts | 241 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 6.66 GB / 32.86 GB (20%) |
-| CPU | 97.0% |
+| RAM used | 6.56 GB / 32.86 GB (20%) |
+| CPU | 96.2% |
 | Disk used | 82.1 GB / 322.3 GB (26%) |
-| Uptime | up 1 day, 6 hours, 42 minutes |
+| Uptime | up 1 day, 6 hours, 47 minutes |
 
 ## Recent markers
 - `2026-04-18T11:58:17` **transcription_done** — NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4 complete (45/14)
