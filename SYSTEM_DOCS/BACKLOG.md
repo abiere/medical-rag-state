@@ -4,6 +4,17 @@
 
 ---
 
+## ✅ Afgerond — 2026-04-18 (sessie 5)
+
+- [x] **Legacy directory cleanup** — `books/device/` en `books/nrt_qat/` verwijderd
+      - Diagnose: 9 duplicate cache entries door filepath-gebaseerde hashing (legacy vs nieuwe paden)
+      - Cleanup: safety check (regel 3) hield alle legacy entries want filename-gebaseerde Qdrant
+        count telt ook vectors van de "goede" entry → 0 deletions, 4 kept (permanently_failed)
+      - Lege legacy directories verwijderd: `books/device/`, `books/nrt_qat/`
+      - `books/acupuncture/` bewaard (bevat `test_acupuncture.pdf`)
+      - Mismatch disk vs cache blijft bestaan door gedeelde Qdrant filenames — geen data verlies
+      - 36/36 tests geslaagd
+
 ## ✅ Afgerond — 2026-04-18 (sessie 4)
 
 - [x] **ISBN-gebaseerde duplicaatdetectie in ingest pipeline** — Fase 0 gebouwd (4 delen)
