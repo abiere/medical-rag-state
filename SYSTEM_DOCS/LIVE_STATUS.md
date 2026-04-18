@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 11:02:49 UTC**
+> Last update: **2026-04-18 11:07:51 UTC**
 
 ## Services
 | Service | Status |
@@ -25,25 +25,25 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `How_to_Reset_23_More_Muscles.mp4` (12 min) |
-| Queued | 8 |
-| Done | 38 / 53 |
+| Current job | `Miraculous_Sequence_-_Part_1.mp4` (4 min) |
+| Queued | 7 |
+| Done | 39 / 55 |
 | Vectors in nrt_video_transcripts | 241 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 6.64 GB / 32.86 GB (20%) |
-| CPU | 96.9% |
-| Disk used | 77.6 GB / 322.3 GB (25%) |
-| Uptime | up 1 day, 5 hours, 27 minutes |
+| RAM used | 6.72 GB / 32.86 GB (20%) |
+| CPU | 97.1% |
+| Disk used | 78.4 GB / 322.3 GB (25%) |
+| Uptime | up 1 day, 5 hours, 32 minutes |
 
 ## Recent markers
+- `2026-04-18T11:03:03` **transcription_done** — How_to_Reset_23_More_Muscles.mp4 complete (39/14)
+- `2026-04-18T11:03:03` **ingest_failed** — How_to_Reset_23_More_Muscles.mp4 ingest FAILED
 - `2026-04-18T10:50:11` **transcription_done** — Everything_Reset_Sequence_-_Part_5.mp4 complete (37/14)
 - `2026-04-18T10:50:11` **ingest_failed** — Everything_Reset_Sequence_-_Part_5.mp4 ingest FAILED
 - `2026-04-18T10:27:32` **transcription_done** — Everything_Reset_Sequence_-_Part_4.mp4 complete (34/14)
-- `2026-04-18T10:27:32` **ingest_failed** — Everything_Reset_Sequence_-_Part_4.mp4 ingest FAILED
-- `2026-04-18T09:58:21` **transcription_done** — Everything_Reset_Sequence_-_Part_3.mp4 complete (31/14)
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-18 10:27:32,697  INFO      Splitting Everything_Reset_Sequence_-_Part_5.mp4 (618 MB) into 20-min segments
-2026-04-18 10:27:38,996  INFO      Split Everything_Reset_Sequence_-_Part_5.mp4 into 3 segments
-2026-04-18 10:27:38,996  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_5.mp4
-2026-04-18 10:50:11,921  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_5.mp4  (1359s, 3 segments)
-2026-04-18 10:50:11,922  INFO      Stats updated: Everything_Reset_Sequence_-_Part_5.mp4 — 2.1s/MB  rate=2.5s/MB (11 samples)
-2026-04-18 10:50:11,923  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_5.json
-2026-04-18 10:50:12,053  INFO      START  nrt/How_to_Reset_23_More_Muscles.mp4  (412 MB)
 2026-04-18 10:50:12,053  INFO      Splitting How_to_Reset_23_More_Muscles.mp4 (412 MB) into 20-min segments
 2026-04-18 10:50:15,845  INFO      Split How_to_Reset_23_More_Muscles.mp4 into 2 segments
 2026-04-18 10:50:15,845  INFO      Transcribing 2 segments for How_to_Reset_23_More_Muscles.mp4
+2026-04-18 11:03:03,296  INFO      DONE   nrt/How_to_Reset_23_More_Muscles.mp4  (771s, 2 segments)
+2026-04-18 11:03:03,297  INFO      Stats updated: How_to_Reset_23_More_Muscles.mp4 — 1.8s/MB  rate=2.4s/MB (12 samples)
+2026-04-18 11:03:03,298  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/How_to_Reset_23_More_Muscles.json
+2026-04-18 11:03:03,428  INFO      START  nrt/Miraculous_Sequence_-_Part_1.mp4  (689 MB)
+2026-04-18 11:03:03,428  INFO      Splitting Miraculous_Sequence_-_Part_1.mp4 (689 MB) into 20-min segments
+2026-04-18 11:03:09,252  INFO      Split Miraculous_Sequence_-_Part_1.mp4 into 2 segments
+2026-04-18 11:03:09,252  INFO      Transcribing 2 segments for Miraculous_Sequence_-_Part_1.mp4
 ```
