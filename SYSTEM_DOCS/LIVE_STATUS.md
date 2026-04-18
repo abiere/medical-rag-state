@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 04:52:24 UTC**
+> Last update: **2026-04-18 04:57:24 UTC**
 
 ## Services
 | Service | Status |
@@ -14,10 +14,10 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Explain Pain Supercharged - Moseley, Butler.pdf` (10 min) |
+| Current job | `Explain Pain Supercharged - Moseley, Butler.pdf` (15 min) |
 | Queued | 16 |
 | Total books | 37 |
-| Ingested | 67 |
+| Ingested | 68 |
 | Vectors in medical_library | 15291 |
 | Images pending approval | 2026 |
 | Images approved | 0 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (11 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (16 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 15.21 GB / 32.86 GB (46%) |
-| CPU | 98.5% |
+| RAM used | 15.31 GB / 32.86 GB (47%) |
+| CPU | 96.9% |
 | Disk used | 72.1 GB / 322.3 GB (23%) |
-| Uptime | up 23 hours, 17 minutes |
+| Uptime | up 23 hours, 22 minutes |
 
 ## Recent markers
 - `2026-04-18T04:41:41.396533+00:00` **book_ingested** — Essentials of Anatomy and Physiology - Scanlon, Sanders.pdf → medical_library: 941 chunks
