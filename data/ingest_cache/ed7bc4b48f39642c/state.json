@@ -1,0 +1,58 @@
+{
+  "filename": "How to Use FlexBeam on Skin and Scars - Recharge Health.pdf",
+  "book_hash": "ed7bc4b48f39642c",
+  "filepath": "/root/medical-rag/books/rlt_flexbeam/How to Use FlexBeam on Skin and Scars - Recharge Health.pdf",
+  "collection": "rlt_flexbeam",
+  "library_category": "rlt_flexbeam",
+  "started_at": "2026-04-18T14:49:49.886977+00:00",
+  "updated_at": "2026-04-18T14:49:49.886979+00:00",
+  "completed_at": "2026-04-18T14:49:49.886981+00:00",
+  "book_metadata": {},
+  "status": "done",
+  "phases": {
+    "parse": {
+      "status": "done",
+      "started_at": null,
+      "completed_at": "2026-04-18T14:49:49.886971+00:00",
+      "pages_total": null,
+      "pages_done": 0,
+      "chunks_extracted": 3,
+      "images_extracted": null,
+      "parse_method": "restored",
+      "output_file": "phase1_chunks.json",
+      "error": null,
+      "warnings": []
+    },
+    "audit": {
+      "status": "done",
+      "started_at": null,
+      "completed_at": "2026-04-18T14:49:49.886971+00:00",
+      "chunks_total": 3,
+      "chunks_tagged": 0,
+      "chunks_skipped": 0,
+      "ollama_available": null,
+      "consecutive_failures_hit": false,
+      "output_file": "phase2_audited.json"
+    },
+    "embed": {
+      "status": "done",
+      "started_at": null,
+      "completed_at": "2026-04-18T14:49:49.886971+00:00",
+      "chunks_total": 3,
+      "chunks_done": 3,
+      "vectors_per_minute": null,
+      "eta_minutes": null,
+      "last_progress_at": null,
+      "output_file": "phase3_vectors.npy"
+    },
+    "qdrant": {
+      "status": "done",
+      "started_at": null,
+      "completed_at": "2026-04-18T14:49:49.886971+00:00",
+      "chunks_inserted": 3,
+      "collection": "rlt_flexbeam"
+    }
+  },
+  "image_extraction_enabled": true,
+  "_recovery_note": "Restored after legacy-path cache cleanup 2026-04-18"
+}
