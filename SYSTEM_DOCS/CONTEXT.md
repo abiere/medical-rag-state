@@ -28,10 +28,10 @@ Alleen via Tailscale (100.66.194.55). Outputs: behandelprotocollen, blogteksten,
 | sync-status.timer | — | ✅ Elke 5 min |
 | queue-watchdog.timer | — | ✅ Elke 10 min |
 
-## Qdrant collecties (stand 2026-04-17)
+## Qdrant collecties (stand 2026-04-18)
 | Collectie | Vectors | Gebruik |
 |---|---|---|
-| medical_library | 10.428 | Boekchunks (PDF/EPUB) |
+| medical_library | 19.572 | Boekchunks (PDF/EPUB) |
 | nrt_curriculum | 425 | NRT curriculum (Lawrence Woods) |
 | qat_curriculum | 125 | QAT curriculum |
 | rlt_flexbeam | 160 | Red Light Therapy docs |
@@ -121,6 +121,13 @@ HE=HE-5   | LIV=LIV-5
 5. **UI taken:** Lees eerst `.claude/skills/nrt-ui-standards/SKILL.md` via Read tool
 
 ---
+
+## Openstaande issues (2026-04-18)
+- Magee duplicaat: 2 boeken met zelfde ASIN — verwijder via /library banner
+- Touch for Health PDF+EPUB: beide aanwezig, keuze nog te maken
+- Video transcriptie queue: actief (grote files via ffmpeg split, Restart=always)
+- EPUB caption re-extractie: loopt in achtergrond
+- Test `test_anthropic_api_key_set`: FAIL (API key niet gezet in settings.json)
 
 ## Maintenance status
 

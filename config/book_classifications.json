@@ -284,7 +284,11 @@
       "image_source": "pdf_cropped",
       "image_priority": "normal",
       "image_priority_override": null,
-      "image_evaluated": false
+      "image_evaluated": false,
+      "server_path": "/root/medical-rag/books/medical_literature/dokumen.pub_the-practice-of-chinese-medicine-the-treatment-of-diseases-with-acupuncture-and-chinese-herbs-2nd-ed-9780443074905-2152393805-0443074909.pdf",
+      "server_filename": "dokumen.pub_the-practice-of-chinese-medicine-the-treatment-of-diseases-with-acupuncture-and-chinese-herbs-2nd-ed-9780443074905-2152393805-0443074909.pdf",
+      "ingested": true,
+      "ingested_at": "2026-04-18T08:25:22.738126+00:00"
     },
     "maciocia_diagnosis": {
       "k": 1,

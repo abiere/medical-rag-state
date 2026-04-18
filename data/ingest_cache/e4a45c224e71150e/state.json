@@ -5,12 +5,12 @@
   "collection": "pemf_qrs",
   "library_category": "pemf_qrs",
   "started_at": "2026-04-18T07:37:57.397228+00:00",
-  "updated_at": "2026-04-18T07:37:57.973182+00:00",
+  "updated_at": "2026-04-18T08:34:28.945020+00:00",
   "completed_at": null,
   "phases": {
     "parse": {
       "status": "failed",
-      "started_at": "2026-04-18T07:37:57.398198+00:00",
+      "started_at": "2026-04-18T08:34:22.781606+00:00",
       "completed_at": null,
       "pages_total": 1,
       "pages_done": 0,
@@ -52,10 +52,13 @@
     }
   },
   "image_extraction_enabled": true,
-  "parse_retry_count": 1,
+  "parse_retry_count": 3,
   "book_metadata": {
     "title": "19537866-5a0d-41d0-8a78-01ff2eac536a.jpg",
     "publisher": "macOS Version 26.3.1 (a) (Build 25D771280a) Quartz PDFContext, AppendMode 1.1",
     "date": "D:20"
-  }
+  },
+  "status": "permanently_failed",
+  "permanently_failed_at": "2026-04-18T08:34:28.945014+00:00",
+  "permanently_failed_reason": "Parse failed 3 times — manual intervention required"
 }

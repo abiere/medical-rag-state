@@ -34,11 +34,46 @@
       "duration_seconds": 417.7,
       "seconds_per_mb": 1.08,
       "completed_at": "2026-04-17T13:09:07.251114+00:00"
+    },
+    {
+      "filename": "2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4",
+      "file_size_mb": 1111.87,
+      "duration_seconds": 298.9,
+      "seconds_per_mb": 0.27,
+      "completed_at": "2026-04-18T08:46:29.298414+00:00"
+    },
+    {
+      "filename": "Everything_Reset_Sequence_-_Part_1.mp4",
+      "file_size_mb": 680.67,
+      "duration_seconds": 1574.0,
+      "seconds_per_mb": 2.31,
+      "completed_at": "2026-04-18T09:12:43.424605+00:00"
+    },
+    {
+      "filename": "Everything_Reset_Sequence_-_Part_2.mp4",
+      "file_size_mb": 523.55,
+      "duration_seconds": 1409.2,
+      "seconds_per_mb": 2.69,
+      "completed_at": "2026-04-18T09:36:12.776645+00:00"
+    },
+    {
+      "filename": "Everything_Reset_Sequence_-_Part_3.mp4",
+      "file_size_mb": 592.58,
+      "duration_seconds": 1328.5,
+      "seconds_per_mb": 2.24,
+      "completed_at": "2026-04-18T09:58:21.395456+00:00"
+    },
+    {
+      "filename": "Everything_Reset_Sequence_-_Part_4.mp4",
+      "file_size_mb": 723.09,
+      "duration_seconds": 1751.0,
+      "seconds_per_mb": 2.42,
+      "completed_at": "2026-04-18T10:27:32.564544+00:00"
     }
   ],
   "model_rate": {
-    "seconds_per_mb": 3.41,
-    "n_samples": 5,
-    "updated_at": "2026-04-17T13:09:07.251114+00:00"
+    "seconds_per_mb": 2.49,
+    "n_samples": 10,
+    "updated_at": "2026-04-18T10:27:32.564544+00:00"
   }
 }

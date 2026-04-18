@@ -5,12 +5,12 @@
   "collection": "rlt_flexbeam",
   "library_category": "rlt_flexbeam",
   "started_at": "2026-04-18T07:37:41.376422+00:00",
-  "updated_at": "2026-04-18T07:37:57.395997+00:00",
+  "updated_at": "2026-04-18T08:34:28.943227+00:00",
   "completed_at": null,
   "phases": {
     "parse": {
       "status": "failed",
-      "started_at": "2026-04-18T07:37:41.377485+00:00",
+      "started_at": "2026-04-18T08:34:05.207744+00:00",
       "completed_at": null,
       "pages_total": 1,
       "pages_done": 0,
@@ -52,10 +52,13 @@
     }
   },
   "image_extraction_enabled": true,
-  "parse_retry_count": 1,
+  "parse_retry_count": 3,
   "book_metadata": {
     "title": "How to Use FlexBeam on Stomach - Recharge Health",
     "publisher": "Skia/PDF m146",
     "date": "D:20"
-  }
+  },
+  "status": "permanently_failed",
+  "permanently_failed_at": "2026-04-18T08:34:28.943221+00:00",
+  "permanently_failed_reason": "Parse failed 3 times — manual intervention required"
 }

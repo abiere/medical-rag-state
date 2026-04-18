@@ -5,12 +5,12 @@
   "collection": "rlt_flexbeam",
   "library_category": "rlt_flexbeam",
   "started_at": "2026-04-18T07:36:11.576194+00:00",
-  "updated_at": "2026-04-18T07:37:04.534797+00:00",
+  "updated_at": "2026-04-18T08:34:28.941589+00:00",
   "completed_at": null,
   "phases": {
     "parse": {
       "status": "failed",
-      "started_at": "2026-04-18T07:36:11.577319+00:00",
+      "started_at": "2026-04-18T08:33:28.896253+00:00",
       "completed_at": null,
       "pages_total": 1,
       "pages_done": 0,
@@ -52,10 +52,13 @@
     }
   },
   "image_extraction_enabled": true,
-  "parse_retry_count": 1,
+  "parse_retry_count": 3,
   "book_metadata": {
     "title": "How to Use FlexBeam on Knees - Recharge Health",
     "publisher": "Skia/PDF m146",
     "date": "D:20"
-  }
+  },
+  "status": "permanently_failed",
+  "permanently_failed_at": "2026-04-18T08:34:28.941573+00:00",
+  "permanently_failed_reason": "Parse failed 3 times — manual intervention required"
 }

@@ -1,0 +1,51 @@
+{
+  "book": "dokumen.pub_the-practice-of-chinese-medicine-the-treatment-of-diseases-with-acupuncture-and-chinese-herbs-2nd-ed-9780443074905-2152393805-0443074909.pdf",
+  "collection": "medical_library",
+  "audited_at": "2026-04-18T07:52:21.440489+00:00",
+  "total_chunks": 1693,
+  "structural": {
+    "total_chunks": 1693,
+    "avg_chunk_words": 324.0,
+    "short_chunks": 0,
+    "long_chunks": 0,
+    "point_codes_found": 2292,
+    "figure_refs_found": 350,
+    "images_extracted": 103,
+    "translation_applied": true,
+    "epub_strategy": null,
+    "pdf_type": "scanned",
+    "ocr_statistics": {
+      "total_pages": 1528,
+      "readable_pages": 856,
+      "unreadable_pages": 672,
+      "engine_usage": {
+        "tesseract": 856
+      },
+      "avg_confidence": 0.7
+    }
+  },
+  "llm_audit": {
+    "sample_size": 15,
+    "avg_coherence": 4.17,
+    "avg_completeness": 4.0,
+    "avg_terminology": 5.0,
+    "avg_translation": 5.0,
+    "quality_score": 4.54,
+    "flagged_chunks": 1,
+    "suggestion": "Break the long paragraph into two or three shorter ones to improve clarity and readability."
+  },
+  "auto_classification": {
+    "error": "classification failed"
+  },
+  "usability_profile": {
+    "scores": {},
+    "counts": {},
+    "total_tagged": 0
+  },
+  "remediation": {
+    "issues": [],
+    "suggestions": [],
+    "remediation_needed": false
+  },
+  "status": "approved"
+}
