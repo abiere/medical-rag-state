@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 13:48:35 UTC**
+> Last update: **2026-04-18 13:53:35 UTC**
 
 ## Services
 | Service | Status |
@@ -25,25 +25,25 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` (16 min) |
-| Queued | 13 |
-| Done | 54 / 69 |
+| Current job | `NRT_Sports_Specific_or_Universal_Reset.mp4` |
+| Queued | 1 |
+| Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 6.75 GB / 32.86 GB (20%) |
-| CPU | 97.6% |
+| RAM used | 2.64 GB / 32.86 GB (8%) |
+| CPU | 5.9% |
 | Disk used | 83.9 GB / 322.3 GB (27%) |
-| Uptime | up 1 day, 8 hours, 13 minutes |
+| Uptime | up 1 day, 8 hours, 18 minutes |
 
 ## Recent markers
-- `2026-04-18T13:32:30.062230+00:00` **watchdog_restart** — transcription-queue hung (39 min stale) — restarted successfully
-- `2026-04-18T12:53:54` **transcription_done** — NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.mp4 complete (51/14)
-- `2026-04-18T12:53:54` **transcript_ingested** — NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.mp4 ingested into Qdrant
-- `2026-04-18T12:42:47` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (50/14)
-- `2026-04-18T12:42:46` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-04-18T13:53:35` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-04-18T13:53:35` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
+- `2026-04-18T13:53:35` **transcription_done** — NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4 complete (55/13)
+- `2026-04-18T13:53:35` **ingest_failed** — NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4 ingest FAILED
+- `2026-04-18T13:53:35` **transcription_done** — Miraculous_Sequence_-_Part_2.mp4 complete (55/13)
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-18 12:53:54,849  INFO      START  nrt/1.Upper_Body_Techniques.mp4  (525 MB)
-2026-04-18 12:53:54,850  INFO      Splitting 1.Upper_Body_Techniques.mp4 (525 MB) into 20-min segments
-2026-04-18 12:54:06,632  INFO      Split 1.Upper_Body_Techniques.mp4 into 4 segments
-2026-04-18 12:54:06,632  INFO      Transcribing 4 segments for 1.Upper_Body_Techniques.mp4
-2026-04-18 13:32:30,109  INFO      ────────────────────────────────────────────────────────────
-2026-04-18 13:32:30,109  INFO      Transcription queue manager started
-2026-04-18 13:32:30,111  INFO      Startup scan: 13 untranscribed video(s) found, 12 new entry/entries added to queue
-2026-04-18 13:32:30,112  INFO      START  nrt/1.Upper_Body_Techniques.mp4  (525 MB)
-2026-04-18 13:32:30,112  INFO      Using existing segments for 1.Upper_Body_Techniques.mp4: 4 parts
-2026-04-18 13:32:30,112  INFO      Transcribing 4 segments for 1.Upper_Body_Techniques.mp4
+2026-04-18 13:53:35,298  INFO      DONE   nrt/NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4  (0s, 2 segments)
+2026-04-18 13:53:35,298  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.json
+2026-04-18 13:53:35,428  INFO      START  nrt/NRT_Fascial_Activation_Application_Method.mp4  (1871 MB)
+2026-04-18 13:53:35,428  INFO      Using existing segments for NRT_Fascial_Activation_Application_Method.mp4: 3 parts
+2026-04-18 13:53:35,428  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
+2026-04-18 13:53:35,631  INFO      DONE   nrt/NRT_Fascial_Activation_Application_Method.mp4  (0s, 3 segments)
+2026-04-18 13:53:35,631  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Fascial_Activation_Application_Method.json
+2026-04-18 13:53:35,761  INFO      START  nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (957 MB)
+2026-04-18 13:53:35,762  INFO      Using existing segments for NRT_Sports_Specific_or_Universal_Reset.mp4: 2 parts
+2026-04-18 13:53:35,762  INFO      Transcribing 2 segments for NRT_Sports_Specific_or_Universal_Reset.mp4
 ```
