@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 11:07:51 UTC**
+> Last update: **2026-04-18 11:11:39 UTC**
 
 ## Services
 | Service | Status |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `Miraculous_Sequence_-_Part_1.mp4` (4 min) |
+| Current job | `Miraculous_Sequence_-_Part_1.mp4` (8 min) |
 | Queued | 7 |
 | Done | 39 / 55 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 6.72 GB / 32.86 GB (20%) |
+| RAM used | 6.74 GB / 32.86 GB (20%) |
 | CPU | 97.1% |
 | Disk used | 78.4 GB / 322.3 GB (25%) |
-| Uptime | up 1 day, 5 hours, 32 minutes |
+| Uptime | up 1 day, 5 hours, 36 minutes |
 
 ## Recent markers
 - `2026-04-18T11:03:03` **transcription_done** — How_to_Reset_23_More_Muscles.mp4 complete (39/14)
