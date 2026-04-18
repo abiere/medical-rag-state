@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 06:32:26 UTC**
+> Last update: **2026-04-18 06:37:26 UTC**
 
 ## Services
 | Service | Status |
@@ -14,10 +14,10 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Orthopedic Physical Assessment 7e editie - Magee, Manske.epub` (18 min) |
+| Current job | `Orthopedic Physical Assessment 7e editie - Magee, Manske.epub` (23 min) |
 | Queued | 11 |
 | Total books | 37 |
-| Ingested | 72 |
+| Ingested | 73 |
 | Vectors in medical_library | 16685 |
 | Images pending approval | 2026 |
 | Images approved | 0 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (21 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (26 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 15.32 GB / 32.86 GB (47%) |
+| RAM used | 15.99 GB / 32.86 GB (49%) |
 | CPU | 100.0% |
 | Disk used | 73.6 GB / 322.3 GB (24%) |
-| Uptime | up 1 day, 57 minutes |
+| Uptime | up 1 day, 1 hour, 2 minutes |
 
 ## Recent markers
 - `2026-04-18T06:13:48.384840+00:00` **book_ingested** — Mobilizing the Myofascial System - Killens, Lee.pdf → medical_library: 379 chunks
