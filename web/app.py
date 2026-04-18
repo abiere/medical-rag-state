@@ -1,6 +1,6 @@
 from fastapi import FastAPI, BackgroundTasks, Request, UploadFile, File, Form
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse, StreamingResponse
-import asyncio, httpx, psutil, subprocess, json, os, re, shutil, sys, threading, time
+import asyncio, html, httpx, psutil, subprocess, json, os, re, shutil, sys, threading, time
 from pathlib import Path
 from datetime import datetime, timezone
 
@@ -1291,7 +1291,6 @@ async def videos_page():
             rows = ""
             for v in videos:
                 safe_id  = re.sub(r"[^\w]", "_", v["name"])
-                esc_name = v["name"].replace("'", "\\'")
                 if v["transcribed"]:
                     badge   = (
                         '<span style="background:#dcfce7;color:#166534;border-radius:999px;'
@@ -1307,7 +1306,9 @@ async def videos_page():
                         'padding:2px 9px;font-size:12px;font-weight:600">Wachten</span>'
                     )
                     actions = (
-                        f"<button onclick=\"manualTranscribe('{vtype}','{esc_name}','{safe_id}')\" "
+                        f'<button data-vtype="{vtype}" data-filename="{html.escape(v["name"])}" '
+                        f'data-safe-id="{safe_id}" '
+                        f'onclick="manualTranscribe(this.dataset.vtype,this.dataset.filename,this.dataset.safeId)" '
                         f'class="btn btn-primary">Transcribeer</button>'
                     )
                 rows += (
@@ -2015,7 +2016,8 @@ def _library_section_html(section_key: str) -> str:
             safe_id   = re.sub(r"[^a-zA-Z0-9]", "_", b["name"])
             is_done   = b["status"] in ("klaar", "audit_lopend", "afb_lopend", "afb_bezig")
             reaudit_btn = (
-                f'<button onclick="reauditBook(\'{b["name"]}\')" '
+                f'<button data-book-name="{html.escape(b["name"])}" '
+                f'onclick="reauditBook(this.dataset.bookName)" '
                 f'class="btn btn-secondary" style="font-size:12px;margin-left:4px">Heraudit</button>'
                 f'<span id="ra-{safe_id}" style="font-size:11px;color:#6b7280;margin-left:4px"></span>'
             ) if is_done else ""
@@ -6329,8 +6331,8 @@ def _score_bar(score: float) -> str:
 @app.get("/search", response_class=HTMLResponse)
 async def search_page(q: str = ""):
     quick_btns = "".join(
-        f'<button onclick="doSearch({json.dumps(qv)})" class="btn btn-secondary" '
-        f'style="font-size:12px;padding:5px 12px">{ql}</button>'
+        f'<button data-query="{html.escape(qv)}" onclick="doSearch(this.dataset.query)" '
+        f'class="btn btn-secondary" style="font-size:12px;padding:5px 12px">{ql}</button>'
         for ql, qv in _QUICK_QUERIES
     )
     col_checks = "".join(
