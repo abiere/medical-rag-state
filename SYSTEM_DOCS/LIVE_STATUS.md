@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 10:22:43 UTC**
+> Last update: **2026-04-18 10:27:44 UTC**
 
 ## Services
 | Service | Status |
@@ -25,25 +25,25 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `Everything_Reset_Sequence_-_Part_4.mp4` (24 min) |
-| Queued | 10 |
-| Done | 33 / 48 |
+| Current job | `Everything_Reset_Sequence_-_Part_5.mp4` |
+| Queued | 9 |
+| Done | 34 / 51 |
 | Vectors in nrt_video_transcripts | 241 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 6.55 GB / 32.86 GB (20%) |
-| CPU | 97.8% |
-| Disk used | 76.6 GB / 322.3 GB (25%) |
-| Uptime | up 1 day, 4 hours, 47 minutes |
+| RAM used | 2.54 GB / 32.86 GB (8%) |
+| CPU | 6.3% |
+| Disk used | 77.2 GB / 322.3 GB (25%) |
+| Uptime | up 1 day, 4 hours, 52 minutes |
 
 ## Recent markers
+- `2026-04-18T10:27:32` **transcription_done** — Everything_Reset_Sequence_-_Part_4.mp4 complete (34/14)
+- `2026-04-18T10:27:32` **ingest_failed** — Everything_Reset_Sequence_-_Part_4.mp4 ingest FAILED
 - `2026-04-18T09:58:21` **transcription_done** — Everything_Reset_Sequence_-_Part_3.mp4 complete (31/14)
 - `2026-04-18T09:58:21` **ingest_failed** — Everything_Reset_Sequence_-_Part_3.mp4 ingest FAILED
 - `2026-04-18T09:36:12` **transcription_done** — Everything_Reset_Sequence_-_Part_2.mp4 complete (29/14)
-- `2026-04-18T09:36:12` **ingest_failed** — Everything_Reset_Sequence_-_Part_2.mp4 ingest FAILED
-- `2026-04-18T09:12:43` **transcription_done** — Everything_Reset_Sequence_-_Part_1.mp4 complete (26/14)
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-18 09:36:12,908  INFO      Splitting Everything_Reset_Sequence_-_Part_3.mp4 (565 MB) into 20-min segments
-2026-04-18 09:36:18,723  INFO      Split Everything_Reset_Sequence_-_Part_3.mp4 into 2 segments
-2026-04-18 09:36:18,724  INFO      Transcribing 2 segments for Everything_Reset_Sequence_-_Part_3.mp4
-2026-04-18 09:58:21,395  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_3.mp4  (1328s, 2 segments)
-2026-04-18 09:58:21,396  INFO      Stats updated: Everything_Reset_Sequence_-_Part_3.mp4 — 2.2s/MB  rate=2.5s/MB (9 samples)
-2026-04-18 09:58:21,396  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_3.json
-2026-04-18 09:58:21,526  INFO      START  nrt/Everything_Reset_Sequence_-_Part_4.mp4  (690 MB)
 2026-04-18 09:58:21,526  INFO      Splitting Everything_Reset_Sequence_-_Part_4.mp4 (690 MB) into 20-min segments
 2026-04-18 09:58:29,883  INFO      Split Everything_Reset_Sequence_-_Part_4.mp4 into 3 segments
 2026-04-18 09:58:29,883  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_4.mp4
+2026-04-18 10:27:32,564  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_4.mp4  (1751s, 3 segments)
+2026-04-18 10:27:32,565  INFO      Stats updated: Everything_Reset_Sequence_-_Part_4.mp4 — 2.4s/MB  rate=2.5s/MB (10 samples)
+2026-04-18 10:27:32,566  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_4.json
+2026-04-18 10:27:32,696  INFO      START  nrt/Everything_Reset_Sequence_-_Part_5.mp4  (618 MB)
+2026-04-18 10:27:32,697  INFO      Splitting Everything_Reset_Sequence_-_Part_5.mp4 (618 MB) into 20-min segments
+2026-04-18 10:27:38,996  INFO      Split Everything_Reset_Sequence_-_Part_5.mp4 into 3 segments
+2026-04-18 10:27:38,996  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_5.mp4
 ```
