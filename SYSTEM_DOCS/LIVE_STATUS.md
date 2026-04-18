@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 11:58:05 UTC**
+> Last update: **2026-04-18 12:03:05 UTC**
 
 ## Services
 | Service | Status |
@@ -25,25 +25,25 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4` (15 min) |
-| Queued | 5 |
-| Done | 44 / 59 |
+| Current job | `NRT_Fascial_Activation_Application_Method.mp4` (4 min) |
+| Queued | 4 |
+| Done | 45 / 62 |
 | Vectors in nrt_video_transcripts | 241 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 6.63 GB / 32.86 GB (20%) |
-| CPU | 95.4% |
-| Disk used | 80.1 GB / 322.3 GB (26%) |
-| Uptime | up 1 day, 6 hours, 22 minutes |
+| RAM used | 6.62 GB / 32.86 GB (20%) |
+| CPU | 94.6% |
+| Disk used | 82.1 GB / 322.3 GB (26%) |
+| Uptime | up 1 day, 6 hours, 27 minutes |
 
 ## Recent markers
+- `2026-04-18T11:58:17` **transcription_done** — NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4 complete (45/14)
+- `2026-04-18T11:58:17` **ingest_failed** — NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4 ingest FAILED
 - `2026-04-18T11:42:53` **transcription_done** — Miraculous_Sequence_-_Part_2.mp4 complete (43/14)
 - `2026-04-18T11:42:53` **ingest_failed** — Miraculous_Sequence_-_Part_2.mp4 ingest FAILED
 - `2026-04-18T11:23:01` **transcription_done** — Miraculous_Sequence_-_Part_1.mp4 complete (41/14)
-- `2026-04-18T11:23:01` **ingest_failed** — Miraculous_Sequence_-_Part_1.mp4 ingest FAILED
-- `2026-04-18T11:03:03` **transcription_done** — How_to_Reset_23_More_Muscles.mp4 complete (39/14)
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-18 11:23:01,133  INFO      Splitting Miraculous_Sequence_-_Part_2.mp4 (664 MB) into 20-min segments
-2026-04-18 11:23:08,008  INFO      Split Miraculous_Sequence_-_Part_2.mp4 into 2 segments
-2026-04-18 11:23:08,008  INFO      Transcribing 2 segments for Miraculous_Sequence_-_Part_2.mp4
-2026-04-18 11:42:53,123  INFO      DONE   nrt/Miraculous_Sequence_-_Part_2.mp4  (1192s, 2 segments)
-2026-04-18 11:42:53,125  INFO      Stats updated: Miraculous_Sequence_-_Part_2.mp4 — 1.7s/MB  rate=2.3s/MB (14 samples)
-2026-04-18 11:42:53,125  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Miraculous_Sequence_-_Part_2.json
-2026-04-18 11:42:53,256  INFO      START  nrt/NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4  (990 MB)
 2026-04-18 11:42:53,257  INFO      Splitting NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4 (990 MB) into 20-min segments
 2026-04-18 11:42:58,560  INFO      Split NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4 into 2 segments
 2026-04-18 11:42:58,560  INFO      Transcribing 2 segments for NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4
+2026-04-18 11:58:17,181  INFO      DONE   nrt/NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4  (924s, 2 segments)
+2026-04-18 11:58:17,183  INFO      Stats updated: NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4 — 0.9s/MB  rate=2.1s/MB (15 samples)
+2026-04-18 11:58:17,184  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.json
+2026-04-18 11:58:17,314  INFO      START  nrt/NRT_Fascial_Activation_Application_Method.mp4  (1871 MB)
+2026-04-18 11:58:17,315  INFO      Splitting NRT_Fascial_Activation_Application_Method.mp4 (1871 MB) into 20-min segments
+2026-04-18 11:58:27,604  INFO      Split NRT_Fascial_Activation_Application_Method.mp4 into 3 segments
+2026-04-18 11:58:27,605  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
 ```
