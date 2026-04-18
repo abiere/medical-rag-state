@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 13:28:29 UTC**
+> Last update: **2026-04-18 13:33:30 UTC**
 
 ## Services
 | Service | Status |
@@ -25,8 +25,8 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` (34 min) |
-| Queued | 1 |
+| Current job | `1.Upper_Body_Techniques.mp4` (1 min) |
+| Queued | 13 |
 | Done | 53 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
@@ -34,16 +34,16 @@
 | Metric | Value |
 |---|---|
 | RAM used | 6.65 GB / 32.86 GB (20%) |
-| CPU | 95.9% |
-| Disk used | 83.9 GB / 322.3 GB (27%) |
-| Uptime | up 1 day, 7 hours, 53 minutes |
+| CPU | 96.0% |
+| Disk used | 84.0 GB / 322.3 GB (27%) |
+| Uptime | up 1 day, 7 hours, 58 minutes |
 
 ## Recent markers
+- `2026-04-18T13:32:30.062230+00:00` **watchdog_restart** — transcription-queue hung (39 min stale) — restarted successfully
 - `2026-04-18T12:53:54` **transcription_done** — NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.mp4 complete (51/14)
 - `2026-04-18T12:53:54` **transcript_ingested** — NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.mp4 ingested into Qdrant
 - `2026-04-18T12:42:47` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (50/14)
 - `2026-04-18T12:42:46` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
-- `2026-04-18T12:28:31` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (48/14)
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-18 12:53:36,144  INFO      INGEST nrt/NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.mp4
-2026-04-18 12:53:54,719  INFO        [ingest] NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.json: 320 segments → 9 chunks
-2026-04-18 12:53:54,719  INFO        [ingest] Loading embedding model …
-2026-04-18 12:53:54,719  INFO        [ingest] Target collection: nrt_video_transcripts
-2026-04-18 12:53:54,719  INFO        [ingest]   Ingested chunk 9/9 for NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.mp4
-2026-04-18 12:53:54,719  INFO        [ingest] Done: 9 chunks ingested, 0 skipped (already exists)
 2026-04-18 12:53:54,849  INFO      START  nrt/1.Upper_Body_Techniques.mp4  (525 MB)
 2026-04-18 12:53:54,850  INFO      Splitting 1.Upper_Body_Techniques.mp4 (525 MB) into 20-min segments
 2026-04-18 12:54:06,632  INFO      Split 1.Upper_Body_Techniques.mp4 into 4 segments
 2026-04-18 12:54:06,632  INFO      Transcribing 4 segments for 1.Upper_Body_Techniques.mp4
+2026-04-18 13:32:30,109  INFO      ────────────────────────────────────────────────────────────
+2026-04-18 13:32:30,109  INFO      Transcription queue manager started
+2026-04-18 13:32:30,111  INFO      Startup scan: 13 untranscribed video(s) found, 12 new entry/entries added to queue
+2026-04-18 13:32:30,112  INFO      START  nrt/1.Upper_Body_Techniques.mp4  (525 MB)
+2026-04-18 13:32:30,112  INFO      Using existing segments for 1.Upper_Body_Techniques.mp4: 4 parts
+2026-04-18 13:32:30,112  INFO      Transcribing 4 segments for 1.Upper_Body_Techniques.mp4
 ```
