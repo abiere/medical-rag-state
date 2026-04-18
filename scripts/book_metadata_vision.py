@@ -577,9 +577,13 @@ def _save_metadata(state_path: Path,
     for src_field, dst_field in field_map.items():
         val = merged.get(src_field)
         if val is not None:
-            # Store year/date as string for consistency with other pipeline paths
             if src_field == "year":
                 val = str(val)
+            elif src_field == "authors":
+                if isinstance(val, list):
+                    val = ", ".join(str(a) for a in val)
+                else:
+                    val = str(val)
             bm[dst_field] = val
 
     bm["metadata_method"]  = "vision_api_merge"

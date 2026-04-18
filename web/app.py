@@ -2347,6 +2347,29 @@ async def _qdrant_count_source(
 
 # ── GET /library ───────────────────────────────────────────────────────────────
 
+def _get_metadata_incomplete_count() -> int:
+    """Return number of medical_library books that are missing isbn or title."""
+    cache_dir = BASE / "data" / "ingest_cache"
+    incomplete = 0
+    try:
+        for d in cache_dir.iterdir():
+            sp = d / "state.json"
+            if not sp.exists():
+                continue
+            try:
+                s = json.loads(sp.read_text())
+            except Exception:
+                continue
+            if s.get("collection") != "medical_library":
+                continue
+            bm = s.get("book_metadata", {})
+            if not bm.get("isbn") or not bm.get("title"):
+                incomplete += 1
+    except Exception:
+        pass
+    return incomplete
+
+
 def _render_dup_banner(groups: list) -> str:
     """Render the amber duplicates banner for /library. Returns '' if no groups."""
     if not groups:
@@ -2475,6 +2498,32 @@ async function resolveDup(keepHash, deleteHash) {{
 async def library_page():
     dup_groups = _find_duplicates()
     dup_banner = _render_dup_banner(dup_groups)
+    meta_incomplete = _get_metadata_incomplete_count()
+
+    meta_banner = ""
+    if meta_incomplete > 0:
+        n = meta_incomplete
+        hebben = "hebben" if n != 1 else "heeft"
+        boeken = "boeken" if n != 1 else "boek"
+        meta_banner = f"""
+  <!-- Collapsible metadata status banner -->
+  <div id="meta-status-section" style="margin-bottom:16px">
+    <div id="meta-status-banner"
+         style="background:#FAEEDA;border:1px solid #EF9F27;border-radius:8px;
+                padding:10px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer"
+         onclick="toggleMetaStatus()">
+      <span style="font-size:13px;color:#854F0B">
+        &#x26A0; {n} {boeken} {hebben} onvolledige metadata
+      </span>
+      <span id="meta-toggle-label" style="font-size:13px;color:#854F0B;font-weight:600">Bekijk &#x25BE;</span>
+    </div>
+    <div id="meta-status-body" style="display:none;border:1px solid #e5e7eb;border-top:none;
+         border-radius:0 0 8px 8px;background:#fff">
+      <div id="library-metadata-container" style="padding:16px">
+        <div style="color:#6b7280;font-size:13px">Laden\u2026</div>
+      </div>
+    </div>
+  </div>"""
 
     body = """
 <style>
@@ -3348,9 +3397,159 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+// ═══════════════════════════════════════════════════════════
+// METADATA STATUS SECTION (/library)
+// ═══════════════════════════════════════════════════════════
+let _libMetaOpen = false;
+
+function toggleMetaStatus() {
+  const body = document.getElementById('meta-status-body');
+  const lbl  = document.getElementById('meta-toggle-label');
+  if (!body) return;
+  _libMetaOpen = !_libMetaOpen;
+  body.style.display = _libMetaOpen ? 'block' : 'none';
+  if (lbl) lbl.innerHTML = _libMetaOpen ? 'Verberg &#x25B4;' : 'Bekijk &#x25BE;';
+  if (_libMetaOpen && !window._libMetaLoaded) loadLibraryMetadataStatus();
+}
+
+async function loadLibraryMetadataStatus() {
+  const cont = document.getElementById('library-metadata-container');
+  if (!cont) return;
+  cont.innerHTML = '<div style="color:#6b7280;font-size:13px">Laden\u2026</div>';
+  try {
+    const r = await fetch('/api/schemas/metadata');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const d = await r.json();
+    const books = d.books || [];
+    window._libMetaLoaded = true;
+
+    if (!books.length) {
+      cont.innerHTML = '<div style="color:#6b7280;font-size:13px">Geen boeken gevonden.</div>';
+      return;
+    }
+
+    const METHOD_LABEL = { 'vision_api_merge': 'Vision+API', 'tekst_extractie': 'Tekst' };
+
+    let html = '<table style="width:100%;border-collapse:collapse;font-size:13px">';
+    html += '<thead><tr style="background:#1A6B72;color:#fff">';
+    ['Titel', 'Auteurs', 'ISBN', 'Jaar', 'Bron', 'Status', 'Acties'].forEach(h => {
+      html += '<th style="padding:8px 12px;text-align:left;font-weight:600;white-space:nowrap">' + h + '</th>';
+    });
+    html += '</tr></thead><tbody>';
+
+    books.forEach((b, i) => {
+      const bh = b.book_hash || '';
+      let rowBg, statusCell;
+      if (!b.title) {
+        rowBg = '#fee2e2';
+        statusCell = '<span style="background:#dc2626;color:#fff;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">Geen titel</span>';
+      } else if (!b.isbn) {
+        rowBg = '#FAEEDA';
+        statusCell = '<span class="lib-isbn-status" style="background:#EF9F27;color:#fff;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">ISBN ontbreekt</span>';
+      } else if (b.needs_review && b.needs_review.length) {
+        rowBg = '#fef3c7';
+        statusCell = '<span style="background:#d97706;color:#fff;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">' + b.needs_review.length + ' velden</span>';
+      } else {
+        rowBg = i % 2 === 0 ? '#f0fdf4' : '#fff';
+        statusCell = '<span style="background:#16a34a;color:#fff;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">\u2713</span>';
+      }
+
+      const titleDisp   = b.title || '<em style="color:#9ca3af">' + (b.filename || '').substring(0,40) + '</em>';
+      const authorsDisp = (Array.isArray(b.authors) ? b.authors.join(', ') : (b.authors || '')).substring(0,40) || '\u2014';
+      const yearDisp    = b.year || '\u2014';
+      const method      = METHOD_LABEL[b.method] || b.method || '\u2014';
+
+      let isbnCell;
+      if (!b.isbn) {
+        isbnCell = '<div style="display:flex;gap:6px;align-items:center">'
+          + '<input type="text" class="lib-isbn-input" data-hash="' + bh + '"'
+          + ' placeholder="9780XXXXXXXXXX"'
+          + ' style="width:150px;font-size:12px;padding:4px 8px;border:1px solid #d1d5db;border-radius:5px;font-family:monospace">'
+          + '<button class="lib-enrich-btn" data-hash="' + bh + '"'
+          + ' onclick="enrichIsbnLib(this.dataset.hash)"'
+          + ' style="font-size:12px;padding:4px 10px;background:#1A6B72;color:#fff;'
+          + 'border:none;border-radius:6px;cursor:pointer;white-space:nowrap">'
+          + 'Opzoeken \u25b6</button>'
+          + '</div>';
+      } else {
+        isbnCell = '<span style="font-family:monospace">' + b.isbn + '</span>';
+      }
+
+      let actions = '<a href="/api/library/book/' + bh + '/view" target="_blank"'
+        + ' style="font-size:11px;padding:3px 8px;background:#f3f4f6;border:1px solid #d1d5db;'
+        + 'color:#374151;border-radius:5px;text-decoration:none;display:inline-block;margin-right:4px">'
+        + '&#x1F4C4; Bekijk</a>';
+      if (b.isbn) {
+        actions += '<a href="https://books.google.com/books?isbn=' + b.isbn + '" target="_blank"'
+          + ' style="font-size:11px;padding:3px 8px;background:#f3f4f6;border:1px solid #d1d5db;'
+          + 'color:#374151;border-radius:5px;text-decoration:none;display:inline-block;margin-right:4px">'
+          + '&#x1F517; Google Books</a>';
+        actions += '<a href="https://openlibrary.org/isbn/' + b.isbn + '" target="_blank"'
+          + ' style="font-size:11px;padding:3px 8px;background:#f3f4f6;border:1px solid #d1d5db;'
+          + 'color:#374151;border-radius:5px;text-decoration:none;display:inline-block">'
+          + '&#x1F4DA; OpenLibrary</a>';
+      }
+
+      html += '<tr data-lib-book-hash="' + bh + '"'
+        + ' style="background:' + rowBg + ';border-bottom:1px solid #e5e7eb">';
+      html += '<td style="padding:8px 12px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + (b.filename||'') + '">' + titleDisp + '</td>';
+      html += '<td style="padding:8px 12px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + authorsDisp + '</td>';
+      html += '<td style="padding:8px 12px">' + isbnCell + '</td>';
+      html += '<td style="padding:8px 12px;white-space:nowrap">' + yearDisp + '</td>';
+      html += '<td style="padding:8px 12px;white-space:nowrap">' + method + '</td>';
+      html += '<td style="padding:8px 12px">' + statusCell + '</td>';
+      html += '<td style="padding:8px 12px;white-space:nowrap">' + actions + '</td>';
+      html += '</tr>';
+    });
+    html += '</tbody></table>';
+    const complete = books.filter(b => b.complete).length;
+    const noIsbn   = books.filter(b => !b.isbn).length;
+    html += '<div style="margin-top:10px;font-size:12px;color:#6b7280">'
+      + books.length + ' boeken \u2014 ' + complete + ' volledig \u2014 ' + noIsbn + ' zonder ISBN</div>';
+    cont.innerHTML = html;
+  } catch(e) {
+    cont.innerHTML = '<div style="color:#dc2626;font-size:13px">Laden mislukt: ' + e + '</div>';
+  }
+}
+
+function enrichIsbnLib(hashVal) {
+  const input = document.querySelector('.lib-isbn-input[data-hash="' + hashVal + '"]');
+  const isbn  = input ? input.value.trim() : '';
+  if (!isbn) { alert('Vul een ISBN-13 in (13 cijfers)'); return; }
+  const btn = document.querySelector('.lib-enrich-btn[data-hash="' + hashVal + '"]');
+  if (btn) { btn.disabled = true; btn.textContent = 'Bezig\u2026'; }
+  fetch('/api/library/book/' + hashVal + '/enrich-isbn', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({isbn: isbn}),
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.error) {
+      alert('Fout: ' + d.error);
+      if (btn) { btn.disabled = false; btn.textContent = 'Opzoeken \u25b6'; }
+    } else {
+      const row = document.querySelector('[data-lib-book-hash="' + hashVal + '"]');
+      if (row) {
+        row.style.background = '#f0fdf4';
+        const sc = row.querySelector('.lib-isbn-status');
+        if (sc) sc.innerHTML = '<span style="color:#16a34a;font-size:12px">\u2713 ' + (d.title||'') + ' (' + (d.year||'') + ')</span>';
+      }
+      if (btn) btn.textContent = '\u2713 Bijgewerkt';
+      setTimeout(() => { window._libMetaLoaded = false; loadLibraryMetadataStatus(); }, 1800);
+    }
+  })
+  .catch(e => {
+    alert('Netwerkfout: ' + e);
+    if (btn) { btn.disabled = false; btn.textContent = 'Opzoeken \u25b6'; }
+  });
+}
 </script>"""
     if dup_banner:
         body = body.replace('<div class="wrap">', '<div class="wrap">\n  ' + dup_banner, 1)
+    if meta_banner:
+        body = body.replace('<div class="wrap">', '<div class="wrap">' + meta_banner, 1)
     return _page_shell("Bibliotheek", "/library", body)
 
 
@@ -4436,7 +4635,7 @@ async def api_schemas_metadata():
                 "filename":   s.get("filename", ""),
                 "book_hash":  s.get("book_hash", d.name),
                 "title":      bm.get("title") or "",
-                "authors":    bm.get("creator") or "",
+                "authors":    (", ".join(bm["creator"]) if isinstance(bm.get("creator"), list) else bm.get("creator") or ""),
                 "isbn":       bm.get("isbn") or "",
                 "year":       str(bm.get("date") or "")[:4],
                 "method":     bm.get("metadata_method") or "tekst_extractie",
@@ -4649,11 +4848,6 @@ async def settings_page():
              font-weight:600;color:#1A6B72;border-bottom:2px solid #1A6B72;margin-bottom:-1px">
       Parameters
     </button>
-    <button type="button" id="tab-schemas" onclick="switchSettingsTab('schemas')"
-      style="padding:10px 22px;border:none;background:none;cursor:pointer;font-size:14px;
-             font-weight:400;color:#6b7280;border-bottom:2px solid transparent;margin-bottom:-1px">
-      Schema's
-    </button>
     <button type="button" id="tab-ai" onclick="switchSettingsTab('ai')"
       style="padding:10px 22px;border:none;background:none;cursor:pointer;font-size:14px;
              font-weight:400;color:#6b7280;border-bottom:2px solid transparent;margin-bottom:-1px">
@@ -4774,31 +4968,6 @@ async def settings_page():
 
   </div><!-- /pane-params -->
 
-  <!-- TAB 2: Schema's -->
-  <div id="pane-schemas" style="display:none;max-width:960px">
-
-    <!-- Boek metadata status -->
-    <div class="section" style="margin-bottom:24px">
-      <div class="section-head">
-        <span class="section-title">Boek metadata status</span>
-        <button onclick="loadMetadataStatus()"
-          style="padding:6px 14px;background:#1A6B72;color:#fff;border:none;
-                 border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">
-          \u21bb Vernieuwen
-        </button>
-      </div>
-      <div id="metadata-status-container" style="padding:16px 24px">
-        <div style="color:#6b7280;font-size:13px">Laden\u2026</div>
-      </div>
-    </div>
-
-    <!-- Pipeline diagrams -->
-    <div id="diagrams-container">
-      <div style="color:#6b7280;font-size:13px;padding:20px 0">Schema's laden\u2026</div>
-    </div>
-
-  </div>
-
   <!-- TAB 3: AI Modellen -->
   <div id="pane-ai" style="display:none;max-width:880px">
 
@@ -4840,7 +5009,7 @@ async def settings_page():
 // TAB SWITCHING
 // ═══════════════════════════════════════════════════════════
 function switchSettingsTab(tab) {
-  ['params','schemas','ai'].forEach(t => {
+  ['params','ai'].forEach(t => {
     document.getElementById('pane-' + t).style.display = t === tab ? 'block' : 'none';
     const btn = document.getElementById('tab-' + t);
     const active = t === tab;
@@ -4848,10 +5017,6 @@ function switchSettingsTab(tab) {
     btn.style.color          = active ? '#1A6B72' : '#6b7280';
     btn.style.borderBottom   = active ? '2px solid #1A6B72' : '2px solid transparent';
   });
-  if (tab === 'schemas') {
-    if (!window._diagramsLoaded) loadDiagrams();
-    if (!window._metadataLoaded) loadMetadataStatus();
-  }
   if (tab === 'ai' && !window._aiLoaded) loadAiSettings();
 }
 
@@ -4925,152 +5090,6 @@ function showToast(msg, isError) {
     + 'background:' + (isError ? '#dc2626' : '#059669');
   document.body.appendChild(t);
   setTimeout(() => t.remove(), 2800);
-}
-
-// ═══════════════════════════════════════════════════════════
-// SCHEMA'S TAB — metadata status table
-// ═══════════════════════════════════════════════════════════
-function enrichIsbn(hashVal) {
-  const input = document.querySelector('.isbn-input[data-hash="' + hashVal + '"]');
-  const isbn = input ? input.value.trim() : '';
-  if (!isbn) { alert('Vul een ISBN-13 in (13 cijfers)'); return; }
-  const btn = document.querySelector('.enrich-btn[data-hash="' + hashVal + '"]');
-  if (btn) { btn.disabled = true; btn.textContent = 'Bezig\u2026'; }
-  fetch('/api/library/book/' + hashVal + '/enrich-isbn', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({isbn: isbn}),
-  })
-  .then(r => r.json())
-  .then(d => {
-    if (d.error) {
-      alert('Fout: ' + d.error);
-      if (btn) { btn.disabled = false; btn.textContent = 'Opzoeken \u25b6'; }
-    } else {
-      const row = document.querySelector('[data-book-hash="' + hashVal + '"]');
-      if (row) {
-        row.style.background = '#f0fdf4';
-        const statusCell = row.querySelector('.isbn-status');
-        if (statusCell) {
-          statusCell.innerHTML = '<span style="color:#16a34a;font-size:12px">\u2713 '
-            + (d.title || '') + ' (' + (d.year || '') + ')</span>';
-        }
-      }
-      if (btn) { btn.textContent = '\u2713 Bijgewerkt'; }
-      setTimeout(() => { window._metadataLoaded = false; loadMetadataStatus(); }, 1800);
-    }
-  })
-  .catch(e => {
-    alert('Netwerkfout: ' + e);
-    if (btn) { btn.disabled = false; btn.textContent = 'Opzoeken \u25b6'; }
-  });
-}
-
-async function loadMetadataStatus() {
-  const cont = document.getElementById('metadata-status-container');
-  cont.innerHTML = '<div style="color:#6b7280;font-size:13px">Laden\u2026</div>';
-  try {
-    const r = await fetch('/api/schemas/metadata');
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    const d = await r.json();
-    const books = d.books || [];
-    window._metadataLoaded = true;
-
-    if (!books.length) {
-      cont.innerHTML = '<div style="color:#6b7280;font-size:13px">Geen boeken gevonden.</div>';
-      return;
-    }
-
-    const METHOD_LABEL = {
-      'vision_api_merge': 'Vision+API',
-      'tekst_extractie':  'Tekst',
-    };
-
-    let html = '<table style="width:100%;border-collapse:collapse;font-size:13px">';
-    html += '<thead><tr style="background:#1A6B72;color:#fff">';
-    ['Titel', 'Auteurs', 'ISBN', 'Jaar', 'Bron', 'Status', 'Acties'].forEach(h => {
-      html += '<th style="padding:8px 12px;text-align:left;font-weight:600;white-space:nowrap">' + h + '</th>';
-    });
-    html += '</tr></thead><tbody>';
-
-    books.forEach((b, i) => {
-      const bh = b.book_hash || '';
-      let rowBg, statusCell;
-      if (!b.title) {
-        rowBg = '#fee2e2';
-        statusCell = '<span style="background:#dc2626;color:#fff;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">Geen titel</span>';
-      } else if (!b.isbn) {
-        rowBg = '#FAEEDA';
-        statusCell = '<span class="isbn-status" style="background:#EF9F27;color:#fff;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">ISBN ontbreekt</span>';
-      } else if (b.needs_review && b.needs_review.length) {
-        rowBg = '#fef3c7';
-        statusCell = '<span style="background:#d97706;color:#fff;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">' + b.needs_review.length + ' velden</span>';
-      } else {
-        rowBg = i % 2 === 0 ? '#f0fdf4' : '#fff';
-        statusCell = '<span style="background:#16a34a;color:#fff;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">\u2713</span>';
-      }
-
-      const titleDisp  = b.title || '<em style="color:#9ca3af">' + (b.filename || '').substring(0,40) + '</em>';
-      const authorsDisp = (b.authors || '').substring(0, 40) || '\u2014';
-      const yearDisp   = b.year || '\u2014';
-      const method     = METHOD_LABEL[b.method] || b.method || '\u2014';
-
-      // ISBN cell: input field for books without ISBN, plain text otherwise
-      let isbnCell;
-      if (!b.isbn) {
-        isbnCell = '<div style="display:flex;gap:6px;align-items:center">'
-          + '<input type="text" class="isbn-input" data-hash="' + bh + '"'
-          + ' placeholder="9780XXXXXXXXXX"'
-          + ' style="width:150px;font-size:12px;padding:4px 8px;'
-          + 'border:1px solid #d1d5db;border-radius:5px;font-family:monospace">'
-          + '<button class="enrich-btn" data-hash="' + bh + '"'
-          + ' onclick="enrichIsbn(this.dataset.hash)"'
-          + ' style="font-size:12px;padding:4px 10px;background:#1A6B72;color:#fff;'
-          + 'border:none;border-radius:6px;cursor:pointer;white-space:nowrap">'
-          + 'Opzoeken \u25b6</button>'
-          + '</div>';
-      } else {
-        isbnCell = '<span style="font-family:monospace">' + b.isbn + '</span>';
-      }
-
-      // Actions cell
-      let actions = '<a href="/api/library/book/' + bh + '/view" target="_blank"'
-        + ' style="font-size:11px;padding:3px 8px;background:#f3f4f6;border:1px solid #d1d5db;'
-        + 'color:#374151;border-radius:5px;text-decoration:none;display:inline-block;margin-right:4px">'
-        + '&#x1F4C4; Bekijk</a>';
-      if (b.isbn) {
-        actions += '<a href="https://books.google.com/books?isbn=' + b.isbn + '" target="_blank"'
-          + ' style="font-size:11px;padding:3px 8px;background:#f3f4f6;border:1px solid #d1d5db;'
-          + 'color:#374151;border-radius:5px;text-decoration:none;display:inline-block;margin-right:4px">'
-          + '&#x1F517; Google Books</a>';
-        actions += '<a href="https://openlibrary.org/isbn/' + b.isbn + '" target="_blank"'
-          + ' style="font-size:11px;padding:3px 8px;background:#f3f4f6;border:1px solid #d1d5db;'
-          + 'color:#374151;border-radius:5px;text-decoration:none;display:inline-block">'
-          + '&#x1F4DA; OpenLibrary</a>';
-      }
-
-      html += '<tr data-book-hash="' + bh + '"'
-        + ' style="background:' + rowBg + ';border-bottom:1px solid #e5e7eb">';
-      html += '<td style="padding:8px 12px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + (b.filename||'') + '">' + titleDisp + '</td>';
-      html += '<td style="padding:8px 12px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + authorsDisp + '</td>';
-      html += '<td style="padding:8px 12px">' + isbnCell + '</td>';
-      html += '<td style="padding:8px 12px;white-space:nowrap">' + yearDisp + '</td>';
-      html += '<td style="padding:8px 12px;white-space:nowrap">' + method + '</td>';
-      html += '<td style="padding:8px 12px">' + statusCell + '</td>';
-      html += '<td style="padding:8px 12px;white-space:nowrap">' + actions + '</td>';
-      html += '</tr>';
-    });
-    html += '</tbody></table>';
-    const complete   = books.filter(b => b.complete).length;
-    const noIsbn     = books.filter(b => !b.isbn).length;
-    html += '<div style="margin-top:10px;font-size:12px;color:#6b7280">'
-      + books.length + ' boeken \u2014 '
-      + complete + ' volledig \u2014 '
-      + noIsbn + ' zonder ISBN</div>';
-    cont.innerHTML = html;
-  } catch(e) {
-    cont.innerHTML = '<div style="color:#dc2626;font-size:13px">Laden mislukt: ' + e + '</div>';
-  }
 }
 
 // ═══════════════════════════════════════════════════════════
