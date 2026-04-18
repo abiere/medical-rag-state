@@ -398,8 +398,14 @@ def _extract_pdf_metadata(pdf_path: Path) -> dict:
             meta["creator"] = raw["author"]
         if raw.get("producer"):
             meta["publisher"] = raw["producer"]
-        if raw.get("creationDate"):
-            meta["date"] = raw["creationDate"][:4]
+        raw_date = raw.get("creationDate", "") or raw.get("modDate", "")
+        if raw_date:
+            date_clean = re.sub(r"^D:", "", raw_date.strip())
+            m = re.match(r"(\d{4})", date_clean)
+            if m:
+                year = m.group(1)
+                if 1990 <= int(year) <= 2030:
+                    meta["date"] = year
         return meta
     except Exception:
         return {}

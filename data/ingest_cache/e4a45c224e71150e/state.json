@@ -56,9 +56,9 @@
   "book_metadata": {
     "title": "19537866-5a0d-41d0-8a78-01ff2eac536a.jpg",
     "publisher": "macOS Version 26.3.1 (a) (Build 25D771280a) Quartz PDFContext, AppendMode 1.1",
-    "date": "D:20"
+    "date": "2026"
   },
   "status": "permanently_failed",
   "permanently_failed_at": "2026-04-18T08:34:28.945014+00:00",
-  "permanently_failed_reason": "Parse failed 3 times — manual intervention required"
+  "permanently_failed_reason": "Parse failed 3 times \u2014 manual intervention required"
 }
