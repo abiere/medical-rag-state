@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 09:02:32 UTC**
+> Last update: **2026-04-18 09:07:33 UTC**
 
 ## Services
 | Service | Status |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `Everything_Reset_Sequence_-_Part_1.mp4` (16 min) |
+| Current job | `Everything_Reset_Sequence_-_Part_1.mp4` (21 min) |
 | Queued | 13 |
 | Done | 24 / 40 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 6.57 GB / 32.86 GB (20%) |
-| CPU | 95.3% |
+| RAM used | 6.59 GB / 32.86 GB (20%) |
+| CPU | 99.9% |
 | Disk used | 74.7 GB / 322.3 GB (24%) |
-| Uptime | up 1 day, 3 hours, 27 minutes |
+| Uptime | up 1 day, 3 hours, 32 minutes |
 
 ## Recent markers
 - `2026-04-18T08:46:29` **transcription_done** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 complete (23/14)
