@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 01:32:19 UTC**
+> Last update: **2026-04-18 01:37:19 UTC**
 
 ## Services
 | Service | Status |
@@ -14,10 +14,10 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `dokumen.pub_atlas-of-acupuncture-1nbsped-0443100284-9780443100284.pdf` (110 min) |
+| Current job | `dokumen.pub_atlas-of-acupuncture-1nbsped-0443100284-9780443100284.pdf` (115 min) |
 | Queued | 9 |
 | Total books | 37 |
-| Ingested | 64 |
+| Ingested | 65 |
 | Vectors in medical_library | 13771 |
 | Images pending approval | 2026 |
 | Images approved | 0 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (21 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (26 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 16.4 GB / 32.86 GB (50%) |
-| CPU | 95.5% |
+| RAM used | 10.36 GB / 32.86 GB (32%) |
+| CPU | 100.0% |
 | Disk used | 70.7 GB / 322.3 GB (23%) |
-| Uptime | up 19 hours, 56 minutes |
+| Uptime | up 20 hours, 1 minute |
 
 ## Recent markers
 - `2026-04-18T01:11:19.034579+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
