@@ -857,6 +857,135 @@ class IntegrationTests(unittest.TestCase):
         self.assertTrue(len(key) > 0,
                         "ANTHROPIC_API_KEY is niet ingesteld in de omgeving")
 
+    def _check_js_no_literal_newlines(self, path: str):
+        """Fetch page and assert no literal newlines appear inside JS single- or double-quoted strings.
+
+        Template literals (backtick strings), regex literals, and comments are correctly
+        skipped so they don't produce false positives.
+        """
+        import re
+        conn = http.client.HTTPConnection("localhost", 8000, timeout=10)
+        conn.request("GET", path)
+        resp = conn.getresponse()
+        html = resp.read().decode()
+        self.assertEqual(resp.status, 200, f"Pagina {path} gaf {resp.status}")
+        scripts = re.findall(r"<script[^>]*>(.*?)</script>", html, re.DOTALL)
+        # Characters after which a '/' is a regex literal, not division
+        REGEX_STARTERS = set("=({[!&|,;:?~^<>+-*/%")
+        for block_idx, script in enumerate(scripts):
+            if not script.strip():
+                continue
+            # States: normal, single, double, template, regex, regex_class,
+            #         line_comment, block_comment
+            state = "normal"
+            i = 0
+            n = len(script)
+            last_nonws = ""  # last non-whitespace char seen in normal state
+            while i < n:
+                ch = script[i]
+                if state == "normal":
+                    if ch == "/" and i + 1 < n:
+                        nxt = script[i + 1]
+                        if nxt == "/":
+                            state = "line_comment"
+                            i += 2
+                            continue
+                        elif nxt == "*":
+                            state = "block_comment"
+                            i += 2
+                            continue
+                        elif last_nonws in REGEX_STARTERS or last_nonws == "":
+                            state = "regex"
+                            i += 1
+                            continue
+                    if ch == "`":
+                        state = "template"
+                    elif ch == "'":
+                        state = "single"
+                    elif ch == '"':
+                        state = "double"
+                    if not ch.isspace():
+                        last_nonws = ch
+                elif state == "single":
+                    if ch == "\\":
+                        i += 2
+                        continue
+                    elif ch == "'":
+                        state = "normal"
+                        last_nonws = "'"
+                    elif ch == "\n":
+                        ctx = script[max(0, i - 60):i + 60].replace("\n", "↵")
+                        self.fail(
+                            f"Literale newline in JS single-quoted string op {path} "
+                            f"(script blok {block_idx + 1}): ...{ctx}..."
+                        )
+                elif state == "double":
+                    if ch == "\\":
+                        i += 2
+                        continue
+                    elif ch == '"':
+                        state = "normal"
+                        last_nonws = '"'
+                    elif ch == "\n":
+                        ctx = script[max(0, i - 60):i + 60].replace("\n", "↵")
+                        self.fail(
+                            f"Literale newline in JS double-quoted string op {path} "
+                            f"(script blok {block_idx + 1}): ...{ctx}..."
+                        )
+                elif state == "template":
+                    if ch == "\\":
+                        i += 2
+                        continue
+                    elif ch == "`":
+                        state = "normal"
+                        last_nonws = "`"
+                    # literal newlines in template literals are valid — no check
+                elif state == "regex":
+                    if ch == "\\":
+                        i += 2
+                        continue
+                    elif ch == "[":
+                        state = "regex_class"
+                    elif ch == "/":
+                        state = "normal"
+                        last_nonws = "/"
+                elif state == "regex_class":
+                    if ch == "\\":
+                        i += 2
+                        continue
+                    elif ch == "]":
+                        state = "regex"
+                elif state == "line_comment":
+                    if ch == "\n":
+                        state = "normal"
+                elif state == "block_comment":
+                    if ch == "*" and i + 1 < n and script[i + 1] == "/":
+                        state = "normal"
+                        i += 2
+                        continue
+                i += 1
+
+    def test_js_no_literal_newlines_library(self):
+        """Geen literale newlines in JS string literals op /library — veroorzaken SyntaxError"""
+        try:
+            self._check_js_no_literal_newlines("/library")
+        except ConnectionRefusedError:
+            self.fail("Verbinding geweigerd op poort 8000")
+
+    def test_js_no_literal_newlines_images(self):
+        """Geen literale newlines in JS string literals op /images"""
+        try:
+            self._check_js_no_literal_newlines("/images")
+        except ConnectionRefusedError:
+            self.fail("Verbinding geweigerd op poort 8000")
+
+    def test_js_no_literal_newlines_videos(self):
+        """Geen literale newlines in JS string literals op /videos"""
+        try:
+            self._check_js_no_literal_newlines("/videos")
+        except ConnectionRefusedError:
+            self.fail("Verbinding geweigerd op poort 8000")
+
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # RUNNER
