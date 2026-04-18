@@ -1,7 +1,7 @@
 # CONTEXT — Session Loader
 > Lees dit aan het begin van elke sessie. Max 150 regels.
 > Volledige technische detail: SYSTEM_DOCS/TECHNICAL.md
-> **Auto-gegenereerd:** 2026-04-18 15:59 UTC
+> **Auto-gegenereerd:** 2026-04-18 16:01 UTC
 
 ## Wat dit systeem is
 Privé, volledig lokaal RAG-systeem voor medische en acupunctuurliteratuur.
@@ -32,7 +32,7 @@ Alleen via Tailscale (100.66.194.55). Outputs: behandelprotocollen, blogteksten,
 ## Qdrant collecties (stand 2026-04-18)
 | Collectie | Vectors | Gebruik |
 |---|---|---|
-| medical_library | 18.006 | Boekchunks (PDF/EPUB) |
+| medical_library | 17.524 | Boekchunks (PDF/EPUB) |
 | nrt_curriculum | 425 | NRT curriculum (Lawrence Woods) |
 | qat_curriculum | 125 | QAT curriculum |
 | rlt_flexbeam | 160 | Red Light Therapy docs |
