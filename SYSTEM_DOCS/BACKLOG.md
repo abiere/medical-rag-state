@@ -1,8 +1,25 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-18 — Bug fixes Pipeline A + volledig backfill 35 boeken + Schema's tab
+> Laatste update: 2026-04-18 — Handmatige ISBN invoer + PDF bekijken + externe links in Schema's tab
 
 ---
+
+## ✅ Afgerond — 2026-04-18 (sessie 15)
+
+- [x] **Feature 1: Handmatige ISBN invoer in Schema's tab**
+      - Amber rijen (oranje) voor 11 boeken zonder ISBN — ISBN ontbreekt badge
+      - Input veld + "Opzoeken ▶" knop per amber rij (data-* attribuut pattern)
+      - `POST /api/library/book/{hash}/enrich-isbn` endpoint: valideert ISBN-13, Google Books + OpenLibrary, mergt metadata, slaat op in state.json + book_classifications.json
+      - Inline row update na succesvolle opzoeking, automatisch herladen na 1.8s
+      - Foutmeldingen: ongeldig ISBN, niet gevonden in beide APIs
+
+- [x] **Feature 2: PDF bekijken + externe links**
+      - `GET /api/library/book/{hash}/view` endpoint: serveert PDF inline (Content-Disposition: inline), EPUB als application/epub+zip
+      - "📄 Bekijk" link opent in nieuwe tab (geen JS nodig, puur `<a href target=_blank>`)
+      - "🔗 Google Books" + "📚 OpenLibrary" links per rij (alleen zichtbaar als ISBN bekend)
+      - HTML entities voor emoji (&#x1F4C4; etc.) — omzeilt Python surrogate encoding bug
+
+- [x] **38/38 tests geslaagd**
 
 ## ✅ Afgerond — 2026-04-18 (sessie 14)
 
