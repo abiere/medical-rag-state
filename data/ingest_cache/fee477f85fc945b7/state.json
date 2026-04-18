@@ -56,10 +56,38 @@
   "parse_retry_count": 0,
   "book_metadata": {
     "title": "Energetic Kinesiology",
-    "creator": "Charles Krebs & Tania O\u2019Neill Mcgowan",
-    "publisher": "calibre 3.40.1 [https://calibre-ebook.com]",
-    "date": "2019",
+    "creator": [
+      "Charles Krebs"
+    ],
+    "publisher": "Handspring Publishing",
+    "date": "2013",
     "isbn": "9781909141032",
-    "isbn_lookup_source": "google_books"
+    "isbn_lookup_source": "google_books",
+    "subtitle": "Principles and Practice",
+    "edition_number": 1,
+    "edition_label": "First published",
+    "cover_url": "https://covers.openlibrary.org/b/id/7719843-M.jpg",
+    "subjects": [
+      "Kinesiology",
+      "Energy medicine"
+    ],
+    "metadata_method": "vision_api_merge",
+    "metadata_sources": {
+      "gemini": true,
+      "google": false,
+      "openlibrary": true
+    },
+    "needs_review": [
+      "pages",
+      "description",
+      "language"
+    ],
+    "confidence": {
+      "title": "high",
+      "authors": "high",
+      "edition": "high",
+      "year": "high",
+      "isbn": "high"
+    }
   }
 }

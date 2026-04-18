@@ -55,11 +55,40 @@
   "image_extraction_enabled": true,
   "parse_retry_count": 0,
   "book_metadata": {
-    "publisher": "ABBYY FineReader 12",
+    "publisher": "Noigroup Publications",
     "date": "2017",
     "isbn": "9780648022701",
     "title": "Explain Pain Supercharged",
-    "creator": "G. Lorimer Moseley, David Sheridan Butler",
-    "isbn_lookup_source": "google_books"
+    "creator": [
+      "David Butler;Lorimer Moseley"
+    ],
+    "isbn_lookup_source": "google_books",
+    "subtitle": "The clinician's manual",
+    "edition_number": 1,
+    "edition_label": "First Edition",
+    "pages": 238,
+    "cover_url": "https://covers.openlibrary.org/b/id/12385427-M.jpg",
+    "subjects": [
+      "Health",
+      "Medicine"
+    ],
+    "metadata_method": "vision_api_merge",
+    "metadata_sources": {
+      "gemini": true,
+      "google": false,
+      "openlibrary": true
+    },
+    "needs_review": [
+      "description",
+      "language"
+    ],
+    "confidence": {
+      "title": "high",
+      "authors": "high",
+      "edition": "high",
+      "year": "high",
+      "isbn": "high",
+      "publisher": "high"
+    }
   }
 }

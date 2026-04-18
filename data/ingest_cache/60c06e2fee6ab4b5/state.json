@@ -55,29 +55,42 @@
   "image_extraction_enabled": true,
   "parse_retry_count": 0,
   "book_metadata": {
-    "publisher": "Adobe Acrobat Pro 11.0.0 Paper Capture Plug-in",
-    "date": "D",
+    "publisher": "Churchill Livingstone",
+    "date": "1995",
     "metadata_method": "vision_api_merge",
     "metadata_sources": {
-      "gemini": false,
+      "gemini": true,
       "google": false,
-      "openlibrary": false
+      "openlibrary": true
     },
     "needs_review": [
-      "title",
-      "subtitle",
-      "authors",
       "edition_number",
       "edition_label",
-      "year",
-      "isbn_13",
-      "publisher",
-      "pages",
       "description",
-      "cover_url",
-      "language",
-      "subjects"
+      "language"
     ],
-    "confidence": {}
+    "confidence": {
+      "title": "high",
+      "authors": "high",
+      "edition": "none",
+      "year": "high",
+      "isbn": "low",
+      "publisher": "high"
+    },
+    "title": "Acupuncture Point Combinations",
+    "subtitle": "The Key to Clinical Success",
+    "creator": [
+      "Jeremy Ross"
+    ],
+    "isbn": "9780443050060",
+    "pages": 504,
+    "cover_url": "https://covers.openlibrary.org/b/id/284721-M.jpg",
+    "subjects": [
+      "Acupuncture",
+      "Acupuncture points",
+      "Classification",
+      "Methods",
+      "Acupuncture Points"
+    ]
   }
 }

@@ -55,13 +55,43 @@
   "image_extraction_enabled": true,
   "parse_retry_count": 0,
   "book_metadata": {
-    "title": "Touch for Health The Complete Edition A Practical Guide to Natural Health With Acupressure Touch nodrm",
-    "creator": "Unknown",
+    "title": "Touch for Health",
+    "creator": [
+      "Matthew Thie"
+    ],
     "identifier": "d8a5622c-f598-40d3-b48c-f4124054795b",
     "language": "en",
     "isbn": "9780875168715",
     "date": "2012",
     "publisher": "DeVorss & Company",
-    "isbn_lookup_source": "openlibrary"
+    "isbn_lookup_source": "openlibrary",
+    "subtitle": "The Complete Edition A Practical Guide to Natural",
+    "cover_url": "https://covers.openlibrary.org/b/id/7760513-M.jpg",
+    "subjects": [
+      "Massage",
+      "Acupuncture"
+    ],
+    "metadata_method": "vision_api_merge",
+    "metadata_sources": {
+      "gemini": true,
+      "google": false,
+      "openlibrary": true
+    },
+    "needs_review": [
+      "edition_number",
+      "edition_label",
+      "isbn_13",
+      "pages",
+      "description",
+      "language"
+    ],
+    "confidence": {
+      "title": "high",
+      "authors": "none",
+      "edition": "none",
+      "year": "none",
+      "isbn": "none",
+      "publisher": "none"
+    }
   }
 }

@@ -55,8 +55,12 @@
   "image_extraction_enabled": true,
   "parse_retry_count": 0,
   "book_metadata": {
-    "title": "Quantum-Touch 2.0 - The New Human",
-    "creator": "Wickhorst Ph.D., Vickie",
+    "title": "Quantum-Touch 2.0 The New Human",
+    "creator": [
+      "Gordon",
+      "Duffield",
+      "Wickhorst"
+    ],
     "publisher": "North Atlantic Books",
     "date": "2013-02-12",
     "asin": "B007RG4JT8",
@@ -68,14 +72,10 @@
       "openlibrary": false
     },
     "needs_review": [
-      "title",
-      "subtitle",
-      "authors",
       "edition_number",
       "edition_label",
       "year",
       "isbn_13",
-      "publisher",
       "pages",
       "description",
       "cover_url",
@@ -83,11 +83,13 @@
       "subjects"
     ],
     "confidence": {
-      "title": "none",
-      "authors": "none",
+      "title": "high",
+      "authors": "high",
       "edition": "none",
       "year": "none",
-      "isbn": "none"
-    }
+      "isbn": "none",
+      "publisher": "high"
+    },
+    "subtitle": "Discovering and Becoming"
   }
 }

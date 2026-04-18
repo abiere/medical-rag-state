@@ -56,10 +56,41 @@
   "parse_retry_count": 0,
   "book_metadata": {
     "title": "The Spark in the Machine",
-    "creator": "Keown, Daniel.",
-    "publisher": "Adobe PDF Library 10.0.1",
-    "date": "2016",
+    "creator": [
+      "Daniel Keown"
+    ],
+    "publisher": "Singing Dragon",
+    "date": "2014",
     "isbn": "9781848191969",
-    "isbn_lookup_source": "google_books"
+    "isbn_lookup_source": "google_books",
+    "subtitle": "How the Science of Acupuncture Explains the Mysteries of Western Medicine",
+    "edition_number": 1,
+    "edition_label": "First Edition",
+    "pages": 294,
+    "cover_url": "https://covers.openlibrary.org/b/id/14371211-M.jpg",
+    "subjects": [
+      "Acupuncture",
+      "Chinese Medicine",
+      "Integrative medicine",
+      "Medicine, chinese",
+      "Alternative medicine"
+    ],
+    "metadata_method": "vision_api_merge",
+    "metadata_sources": {
+      "gemini": true,
+      "google": false,
+      "openlibrary": true
+    },
+    "needs_review": [
+      "description",
+      "language"
+    ],
+    "confidence": {
+      "title": "high",
+      "authors": "high",
+      "edition": "medium",
+      "year": "high",
+      "isbn": "high"
+    }
   }
 }

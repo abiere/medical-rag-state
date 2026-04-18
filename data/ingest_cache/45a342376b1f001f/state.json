@@ -55,11 +55,40 @@
   "image_extraction_enabled": true,
   "parse_retry_count": 0,
   "book_metadata": {
-    "publisher": "Adobe PDF Library 15.0",
+    "publisher": "Handspring Publishing",
     "date": "2018",
     "isbn": "9781909141902",
     "title": "Mobilizing the Myofascial System",
-    "creator": "Doreen Killens",
-    "isbn_lookup_source": "openlibrary"
+    "creator": [
+      "Doreen Killens"
+    ],
+    "isbn_lookup_source": "openlibrary",
+    "subtitle": "A clinical guide to assessment and treatment of myofascial dysfunctions",
+    "cover_url": "https://covers.openlibrary.org/b/id/14800015-M.jpg",
+    "subjects": [
+      "Physical therapy",
+      "Face, diseases"
+    ],
+    "metadata_method": "vision_api_merge",
+    "metadata_sources": {
+      "gemini": true,
+      "google": false,
+      "openlibrary": true
+    },
+    "needs_review": [
+      "edition_number",
+      "edition_label",
+      "pages",
+      "description",
+      "language"
+    ],
+    "confidence": {
+      "title": "high",
+      "authors": "high",
+      "edition": "none",
+      "year": "high",
+      "isbn": "high",
+      "publisher": "high"
+    }
   }
 }

@@ -55,11 +55,46 @@
   "image_extraction_enabled": true,
   "parse_retry_count": 0,
   "book_metadata": {
-    "publisher": "ABBYY FineReader 9.0 Professional Edition",
-    "date": "2010",
+    "publisher": "North Atlantic Books",
+    "date": "1995",
     "isbn": "9781556431838",
-    "title": "An Introduction to Craniosacral Therapy: Anatomy, Function, and Treatment",
-    "creator": "Don Cohen",
-    "isbn_lookup_source": "google_books"
+    "title": "An Introduction to Craniosacral Therapy",
+    "creator": [
+      "Don Cohen"
+    ],
+    "isbn_lookup_source": "google_books",
+    "subtitle": "Anatomy, Function, and Treatment",
+    "pages": 115,
+    "cover_url": "https://covers.openlibrary.org/b/id/777345-M.jpg",
+    "subjects": [
+      "Central nervous system",
+      "Cerebrospinal fluid",
+      "Craniosacral therapy",
+      "Methods",
+      "Osteopathic medicine",
+      "Craniology",
+      "Cerebrospinal Fluid",
+      "Central Nervous System",
+      "Osteopathic Medicine"
+    ],
+    "metadata_method": "vision_api_merge",
+    "metadata_sources": {
+      "gemini": true,
+      "google": false,
+      "openlibrary": true
+    },
+    "needs_review": [
+      "edition_number",
+      "edition_label",
+      "description",
+      "language"
+    ],
+    "confidence": {
+      "title": "high",
+      "authors": "high",
+      "edition": "high",
+      "year": "high",
+      "isbn": "high"
+    }
   }
 }

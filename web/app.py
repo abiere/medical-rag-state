@@ -4305,6 +4305,48 @@ async def api_settings_post(request: Request):
     _save_settings_cfg(current)
     return {"ok": True}
 
+# ── GET /api/schemas/metadata ─────────────────────────────────────────────────
+
+@app.get("/api/schemas/metadata")
+async def api_schemas_metadata():
+    """Return metadata status for all medical_library books."""
+    import sys as _sys
+    _sys.path.insert(0, str(BASE / "scripts"))
+    cache_dir = BASE / "data" / "ingest_cache"
+    rows = []
+    try:
+        for d in sorted(cache_dir.iterdir()):
+            sp = d / "state.json"
+            if not sp.exists():
+                continue
+            try:
+                s = json.loads(sp.read_text())
+            except Exception:
+                continue
+            if s.get("collection") != "medical_library":
+                continue
+            bm = s.get("book_metadata", {})
+            nr = bm.get("needs_review", [])
+            rows.append({
+                "filename":  s.get("filename", ""),
+                "title":     bm.get("title") or "",
+                "authors":   bm.get("creator") or "",
+                "isbn":      bm.get("isbn") or "",
+                "year":      str(bm.get("date") or "")[:4],
+                "method":    bm.get("metadata_method") or "tekst_extractie",
+                "sources":   bm.get("metadata_sources") or {},
+                "needs_review": nr,
+                "complete":  len(nr) == 0,
+            })
+        # Sort: needs_review first (amber), no title (red), complete last (green)
+        rows.sort(key=lambda r: (
+            0 if not r["title"] else (1 if r["needs_review"] else 2)
+        ))
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
+    return {"books": rows, "total": len(rows)}
+
+
 # ── GET/POST /api/ai/settings ─────────────────────────────────────────────────
 
 AI_SETTINGS_PATH = BASE / "config" / "ai_settings.json"
@@ -4627,10 +4669,28 @@ async def settings_page():
   </div><!-- /pane-params -->
 
   <!-- TAB 2: Schema's -->
-  <div id="pane-schemas" style="display:none;max-width:880px">
+  <div id="pane-schemas" style="display:none;max-width:960px">
+
+    <!-- Boek metadata status -->
+    <div class="section" style="margin-bottom:24px">
+      <div class="section-head">
+        <span class="section-title">Boek metadata status</span>
+        <button onclick="loadMetadataStatus()"
+          style="padding:6px 14px;background:#1A6B72;color:#fff;border:none;
+                 border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">
+          \u21bb Vernieuwen
+        </button>
+      </div>
+      <div id="metadata-status-container" style="padding:16px 24px">
+        <div style="color:#6b7280;font-size:13px">Laden\u2026</div>
+      </div>
+    </div>
+
+    <!-- Pipeline diagrams -->
     <div id="diagrams-container">
       <div style="color:#6b7280;font-size:13px;padding:20px 0">Schema's laden\u2026</div>
     </div>
+
   </div>
 
   <!-- TAB 3: AI Modellen -->
@@ -4682,7 +4742,10 @@ function switchSettingsTab(tab) {
     btn.style.color          = active ? '#1A6B72' : '#6b7280';
     btn.style.borderBottom   = active ? '2px solid #1A6B72' : '2px solid transparent';
   });
-  if (tab === 'schemas' && !window._diagramsLoaded) loadDiagrams();
+  if (tab === 'schemas') {
+    if (!window._diagramsLoaded) loadDiagrams();
+    if (!window._metadataLoaded) loadMetadataStatus();
+  }
   if (tab === 'ai' && !window._aiLoaded) loadAiSettings();
 }
 
@@ -4759,6 +4822,74 @@ function showToast(msg, isError) {
 }
 
 // ═══════════════════════════════════════════════════════════
+// SCHEMA'S TAB — metadata status table
+// ═══════════════════════════════════════════════════════════
+async function loadMetadataStatus() {
+  const cont = document.getElementById('metadata-status-container');
+  cont.innerHTML = '<div style="color:#6b7280;font-size:13px">Laden\u2026</div>';
+  try {
+    const r = await fetch('/api/schemas/metadata');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const d = await r.json();
+    const books = d.books || [];
+    window._metadataLoaded = true;
+
+    if (!books.length) {
+      cont.innerHTML = '<div style="color:#6b7280;font-size:13px">Geen boeken gevonden.</div>';
+      return;
+    }
+
+    const METHOD_LABEL = {
+      'vision_api_merge': 'Vision+API',
+      'tekst_extractie':  'Tekst',
+    };
+
+    let html = '<table style="width:100%;border-collapse:collapse;font-size:13px">';
+    html += '<thead><tr style="background:#1A6B72;color:#fff">';
+    ['Titel', 'Auteurs', 'ISBN', 'Jaar', 'Bron', 'Ontbrekend'].forEach(h => {
+      html += '<th style="padding:8px 12px;text-align:left;font-weight:600;white-space:nowrap">' + h + '</th>';
+    });
+    html += '</tr></thead><tbody>';
+
+    books.forEach((b, i) => {
+      let rowBg, badge;
+      if (!b.title) {
+        rowBg = '#fee2e2';
+        badge = '<span style="background:#dc2626;color:#fff;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">Geen titel</span>';
+      } else if (b.needs_review && b.needs_review.length) {
+        rowBg = '#fef3c7';
+        badge = '<span style="background:#d97706;color:#fff;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">' + b.needs_review.length + ' velden</span>';
+      } else {
+        rowBg = i % 2 === 0 ? '#f0fdf4' : '#fff';
+        badge = '<span style="background:#16a34a;color:#fff;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">\u2713</span>';
+      }
+      const title   = b.title   || '<em style="color:#9ca3af">' + (b.filename || '').substring(0,40) + '</em>';
+      const authors = (b.authors || '').substring(0, 40) || '\u2014';
+      const isbn    = b.isbn  || '\u2014';
+      const year    = b.year  || '\u2014';
+      const method  = METHOD_LABEL[b.method] || b.method || '\u2014';
+      html += '<tr style="background:' + rowBg + ';border-bottom:1px solid #e5e7eb">';
+      html += '<td style="padding:8px 12px;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + (b.filename||'') + '">' + title + '</td>';
+      html += '<td style="padding:8px 12px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + authors + '</td>';
+      html += '<td style="padding:8px 12px;font-family:monospace;white-space:nowrap">' + isbn + '</td>';
+      html += '<td style="padding:8px 12px;white-space:nowrap">' + year + '</td>';
+      html += '<td style="padding:8px 12px;white-space:nowrap">' + method + '</td>';
+      html += '<td style="padding:8px 12px">' + badge + '</td>';
+      html += '</tr>';
+    });
+    html += '</tbody></table>';
+    const complete = books.filter(b => b.complete).length;
+    html += '<div style="margin-top:10px;font-size:12px;color:#6b7280">'
+      + books.length + ' boeken \u2014 '
+      + complete + ' volledig \u2014 '
+      + (books.length - complete) + ' needs review</div>';
+    cont.innerHTML = html;
+  } catch(e) {
+    cont.innerHTML = '<div style="color:#dc2626;font-size:13px">Laden mislukt: ' + e + '</div>';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
 // AI MODELLEN TAB
 // ═══════════════════════════════════════════════════════════
 let _aiSettings = {};
@@ -4801,7 +4932,9 @@ function renderUseCases(settings) {
     gemini:    (providers.gemini    || {}).models || ['gemini-2.5-flash','gemini-2.5-pro'],
   };
 
-  Object.entries(useCases).forEach(([key, uc], i) => {
+  const sortedUseCases = Object.entries(useCases)
+    .sort(([, a], [, b]) => (a.order || 99) - (b.order || 99));
+  sortedUseCases.forEach(([key, uc], i) => {
     const tr = tbody.insertRow();
     tr.style.background = i % 2 === 0 ? '#fff' : '#f8fafc';
 
@@ -4874,6 +5007,7 @@ async function saveAllUseCases() {
         provider: newProv,
         model: modSel.value,
         supports_vision: supportsVision,
+        order: useCases[key].order,
       };
     }
   });

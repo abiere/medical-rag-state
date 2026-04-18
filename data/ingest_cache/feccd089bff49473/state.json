@@ -57,9 +57,45 @@
   "book_metadata": {
     "date": "2008",
     "isbn": "9780443074905",
-    "title": "The practice of Chinese medicine",
-    "creator": "Giovanni Maciocia",
-    "publisher": "Churchill Livingstone/Elsevier",
-    "isbn_lookup_source": "openlibrary"
+    "title": "The Practice of Chinese Medicine",
+    "creator": [
+      "Giovanni Maciocia"
+    ],
+    "publisher": "Churchill Livingstone Elsevier",
+    "isbn_lookup_source": "openlibrary",
+    "subtitle": "The Treatment of Diseases with Acupuncture and Chinese Herbs",
+    "edition_number": 2,
+    "edition_label": "SECOND EDITION",
+    "pages": 1501,
+    "cover_url": "https://covers.openlibrary.org/b/id/10172884-M.jpg",
+    "subjects": [
+      "Acupuncture",
+      "Acupuncture Therapy",
+      "Chinese Herbal Drugs",
+      "Chinese Medicine",
+      "Chinese Traditional Medicine",
+      "Drugs, Chinese Herbal",
+      "Herbal Medicine",
+      "Herbs",
+      "Medicine, Chinese",
+      "Medicine, Chinese Traditional"
+    ],
+    "metadata_method": "vision_api_merge",
+    "metadata_sources": {
+      "gemini": true,
+      "google": false,
+      "openlibrary": true
+    },
+    "needs_review": [
+      "description",
+      "language"
+    ],
+    "confidence": {
+      "title": "high",
+      "authors": "high",
+      "edition": "high",
+      "year": "high",
+      "isbn": "high"
+    }
   }
 }

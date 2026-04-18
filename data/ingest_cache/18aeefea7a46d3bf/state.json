@@ -55,9 +55,13 @@
   "image_extraction_enabled": true,
   "parse_retry_count": 0,
   "book_metadata": {
-    "title": "Sobotta Anatomy Textbook (VORKLINIK - Lehrbuch - Urban & Fischer-Verlag)",
-    "creator": "Unknown",
-    "publisher": "Urban & Fischer",
+    "title": "Sobotta",
+    "creator": [
+      "Waschke",
+      "Böckers",
+      "Paulsen"
+    ],
+    "publisher": "Elsevier",
     "date": "2018-12-14",
     "asin": "B07LBS87C5",
     "language": "en",
@@ -68,14 +72,9 @@
       "openlibrary": false
     },
     "needs_review": [
-      "title",
-      "subtitle",
-      "authors",
       "edition_number",
-      "edition_label",
       "year",
       "isbn_13",
-      "publisher",
       "pages",
       "description",
       "cover_url",
@@ -83,11 +82,13 @@
       "subjects"
     ],
     "confidence": {
-      "title": "none",
-      "authors": "none",
-      "edition": "none",
+      "title": "high",
+      "authors": "high",
+      "edition": "medium",
       "year": "none",
       "isbn": "none"
-    }
+    },
+    "subtitle": "ANATOMY TEXTBOOK",
+    "edition_label": "English Edition"
   }
 }

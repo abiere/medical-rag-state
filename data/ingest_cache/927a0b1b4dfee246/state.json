@@ -55,11 +55,47 @@
   "image_extraction_enabled": true,
   "parse_retry_count": 0,
   "book_metadata": {
-    "publisher": "Adobe Acrobat 9.0 Paper Capture Plug-in with ClearScan",
-    "date": "2010",
+    "publisher": "North Atlantic Books",
+    "date": "2002",
     "isbn": "9781556433740",
-    "title": "Applied kinesiology",
-    "creator": "Robert Frost",
-    "isbn_lookup_source": "openlibrary"
+    "title": "APPLIED KINESIOLOGY",
+    "creator": [
+      "Robert Frost"
+    ],
+    "isbn_lookup_source": "openlibrary",
+    "subtitle": "A TRAINING MANUAL AND REFERENCE BOOK OF BASIC PRINCIPLES AND PRACTICES",
+    "pages": 272,
+    "cover_url": "https://covers.openlibrary.org/b/id/12865374-M.jpg",
+    "subjects": [
+      "Applied kinesiology",
+      "Diseases",
+      "Handbooks, manuals",
+      "Handbooks, manuals, etc",
+      "Human mechanics",
+      "Kinesiology",
+      "Kinesiology, Applied",
+      "Methods",
+      "Musculoskeletal Physiology",
+      "Musculoskeletal system"
+    ],
+    "metadata_method": "vision_api_merge",
+    "metadata_sources": {
+      "gemini": true,
+      "google": false,
+      "openlibrary": true
+    },
+    "needs_review": [
+      "edition_number",
+      "edition_label",
+      "description",
+      "language"
+    ],
+    "confidence": {
+      "title": "high",
+      "authors": "high",
+      "edition": "none",
+      "year": "high",
+      "isbn": "high"
+    }
   }
 }

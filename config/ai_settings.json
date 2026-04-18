@@ -29,42 +29,32 @@
     }
   },
   "use_cases": {
-    "chunk_tagging": {
-      "provider": "ollama",
-      "model": "llama3.1:8b",
-      "label": "K/A/I chunk tagging",
-      "description": "Medische chunks classificeren als Klinisch, Acupunctuur of Afbeelding tijdens audit. Draait voor elk geïngesteerd boek.",
-      "supports_vision": false
-    },
-    "rag_answering": {
-      "provider": "ollama",
-      "model": "llama3.1:8b",
-      "label": "RAG zoekantwoorden",
-      "description": "Vragen beantwoorden op basis van opgehaalde chunks uit de bibliotheek (/zoeken).",
-      "supports_vision": false
-    },
-    "protocol_generation": {
-      "provider": "ollama",
-      "model": "llama3.1:8b",
-      "label": "Behandelprotocol generatie",
-      "description": "Behandelprotocollen genereren op basis van RAG-resultaten en Domain MDs.",
-      "supports_vision": false
-    },
     "book_metadata": {
+      "order": 1,
       "provider": "gemini",
       "model": "gemini-2.5-flash",
       "label": "Boek metadata extractie",
       "description": "Titel, auteur, editie en jaar extraheren uit de titelpagina van een boek (vision). Gebruikt bij elke nieuwe import.",
       "supports_vision": true
     },
-    "image_captioning": {
-      "provider": "gemini",
-      "model": "gemini-2.5-flash",
-      "label": "Afbeelding captioning",
-      "description": "Medische captions genereren voor afbeeldingen uit boeken. Zichtbaar in /afbeeldingen.",
-      "supports_vision": true
+    "chunk_tagging": {
+      "order": 2,
+      "provider": "ollama",
+      "model": "llama3.1:8b",
+      "label": "K/A/I chunk tagging",
+      "description": "Medische chunks classificeren als Klinisch, Acupunctuur of Afbeelding tijdens audit. Draait voor elk geïngesteerd boek.",
+      "supports_vision": false
+    },
+    "chunk_audit": {
+      "order": 3,
+      "provider": "ollama",
+      "model": "llama3.1:8b",
+      "label": "Chunk kwaliteitsaudit",
+      "description": "Kwaliteitscheck van parsed chunks: leesbaarheid, volledigheid, coherentie. Wordt uitgevoerd tijdens audit_book.",
+      "supports_vision": false
     },
     "ocr_correction": {
+      "order": 4,
       "provider": "ollama",
       "model": "llama3.1:8b",
       "label": "OCR correctie",
@@ -72,17 +62,35 @@
       "supports_vision": false
     },
     "image_description": {
+      "order": 5,
       "provider": "gemini",
       "model": "gemini-2.5-flash",
       "label": "Afbeelding beschrijving (ingest)",
       "description": "Korte 1-zin beschrijving van medische/anatomische afbeeldingen tijdens boekimport.",
       "supports_vision": true
     },
-    "chunk_audit": {
+    "image_captioning": {
+      "order": 6,
+      "provider": "gemini",
+      "model": "gemini-2.5-flash",
+      "label": "Afbeelding captioning",
+      "description": "Medische captions genereren voor afbeeldingen uit boeken. Zichtbaar in /afbeeldingen.",
+      "supports_vision": true
+    },
+    "rag_answering": {
+      "order": 7,
       "provider": "ollama",
       "model": "llama3.1:8b",
-      "label": "Chunk kwaliteitsaudit",
-      "description": "Kwaliteitscheck van parsed chunks: leesbaarheid, volledigheid, coherentie. Wordt uitgevoerd tijdens audit_book.",
+      "label": "RAG zoekantwoorden",
+      "description": "Vragen beantwoorden op basis van opgehaalde chunks uit de bibliotheek (/zoeken).",
+      "supports_vision": false
+    },
+    "protocol_generation": {
+      "order": 8,
+      "provider": "ollama",
+      "model": "llama3.1:8b",
+      "label": "Behandelprotocol generatie",
+      "description": "Behandelprotocollen genereren op basis van RAG-resultaten en Domain MDs.",
       "supports_vision": false
     }
   }

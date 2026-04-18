@@ -56,9 +56,40 @@
   "parse_retry_count": 0,
   "book_metadata": {
     "title": "Atlas of Acupuncture",
-    "creator": "Claudia Focks MD",
-    "publisher": "A-PDF Merger 2.4.3 (http://www.a-pdf.com)",
+    "creator": [
+      "Claudia Focks"
+    ],
+    "publisher": "Churchill Livingstone",
     "date": "2008",
-    "isbn": "9780443100284"
+    "isbn": "9780443100284",
+    "edition_number": 2,
+    "edition_label": "Second Edition",
+    "pages": 732,
+    "cover_url": "https://covers.openlibrary.org/b/id/8534596-M.jpg",
+    "subjects": [
+      "Acupuncture",
+      "Acupuncture points",
+      "Atlases",
+      "Acupuncture Points",
+      "Acupuncture Therapy"
+    ],
+    "metadata_method": "vision_api_merge",
+    "metadata_sources": {
+      "gemini": true,
+      "google": false,
+      "openlibrary": true
+    },
+    "needs_review": [
+      "subtitle",
+      "description",
+      "language"
+    ],
+    "confidence": {
+      "title": "high",
+      "authors": "high",
+      "edition": "high",
+      "year": "high",
+      "isbn": "high"
+    }
   }
 }

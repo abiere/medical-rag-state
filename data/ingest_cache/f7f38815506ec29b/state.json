@@ -56,10 +56,42 @@
   "parse_retry_count": 0,
   "book_metadata": {
     "title": "Essentials of Anatomy and Physiology",
-    "creator": "Scanlon, Valerie C.; Sanders, Tina",
-    "publisher": "Acrobat Distiller 7.0.5 (Windows)",
-    "date": "2007",
+    "creator": [
+      "Valerie C. Scanlon",
+      "Tina Sanders"
+    ],
+    "publisher": "F. A. Davis Company",
+    "date": "2006",
     "isbn": "9780803615465",
-    "isbn_lookup_source": "google_books"
+    "isbn_lookup_source": "google_books",
+    "edition_number": 5,
+    "edition_label": "FIFTH EDITION",
+    "pages": 603,
+    "cover_url": "https://covers.openlibrary.org/b/id/575059-M.jpg",
+    "subjects": [
+      "Anatomy",
+      "Human anatomy",
+      "Human physiology",
+      "Physiology"
+    ],
+    "metadata_method": "vision_api_merge",
+    "metadata_sources": {
+      "gemini": true,
+      "google": false,
+      "openlibrary": true
+    },
+    "needs_review": [
+      "subtitle",
+      "description",
+      "language"
+    ],
+    "confidence": {
+      "title": "high",
+      "authors": "high",
+      "edition": "high",
+      "year": "high",
+      "isbn": "high",
+      "publisher": "high"
+    }
   }
 }

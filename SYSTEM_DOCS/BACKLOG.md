@@ -1,8 +1,34 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-18 — Pipeline A: boek metadata extractie via Gemini Vision geïmplementeerd
+> Laatste update: 2026-04-18 — Bug fixes Pipeline A + volledig backfill 35 boeken + Schema's tab
 
 ---
+
+## ✅ Afgerond — 2026-04-18 (sessie 14)
+
+- [x] **Bug fixes book_metadata_vision.py (3 bugs)**
+      - Bug 1 (EPUB rendering): vervangen door `_render_epub_cover()` via zipfile — directe extractie van coverafbeeldingen uit EPUB zip, bypast kapotte fitz HTML rendering
+      - Bug 2 (Google Books 429): exponential backoff [5s, 15s, 30s] voor 429+503, was alleen 503
+      - Bug 3 (JSON truncatie): `_safe_json_parse()` met 4 strategies; `response_mime_type="application/json"` in Gemini config; max_tokens 2000→3000
+      - Mime-type detectie per afbeelding (JPEG/PNG) voor EPUB cover images
+
+- [x] **`backfill_all_metadata()` + `--all` vlag**
+      - Nieuw `backfill_all_metadata()` functie voor alle 35 medical_library boeken
+      - `python3 book_metadata_vision.py --all` uitvoerbaar
+      - Volledig backfill resultaat: **24/35 volledig (isbn+title+year)**, 11 gedeeltelijk, 0 mislukt
+
+- [x] **Schema's tab: boek metadata status tabel**
+      - `GET /api/schemas/metadata` endpoint: JSON list alle medical boeken met status
+      - Schema's tab uitgebreid met live overzichtstabel: Titel | Auteurs | ISBN | Jaar | Bron | Ontbrekend
+      - Kleurcodering: rood=geen titel, amber=needs_review, groen=volledig
+      - ↻ Vernieuwen knop + lazy loading bij tab-switch
+
+- [x] **AI Modellen tab: volgorde op `order` veld**
+      - `order` veld toegevoegd aan alle 8 use cases in `ai_settings.json` (1–8)
+      - `renderUseCases()` sorteert op `order` — volgorde: book_metadata → chunk_tagging → chunk_audit → ocr → image_description → image_captioning → rag → protocol
+      - `saveAllUseCases()` behoudt `order` bij opslaan
+
+- [x] **38/38 tests geslaagd**
 
 ## ✅ Afgerond — 2026-04-18 (sessie 13)
 

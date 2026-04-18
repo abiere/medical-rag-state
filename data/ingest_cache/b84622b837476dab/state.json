@@ -61,6 +61,34 @@
     "date": "2023-04-18",
     "asin": "B0C1NY8G4C",
     "language": "en",
-    "isbn": "9783437441509"
+    "isbn": "9783437441509",
+    "metadata_method": "vision_api_merge",
+    "metadata_sources": {
+      "gemini": true,
+      "google": false,
+      "openlibrary": false
+    },
+    "needs_review": [
+      "title",
+      "subtitle",
+      "authors",
+      "edition_number",
+      "edition_label",
+      "year",
+      "isbn_13",
+      "publisher",
+      "pages",
+      "description",
+      "cover_url",
+      "language",
+      "subjects"
+    ],
+    "confidence": {
+      "title": "none",
+      "authors": "none",
+      "edition": "none",
+      "year": "none",
+      "isbn": "none"
+    }
   }
 }

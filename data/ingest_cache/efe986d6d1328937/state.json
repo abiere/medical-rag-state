@@ -81,9 +81,9 @@
     "confidence": {
       "title": "high",
       "authors": "high",
-      "edition": "high",
+      "edition": "none",
       "year": "high",
-      "isbn": "low",
+      "isbn": "none",
       "publisher": "high"
     }
   }

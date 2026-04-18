@@ -55,13 +55,41 @@
   "image_extraction_enabled": true,
   "parse_retry_count": 0,
   "book_metadata": {
-    "title": "Sobotta Atlas of Anatomy, Vol.1, 17th ed., English/Latin",
-    "creator": "Unknown",
-    "publisher": "Urban & Fischer",
+    "title": "Sobotta Atlas of Anatomy",
+    "creator": [
+      "Paulsen",
+      "Waschke"
+    ],
+    "publisher": "Elsevier",
     "date": "2023-04-18",
     "asin": "B0C1NYNC9X",
     "language": "en",
     "isbn": "9783437441301",
-    "isbn_lookup_source": "google_books"
+    "isbn_lookup_source": "google_books",
+    "subtitle": "General Anatomy and Musculoskeletal System",
+    "edition_number": 17,
+    "edition_label": "17th Edition",
+    "metadata_method": "vision_api_merge",
+    "metadata_sources": {
+      "gemini": true,
+      "google": false,
+      "openlibrary": false
+    },
+    "needs_review": [
+      "year",
+      "isbn_13",
+      "pages",
+      "description",
+      "cover_url",
+      "language",
+      "subjects"
+    ],
+    "confidence": {
+      "title": "high",
+      "authors": "high",
+      "edition": "high",
+      "year": "none",
+      "isbn": "none"
+    }
   }
 }

@@ -57,7 +57,7 @@
   },
   "book_metadata": {
     "publisher": "Williams & Wilkins",
-    "date": "2010",
+    "date": "1999",
     "title": "Travell & Simons' Myofascial Pain and Dysfunction",
     "subtitle": "The Trigger Point Manual VOLUME 1. Upper Half of Body",
     "creator": [
@@ -74,7 +74,6 @@
       "openlibrary": false
     },
     "needs_review": [
-      "year",
       "isbn_13",
       "pages",
       "description",
@@ -86,9 +85,8 @@
       "title": "high",
       "authors": "high",
       "edition": "high",
-      "year": "none",
-      "isbn": "none",
-      "publisher": "high"
+      "year": "high",
+      "isbn": "none"
     }
   }
 }

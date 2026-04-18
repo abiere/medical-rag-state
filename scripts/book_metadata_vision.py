@@ -101,43 +101,98 @@ def _render_title_pages(book_path: Path,
             log.error("PDF render failed %s: %s", book_path.name, e)
 
     elif ext in (".epub",):
-        try:
-            from ebooklib import epub
-            from bs4 import BeautifulSoup
-
-            book = epub.read_epub(str(book_path),
-                                  options={"ignore_ncx": True})
-            count = 0
-            for item in book.get_items():
-                if item.get_type() != 9:  # ITEM_DOCUMENT
-                    continue
-                soup = BeautifulSoup(item.content, "html.parser")
-                text = soup.get_text()
-                if len(text.strip()) < 20:
-                    continue
-
-                # Render HTML page as PNG via fitz
-                html_bytes = item.content
-                doc = fitz.open(stream=html_bytes,
-                                filetype="html")
-                if len(doc) == 0:
-                    doc.close()
-                    continue
-                page = doc[0]
-                mat  = fitz.Matrix(300 / 72, 300 / 72)
-                pix  = page.get_pixmap(matrix=mat)
-                out  = render_subdir / f"page_{count+1:03d}.png"
-                pix.save(str(out))
-                png_paths.append(out)
-                doc.close()
-                count += 1
-                if count >= pages:
-                    break
-        except Exception as e:
-            log.error("EPUB render failed %s: %s", book_path.name, e)
+        epub_images = _render_epub_cover(book_path, max_images=pages)
+        png_paths.extend(epub_images)
 
     log.info("Rendered %d pages for %s", len(png_paths), book_path.name)
     return png_paths
+
+
+def _render_epub_cover(epub_path: Path,
+                       max_images: int = 10) -> list[Path]:
+    """
+    Extract cover and first images directly from EPUB zip.
+    Much more reliable than rendering HTML via fitz.
+    """
+    import zipfile
+    render_subdir = RENDER_DIR / epub_path.stem[:40]
+    render_subdir.mkdir(parents=True, exist_ok=True)
+    results = []
+
+    try:
+        with zipfile.ZipFile(str(epub_path)) as z:
+            names = z.namelist()
+
+            # Strategy 1: find OPF manifest cover-image item
+            opf_files = [n for n in names if n.endswith(".opf")]
+            cover_name = None
+            for opf in opf_files:
+                try:
+                    content = z.read(opf).decode("utf-8", errors="ignore")
+                    m = re.search(
+                        r'id=["\']cover[^"\']*["\'][^>]*href=["\']([^"\']+)["\']',
+                        content, re.I)
+                    if not m:
+                        m = re.search(
+                            r'href=["\']([^"\']+)["\'][^>]*id=["\']cover[^"\']*["\']',
+                            content, re.I)
+                    if m:
+                        href = m.group(1)
+                        opf_dir = opf.rsplit("/", 1)[0] if "/" in opf else ""
+                        cover_name = (opf_dir + "/" + href).lstrip("/")
+                        if cover_name not in names:
+                            cover_name = href
+                        break
+                except Exception:
+                    pass
+
+            # Strategy 2: common cover filenames
+            if not cover_name:
+                for candidate in [
+                    "cover.jpg", "cover.jpeg", "cover.png",
+                    "OEBPS/cover.jpg", "OEBPS/cover.jpeg",
+                    "OEBPS/cover.png", "OEBPS/images/cover.jpg",
+                ]:
+                    if candidate in names:
+                        cover_name = candidate
+                        break
+
+            # Strategy 3: first image file in zip
+            if not cover_name:
+                img_exts = (".jpg", ".jpeg", ".png")
+                for name in names:
+                    if any(name.lower().endswith(e) for e in img_exts):
+                        cover_name = name
+                        break
+
+            # Extract cover image
+            if cover_name and cover_name in names:
+                data = z.read(cover_name)
+                ext  = Path(cover_name).suffix.lower()
+                out  = render_subdir / f"cover{ext}"
+                out.write_bytes(data)
+                results.append(out)
+
+            # Extract up to max_images-1 additional image assets
+            img_exts = (".jpg", ".jpeg", ".png")
+            count = 0
+            for name in names:
+                if name == cover_name:
+                    continue
+                if any(name.lower().endswith(e) for e in img_exts):
+                    if count >= max_images - 1:
+                        break
+                    data = z.read(name)
+                    ext  = Path(name).suffix.lower()
+                    out  = render_subdir / f"page_{count+1:03d}{ext}"
+                    out.write_bytes(data)
+                    results.append(out)
+                    count += 1
+
+    except Exception as e:
+        log.error("EPUB cover extraction failed %s: %s", epub_path.name, e)
+
+    return results
 
 
 # ── Gemini Vision extraction ──────────────────────────────────────
@@ -186,6 +241,49 @@ Rules:
 - Do not invent data. Only report what is visible."""
 
 
+def _safe_json_parse(text: str) -> dict:
+    """Try multiple strategies to parse Gemini JSON output."""
+    # Strategy 1: direct parse
+    try:
+        result = json.loads(text)
+        if isinstance(result, dict):
+            return result
+    except json.JSONDecodeError:
+        pass
+    # Strategy 2: strip markdown fences
+    cleaned = re.sub(r"^```(?:json)?\s*", "", text.strip())
+    cleaned = re.sub(r"\s*```$", "", cleaned)
+    try:
+        result = json.loads(cleaned)
+        if isinstance(result, dict):
+            return result
+    except json.JSONDecodeError:
+        pass
+    # Strategy 3: find first complete JSON object by brace matching
+    start = cleaned.find("{")
+    if start >= 0:
+        depth = 0
+        for i, ch in enumerate(cleaned[start:], start):
+            if ch == "{":
+                depth += 1
+            elif ch == "}":
+                depth -= 1
+                if depth == 0:
+                    try:
+                        result = json.loads(cleaned[start:i + 1])
+                        if isinstance(result, dict):
+                            return result
+                    except json.JSONDecodeError:
+                        break
+    # Strategy 4: extract isbn_13 at minimum via regex
+    isbn_match = re.search(r'"isbn_13"\s*:\s*"(\d{13})"', text)
+    if isbn_match:
+        log.warning("JSON parse failed, extracting ISBN only via regex")
+        return {"isbn_13": isbn_match.group(1)}
+    log.error("All JSON parse strategies failed")
+    return {}
+
+
 def _extract_metadata_gemini(png_paths: list[Path]) -> dict:
     """
     Send rendered pages to Gemini Vision and extract metadata.
@@ -194,7 +292,6 @@ def _extract_metadata_gemini(png_paths: list[Path]) -> dict:
     if not png_paths:
         return {}
     try:
-        # Send all pages in one call — Gemini supports multi-image
         from google import genai
         from google.genai import types
         import os
@@ -205,20 +302,22 @@ def _extract_metadata_gemini(png_paths: list[Path]) -> dict:
 
         client = genai.Client(api_key=api_key)
 
+        # Detect mime type per image (EPUB may provide JPEG)
+        mime_map = {".jpg": "image/jpeg", ".jpeg": "image/jpeg",
+                    ".png": "image/png",  ".webp": "image/webp"}
         contents = []
         for p in png_paths:
             img_data = p.read_bytes()
-            contents.append(
-                types.Part.from_bytes(data=img_data,
-                                       mime_type="image/png")
-            )
+            mime     = mime_map.get(p.suffix.lower(), "image/png")
+            contents.append(types.Part.from_bytes(data=img_data, mime_type=mime))
         contents.append(GEMINI_PROMPT)
 
         response = client.models.generate_content(
             model="gemini-2.5-flash",
             contents=contents,
             config=types.GenerateContentConfig(
-                max_output_tokens=2000
+                max_output_tokens=3000,
+                response_mime_type="application/json",
             ),
         )
         if response.text is not None:
@@ -233,22 +332,13 @@ def _extract_metadata_gemini(png_paths: list[Path]) -> dict:
         if not text:
             log.warning("Gemini returned empty response")
             return {}
-        # Strip markdown fences if present
-        text = re.sub(r"^```(?:json)?\s*", "", text)
-        text = re.sub(r"\s*```$", "", text)
 
-        result = json.loads(text)
-        if not isinstance(result, dict):
-            log.warning("Gemini returned non-dict JSON: %s", type(result))
-            return {}
+        result = _safe_json_parse(text)
         log.info("Gemini extracted: title=%s isbn=%s",
                  (result.get("title") or "?")[:40],
                  result.get("isbn_13") or "?")
         return result
 
-    except json.JSONDecodeError as e:
-        log.error("Gemini JSON parse failed: %s", e)
-        return {}
     except Exception as e:
         log.error("Gemini vision failed: %s", e)
         return {}
@@ -265,7 +355,8 @@ def _fetch_google_books(isbn: str) -> dict:
         return {}
     url = (f"https://www.googleapis.com/books/v1/volumes"
            f"?q=isbn:{isbn}&maxResults=1")
-    for attempt in range(3):
+    _WAIT_TIMES = [5, 15, 30]
+    for attempt, wait in enumerate(_WAIT_TIMES):
         try:
             req = urllib.request.Request(
                 url,
@@ -314,11 +405,11 @@ def _fetch_google_books(isbn: str) -> dict:
             return result
 
         except urllib.error.HTTPError as e:
-            if e.code == 503 and attempt < 2:
-                log.warning("Google Books 503, retry %d", attempt + 1)
-                time.sleep(5)
+            if e.code in (429, 503) and attempt < len(_WAIT_TIMES) - 1:
+                log.warning("Google Books %d, retry in %ds", e.code, wait)
+                time.sleep(wait)
                 continue
-            log.error("Google Books HTTP error %d: %s", e.code, e)
+            log.warning("Google Books failed %d", e.code)
             return {}
         except Exception as e:
             log.error("Google Books failed: %s", e)
@@ -674,6 +765,44 @@ def backfill_missing_metadata() -> None:
     log.info("Backfill complete: %d ok, %d failed", ok, failed)
 
 
+# ── Full backfill: ALL medical books ─────────────────────────────
+
+def backfill_all_metadata() -> None:
+    """Run full enrichment for ALL medical_library books."""
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)-8s %(message)s"
+    )
+    targets = []
+    for d in sorted(CACHE_DIR.iterdir()):
+        sp = d / "state.json"
+        if not sp.exists():
+            continue
+        try:
+            s = json.loads(sp.read_text())
+        except Exception:
+            continue
+        if s.get("collection") != "medical_library":
+            continue
+        targets.append((sp, s))
+
+    log.info("Full backfill: %d medical books", len(targets))
+    ok = failed = 0
+    for sp, s in targets:
+        try:
+            success = enrich_book(sp, s)
+            if success:
+                ok += 1
+            else:
+                failed += 1
+        except Exception as e:
+            log.error("Failed %s: %s", s.get("filename", ""), e)
+            failed += 1
+        time.sleep(3)
+
+    log.info("Full backfill done: %d ok, %d failed", ok, failed)
+
+
 # ── Single book mode ──────────────────────────────────────────────
 
 def enrich_single(filename: str) -> None:
@@ -700,5 +829,7 @@ if __name__ == "__main__":
     if "--book" in sys.argv:
         idx = sys.argv.index("--book")
         enrich_single(sys.argv[idx + 1])
+    elif "--all" in sys.argv:
+        backfill_all_metadata()
     else:
         backfill_missing_metadata()

@@ -56,32 +56,37 @@
   "parse_retry_count": 0,
   "book_metadata": {
     "title": "Quantum-Touch",
-    "creator": "Unknown",
+    "creator": [
+      "Gordon"
+    ],
     "publisher": "North Atlantic Books",
     "date": "2011-03-22",
     "asin": "B004JHYRWW",
     "language": "en",
     "metadata_method": "vision_api_merge",
     "metadata_sources": {
-      "gemini": false,
+      "gemini": true,
       "google": false,
       "openlibrary": false
     },
     "needs_review": [
-      "title",
-      "subtitle",
-      "authors",
-      "edition_number",
-      "edition_label",
       "year",
       "isbn_13",
-      "publisher",
       "pages",
       "description",
       "cover_url",
       "language",
       "subjects"
     ],
-    "confidence": {}
+    "confidence": {
+      "title": "high",
+      "authors": "high",
+      "edition": "high",
+      "year": "none",
+      "isbn": "none"
+    },
+    "subtitle": "The Power to Heal",
+    "edition_number": 3,
+    "edition_label": "Third Edition"
   }
 }

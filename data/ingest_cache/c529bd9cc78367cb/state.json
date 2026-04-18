@@ -55,13 +55,40 @@
   "image_extraction_enabled": true,
   "parse_retry_count": 0,
   "book_metadata": {
-    "title": "Sobotta Tables of Muscles, Joints and Nerves, English/Latin",
-    "creator": "Unknown",
-    "publisher": "Urban & Fischer",
-    "date": "2023-04-18",
+    "title": "Sobotta",
+    "creator": [
+      "Jens Waschke",
+      "Friedrich Paulsen"
+    ],
+    "publisher": "Elsevier",
+    "date": "2023",
     "asin": "B0BVBPF1NW",
     "language": "en",
     "isbn": "9783437441608",
-    "isbn_lookup_source": "openlibrary"
+    "isbn_lookup_source": "openlibrary",
+    "subtitle": "Muscles, Joints and Nerves Origin - Insertion - Innervation - Function",
+    "edition_number": 3,
+    "edition_label": "3rd Edition",
+    "metadata_method": "vision_api_merge",
+    "metadata_sources": {
+      "gemini": true,
+      "google": false,
+      "openlibrary": true
+    },
+    "needs_review": [
+      "isbn_13",
+      "pages",
+      "description",
+      "cover_url",
+      "language",
+      "subjects"
+    ],
+    "confidence": {
+      "title": "high",
+      "authors": "high",
+      "edition": "high",
+      "year": "none",
+      "isbn": "none"
+    }
   }
 }

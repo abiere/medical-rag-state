@@ -65,11 +65,11 @@
   "parse_retry_count": 0,
   "book_metadata": {
     "publisher": "Books of Discovery",
-    "date": "2024",
+    "date": "2019",
     "title": "Trail Guide to the Body",
-    "subtitle": "A hands-on guide to locating muscles, bones, and more",
+    "subtitle": "A Hands-On Guide to Locating Muscles, Bones, and More",
     "creator": [
-      "Biel"
+      "Andrew Biel"
     ],
     "edition_number": 6,
     "edition_label": "Sixth Edition",
@@ -77,23 +77,24 @@
     "metadata_sources": {
       "gemini": true,
       "google": false,
-      "openlibrary": false
+      "openlibrary": true
     },
     "needs_review": [
-      "year",
-      "isbn_13",
       "pages",
       "description",
       "cover_url",
-      "language",
-      "subjects"
+      "language"
     ],
     "confidence": {
       "title": "high",
       "authors": "high",
       "edition": "high",
-      "year": "none",
-      "isbn": "none"
-    }
+      "year": "high",
+      "isbn": "high"
+    },
+    "isbn": "9780998266305",
+    "subjects": [
+      "Education"
+    ]
   }
 }

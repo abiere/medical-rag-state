@@ -56,10 +56,46 @@
   "parse_retry_count": 0,
   "book_metadata": {
     "isbn": "9780702052163",
-    "title": "The Foundations of Chinese Medicine: A Comprehensive Text",
+    "title": "The Foundations of Chinese Medicine",
     "date": "2015",
-    "creator": "Giovanni Maciocia",
-    "publisher": "Elsevier Health Sciences",
-    "isbn_lookup_source": "google_books"
+    "creator": [
+      "Giovanni Maciocia"
+    ],
+    "publisher": "Elsevier",
+    "isbn_lookup_source": "google_books",
+    "subtitle": "A Comprehensive Text",
+    "edition_number": 3,
+    "edition_label": "Third Edition",
+    "pages": 1320,
+    "cover_url": "https://covers.openlibrary.org/b/id/13209242-M.jpg",
+    "subjects": [
+      "Acupuncture Therapy",
+      "Acupuncturists",
+      "Chinese Medicine",
+      "Chinese Traditional Medicine",
+      "Herbalists",
+      "Medicine, Chinese",
+      "Medicine, Chinese Traditional",
+      "Methods",
+      "Philosophy",
+      "Medicine, chinese--philosophy"
+    ],
+    "metadata_method": "vision_api_merge",
+    "metadata_sources": {
+      "gemini": true,
+      "google": false,
+      "openlibrary": true
+    },
+    "needs_review": [
+      "description",
+      "language"
+    ],
+    "confidence": {
+      "title": "high",
+      "authors": "high",
+      "edition": "high",
+      "year": "high",
+      "isbn": "high"
+    }
   }
 }

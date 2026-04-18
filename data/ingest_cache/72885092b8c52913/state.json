@@ -55,8 +55,10 @@
   "image_extraction_enabled": true,
   "parse_retry_count": 0,
   "book_metadata": {
-    "title": "Sobotta Atlas of Anatomy Classic",
-    "creator": "Playfair McMurrich, John",
+    "title": "Sobotta Atlas of Anatomy",
+    "creator": [
+      "Sobotta"
+    ],
     "date": "2016-07-14",
     "asin": "B01IGU361U",
     "language": "en",
@@ -67,11 +69,8 @@
       "openlibrary": false
     },
     "needs_review": [
-      "title",
       "subtitle",
-      "authors",
       "edition_number",
-      "edition_label",
       "year",
       "isbn_13",
       "publisher",
@@ -82,11 +81,12 @@
       "subjects"
     ],
     "confidence": {
-      "title": "none",
-      "authors": "none",
-      "edition": "none",
+      "title": "high",
+      "authors": "high",
+      "edition": "medium",
       "year": "none",
       "isbn": "none"
-    }
+    },
+    "edition_label": "CLASSIC"
   }
 }

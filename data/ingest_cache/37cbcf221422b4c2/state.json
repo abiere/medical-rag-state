@@ -59,7 +59,8 @@
     "publisher": "Upledger Institute",
     "date": "1987",
     "creator": [
-      "Upledger"
+      "Upledger",
+      "Lowen"
     ],
     "metadata_method": "vision_api_merge",
     "metadata_sources": {
@@ -82,7 +83,7 @@
       "title": "high",
       "authors": "high",
       "edition": "none",
-      "year": "high",
+      "year": "medium",
       "isbn": "none"
     }
   }

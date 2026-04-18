@@ -77,9 +77,10 @@
       "authors": "high",
       "edition": "none",
       "year": "high",
-      "isbn": "low"
+      "isbn": "medium",
+      "publisher": "high"
     },
-    "title": "A Manual of Acupuncture",
+    "title": "A Manual of ACUPUNCTURE",
     "creator": [
       "Peter Deadman",
       "Kevin Baker - undifferentiated",

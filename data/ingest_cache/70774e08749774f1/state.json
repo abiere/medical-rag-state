@@ -55,9 +55,9 @@
   "image_extraction_enabled": true,
   "parse_retry_count": 0,
   "book_metadata": {
-    "title": "Anatomy Trains",
+    "title": "ANATOMY TRAINS",
     "creator": [
-      "Thomas W. Myers"
+      "Myers"
     ],
     "publisher": "Churchill Livingstone",
     "date": "2014",
@@ -65,24 +65,39 @@
     "language": "en",
     "isbn": "9780702046544",
     "isbn_lookup_source": "google_books",
-    "subtitle": "Myofascial Meridians for Manual and Movement Therapists",
+    "subtitle": "Myofascial Meridians for Manual & Movement Therapists",
     "pages": 317,
-    "cover_url": "http://books.google.com/books/content?id=kHk6lAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "cover_url": "https://covers.openlibrary.org/b/id/12484886-M.jpg",
     "subjects": [
-      "Anatomy, Surgical and topographical"
+      "Fasciae (Anatomy)",
+      "Kinesiology",
+      "Surgical and topographical Anatomy",
+      "Manipulation (Therapeutics)",
+      "Anatomy, surgical and topographical",
+      "Manipulation (therapeutics)",
+      "Physiology",
+      "Allied health & medical -> medical -> physiology"
     ],
     "metadata_method": "vision_api_merge",
     "metadata_sources": {
-      "gemini": false,
-      "google": true,
+      "gemini": true,
+      "google": false,
       "openlibrary": true
     },
     "needs_review": [
-      "edition_number",
-      "edition_label",
-      "isbn_13"
+      "isbn_13",
+      "description",
+      "language"
     ],
-    "confidence": {},
-    "description": "Presents an understanding of the role of fascia in healthy movement and postural distortion which is of vital importance to bodyworkers and movement therapists worldwide. This book presents a 'whole systems' view of myofascial/locomotor anatomy in which the body-wide connections among the muscles within the fascial net are described in detail."
+    "confidence": {
+      "title": "high",
+      "authors": "high",
+      "edition": "high",
+      "year": "none",
+      "isbn": "none"
+    },
+    "description": "Presents an understanding of the role of fascia in healthy movement and postural distortion which is of vital importance to bodyworkers and movement therapists worldwide. This book presents a 'whole systems' view of myofascial/locomotor anatomy in which the body-wide connections among the muscles within the fascial net are described in detail.",
+    "edition_number": 3,
+    "edition_label": "Third Edition"
   }
 }
