@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 12:48:19 UTC**
+> Last update: **2026-04-18 12:53:19 UTC**
 
 ## Services
 | Service | Status |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.mp4` (5 min) |
+| Current job | `NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.mp4` (10 min) |
 | Queued | 2 |
 | Done | 50 / 65 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 6.6 GB / 32.86 GB (20%) |
-| CPU | 95.1% |
+| RAM used | 6.69 GB / 32.86 GB (20%) |
+| CPU | 96.4% |
 | Disk used | 83.4 GB / 322.3 GB (27%) |
-| Uptime | up 1 day, 7 hours, 12 minutes |
+| Uptime | up 1 day, 7 hours, 17 minutes |
 
 ## Recent markers
 - `2026-04-18T12:42:47` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (50/14)
