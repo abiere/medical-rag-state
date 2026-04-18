@@ -4,6 +4,30 @@
 
 ---
 
+## ✅ Afgerond — 2026-04-18 (sessie 17)
+
+- [x] **DEEL A: ISBNsearch.org scraper + Library of Congress API**
+      - `_fetch_isbnsearch(isbn)`: BeautifulSoup scraper, CAPTCHA-detectie, haalt title/authors/publisher/year/isbn/cover op
+      - `_fetch_loc(isbn)`: LOC catalog API — graceful fallback (403 op Hetzner, log + return {})
+      - ISBNsearch werkt voor Bates 14e internationale editie: title + year 2025 + publisher (Google Books geen resultaat voor dit ISBN)
+
+- [x] **DEEL B: ISBN-10 → ISBN-13 conversie + copy-paste friendliness**
+      - `_isbn10_to_isbn13(isbn10)`: 978-prefix + herberekend checksum
+      - `_validate_isbn13()`: accepteert nu ook ISBN-10 en strips alle niet-cijfer tekens (dashes, spaties)
+      - Tests: `0443100284` → `9780443100284` ✓, `978-0-443-10028-4` → `9780443100284` ✓, `978 1 975 28260 8` → `9781975282608` ✓
+
+- [x] **DEEL C: FIELD_PRIORITY bijgewerkt met 5 bronnen**
+      - `_merge_metadata()`: signature uitgebreid met `isbnsearch=None, loc=None`
+      - ISBNsearch prioriteit 1 voor year, publisher, cover_url (meest nauwkeurig voor recente edities)
+      - `enrich_book()`: roept nu alle 5 bronnen aan + `time.sleep(1)` rate-limiting
+
+- [x] **DEEL D: ISBN invoerveld auto-strip + server-side cleanup**
+      - `api_enrich_isbn`: `re.sub(r"[^\dXx]", "", ...)` strip op input (dashes/spaces)
+      - Imports uitgebreid met `_fetch_isbnsearch, _fetch_loc`; endpoint gebruikt nu 5 bronnen
+      - ISBN input in /library banner: `oninput="this.value=this.value.replace(/[^0-9]/g,'')"` toegevoegd
+
+- [x] **38/38 tests geslaagd**
+
 ## ✅ Afgerond — 2026-04-18 (sessie 16)
 
 - [x] **FIX 1: TypeError: authors.substring is not a function**

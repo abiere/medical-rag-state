@@ -3465,6 +3465,7 @@ async function loadLibraryMetadataStatus() {
         isbnCell = '<div style="display:flex;gap:6px;align-items:center">'
           + '<input type="text" class="lib-isbn-input" data-hash="' + bh + '"'
           + ' placeholder="9780XXXXXXXXXX"'
+          + ' oninput="this.value=this.value.replace(/[^0-9]/g,\'\')"'
           + ' style="width:150px;font-size:12px;padding:4px 8px;border:1px solid #d1d5db;border-radius:5px;font-family:monospace">'
           + '<button class="lib-enrich-btn" data-hash="' + bh + '"'
           + ' onclick="enrichIsbnLib(this.dataset.hash)"'
@@ -4096,7 +4097,8 @@ async def api_enrich_isbn(book_hash: str, request: Request):
     _sys.path.insert(0, str(BASE / "scripts"))
 
     body = await request.json()
-    isbn_input = body.get("isbn", "").strip()
+    # Strip non-digit/X characters (dashes, spaces from copy-paste)
+    isbn_input = re.sub(r"[^\dXx]", "", body.get("isbn", "").strip())
 
     state_path = None
     state: dict = {}
@@ -4117,28 +4119,30 @@ async def api_enrich_isbn(book_hash: str, request: Request):
 
     from book_metadata_vision import (
         _validate_isbn13, _fetch_google_books,
-        _fetch_openlibrary, _merge_metadata,
-        _save_metadata, _update_classifications,
+        _fetch_openlibrary, _fetch_isbnsearch, _fetch_loc,
+        _merge_metadata, _save_metadata, _update_classifications,
     )
 
     isbn = _validate_isbn13(isbn_input)
     if not isbn:
         return JSONResponse(
-            {"error": f"Ongeldig ISBN: {isbn_input}. Controleer of het 13 cijfers zijn."},
+            {"error": f"Ongeldig ISBN: {isbn_input}. Vul een geldig ISBN-13 of ISBN-10 in."},
             status_code=400,
         )
 
     google      = _fetch_google_books(isbn)
     openlibrary = _fetch_openlibrary(isbn)
+    isbnsearch  = _fetch_isbnsearch(isbn)
+    loc         = _fetch_loc(isbn)
 
-    if not google and not openlibrary:
+    if not google and not openlibrary and not isbnsearch:
         return JSONResponse(
-            {"error": f"ISBN {isbn} niet gevonden in Google Books of OpenLibrary."},
+            {"error": f"ISBN {isbn} niet gevonden in Google Books, OpenLibrary of ISBNsearch."},
             status_code=404,
         )
 
     gemini = {"isbn_13": isbn}
-    merged = _merge_metadata(gemini, google, openlibrary)
+    merged = _merge_metadata(gemini, google, openlibrary, isbnsearch, loc)
     merged["isbn_13"] = isbn
 
     _save_metadata(state_path, state, merged)

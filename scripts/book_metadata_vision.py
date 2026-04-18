@@ -41,14 +41,36 @@ _ai = AIClient()
 
 # ── ISBN validation ───────────────────────────────────────────────
 
+def _isbn10_to_isbn13(isbn10: str) -> str:
+    """Convert ISBN-10 to ISBN-13."""
+    clean = re.sub(r"[^\dX]", "", isbn10.upper())
+    if len(clean) != 10:
+        return ""
+    base  = "978" + clean[:9]
+    total = sum(int(d) * (1 if i % 2 == 0 else 3)
+                for i, d in enumerate(base))
+    check = (10 - (total % 10)) % 10
+    return base + str(check)
+
+
 def _validate_isbn13(isbn: str) -> Optional[str]:
     """
     Validate ISBN-13 checksum. Returns clean 13-digit string or None.
-    Attempts common OCR corrections (0↔8, 1↔7) if checksum fails.
+    Also accepts ISBN-10 (converts to ISBN-13) and strips dashes/spaces
+    for copy-paste friendliness.
+    Attempts OCR last-digit correction if checksum fails.
     """
     if not isbn:
         return None
-    clean = re.sub(r"[\s\-]", "", str(isbn))
+    clean = re.sub(r"[^\dX]", "", str(isbn).upper())
+
+    # ISBN-10 → convert to ISBN-13
+    if len(clean) == 10:
+        converted = _isbn10_to_isbn13(clean)
+        if converted:
+            log.info("ISBN-10 %s converted to ISBN-13 %s", clean, converted)
+            return converted
+
     if not re.match(r"^\d{13}$", clean):
         return None
 
@@ -60,11 +82,11 @@ def _validate_isbn13(isbn: str) -> Optional[str]:
     if int(clean[12]) == _checksum(clean):
         return clean
 
-    # Try common OCR substitutions on last digit only
-    for sub in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]:
+    # Try OCR corrections on last digit
+    for sub in "0123456789":
         candidate = clean[:12] + sub
         if int(candidate[12]) == _checksum(candidate):
-            log.info("ISBN corrected via checksum: %s → %s", clean, candidate)
+            log.info("ISBN corrected: %s → %s", clean, candidate)
             return candidate
 
     return None
@@ -486,38 +508,170 @@ def _fetch_openlibrary(isbn: str) -> dict:
         return {}
 
 
+# ── ISBNsearch.org scraper ────────────────────────────────────────
+
+def _fetch_isbnsearch(isbn: str) -> dict:
+    """
+    Scrape ISBNsearch.org for book metadata.
+    Good coverage of recent and international editions. No API key needed.
+    """
+    if not isbn:
+        return {}
+    url = f"https://isbnsearch.org/isbn/{isbn}"
+    try:
+        req = urllib.request.Request(
+            url,
+            headers={
+                "User-Agent": (
+                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) "
+                    "Chrome/120.0.0.0 Safari/537.36"
+                ),
+                "Accept": "text/html,application/xhtml+xml",
+                "Accept-Language": "en-US,en;q=0.9",
+            }
+        )
+        with urllib.request.urlopen(req, timeout=15) as r:
+            html = r.read().decode("utf-8", errors="ignore")
+
+        try:
+            from bs4 import BeautifulSoup
+        except ImportError:
+            log.warning("BeautifulSoup not installed — ISBNsearch skipped")
+            return {}
+
+        if "Please Verify" in html or "captcha" in html.lower():
+            log.warning("ISBNsearch.org returned CAPTCHA for %s", isbn)
+            return {}
+
+        soup   = BeautifulSoup(html, "html.parser")
+        result = {}
+
+        h1 = soup.find("h1")
+        if h1:
+            result["title"] = h1.get_text(strip=True)
+
+        for strong in soup.find_all("strong"):
+            label   = strong.get_text(strip=True).rstrip(":").lower()
+            sibling = strong.next_sibling
+            if not sibling:
+                continue
+            value = str(sibling).strip()
+            if not value:
+                continue
+            if label == "author":
+                result["authors"] = [
+                    a.split(",")[0].strip()
+                    for a in value.split(";")
+                    if a.strip()
+                ]
+            elif label == "publisher":
+                result["publisher"] = value
+            elif label == "published":
+                m = re.search(r"\b(\d{4})\b", value)
+                if m:
+                    result["year"] = int(m.group(1))
+            elif label in ("isbn-13", "isbn13"):
+                clean = re.sub(r"[^\d]", "", value)
+                if len(clean) == 13:
+                    result["isbn_13"] = clean
+            elif label in ("isbn-10", "isbn10"):
+                clean = re.sub(r"[^\d]", "", value)
+                if len(clean) == 10:
+                    result["isbn_10"] = clean
+
+        # Try cover image from og:image
+        og_img = soup.find("meta", property="og:image")
+        if og_img and og_img.get("content"):
+            result["cover_url"] = og_img["content"]
+
+        if result:
+            log.info("ISBNsearch: found %s (%s)",
+                     result.get("title", "?")[:40],
+                     result.get("year", "?"))
+        return result
+
+    except Exception as e:
+        log.warning("ISBNsearch failed isbn=%s: %s", isbn, e)
+        return {}
+
+
+# ── Library of Congress API ───────────────────────────────────────
+
+def _fetch_loc(isbn: str) -> dict:
+    """Fetch from Library of Congress catalog API."""
+    if not isbn:
+        return {}
+    url = f"https://www.loc.gov/search/?q={isbn}&fo=json&at=results"
+    try:
+        req = urllib.request.Request(
+            url,
+            headers={"User-Agent": "NRT-Amsterdam-RAG/1.0"}
+        )
+        with urllib.request.urlopen(req, timeout=15) as r:
+            data = json.loads(r.read())
+        results = data.get("results", [])
+        if not results:
+            return {}
+        item   = results[0]
+        result = {}
+        if item.get("title"):
+            result["title"] = item["title"].rstrip("/ ").strip()
+        contributors = item.get("contributor", [])
+        if contributors:
+            result["authors"] = [
+                c.split(",")[0].strip() for c in contributors[:5]
+            ]
+        m = re.search(r"\b(\d{4})\b", str(item.get("date", "")))
+        if m:
+            result["year"] = int(m.group(1))
+        subjects = item.get("subject", [])
+        if subjects:
+            result["subjects"] = subjects[:5]
+        if result:
+            log.info("LOC: found %s (%s)",
+                     result.get("title", "?")[:40],
+                     result.get("year", "?"))
+        return result
+    except Exception as e:
+        log.warning("LOC failed isbn=%s: %s", isbn, e)
+        return {}
+
+
 # ── Merge with field-level priority ──────────────────────────────
 
 FIELD_PRIORITY = {
-    # field: [source1, source2, source3]
-    # source1 wins if non-empty, else source2, else source3
-    "title":          ["google",      "gemini",      "openlibrary"],
-    "subtitle":       ["google",      "gemini",      "openlibrary"],
-    "authors":        ["google",      "openlibrary", "gemini"],
-    "edition_number": ["gemini",      "google",      "openlibrary"],
-    "edition_label":  ["gemini",      "google",      None],
-    "year":           ["google",      "openlibrary", "gemini"],
-    "isbn_13":        ["gemini",      "google",      "openlibrary"],
-    "publisher":      ["google",      "gemini",      "openlibrary"],
-    "pages":          ["openlibrary", "google",      None],
-    "description":    ["google",      "openlibrary", None],
-    "cover_url":      ["google",      "openlibrary", None],
-    "language":       ["google",      "openlibrary", None],
-    "subjects":       ["google",      "openlibrary", None],
+    "title":          ["google", "isbnsearch", "gemini", "loc", "openlibrary"],
+    "subtitle":       ["google", "isbnsearch", "gemini", "openlibrary"],
+    "authors":        ["google", "openlibrary", "isbnsearch", "loc", "gemini"],
+    "edition_number": ["gemini", "google", "isbnsearch", "openlibrary"],
+    "edition_label":  ["gemini", "isbnsearch", "google"],
+    "year":           ["isbnsearch", "google", "openlibrary", "loc", "gemini"],
+    "isbn_13":        ["gemini", "isbnsearch", "google", "openlibrary"],
+    "publisher":      ["isbnsearch", "google", "gemini", "openlibrary"],
+    "pages":          ["openlibrary", "google"],
+    "description":    ["google", "openlibrary"],
+    "cover_url":      ["isbnsearch", "google", "openlibrary"],
+    "language":       ["google", "openlibrary"],
+    "subjects":       ["google", "openlibrary", "loc"],
 }
 
 
 def _merge_metadata(gemini: dict,
                     google: dict,
-                    openlibrary: dict) -> dict:
+                    openlibrary: dict,
+                    isbnsearch: dict = None,
+                    loc: dict = None) -> dict:
     """
-    Merge metadata from three sources using field-level priority.
+    Merge metadata from up to five sources using field-level priority.
     Adds source attribution and needs_review list.
     """
     sources = {
-        "gemini":      gemini,
-        "google":      google,
-        "openlibrary": openlibrary,
+        "gemini":      gemini      or {},
+        "google":      google      or {},
+        "openlibrary": openlibrary or {},
+        "isbnsearch":  isbnsearch  or {},
+        "loc":         loc         or {},
     }
     merged       = {}
     needs_review = []
@@ -526,8 +680,6 @@ def _merge_metadata(gemini: dict,
         value  = None
         source = None
         for src in priority:
-            if src is None:
-                continue
             v = sources[src].get(field)
             if v is not None and v != "" and v != []:
                 value  = v
@@ -538,13 +690,14 @@ def _merge_metadata(gemini: dict,
         if value is None:
             needs_review.append(field)
 
-    # Confidence from Gemini
-    merged["confidence"]       = gemini.get("confidence", {})
+    merged["confidence"]       = gemini.get("confidence", {}) if gemini else {}
     merged["needs_review"]     = needs_review
     merged["metadata_sources"] = {
         "gemini":      bool(gemini),
         "google":      bool(google),
         "openlibrary": bool(openlibrary),
+        "isbnsearch":  bool(isbnsearch),
+        "loc":         bool(loc),
     }
 
     return merged
@@ -693,16 +846,19 @@ def enrich_book(state_path: Path, state: dict) -> bool:
             state.get("book_metadata", {}).get("isbn", "")
         )
 
-    # Step 4+5: API lookups (always run both)
+    # Step 4–7: API lookups (all sources)
     google      = _fetch_google_books(isbn) if isbn else {}
     openlibrary = _fetch_openlibrary(isbn)  if isbn else {}
+    isbnsearch  = _fetch_isbnsearch(isbn)   if isbn else {}
+    loc         = _fetch_loc(isbn)          if isbn else {}
+    time.sleep(1)  # respectful rate-limiting after 4 external calls
 
     if not isbn:
         log.warning("No valid ISBN found for %s — "
                     "using Gemini Vision data only", filename)
 
-    # Step 6: merge
-    merged = _merge_metadata(gemini, google, openlibrary)
+    # Step 8: merge
+    merged = _merge_metadata(gemini, google, openlibrary, isbnsearch, loc)
     merged["isbn_13"] = isbn  # Use validated ISBN
 
     # Step 7: save
