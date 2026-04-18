@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 08:42:30 UTC**
+> Last update: **2026-04-18 08:47:31 UTC**
 
 ## Services
 | Service | Status |
@@ -25,25 +25,25 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (1 min) |
-| Queued | 14 |
-| Done | 22 / 37 |
+| Current job | `Everything_Reset_Sequence_-_Part_1.mp4` (1 min) |
+| Queued | 13 |
+| Done | 23 / 40 |
 | Vectors in nrt_video_transcripts | 241 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 6.56 GB / 32.86 GB (20%) |
-| CPU | 96.2% |
-| Disk used | 74.0 GB / 322.3 GB (24%) |
-| Uptime | up 1 day, 3 hours, 7 minutes |
+| RAM used | 6.34 GB / 32.86 GB (19%) |
+| CPU | 99.1% |
+| Disk used | 74.7 GB / 322.3 GB (24%) |
+| Uptime | up 1 day, 3 hours, 12 minutes |
 
 ## Recent markers
+- `2026-04-18T08:46:29` **transcription_done** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 complete (23/14)
+- `2026-04-18T08:46:29` **ingest_failed** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 ingest FAILED
 - `2026-04-18T08:41:30.353731+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-18T08:25:23.517854+00:00` **book_ingested** — dokumen.pub_the-practice-of-chinese-medicine-the-treatment-of-diseases-with-acupuncture-and-chinese-herbs-2nd-ed-9780443074905-2152393805-0443074909.pdf → medical_library: 1693 chunks
 - `2026-04-18T08:11:28.467496+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
-- `2026-04-18T07:41:27.893583+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
-- `2026-04-18T07:40:19.016780+00:00` **book_ingested** — QRS101 Quick start - English.pdf → pemf_qrs: 1 chunks
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-18 08:11:28,524  INFO      Startup scan: 14 untranscribed video(s) found, 0 new entry/entries added to queue
-2026-04-18 08:11:28,525  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
-2026-04-18 08:11:28,525  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
-2026-04-18 08:11:28,526  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
-2026-04-18 08:41:30,402  INFO      ────────────────────────────────────────────────────────────
-2026-04-18 08:41:30,402  INFO      Transcription queue manager started
-2026-04-18 08:41:30,403  INFO      Startup scan: 14 untranscribed video(s) found, 0 new entry/entries added to queue
 2026-04-18 08:41:30,403  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
 2026-04-18 08:41:30,404  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
 2026-04-18 08:41:30,404  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
+2026-04-18 08:46:29,298  INFO      DONE   nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (299s, 2 segments)
+2026-04-18 08:46:29,299  INFO      Stats updated: 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 — 0.3s/MB  rate=2.6s/MB (6 samples)
+2026-04-18 08:46:29,300  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.json
+2026-04-18 08:46:29,430  INFO      START  nrt/Everything_Reset_Sequence_-_Part_1.mp4  (649 MB)
+2026-04-18 08:46:29,430  INFO      Splitting Everything_Reset_Sequence_-_Part_1.mp4 (649 MB) into 20-min segments
+2026-04-18 08:46:37,588  INFO      Split Everything_Reset_Sequence_-_Part_1.mp4 into 3 segments
+2026-04-18 08:46:37,588  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_1.mp4
 ```
