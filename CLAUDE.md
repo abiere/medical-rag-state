@@ -145,6 +145,23 @@ Read this skill before ANY UI task. Key tokens: teal `#1A6B72`, nav `NAV_ITEMS` 
 5. **Destructive actions:** Always show confirmation dialog with chunk count first.
 6. **Terminology:** NRT-Amsterdam.nl (with hyphen + .nl). Never "NRT Amsterdam".
 
+## HTML onclick standaard — ALTIJD VOLGEN
+
+Gebruik NOOIT Python f-string variabelen direct in
+HTML onclick attributen. Dit veroorzaakt silent failures
+als de variabele aanhalingstekens bevat.
+
+FOUT:
+  <button onclick="myFunc('{variable}')">
+
+GOED:
+  <button data-value="{variable}"
+          onclick="myFunc(this.dataset.value)">
+
+Reden: data-* attributen zijn veilig voor alle tekens.
+JS template literals (${}) in backtick-strings zijn wél
+toegestaan — die worden door de browser geëvalueerd.
+
 ## Pipeline diagram updates
 
 After ANY change to these files:
