@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 08:22:28 UTC**
+> Last update: **2026-04-18 08:27:28 UTC**
 
 ## Services
 | Service | Status |
@@ -14,18 +14,18 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `dokumen.pub_the-practice-of-chinese-medicine-the-treatment-of-diseases-with-acupuncture-and-chinese-herbs-2nd-ed-9780443074905-2152393805-0443074909.pdf` (400 min) |
+| Current job | idle |
 | Queued | 0 |
 | Total books | 36 |
 | Ingested | 74 |
-| Vectors in medical_library | 17879 |
+| Vectors in medical_library | 19572 |
 | Images pending approval | 2026 |
 | Images approved | 0 |
 
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (11 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (16 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 9.85 GB / 32.86 GB (30%) |
-| CPU | 99.7% |
-| Disk used | 73.9 GB / 322.3 GB (24%) |
-| Uptime | up 1 day, 2 hours, 47 minutes |
+| RAM used | 9.42 GB / 32.86 GB (29%) |
+| CPU | 99.0% |
+| Disk used | 74.0 GB / 322.3 GB (24%) |
+| Uptime | up 1 day, 2 hours, 52 minutes |
 
 ## Recent markers
+- `2026-04-18T08:25:23.517854+00:00` **book_ingested** — dokumen.pub_the-practice-of-chinese-medicine-the-treatment-of-diseases-with-acupuncture-and-chinese-herbs-2nd-ed-9780443074905-2152393805-0443074909.pdf → medical_library: 1693 chunks
 - `2026-04-18T08:11:28.467496+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-18T07:41:27.893583+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-18T07:40:19.016780+00:00` **book_ingested** — QRS101 Quick start - English.pdf → pemf_qrs: 1 chunks
 - `2026-04-18T07:39:12.298134+00:00` **book_ingested** — QRS-101-Home-System-Brochure.pdf → pemf_qrs: 1 chunks
-- `2026-04-18T07:36:11.549305+00:00` **book_ingested** — How to Use FlexBeam on Elbows - Recharge Health.pdf → rlt_flexbeam: 3 chunks
 
 ## Nightly Consistency
 ```
