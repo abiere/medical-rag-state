@@ -4,6 +4,26 @@
 
 ---
 
+## ✅ Afgerond — 2026-04-18 (sessie 6)
+
+- [x] **Fix 1 — Prioriteit dropdown /images** — Unicode mismatch opgelost
+      - Root cause: click-outside handler controleerde U+25BE (▾) maar knop render ▼ (U+25BC)
+      - Fix: `class="prio-toggle-btn"` toegevoegd aan knop; handler gebruikt nu `classList.contains()`
+      - Test toegevoegd: `test_images_prio_dropdown_unicode` — 37/37 groen
+
+- [x] **Fix 2 — Touch for Health in verkeerde sectie**
+      - Root cause: `book_classifications.json` had `library_category=nrt_curriculum`
+        maar bestand staat in `books/medical_literature/` + collection=medical_library
+      - Fix A: library_category gecorrigeerd naar `medical_literature`
+      - Fix B (structureel): `/api/library/items` gebruikt nu `state.json collection` als
+        authoritative source voor unambiguous collections (nrt/qat/rlt/pemf) — voorkomt
+        toekomstige divergentie tussen Importeer-tab en Bibliotheek-tab
+      - Polyvagal Theory: ghost entry in book_classifications.json (library_category=nrt_curriculum),
+        geen bestand op disk — toont in NRT tab met 0 chunks (informatief, geen bug)
+
+- [x] **Fix 3 — Queue stubs opruimen**
+      - Queue was al leeg (0 entries) — geen actie nodig
+
 ## ✅ Afgerond — 2026-04-18 (sessie 5)
 
 - [x] **Legacy cache cleanup + herstel** — 42 entries verwijderd + 37 hersteld

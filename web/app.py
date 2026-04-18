@@ -2155,6 +2155,17 @@ _CAT_COLLECTION = {
     "videos":             "nrt_video_transcripts",  # legacy
 }
 
+# Reverse map: collection → display category.
+# Only covers unambiguous collections (medical_library covers both
+# medical_literature and acupuncture, so it is excluded here — those
+# books fall back to library_category from book_classifications.json).
+_COLLECTION_TO_CATEGORY = {
+    "nrt_curriculum": "nrt_curriculum",
+    "qat_curriculum": "qat_curriculum",
+    "rlt_flexbeam":   "rlt_flexbeam",
+    "pemf_qrs":       "pemf_qrs",
+}
+
 _KAI_COLORS = {1: "#16a34a", 2: "#d97706", 3: "#9ca3af"}
 _KAI_LABELS = {1: "Primair", 2: "Ondersteunend", 3: "Achtergrond"}
 
@@ -3417,14 +3428,23 @@ async def api_library_items():
     count_args: list[tuple[str, str]] = []  # (collection, source_key)
 
     for book_id, info in classifications.items():
-        category = info.get("library_category", "")
-        collection = _CAT_COLLECTION.get(category, "medical_library")
         patterns = info.get("filename_patterns", [])
 
         # Use actual filename from state.json as Qdrant source_key (exact match)
         # Fall back to first pattern if no state.json entry found
         actual_fn, _sm = _resolve_state_entry(patterns, book_id)
         source_key = actual_fn if actual_fn else (patterns[0] if patterns else book_id)
+
+        # State collection is authoritative for unambiguous collections.
+        # Prevents a book ingested into books/nrt_curriculum/ from appearing
+        # in the wrong tab when book_classifications.json has a stale category.
+        state_col = (_sm.get("_full_state") or {}).get("collection", "") if _sm else ""
+        if state_col and state_col in _COLLECTION_TO_CATEGORY:
+            category = _COLLECTION_TO_CATEGORY[state_col]
+        else:
+            category = info.get("library_category", "")
+
+        collection = _CAT_COLLECTION.get(category, "medical_library")
 
         # medical_literature → full_title (year suffix added later in JS)
         # all other sections → actual filename so curators see what's on disk
@@ -5997,7 +6017,7 @@ async def images_page(filter: str = "all", sort: str = "images"):
         if ck:
             prio_dropdown = f'''<div style="position:relative;margin-left:auto">
         <button data-hash="{bh}" onclick="togglePrioMenu(this.dataset.hash)"
-                class="btn btn-secondary" style="font-size:12px;padding:4px 10px">
+                class="btn btn-secondary prio-toggle-btn" style="font-size:12px;padding:4px 10px">
           Prioriteit &#9660;
         </button>
         <div id="prio-{bh}"
@@ -6300,7 +6320,7 @@ function togglePrioMenu(bh) {
   el.style.display = el.style.display === 'none' ? 'block' : 'none';
 }
 document.addEventListener('click', function(e) {
-  if (!e.target.closest('[id^="prio-"]') && !e.target.textContent.includes('\u25be'))
+  if (!e.target.closest('[id^="prio-"]') && !e.target.classList.contains('prio-toggle-btn'))
     document.querySelectorAll('[id^="prio-"]').forEach(el => el.style.display = 'none');
 });
 function setPriority(bookHash, clsKey, priority) {

@@ -991,6 +991,21 @@ class IntegrationTests(unittest.TestCase):
         except ConnectionRefusedError:
             self.fail("Verbinding geweigerd op poort 8000")
 
+    def test_images_prio_dropdown_unicode(self):
+        """Prioriteit dropdown gebruikt class-check, niet fragiele textContent/unicode vergelijking"""
+        import urllib.request as _ur
+        try:
+            resp = _ur.urlopen("http://localhost:8000/images", timeout=10)
+            html = resp.read().decode("utf-8", errors="replace")
+        except ConnectionRefusedError:
+            self.fail("Verbinding geweigerd op poort 8000")
+        # Button must carry the class used by the click-outside guard
+        self.assertIn("prio-toggle-btn", html,
+                      "prio-toggle-btn class ontbreekt op Prioriteit knop")
+        # Old fragile unicode check must be gone
+        self.assertNotIn("\u25be", html,
+                         "U+25BE (▾) gevonden — verwijder verouderde textContent unicode check")
+
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # RUNNER
