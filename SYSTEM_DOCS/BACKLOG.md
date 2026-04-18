@@ -1,8 +1,27 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-18 — Handmatige ISBN invoer + PDF bekijken + externe links in Schema's tab
+> Laatste update: 2026-04-18 — TypeError fix + metadata status naar /library
 
 ---
+
+## ✅ Afgerond — 2026-04-18 (sessie 16)
+
+- [x] **FIX 1: TypeError: authors.substring is not a function**
+      - Root cause: `_merge_metadata()` returns `authors` als Python lijst (van Google Books API), `_save_metadata()` sloeg dit op in `bm["creator"]` zonder type-conversie
+      - PART A: `_save_metadata()` converteert authors-lijst naar kommagescheiden string bij opslaan
+      - PART B: `/api/schemas/metadata` endpoint: defensieve coerce van creator bij lezen
+      - PART B JS: `loadLibraryMetadataStatus()` gebruikt `Array.isArray()` guard voor `.substring()`
+      - PART C: Backfill — 32 state.json bestanden gecorrigeerd van list naar string
+
+- [x] **FIX 2: Metadata status van /instellingen naar /library verplaatst**
+      - Schema's tab volledig verwijderd uit /instellingen (tab-knop + pane + dode JS-functies)
+      - `switchSettingsTab()` behandelt nu alleen 'params' en 'ai'
+      - Collapsible amber banner bovenaan /library: toont aantal onvolledige boeken
+      - Server-side `_get_metadata_incomplete_count()` helper voor banner-count
+      - Nieuwe JS-functies `loadLibraryMetadataStatus()` + `enrichIsbnLib()` in /library
+      - Banner toont tabel bij klikken, verborgen wanneer alles volledig
+
+- [x] **38/38 tests geslaagd**
 
 ## ✅ Afgerond — 2026-04-18 (sessie 15)
 
