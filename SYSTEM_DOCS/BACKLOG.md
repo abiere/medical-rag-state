@@ -6,6 +6,12 @@
 
 ## ✅ Afgerond — 2026-04-18
 
+- [x] **sync_context.py + post-commit hook** — CONTEXT.md auto-genereert bij elke commit + elke 5 min
+      - `scripts/sync_context.py`: live Qdrant counts, open issues uit BACKLOG.md, auto-timestamp
+      - `.git/hooks/post-commit`: genereert CONTEXT.md, amends commit als gewijzigd, pusht automatisch
+      - `sync_status.py`: roept sync_context.py aan vóór git add → CONTEXT.md meegecommit elke 5 min
+      - Deduplicatie van open issues (Trail Guide verscheen dubbel in BACKLOG)
+
 - [x] **"Bewaar dit" knop feedback + timeout** — visuele feedback + elapsed timer toegevoegd
       - Root cause: `data-delete` attribute bestond, maar JS zocht op `data-keep` (niet aanwezig)
       - Fix: `data-delete` → `data-keep` + `data-other` op beide knoppen per paar
