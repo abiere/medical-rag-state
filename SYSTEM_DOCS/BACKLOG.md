@@ -1,18 +1,65 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-17 — Kennissyntheselaag architectuur bijgesteld (Fase 0–5)
+> Laatste update: 2026-04-18 — Legacy cache cleanup (42 entries), 37 boeken missen cache entry
+
+---
+
+## 🔴 KRITIEK — Actie vereist: 37 boeken zonder cache entry
+
+Na targeted cleanup van legacy cache entries (correcte filepath-existence check) zijn
+37 boeken zonder state.json. Qdrant vectors zijn intact — search werkt nog. Maar de
+/library catalogus toont deze boeken NIET en book-ingest-queue service is INACTIVE.
+
+**Re-ingest vereist voor:**
+- 9 NRT curriculum boeken (`books/nrt_curriculum/`)
+- 3 QAT curriculum boeken (QAT_2025_overgenomen, Quantum Alignment Home Study 2025,
+  The Acupuncture Pendant eu)
+- 22 RLT flexbeam boeken (`books/rlt_flexbeam/`) — incl. FlexBeam protocol PDFs
+- 4 PEMF boeken (`books/pemf_qrs/`)
+
+**Eindtelling na cleanup:**
+```
+Sectie              Disk  Cache  Match
+medical_literature    35     36  MISMATCH (+1 = test_acupuncture.pdf, onschuldig)
+nrt_curriculum         9      0  KRITIEK — alle 9 missing
+qat_curriculum         5      2  MISMATCH
+rlt_flexbeam          25      7  KRITIEK — 22 missing (6 permanently_failed)
+pemf_qrs               7      4  MISMATCH (2 permanently_failed)
+```
+
+**Stappen om te herstellen:**
+1. `systemctl start book-ingest-queue` → startup_scan() pikt bestanden automatisch op
+2. Queue zal de 37 boeken opnieuw ingesteren (vectors al in Qdrant → deduplicatie bij ingest)
+3. Monitor: `journalctl -u book-ingest-queue -f | grep -E "Queued|Embedding|Done"`
+
+**Bekende permanently_failed (NIET hergestest):**
+- `FlexBeam on Neck pain` — was al failed vóór cleanup
+- `FlexBeam on Knees pain` — was al failed vóór cleanup
+- `FlexBeam on Stomach pain` — was al failed vóór cleanup
+- `Levels Mat/Pillow/Pen` — was al failed vóór cleanup
 
 ---
 
 ## ✅ Afgerond — 2026-04-18 (sessie 5)
 
-- [x] **Legacy directory cleanup** — `books/device/` en `books/nrt_qat/` verwijderd
-      - Diagnose: 9 duplicate cache entries door filepath-gebaseerde hashing (legacy vs nieuwe paden)
-      - Cleanup: safety check (regel 3) hield alle legacy entries want filename-gebaseerde Qdrant
-        count telt ook vectors van de "goede" entry → 0 deletions, 4 kept (permanently_failed)
+- [x] **Legacy cache cleanup** — 42 entries verwijderd (filepath-existence check)
+      - Root cause eerdere 0-deletions: Qdrant safety check gebruikte source_file=filename,
+        waardoor legacy entries ook vectors "hadden" (via goede entry met zelfde bestandsnaam)
+      - Correcte aanpak: `Path(filepath).exists()` — 42 legacy entries verwijderd
+      - Kept (permanently_failed): 4 entries — FlexBeam Neck/Knees/Stomach + Levels Mat
+      - Kept (file exists): 1 entry — test_acupuncture.pdf
       - Lege legacy directories verwijderd: `books/device/`, `books/nrt_qat/`
-      - `books/acupuncture/` bewaard (bevat `test_acupuncture.pdf`)
-      - Mismatch disk vs cache blijft bestaan door gedeelde Qdrant filenames — geen data verlies
+      - Bijwerking: 37 boeken verloren hun enige cache entry (zie KRITIEK sectie hierboven)
+      - 36/36 tests geslaagd
+
+- [x] **PDF date parsing bug fix** — `_extract_pdf_metadata` sloeg "D:20" op ipv "2023"
+      - Root cause: `raw["creationDate"][:4]` op "D:20230418..." → "D:20"
+      - Fix: strip "D:" prefix → regex `\d{4}` → valideer 1990–2030
+      - Backfill: 71 state.json bestanden bijgewerkt door re-extractie uit originele PDF bestanden
+
+- [x] **Transcription queue test fix** — `test_transcription_queue_service` faalde bij lege queue
+      - Root cause: lege queue → service exit → Restart=always → status 'inactive' (niet 'failed')
+      - Fix: assertIn(['active', 'inactive', 'activating']) ipv assertEqual('active')
       - 36/36 tests geslaagd
 
 ## ✅ Afgerond — 2026-04-18 (sessie 4)
