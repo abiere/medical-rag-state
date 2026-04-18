@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 05:17:25 UTC**
+> Last update: **2026-04-18 05:22:25 UTC**
 
 ## Services
 | Service | Status |
@@ -14,18 +14,18 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Integrative Manual Therapy Autonomic Nervous System - Giammatteo.pdf` (10 min) |
-| Queued | 15 |
+| Current job | `Integrative Manual Therapy Connective Tissue - Giammatteo.pdf` |
+| Queued | 14 |
 | Total books | 37 |
-| Ingested | 68 |
-| Vectors in medical_library | 15690 |
+| Ingested | 69 |
+| Vectors in medical_library | 15876 |
 | Images pending approval | 2026 |
 | Images approved | 0 |
 
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (6 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (11 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 14.46 GB / 32.86 GB (44%) |
-| CPU | 99.0% |
+| RAM used | 14.89 GB / 32.86 GB (45%) |
+| CPU | 99.7% |
 | Disk used | 72.3 GB / 322.3 GB (23%) |
-| Uptime | up 23 hours, 42 minutes |
+| Uptime | up 23 hours, 47 minutes |
 
 ## Recent markers
+- `2026-04-18T05:21:56.019064+00:00` **book_ingested** — Integrative Manual Therapy Autonomic Nervous System - Giammatteo.pdf → medical_library: 186 chunks
 - `2026-04-18T05:11:24.896935+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-18T05:06:24.951156+00:00` **book_ingested** — Explain Pain Supercharged - Moseley, Butler.pdf → medical_library: 399 chunks
 - `2026-04-18T04:41:41.396533+00:00` **book_ingested** — Essentials of Anatomy and Physiology - Scanlon, Sanders.pdf → medical_library: 941 chunks
 - `2026-04-18T04:41:24.502537+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
-- `2026-04-18T04:11:23.642722+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 
 ## Nightly Consistency
 ```
