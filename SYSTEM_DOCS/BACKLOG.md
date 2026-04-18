@@ -4,6 +4,31 @@
 
 ---
 
+## ✅ Afgerond — 2026-04-18 (sessie 7)
+
+- [x] **book_classifications.json opschoning — "In wachtrij" stubs opgelost**
+
+  Fix 1 — 8 ghost entries verwijderd (0 vectors, 0 cache, 0 images, safety-check bevestigd):
+    guyton, thieme_atlas, thieme_internal, patten,
+    pocket_atlas_1/2/3, maciocia_diagnosis
+
+  Fix 2 — Pattern mismatches gecorrigeerd:
+    - `bates`: `"Bates Guide"` → toegevoegd `"Bates' Guide"` (apostrof ontbrak)
+    - `maciocia_foundations`: toegevoegd `"756201384-the-foundations-of-chinese-medicine"`
+      en `"foundations-of-chinese-medicine"` (spaties ≠ koppeltekens in bestandsnaam)
+
+  Fix 3 — 2 echte `unclassified_` duplicaten verwijderd:
+    - `unclassified_Bates' Guide...` (gedekt door `bates`)
+    - `unclassified_756201384-...` (gedekt door `maciocia_foundations`)
+    10 `unclassified_` entries met `library_category=None` gefix naar `medical_literature`
+    37 `unclassified_` entries blijven over (legitieme recovery entries)
+
+  Root cause diagnose: `/api/library/items` line 3505 hardcodes `status="in_wachtrij"`
+    als `_resolve_state_entry` geen state.json vindt — veroorzaakt door pattern
+    die de bestandsnaam niet matcht.
+
+  37/37 tests geslaagd
+
 ## ✅ Afgerond — 2026-04-18 (sessie 6)
 
 - [x] **Fix 1 — Prioriteit dropdown /images** — Unicode mismatch opgelost

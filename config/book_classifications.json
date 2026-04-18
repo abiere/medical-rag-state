@@ -36,8 +36,8 @@
       "notes": "Primary source for lower body anatomy + high quality images",
       "image_source": "pdf_vision",
       "image_priority": "normal",
-      "image_priority_override": null,
-      "image_evaluated": false
+      "image_priority_override": "high",
+      "image_evaluated": true
     },
     "sobotta_vol3": {
       "k": 1,
@@ -54,8 +54,8 @@
       "notes": "Primary source for head/neck/neuroanatomy + images",
       "image_source": "pdf_vision",
       "image_priority": "normal",
-      "image_priority_override": null,
-      "image_evaluated": false
+      "image_priority_override": "high",
+      "image_evaluated": true
     },
     "sobotta_textbook": {
       "k": 1,
@@ -243,8 +243,8 @@
       "notes": "Visual acupuncture atlas — images of point locations",
       "image_source": "pdf_cropped",
       "image_priority": "normal",
-      "image_priority_override": null,
-      "image_evaluated": false,
+      "image_priority_override": "low",
+      "image_evaluated": true,
       "server_path": "/root/medical-rag/books/medical_literature/dokumen.pub_atlas-of-acupuncture-1nbsped-0443100284-9780443100284.pdf",
       "server_filename": "dokumen.pub_atlas-of-acupuncture-1nbsped-0443100284-9780443100284.pdf",
       "ingested": true,
@@ -260,7 +260,9 @@
       "authors": "Maciocia",
       "format": "pdf",
       "filename_patterns": [
-        "Foundations of Chinese Medicine"
+        "Foundations of Chinese Medicine",
+        "756201384-the-foundations-of-chinese-medicine",
+        "foundations-of-chinese-medicine"
       ],
       "notes": "TCM theory + points + pathology — most complete TCM source",
       "image_source": "pdf_cropped",
@@ -283,31 +285,12 @@
       "notes": "TCM disease treatment — maps patterns to point prescriptions",
       "image_source": "pdf_cropped",
       "image_priority": "normal",
-      "image_priority_override": null,
-      "image_evaluated": false,
+      "image_priority_override": "low",
+      "image_evaluated": true,
       "server_path": "/root/medical-rag/books/medical_literature/dokumen.pub_the-practice-of-chinese-medicine-the-treatment-of-diseases-with-acupuncture-and-chinese-herbs-2nd-ed-9780443074905-2152393805-0443074909.pdf",
       "server_filename": "dokumen.pub_the-practice-of-chinese-medicine-the-treatment-of-diseases-with-acupuncture-and-chinese-herbs-2nd-ed-9780443074905-2152393805-0443074909.pdf",
       "ingested": true,
       "ingested_at": "2026-04-18T08:25:22.738126+00:00"
-    },
-    "maciocia_diagnosis": {
-      "k": 1,
-      "a": 1,
-      "i": 3,
-      "library_category": "medical_literature",
-      "role": "tcm_diagnosis",
-      "full_title": "Diagnosis in Chinese Medicine",
-      "authors": "Maciocia",
-      "format": "pdf",
-      "filename_patterns": [
-        "Diagnosis in Chinese Medicine",
-        "maciocia-diagnosis"
-      ],
-      "notes": "TCM diagnostic criteria — pattern identification",
-      "image_source": "pdf_cropped",
-      "image_priority": "normal",
-      "image_priority_override": null,
-      "image_evaluated": false
     },
     "anatomy_trains": {
       "k": 1,
@@ -330,25 +313,6 @@
       "server_filename": "Anatomy Trains_ Myofascial Meridians for Manual and Movement Therapists_nodrm.epub",
       "ingested": true,
       "ingested_at": "2026-04-17T14:38:20.634060+00:00"
-    },
-    "guyton": {
-      "k": 1,
-      "a": 3,
-      "i": 3,
-      "library_category": "medical_literature",
-      "role": "physiology",
-      "full_title": "Medical Physiology",
-      "authors": "Guyton, Hall",
-      "format": "pdf",
-      "filename_patterns": [
-        "Medical Physiology",
-        "Guyton"
-      ],
-      "notes": "Physiology foundation — explains WHY tissues are involved",
-      "image_source": "pdf_cropped",
-      "image_priority": "normal",
-      "image_priority_override": null,
-      "image_evaluated": false
     },
     "magee": {
       "k": 1,
@@ -423,114 +387,6 @@
       "ingested": true,
       "ingested_at": "2026-04-17T10:49:53.538140+00:00"
     },
-    "thieme_atlas": {
-      "k": 1,
-      "a": 3,
-      "i": 1,
-      "library_category": "medical_literature",
-      "role": "anatomy_atlas",
-      "full_title": "Thieme Atlas of Anatomy",
-      "authors": "Schünke",
-      "format": "pdf",
-      "filename_patterns": [
-        "Thieme Atlas of Anatomy Deel"
-      ],
-      "notes": "Alternative anatomy atlas — supplement to Sobotta",
-      "image_source": "pdf_cropped",
-      "image_priority": "normal",
-      "image_priority_override": null,
-      "image_evaluated": false
-    },
-    "thieme_internal": {
-      "k": 1,
-      "a": 3,
-      "i": 1,
-      "library_category": "medical_literature",
-      "role": "internal_anatomy",
-      "full_title": "Thieme Atlas of Anatomy Internal Organs",
-      "authors": "Schünke",
-      "format": "pdf",
-      "filename_patterns": [
-        "Thieme Atlas of Anatomy Internal"
-      ],
-      "notes": "Internal organ anatomy — useful for visceral conditions",
-      "image_source": "pdf_cropped",
-      "image_priority": "normal",
-      "image_priority_override": null,
-      "image_evaluated": false
-    },
-    "patten": {
-      "k": 1,
-      "a": 3,
-      "i": 3,
-      "library_category": "medical_literature",
-      "role": "neuroanatomy",
-      "full_title": "Neurological Differential Diagnosis",
-      "authors": "Patten",
-      "format": "pdf",
-      "filename_patterns": [
-        "Neurological Differential"
-      ],
-      "notes": "Neuroanatomy + differential diagnosis",
-      "image_source": "pdf_cropped",
-      "image_priority": "normal",
-      "image_priority_override": null,
-      "image_evaluated": false
-    },
-    "pocket_atlas_1": {
-      "k": 1,
-      "a": 3,
-      "i": 1,
-      "library_category": "medical_literature",
-      "role": "sectional_anatomy",
-      "full_title": "Pocket Atlas of Sectional Anatomy Vol I",
-      "authors": "Moeller, Reif",
-      "format": "pdf",
-      "filename_patterns": [
-        "Pocket Atlas of Sectional Anatomy Vol I"
-      ],
-      "notes": "Cross-sectional anatomy — head and neck",
-      "image_source": "pdf_cropped",
-      "image_priority": "normal",
-      "image_priority_override": null,
-      "image_evaluated": false
-    },
-    "pocket_atlas_2": {
-      "k": 1,
-      "a": 3,
-      "i": 1,
-      "library_category": "medical_literature",
-      "role": "sectional_anatomy",
-      "full_title": "Pocket Atlas of Sectional Anatomy Vol II",
-      "authors": "Moeller, Reif",
-      "format": "pdf",
-      "filename_patterns": [
-        "Pocket Atlas of Sectional Anatomy Vol II"
-      ],
-      "notes": "Cross-sectional anatomy — thorax and abdomen",
-      "image_source": "pdf_cropped",
-      "image_priority": "normal",
-      "image_priority_override": null,
-      "image_evaluated": false
-    },
-    "pocket_atlas_3": {
-      "k": 1,
-      "a": 3,
-      "i": 1,
-      "library_category": "medical_literature",
-      "role": "sectional_anatomy",
-      "full_title": "Pocket Atlas of Sectional Anatomy Vol III",
-      "authors": "Moeller, Reif",
-      "format": "pdf",
-      "filename_patterns": [
-        "Pocket Atlas of Sectional Anatomy Vol III"
-      ],
-      "notes": "Cross-sectional anatomy — spine and extremities",
-      "image_source": "pdf_cropped",
-      "image_priority": "normal",
-      "image_priority_override": null,
-      "image_evaluated": false
-    },
     "bates": {
       "k": 1,
       "a": 3,
@@ -541,7 +397,8 @@
       "authors": "Bickley",
       "format": "epub",
       "filename_patterns": [
-        "Bates Guide"
+        "Bates Guide",
+        "Bates' Guide"
       ],
       "notes": "Physical examination — clinical assessment",
       "image_source": "epub",
@@ -717,8 +574,8 @@
       "ingested_at": "2026-04-18T07:36:10.476063+00:00",
       "image_source": "pdf_cropped",
       "image_priority": "normal",
-      "image_priority_override": null,
-      "image_evaluated": false
+      "image_priority_override": "skip",
+      "image_evaluated": true
     },
     "unclassified_QAT_2025_overgenomen": {
       "k": 2,
@@ -1110,7 +967,9 @@
       ],
       "notes": "Auto-added — needs manual K/A/I classification",
       "library_category": "pemf_qrs",
-      "full_title": "Resonance System Therapy is the"
+      "full_title": "Resonance System Therapy is the",
+      "image_priority_override": "skip",
+      "image_evaluated": true
     },
     "unclassified_QRS-101 Manual Englisch": {
       "k": 2,
@@ -1142,7 +1001,9 @@
       ],
       "notes": "Auto-added — needs manual K/A/I classification",
       "library_category": "pemf_qrs",
-      "full_title": "QRS Home-System"
+      "full_title": "QRS Home-System",
+      "image_priority_override": "skip",
+      "image_evaluated": true
     },
     "unclassified_QRS 101 Indication Settings En": {
       "k": 2,
@@ -1175,22 +1036,6 @@
       "notes": "Auto-added — needs manual K/A/I classification",
       "library_category": "pemf_qrs",
       "full_title": "QRS 101 Operating Manual"
-    },
-    "unclassified_Bates' Guide To Physical Exami": {
-      "k": 2,
-      "a": 2,
-      "i": 2,
-      "role": "unclassified",
-      "server_path": "/root/medical-rag/books/medical_literature/Bates' Guide To Physical Examination and History Taking_nodrm.epub",
-      "server_filename": "Bates' Guide To Physical Examination and History Taking_nodrm.epub",
-      "ingested": true,
-      "ingested_at": "2026-04-17T14:56:49.960796+00:00",
-      "filename_patterns": [
-        "Bates' Guide To Physical Examination and History Taking_nodrm.epub"
-      ],
-      "notes": "Auto-added — needs manual K/A/I classification",
-      "library_category": "medical_literature",
-      "full_title": "Bates' Guide To Physical Examination and History Taking"
     },
     "unclassified_Quantum-Touch 2.0 - The New Hu": {
       "k": 2,
@@ -1280,24 +1125,8 @@
       "notes": "Auto-added — needs manual K/A/I classification",
       "image_priority_override": "skip",
       "image_evaluated": true,
-      "full_title": "Whole Brain Living"
-    },
-    "unclassified_756201384-The-Foundations-of-C": {
-      "k": 2,
-      "a": 2,
-      "i": 2,
-      "role": "unclassified",
-      "server_path": "/root/medical-rag/books/medical_literature/756201384-The-Foundations-of-Chinese-Medicine-A-Comprehensive-Text-3rd-Edition-ISBN-0702052167-978-0702052163.pdf",
-      "server_filename": "756201384-The-Foundations-of-Chinese-Medicine-A-Comprehensive-Text-3rd-Edition-ISBN-0702052167-978-0702052163.pdf",
-      "ingested": true,
-      "ingested_at": "2026-04-17T20:31:11.232572+00:00",
-      "filename_patterns": [
-        "756201384-The-Foundations-of-Chinese-Medicine-A-Comprehensive-Text-3rd-Edition-ISBN-0702052167-978-0702052163.pdf"
-      ],
-      "notes": "Auto-added — needs manual K/A/I classification",
-      "image_priority_override": "skip",
-      "image_evaluated": true,
-      "full_title": "The Foundations of Chinese Medicine: A Comprehensive"
+      "full_title": "Whole Brain Living",
+      "library_category": "medical_literature"
     },
     "unclassified_An Introduction to Craniosacra": {
       "k": 2,
@@ -1312,7 +1141,8 @@
         "An Introduction to Craniosacral Therapy - Kern.pdf"
       ],
       "notes": "Auto-added — needs manual K/A/I classification",
-      "full_title": "An Introduction to"
+      "full_title": "An Introduction to",
+      "library_category": "medical_literature"
     },
     "unclassified_CranioSacral Therapy Study Gui": {
       "k": 2,
@@ -1329,7 +1159,8 @@
       "notes": "Auto-added — needs manual K/A/I classification",
       "image_priority_override": "skip",
       "image_evaluated": true,
-      "full_title": "800.233.5880"
+      "full_title": "800.233.5880",
+      "library_category": "medical_literature"
     },
     "unclassified_Energetic Kinesiology - Krebs,": {
       "k": 2,
@@ -1344,7 +1175,8 @@
         "Energetic Kinesiology - Krebs, McGowan.pdf"
       ],
       "notes": "Auto-added — needs manual K/A/I classification",
-      "full_title": "ENERGETIC KINESIOLOGY – PRINCIPLES"
+      "full_title": "ENERGETIC KINESIOLOGY – PRINCIPLES",
+      "library_category": "medical_literature"
     },
     "unclassified_Essentials of Anatomy and Phys": {
       "k": 2,
@@ -1359,7 +1191,10 @@
         "Essentials of Anatomy and Physiology - Scanlon, Sanders.pdf"
       ],
       "notes": "Auto-added — needs manual K/A/I classification",
-      "full_title": "Copyright © 2007 by F. A. Davis."
+      "full_title": "Copyright © 2007 by F. A. Davis.",
+      "image_priority_override": "low",
+      "image_evaluated": true,
+      "library_category": "medical_literature"
     },
     "unclassified_Integrative Manual Therapy Aut": {
       "k": 2,
@@ -1376,7 +1211,8 @@
       "notes": "Auto-added — needs manual K/A/I classification",
       "image_priority_override": "skip",
       "image_evaluated": true,
-      "full_title": "Medicine/Rehabilitation"
+      "full_title": "Medicine/Rehabilitation",
+      "library_category": "medical_literature"
     },
     "unclassified_Integrative Manual Therapy Con": {
       "k": 2,
@@ -1393,7 +1229,8 @@
       "notes": "Auto-added — needs manual K/A/I classification",
       "image_priority_override": "skip",
       "image_evaluated": true,
-      "full_title": "INTEGRATIVE"
+      "full_title": "INTEGRATIVE",
+      "library_category": "medical_literature"
     },
     "unclassified_Integrative Manual Therapy Upp": {
       "k": 2,
@@ -1410,7 +1247,8 @@
       "notes": "Auto-added — needs manual K/A/I classification",
       "image_priority_override": "skip",
       "image_evaluated": true,
-      "full_title": "INTEGRATIVE"
+      "full_title": "INTEGRATIVE",
+      "library_category": "medical_literature"
     },
     "unclassified_Mobilizing the Myofascial Syst": {
       "k": 2,
@@ -1425,7 +1263,8 @@
         "Mobilizing the Myofascial System - Killens, Lee.pdf"
       ],
       "notes": "Auto-added — needs manual K/A/I classification",
-      "full_title": "the Myofascial"
+      "full_title": "the Myofascial",
+      "library_category": "medical_literature"
     }
   },
   "query_profiles": {
