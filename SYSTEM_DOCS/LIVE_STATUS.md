@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 04:02:23 UTC**
+> Last update: **2026-04-18 04:07:23 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Energetic Kinesiology - Krebs, McGowan.pdf` (19 min) |
+| Current job | `Energetic Kinesiology - Krebs, McGowan.pdf` (24 min) |
 | Queued | 18 |
 | Total books | 37 |
 | Ingested | 66 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (21 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (26 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 8.29 GB / 32.86 GB (25%) |
-| CPU | 100.0% |
+| RAM used | 8.21 GB / 32.86 GB (25%) |
+| CPU | 99.9% |
 | Disk used | 71.6 GB / 322.3 GB (23%) |
-| Uptime | up 22 hours, 27 minutes |
+| Uptime | up 22 hours, 32 minutes |
 
 ## Recent markers
 - `2026-04-18T03:41:22.003283+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
