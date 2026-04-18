@@ -1,7 +1,7 @@
 # CONTEXT — Session Loader
 > Lees dit aan het begin van elke sessie. Max 150 regels.
 > Volledige technische detail: SYSTEM_DOCS/TECHNICAL.md
-> **Auto-gegenereerd:** 2026-04-18 12:53 UTC
+> **Auto-gegenereerd:** 2026-04-18 12:57 UTC
 
 ## Wat dit systeem is
 Privé, volledig lokaal RAG-systeem voor medische en acupunctuurliteratuur.
@@ -37,7 +37,7 @@ Alleen via Tailscale (100.66.194.55). Outputs: behandelprotocollen, blogteksten,
 | qat_curriculum | 125 | QAT curriculum |
 | rlt_flexbeam | 160 | Red Light Therapy docs |
 | pemf_qrs | 64 | PEMF QRS-101 docs |
-| nrt_video_transcripts | 241 | NRT video transcripties |
+| nrt_video_transcripts | 250 | NRT video transcripties |
 | qat_video_transcripts | 123 | QAT video transcripties |
 
 ## Stack
