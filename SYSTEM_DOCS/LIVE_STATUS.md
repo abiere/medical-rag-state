@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 12:53:40 UTC**
+> Last update: **2026-04-18 12:58:21 UTC**
 
 ## Services
 | Service | Status |
@@ -25,25 +25,25 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | idle |
+| Current job | `1.Upper_Body_Techniques.mp4` (4 min) |
 | Queued | 1 |
-| Done | 51 / 65 |
-| Vectors in nrt_video_transcripts | 241 |
+| Done | 51 / 69 |
+| Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 2.99 GB / 32.86 GB (9%) |
-| CPU | 6.9% |
-| Disk used | 83.3 GB / 322.3 GB (27%) |
-| Uptime | up 1 day, 7 hours, 18 minutes |
+| RAM used | 6.77 GB / 32.86 GB (21%) |
+| CPU | 97.6% |
+| Disk used | 83.9 GB / 322.3 GB (27%) |
+| Uptime | up 1 day, 7 hours, 23 minutes |
 
 ## Recent markers
+- `2026-04-18T12:53:54` **transcription_done** — NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.mp4 complete (51/14)
+- `2026-04-18T12:53:54` **transcript_ingested** — NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.mp4 ingested into Qdrant
 - `2026-04-18T12:42:47` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (50/14)
 - `2026-04-18T12:42:46` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
 - `2026-04-18T12:28:31` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (48/14)
-- `2026-04-18T12:28:31` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
-- `2026-04-18T11:58:17` **transcription_done** — NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4 complete (45/14)
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-18 12:28:36,985  INFO      Transcribing 2 segments for NRT_Sports_Specific_or_Universal_Reset.mp4
-2026-04-18 12:42:46,963  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (856s, 2 segments)
-2026-04-18 12:42:46,964  INFO      Stats updated: NRT_Sports_Specific_or_Universal_Reset.mp4 — 0.9s/MB  rate=2.0s/MB (17 samples)
-2026-04-18 12:42:46,965  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
-2026-04-18 12:42:47,095  INFO      START  nrt/NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.mp4  (639 MB)
-2026-04-18 12:42:47,096  INFO      Splitting NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.mp4 (639 MB) into 20-min segments
-2026-04-18 12:42:50,668  INFO      Split NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.mp4 into 1 segments
-2026-04-18 12:53:36,142  INFO      DONE   nrt/NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.mp4  (649s)
-2026-04-18 12:53:36,143  INFO      Stats updated: NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.mp4 — 1.0s/MB  rate=1.9s/MB (18 samples)
 2026-04-18 12:53:36,144  INFO      INGEST nrt/NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.mp4
+2026-04-18 12:53:54,719  INFO        [ingest] NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.json: 320 segments → 9 chunks
+2026-04-18 12:53:54,719  INFO        [ingest] Loading embedding model …
+2026-04-18 12:53:54,719  INFO        [ingest] Target collection: nrt_video_transcripts
+2026-04-18 12:53:54,719  INFO        [ingest]   Ingested chunk 9/9 for NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.mp4
+2026-04-18 12:53:54,719  INFO        [ingest] Done: 9 chunks ingested, 0 skipped (already exists)
+2026-04-18 12:53:54,849  INFO      START  nrt/1.Upper_Body_Techniques.mp4  (525 MB)
+2026-04-18 12:53:54,850  INFO      Splitting 1.Upper_Body_Techniques.mp4 (525 MB) into 20-min segments
+2026-04-18 12:54:06,632  INFO      Split 1.Upper_Body_Techniques.mp4 into 4 segments
+2026-04-18 12:54:06,632  INFO      Transcribing 4 segments for 1.Upper_Body_Techniques.mp4
 ```
