@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 12:33:13 UTC**
+> Last update: **2026-04-18 12:38:15 UTC**
 
 ## Services
 | Service | Status |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `NRT_Sports_Specific_or_Universal_Reset.mp4` (4 min) |
+| Current job | `NRT_Sports_Specific_or_Universal_Reset.mp4` (9 min) |
 | Queued | 3 |
 | Done | 48 / 64 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 6.68 GB / 32.86 GB (20%) |
-| CPU | 93.4% |
+| RAM used | 6.67 GB / 32.86 GB (20%) |
+| CPU | 95.1% |
 | Disk used | 82.7 GB / 322.3 GB (27%) |
-| Uptime | up 1 day, 6 hours, 57 minutes |
+| Uptime | up 1 day, 7 hours, 2 minutes |
 
 ## Recent markers
 - `2026-04-18T12:28:31` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (48/14)
