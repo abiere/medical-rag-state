@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 01:42:19 UTC**
+> Last update: **2026-04-18 01:47:19 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `dokumen.pub_the-practice-of-chinese-medicine-the-treatment-of-diseases-with-acupuncture-and-chinese-herbs-2nd-ed-9780443074905-2152393805-0443074909.pdf` |
+| Current job | `dokumen.pub_the-practice-of-chinese-medicine-the-treatment-of-diseases-with-acupuncture-and-chinese-herbs-2nd-ed-9780443074905-2152393805-0443074909.pdf` (5 min) |
 | Queued | 18 |
 | Total books | 37 |
 | Ingested | 65 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (1 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (6 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 8.93 GB / 32.86 GB (27%) |
-| CPU | 98.8% |
+| RAM used | 7.37 GB / 32.86 GB (22%) |
+| CPU | 100.0% |
 | Disk used | 70.8 GB / 322.3 GB (23%) |
-| Uptime | up 20 hours, 6 minutes |
+| Uptime | up 20 hours, 11 minutes |
 
 ## Recent markers
 - `2026-04-18T01:41:19.558452+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
