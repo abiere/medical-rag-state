@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 07:02:27 UTC**
+> Last update: **2026-04-18 07:07:27 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Orthopedic Physical Assessment 7e editie - Magee, Manske.epub` (48 min) |
+| Current job | `Orthopedic Physical Assessment 7e editie - Magee, Manske.epub` (53 min) |
 | Queued | 11 |
 | Total books | 37 |
 | Ingested | 73 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (21 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (26 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 9.56 GB / 32.86 GB (29%) |
-| CPU | 100.0% |
-| Disk used | 73.8 GB / 322.3 GB (24%) |
-| Uptime | up 1 day, 1 hour, 27 minutes |
+| RAM used | 9.37 GB / 32.86 GB (28%) |
+| CPU | 99.8% |
+| Disk used | 73.4 GB / 322.3 GB (24%) |
+| Uptime | up 1 day, 1 hour, 32 minutes |
 
 ## Recent markers
 - `2026-04-18T06:41:26.724209+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
