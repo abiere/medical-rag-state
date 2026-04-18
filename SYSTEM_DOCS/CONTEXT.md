@@ -124,5 +124,6 @@ HE=HE-5   | LIV=LIV-5
 
 ## Test status
 
-**Laatste run:** 17-04-2026 17:20 (19.4s)  
-**Uitslag:** ✅ GESLAAGD — 33/33 geslaagd, 0 overgeslagen
+**Laatste run:** 18-04-2026 00:00 (28.1s)  
+**Uitslag:** ❌ MISLUKT — 32/33 geslaagd, 1 mislukt, 0 overgeslagen  
+**Mislukt:** `test_anthropic_api_key_set`
