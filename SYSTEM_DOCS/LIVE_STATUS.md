@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 11:27:57 UTC**
+> Last update: **2026-04-18 11:32:57 UTC**
 
 ## Services
 | Service | Status |
@@ -25,18 +25,18 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `Miraculous_Sequence_-_Part_2.mp4` (4 min) |
+| Current job | `Miraculous_Sequence_-_Part_2.mp4` (9 min) |
 | Queued | 6 |
-| Done | 41 / 57 |
+| Done | 42 / 57 |
 | Vectors in nrt_video_transcripts | 241 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 6.67 GB / 32.86 GB (20%) |
-| CPU | 95.9% |
-| Disk used | 79.1 GB / 322.3 GB (26%) |
-| Uptime | up 1 day, 5 hours, 52 minutes |
+| RAM used | 2.52 GB / 32.86 GB (8%) |
+| CPU | 6.5% |
+| Disk used | 79.0 GB / 322.3 GB (26%) |
+| Uptime | up 1 day, 5 hours, 57 minutes |
 
 ## Recent markers
 - `2026-04-18T11:23:01` **transcription_done** — Miraculous_Sequence_-_Part_1.mp4 complete (41/14)
