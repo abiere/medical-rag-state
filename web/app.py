@@ -2363,6 +2363,15 @@ def _render_dup_banner(groups: list) -> str:
             cap_note = f" · {book['captions']} captions" if book["captions"] else ""
             asin_note = f'<div style="font-size:11px;color:#6b7280">ASIN: {book["asin"]}</div>' if book["asin"] else ""
             isbn_note = f'<div style="font-size:11px;color:#6b7280">ISBN: {book["isbn"]}</div>' if book["isbn"] else ""
+            dl_btn = (
+                f'<a href="/api/library/book/{bh}/download" download'
+                f' style="display:inline-block;font-size:12px;padding:4px 12px;'
+                f'background:var(--color-background-secondary,#f8fafc);'
+                f'border:0.5px solid var(--color-border-secondary,#e2e8f0);'
+                f'color:var(--color-text-primary,#1a1a2e);border-radius:6px;'
+                f'cursor:pointer;text-decoration:none;margin-top:6px">'
+                f'\u2193 Download</a>'
+            )
             cols += f"""
 <div data-book-hash="{bh}" style="flex:1;min-width:220px;background:#fff;border:1px solid #e2e8f0;
             border-radius:8px;padding:12px 14px">
@@ -2374,6 +2383,7 @@ def _render_dup_banner(groups: list) -> str:
   </div>
   <div style="font-size:12px;color:#6b7280">{book['size_mb']} MB · {book['ingested_at']}</div>
   {keep_btn}
+  {dl_btn}
 </div>"""
         rows_html += f"""
 <div style="margin-bottom:14px">
@@ -3786,6 +3796,39 @@ async def api_library_resume_book(book_hash: str):
         "filename":  filename,
         "message":   "Boek terug in wachtrij — ISBN check overgeslagen",
     }
+
+
+# ── GET /api/library/book/{book_hash}/download ────────────────────────────────
+
+@app.get("/api/library/book/{book_hash}/download")
+async def api_library_download_book(book_hash: str):
+    """Serve the book file as a download."""
+    for d in CACHE_DIR.iterdir():
+        sp = d / "state.json"
+        if not sp.exists():
+            continue
+        try:
+            s = json.loads(sp.read_text())
+            if s.get("book_hash") != book_hash:
+                continue
+            filepath = s.get("filepath", "")
+            filename = s.get("filename", "")
+            if filepath and Path(filepath).exists():
+                return FileResponse(
+                    path=filepath,
+                    filename=filename,
+                    media_type="application/octet-stream",
+                )
+            if filename:
+                for fp in (BASE / "books").rglob(filename):
+                    return FileResponse(
+                        path=str(fp),
+                        filename=filename,
+                        media_type="application/octet-stream",
+                    )
+        except Exception:
+            continue
+    return JSONResponse({"error": "Bestand niet gevonden op disk"}, status_code=404)
 
 
 # ── GET /library/ingest ────────────────────────────────────────────────────────
