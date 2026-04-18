@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 04:07:23 UTC**
+> Last update: **2026-04-18 04:12:23 UTC**
 
 ## Services
 | Service | Status |
@@ -14,18 +14,18 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Energetic Kinesiology - Krebs, McGowan.pdf` (24 min) |
-| Queued | 18 |
+| Current job | `Essentials of Anatomy and Physiology - Scanlon, Sanders.pdf` (3 min) |
+| Queued | 17 |
 | Total books | 37 |
 | Ingested | 66 |
-| Vectors in medical_library | 13771 |
+| Vectors in medical_library | 14350 |
 | Images pending approval | 2026 |
 | Images approved | 0 |
 
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (26 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (1 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 8.21 GB / 32.86 GB (25%) |
-| CPU | 99.9% |
-| Disk used | 71.6 GB / 322.3 GB (23%) |
-| Uptime | up 22 hours, 32 minutes |
+| RAM used | 14.52 GB / 32.86 GB (44%) |
+| CPU | 98.6% |
+| Disk used | 71.7 GB / 322.3 GB (23%) |
+| Uptime | up 22 hours, 37 minutes |
 
 ## Recent markers
+- `2026-04-18T04:11:23.642722+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
+- `2026-04-18T04:08:54.841718+00:00` **book_ingested** — Energetic Kinesiology - Krebs, McGowan.pdf → medical_library: 579 chunks
 - `2026-04-18T03:41:22.003283+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-18T03:11:21.793912+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-18T02:41:20.920139+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
-- `2026-04-18T02:11:20.406304+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
-- `2026-04-18T01:41:19.558452+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-18 03:11:21,860  INFO      Startup scan: 14 untranscribed video(s) found, 0 new entry/entries added to queue
-2026-04-18 03:11:21,860  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
-2026-04-18 03:11:21,861  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
-2026-04-18 03:11:21,861  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
-2026-04-18 03:41:22,058  INFO      ────────────────────────────────────────────────────────────
-2026-04-18 03:41:22,058  INFO      Transcription queue manager started
 2026-04-18 03:41:22,060  INFO      Startup scan: 14 untranscribed video(s) found, 0 new entry/entries added to queue
 2026-04-18 03:41:22,060  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
 2026-04-18 03:41:22,061  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
 2026-04-18 03:41:22,061  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
+2026-04-18 04:11:23,704  INFO      ────────────────────────────────────────────────────────────
+2026-04-18 04:11:23,705  INFO      Transcription queue manager started
+2026-04-18 04:11:23,706  INFO      Startup scan: 14 untranscribed video(s) found, 0 new entry/entries added to queue
+2026-04-18 04:11:23,706  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
+2026-04-18 04:11:23,707  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
+2026-04-18 04:11:23,707  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
 ```
