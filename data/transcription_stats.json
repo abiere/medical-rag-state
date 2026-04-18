@@ -69,11 +69,67 @@
       "duration_seconds": 1751.0,
       "seconds_per_mb": 2.42,
       "completed_at": "2026-04-18T10:27:32.564544+00:00"
+    },
+    {
+      "filename": "Everything_Reset_Sequence_-_Part_5.mp4",
+      "file_size_mb": 647.61,
+      "duration_seconds": 1359.2,
+      "seconds_per_mb": 2.1,
+      "completed_at": "2026-04-18T10:50:11.921866+00:00"
+    },
+    {
+      "filename": "How_to_Reset_23_More_Muscles.mp4",
+      "file_size_mb": 432.52,
+      "duration_seconds": 771.2,
+      "seconds_per_mb": 1.78,
+      "completed_at": "2026-04-18T11:03:03.297143+00:00"
+    },
+    {
+      "filename": "Miraculous_Sequence_-_Part_1.mp4",
+      "file_size_mb": 722.19,
+      "duration_seconds": 1197.6,
+      "seconds_per_mb": 1.66,
+      "completed_at": "2026-04-18T11:23:01.001171+00:00"
+    },
+    {
+      "filename": "Miraculous_Sequence_-_Part_2.mp4",
+      "file_size_mb": 696.1,
+      "duration_seconds": 1192.0,
+      "seconds_per_mb": 1.71,
+      "completed_at": "2026-04-18T11:42:53.124144+00:00"
+    },
+    {
+      "filename": "NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4",
+      "file_size_mb": 1038.37,
+      "duration_seconds": 923.9,
+      "seconds_per_mb": 0.89,
+      "completed_at": "2026-04-18T11:58:17.182070+00:00"
+    },
+    {
+      "filename": "NRT_Fascial_Activation_Application_Method.mp4",
+      "file_size_mb": 1961.67,
+      "duration_seconds": 1813.9,
+      "seconds_per_mb": 0.92,
+      "completed_at": "2026-04-18T12:28:31.229942+00:00"
+    },
+    {
+      "filename": "NRT_Sports_Specific_or_Universal_Reset.mp4",
+      "file_size_mb": 1003.87,
+      "duration_seconds": 855.6,
+      "seconds_per_mb": 0.85,
+      "completed_at": "2026-04-18T12:42:46.963431+00:00"
+    },
+    {
+      "filename": "NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.mp4",
+      "file_size_mb": 670.34,
+      "duration_seconds": 649.0,
+      "seconds_per_mb": 0.97,
+      "completed_at": "2026-04-18T12:53:36.142823+00:00"
     }
   ],
   "model_rate": {
-    "seconds_per_mb": 2.49,
-    "n_samples": 10,
-    "updated_at": "2026-04-18T10:27:32.564544+00:00"
+    "seconds_per_mb": 1.9,
+    "n_samples": 18,
+    "updated_at": "2026-04-18T12:53:36.142823+00:00"
   }
 }

@@ -53,5 +53,9 @@
     }
   },
   "image_extraction_enabled": true,
-  "parse_retry_count": 0
+  "parse_retry_count": 0,
+  "book_metadata": {
+    "date": "2008",
+    "isbn": "9780443074905"
+  }
 }

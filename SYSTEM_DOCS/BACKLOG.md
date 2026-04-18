@@ -4,17 +4,22 @@
 
 ---
 
-## ✅ Afgerond — 2026-04-18 (sessie 2)
+## ✅ Afgerond — 2026-04-18 (sessie 3)
 
-- [x] **Catalogus sectie-indeling + publicatiejaar** — /library groepeert nu op sectie met headers
-      - JS `renderItems()` groepeert op `DISPLAY_SECTIONS` (6 secties incl. Acupunctuur)
+- [x] **Catalogus sectie-indeling, titels en publicatiejaren voltooid** — /library volledig herzien
+      - JS `renderItems()` groepeert op `DISPLAY_SECTIONS` (5 secties: geen Acupunctuur meer)
       - Sectieheaders: teal `#1A6B72`, font-weight 700, `border-bottom:2px solid #e8f4f5`
       - Python `_extract_pub_year()` helper: ISO datum + PDF D:YYYYMMDD... formaat
       - `pub_year` toegevoegd aan `state_map` entry + `items_out` in `api_library_items`
-      - Medische Literatuur: `full_title (jaar)` — 12/25 boeken hebben jaar uit metadata
-      - Overige secties: display naam ongewijzigd (full_title uit classifications)
+      - Medische Literatuur: `full_title (jaar)` — 12/34 boeken hebben jaar uit metadata
+      - Non-medical secties: tonen bestandsnaam als display title (ipv full_title)
+      - FIX 1: 9 `library_category='acupuncture'` → `'medical_literature'` in book_classifications.json
+      - FIX 2: 39 `unclassified_*` entries kregen `full_title` uit PDF/EPUB extractie
+      - FIX 3: 4 state.json bestanden bijgewerkt met publicatiejaar uit copyright-tekst:
+        deadman=1998, cecil_sterman=2018, atlas_acupuncture=2008, maciocia_practice=2008
       - Structurele test voor JS literal newlines uitgebreid tot volledige 8-state parser
         (regex literals, template literals, comments — geen false positives meer)
+      - 36/36 tests geslaagd
 
 ## ✅ Afgerond — 2026-04-18
 

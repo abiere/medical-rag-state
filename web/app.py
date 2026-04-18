@@ -2687,7 +2687,6 @@ const CAT_LABELS = {
 const CAT_ORDER = ['all','medical_literature','acupuncture','nrt_curriculum','qat_curriculum','rlt_flexbeam','pemf_qrs'];
 const DISPLAY_SECTIONS = [
   {key: 'medical_literature', label: 'Medische Literatuur'},
-  {key: 'acupuncture',        label: 'Acupunctuur'},
   {key: 'nrt_curriculum',     label: 'NRT Curriculum'},
   {key: 'qat_curriculum',     label: 'QAT Curriculum'},
   {key: 'rlt_flexbeam',       label: 'RLT (FlexBeam)'},
@@ -2777,7 +2776,6 @@ function renderItems() {
     return;
   }
 
-  const knownKeys = new Set(DISPLAY_SECTIONS.map(s => s.key));
   let html = '';
   for (const {key, label} of DISPLAY_SECTIONS) {
     const group = items.filter(it => it.library_category === key);
@@ -2786,14 +2784,6 @@ function renderItems() {
                          padding:14px 0 8px 0;margin-top:8px;
                          border-bottom:2px solid #e8f4f5">${label}</div>`;
     html += group.map(item => renderCard(item)).join('');
-  }
-  // Books with categories not in DISPLAY_SECTIONS (e.g. empty category)
-  const others = items.filter(it => !knownKeys.has(it.library_category));
-  if (others.length) {
-    html += `<div style="font-size:14px;font-weight:700;color:#1A6B72;
-                         padding:14px 0 8px 0;margin-top:8px;
-                         border-bottom:2px solid #e8f4f5">Overige</div>`;
-    html += others.map(item => renderCard(item)).join('');
   }
   document.getElementById('item-list').innerHTML = html;
 }
