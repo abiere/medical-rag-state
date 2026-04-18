@@ -735,6 +735,21 @@ def _phase_qdrant(state: dict) -> bool:
 
 # ── startup scan ───────────────────────────────────────────────────────────────
 
+def _sync_filepath(state_path: Path, state: dict, actual_path: Path) -> bool:
+    """Update filepath in state.json if it differs from actual disk path.
+    Returns True if updated."""
+    stored = state.get("filepath", "")
+    actual = str(actual_path)
+    if stored == actual:
+        return False
+    state["filepath"] = actual
+    tmp = state_path.with_suffix(".tmp")
+    tmp.write_text(json.dumps(state, indent=2, ensure_ascii=False))
+    tmp.replace(state_path)
+    logger.info("Updated filepath: %s → %s", stored[:60], actual[:60])
+    return True
+
+
 def startup_scan() -> int:
     """Scan books/ subdirs, enqueue any un-ingested files. Returns count added."""
     added   = 0
@@ -752,8 +767,11 @@ def startup_scan() -> int:
                 continue
 
             # Check state machine — skip fully completed books
-            bh    = _book_hash(f)
-            state = _read_state(bh)
+            bh         = _book_hash(f)
+            state      = _read_state(bh)
+            state_path = CACHE_DIR / bh / "state.json"
+            if state:
+                _sync_filepath(state_path, state, f)
             if state and state.get("completed_at"):
                 logger.debug("Skip (completed): %s", f.name)
                 continue
