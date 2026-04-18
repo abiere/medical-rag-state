@@ -1,5 +1,5 @@
 # AI Status
-_Gegenereerd: 2026-04-18 18:12 UTC_
+_Gegenereerd: 2026-04-18 18:14 UTC_
 
 ## Use-case routing
 
@@ -14,8 +14,8 @@ _Gegenereerd: 2026-04-18 18:12 UTC_
 | `image_description` | Afbeelding beschrijving (ingest) | Google Gemini | `gemini-2.5-flash` |
 | `chunk_audit` | Chunk kwaliteitsaudit | Ollama (lokaal) | `llama3.1:8b` |
 
-## Provider keys
+## Providers
 
-- **anthropic** (ANTHROPIC_API_KEY): aanwezig
-- **gemini** (GEMINI_API_KEY): ONTBREEKT
-- **ollama**: lokaal, geen key vereist
+- **anthropic** (Cloud) ✅ — ANTHROPIC_API_KEY
+- **gemini** (Cloud) ✅ — GEMINI_API_KEY
+- **ollama** (lokaal) ✅ — geen key vereist

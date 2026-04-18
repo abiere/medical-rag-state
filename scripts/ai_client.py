@@ -269,10 +269,21 @@ _PROVIDER_LABEL = {
 }
 
 
-def update_ai_status_md() -> None:
+def _key_present(env_var: str) -> bool:
+    """Check if API key is available via env or systemd service file."""
+    if os.environ.get(env_var):
+        return True
+    service = Path("/etc/systemd/system/medical-rag-web.service")
+    if service.exists():
+        return env_var in service.read_text()
+    return False
+
+
+def update_ai_status_md(settings: Optional[dict] = None) -> None:
     """Write SYSTEM_DOCS/AI_STATUS.md with current use-case routing."""
     try:
-        settings  = json.loads(AI_SETTINGS_PATH.read_text())
+        if settings is None:
+            settings = json.loads(AI_SETTINGS_PATH.read_text())
         use_cases = settings.get("use_cases", {})
         from datetime import datetime, timezone
         now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
@@ -293,14 +304,14 @@ def update_ai_status_md() -> None:
                 f"| `{key}` | {uc.get('label', key)} | {label} | `{uc.get('model', '?')}` |"
             )
 
-        lines += ["", "## Provider keys", ""]
-        for prov, env_key in [
-            ("anthropic", "ANTHROPIC_API_KEY"),
-            ("gemini",    "GEMINI_API_KEY"),
+        lines += ["", "## Providers", ""]
+        for prov, env_key, kind in [
+            ("anthropic", "ANTHROPIC_API_KEY", "Cloud"),
+            ("gemini",    "GEMINI_API_KEY",    "Cloud"),
         ]:
-            present = "aanwezig" if os.environ.get(env_key) else "ONTBREEKT"
-            lines.append(f"- **{prov}** ({env_key}): {present}")
-        lines.append("- **ollama**: lokaal, geen key vereist")
+            icon = "✅" if _key_present(env_key) else "❌"
+            lines.append(f"- **{prov}** ({kind}) {icon} — {env_key}")
+        lines.append("- **ollama** (lokaal) ✅ — geen key vereist")
         lines.append("")
 
         AI_STATUS_PATH.write_text("\n".join(lines))

@@ -336,7 +336,7 @@ def main() -> None:
         capture_output=True,
     )
 
-    files_to_add = ["SYSTEM_DOCS/LIVE_STATUS.md", "SYSTEM_DOCS/CONTEXT.md"]
+    files_to_add = ["SYSTEM_DOCS/LIVE_STATUS.md", "SYSTEM_DOCS/CONTEXT.md", "SYSTEM_DOCS/AI_STATUS.md"]
     backlog = BASE / "SYSTEM_DOCS" / "BACKLOG.md"
     if backlog.exists():
         files_to_add.append("SYSTEM_DOCS/BACKLOG.md")
