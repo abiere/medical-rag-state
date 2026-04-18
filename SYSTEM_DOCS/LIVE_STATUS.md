@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 05:57:25 UTC**
+> Last update: **2026-04-18 06:02:25 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Mobilizing the Myofascial System - Killens, Lee.pdf` (2 min) |
+| Current job | `Mobilizing the Myofascial System - Killens, Lee.pdf` (7 min) |
 | Queued | 12 |
 | Total books | 37 |
 | Ingested | 71 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (16 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (21 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 14.17 GB / 32.86 GB (43%) |
-| CPU | 99.9% |
+| RAM used | 14.53 GB / 32.86 GB (44%) |
+| CPU | 99.1% |
 | Disk used | 72.8 GB / 322.3 GB (24%) |
-| Uptime | up 1 day, 22 minutes |
+| Uptime | up 1 day, 27 minutes |
 
 ## Recent markers
 - `2026-04-18T05:54:48.659693+00:00` **book_ingested** — Integrative Manual Therapy Upper Lower Extremities - Giammatteo.pdf → medical_library: 170 chunks
