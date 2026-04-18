@@ -852,6 +852,25 @@ def _run_fase0_isbn_check(state: dict, book_path: Path) -> bool:
 
     isbn = _extract_isbn(book_path)
     if not isbn:
+        # Fallback: try Gemini Vision on first 5 title pages
+        try:
+            import sys
+            sys.path.insert(0, str(Path(__file__).parent))
+            from book_metadata_vision import (
+                _render_title_pages, _extract_metadata_gemini, _validate_isbn13
+            )
+            import shutil as _shutil
+            _pngs = _render_title_pages(book_path, pages=5)
+            if _pngs:
+                _gmeta = _extract_metadata_gemini(_pngs)
+                _shutil.rmtree(str(_pngs[0].parent), ignore_errors=True)
+                isbn = _validate_isbn13(_gmeta.get("isbn_13", ""))
+                if isbn:
+                    log.info("Fase 0: ISBN found via Gemini Vision: %s", isbn)
+        except Exception as _e:
+            log.warning("Fase 0: Gemini Vision ISBN fallback failed: %s", _e)
+
+    if not isbn:
         log.info("Fase 0: No ISBN found — continuing to Fase 1")
         return False
 
@@ -1052,6 +1071,16 @@ def process_book(item: dict) -> bool:
         _write_state(state)
         logger.info("DONE   %s  (%.0fs)  phases: parse+audit+embed+qdrant",
                     filename, elapsed)
+
+        # Enrich book metadata (Gemini Vision + Google Books + OpenLibrary)
+        if state.get("collection") == "medical_library":
+            try:
+                from book_metadata_vision import enrich_book as _enrich_book
+                state_path = CACHE_DIR / bh / "state.json"
+                _enrich_book(state_path, state)
+            except Exception as _e:
+                logger.warning("Metadata enrichment failed for %s: %s",
+                               filename, _e)
 
         # Link classification + check protocols
         book_key = _link_classification(filename, str(filepath))

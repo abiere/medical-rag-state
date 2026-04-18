@@ -1,8 +1,25 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-18 — "Claude API audit" card verwijderd uit Parameters tab
+> Laatste update: 2026-04-18 — Pipeline A: boek metadata extractie via Gemini Vision geïmplementeerd
 
 ---
+
+## ✅ Afgerond — 2026-04-18 (sessie 13)
+
+- [x] **Pipeline A: boek metadata extractie via Gemini Vision + Google Books + OpenLibrary**
+      - `scripts/book_metadata_vision.py` aangemaakt: volledig nieuwe pipeline
+      - Gemini Vision (multi-image): titelpagina's 1–5 als PNG (300 DPI) → JSON
+      - Google Books API + OpenLibrary API: ISBN-gebaseerd opzoeken
+      - Veld-prioriteits merge: `google > gemini > openlibrary` per veld
+      - ISBN-13 checksum validatie met OCR-last-digit correctie
+      - Atomische schrijf naar `state.json` (field: `book_metadata`)
+      - `book_classifications.json`: `full_title` + `authors` bijgewerkt
+      - Geïntegreerd in `book_ingest_queue.py`:
+          - Fase 0: Gemini Vision ISBN fallback wanneer tekstextractie mislukt
+          - Post-ingest: `enrich_book()` voor medical_library boeken
+      - Test `test_book_metadata_vision_imports` toegevoegd aan `run_tests.py`
+      - Bug fix: `/library` 500 error door int `date` veld → `str(meta.get("date") or "")[:4]`
+      - 38/38 tests geslaagd
 
 ## ✅ Afgerond — 2026-04-18 (sessie 12)
 

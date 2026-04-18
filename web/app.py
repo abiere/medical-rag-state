@@ -2288,7 +2288,7 @@ def _find_duplicates() -> list:
             "isbn":         meta.get("isbn", ""),
             "asin":         meta.get("asin", ""),
             "publisher":    meta.get("publisher", ""),
-            "pub_date":     (meta.get("date") or "")[:4],
+            "pub_date":     str(meta.get("date") or "")[:4],
             "meta_title":   meta.get("title", ""),
             "meta_creator": meta.get("creator", ""),
             "cls_key":      _get_cls_key_for_book(fn),

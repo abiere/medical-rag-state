@@ -1006,6 +1006,22 @@ class IntegrationTests(unittest.TestCase):
         self.assertNotIn("\u25be", html,
                          "U+25BE (▾) gevonden — verwijder verouderde textContent unicode check")
 
+    def test_book_metadata_vision_imports(self):
+        """book_metadata_vision importeert correct en ISBN validatie werkt"""
+        import sys
+        sys.path.insert(0, "/root/medical-rag/scripts")
+        from book_metadata_vision import (
+            _validate_isbn13, _merge_metadata,
+            backfill_missing_metadata, enrich_single,
+        )
+        self.assertEqual(_validate_isbn13("9780443100284"), "9780443100284")
+        self.assertIsNone(_validate_isbn13("invalid"))
+        self.assertIsNone(_validate_isbn13("97804431002xx"))
+        self.assertEqual(_validate_isbn13("978-0-443-10028-4"), "9780443100284")
+        merged = _merge_metadata({}, {}, {})
+        self.assertIsInstance(merged, dict)
+        self.assertIn("needs_review", merged)
+
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # RUNNER
