@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 13:33:30 UTC**
+> Last update: **2026-04-18 13:35:29 UTC**
 
 ## Services
 | Service | Status |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` (1 min) |
+| Current job | `1.Upper_Body_Techniques.mp4` (2 min) |
 | Queued | 13 |
 | Done | 53 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 6.65 GB / 32.86 GB (20%) |
-| CPU | 96.0% |
+| RAM used | 6.71 GB / 32.86 GB (20%) |
+| CPU | 97.0% |
 | Disk used | 84.0 GB / 322.3 GB (27%) |
-| Uptime | up 1 day, 7 hours, 58 minutes |
+| Uptime | up 1 day, 8 hours, 0 minutes |
 
 ## Recent markers
 - `2026-04-18T13:32:30.062230+00:00` **watchdog_restart** — transcription-queue hung (39 min stale) — restarted successfully
