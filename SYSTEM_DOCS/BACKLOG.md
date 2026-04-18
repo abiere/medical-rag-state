@@ -1,8 +1,16 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-18 — AI abstraction layer volledig: alle scripts gemigreerd + /settings AI tab
+> Laatste update: 2026-04-18 — ANTHROPIC_API_KEY toegevoegd aan systemd; alle 3 providers groen
 
 ---
+
+## ✅ Afgerond — 2026-04-18 (sessie 11)
+
+- [x] **ANTHROPIC_API_KEY toegevoegd aan systemd service**
+      - Key uitgelezen uit `settings.json → claude_api.api_key`
+      - Ingevoegd in `/etc/systemd/system/medical-rag-web.service` (na GEMINI lijn)
+      - `systemctl daemon-reload && restart` — service actief
+      - Test: ollama ✅ 506ms · anthropic ✅ 1225ms · gemini ✅ 1453ms
 
 ## ✅ Afgerond — 2026-04-18 (sessie 10)
 
