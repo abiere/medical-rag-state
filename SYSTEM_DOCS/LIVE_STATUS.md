@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 11:42:59 UTC**
+> Last update: **2026-04-18 11:48:02 UTC**
 
 ## Services
 | Service | Status |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4` |
+| Current job | `NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4` (5 min) |
 | Queued | 5 |
 | Done | 43 / 59 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 2.57 GB / 32.86 GB (8%) |
-| CPU | 6.3% |
+| RAM used | 6.62 GB / 32.86 GB (20%) |
+| CPU | 94.1% |
 | Disk used | 80.1 GB / 322.3 GB (26%) |
-| Uptime | up 1 day, 6 hours, 7 minutes |
+| Uptime | up 1 day, 6 hours, 12 minutes |
 
 ## Recent markers
 - `2026-04-18T11:42:53` **transcription_done** — Miraculous_Sequence_-_Part_2.mp4 complete (43/14)
