@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 06:07:26 UTC**
+> Last update: **2026-04-18 06:12:26 UTC**
 
 ## Services
 | Service | Status |
@@ -14,7 +14,7 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `Mobilizing the Myofascial System - Killens, Lee.pdf` (12 min) |
+| Current job | `Mobilizing the Myofascial System - Killens, Lee.pdf` (17 min) |
 | Queued | 12 |
 | Total books | 37 |
 | Ingested | 72 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (26 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (1 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 15.18 GB / 32.86 GB (46%) |
-| CPU | 100.0% |
+| RAM used | 8.24 GB / 32.86 GB (25%) |
+| CPU | 99.9% |
 | Disk used | 72.8 GB / 322.3 GB (24%) |
-| Uptime | up 1 day, 32 minutes |
+| Uptime | up 1 day, 37 minutes |
 
 ## Recent markers
+- `2026-04-18T06:11:26.142009+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-18T05:54:48.659693+00:00` **book_ingested** — Integrative Manual Therapy Upper Lower Extremities - Giammatteo.pdf → medical_library: 170 chunks
 - `2026-04-18T05:41:25.559033+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 - `2026-04-18T05:40:02.115208+00:00` **book_ingested** — Integrative Manual Therapy Connective Tissue - Giammatteo.pdf → medical_library: 260 chunks
 - `2026-04-18T05:21:56.019064+00:00` **book_ingested** — Integrative Manual Therapy Autonomic Nervous System - Giammatteo.pdf → medical_library: 186 chunks
-- `2026-04-18T05:11:24.896935+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-18 05:11:24,959  INFO      Startup scan: 14 untranscribed video(s) found, 0 new entry/entries added to queue
-2026-04-18 05:11:24,959  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
-2026-04-18 05:11:24,960  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
-2026-04-18 05:11:24,960  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
-2026-04-18 05:41:25,634  INFO      ────────────────────────────────────────────────────────────
-2026-04-18 05:41:25,634  INFO      Transcription queue manager started
 2026-04-18 05:41:25,637  INFO      Startup scan: 14 untranscribed video(s) found, 0 new entry/entries added to queue
 2026-04-18 05:41:25,639  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
 2026-04-18 05:41:25,639  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
 2026-04-18 05:41:25,640  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
+2026-04-18 06:11:26,191  INFO      ────────────────────────────────────────────────────────────
+2026-04-18 06:11:26,191  INFO      Transcription queue manager started
+2026-04-18 06:11:26,192  INFO      Startup scan: 14 untranscribed video(s) found, 0 new entry/entries added to queue
+2026-04-18 06:11:26,193  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
+2026-04-18 06:11:26,194  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
+2026-04-18 06:11:26,194  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
 ```
