@@ -6,12 +6,21 @@
 
 ## ✅ Afgerond — 2026-04-18
 
+- [x] **Structurele fix onclick — LOW RISK instances** — alle resterende onclick f-string interpolaties naar `data-*` patroon
+      - `uploadBook` (library/ingest): `section_key` → `data-section`
+      - `resolveDup` (library banner): `bh`+`delete_hash` → `data-hash`+`data-delete`
+      - `setPriority` (images prio dropdown): 3 params → `data-hash`+`data-cls`+`data-prio`
+      - `togglePrioMenu` (images prio button): `bh` → `data-hash`
+      - `toggleImgBook` (images book div): `bh` → `data-hash`
+      - `setImgFilter` (images filter btns): bestaande `data-hash`+`data-filter` hergebruikt
+      - `selectAllVisible`, `deleteSelected`, `loadMoreImgs` (images): `bh` → `data-hash`
+      - Resterende grep-matches zijn JS template literals (`${k}`, `${img.url}`) — geen Python f-strings
+
 - [x] **Structurele fix onclick XSS** — alle HIGH RISK f-string onclick interpolaties vervangen door `data-*` patroon
       - `manualTranscribe` (video pagina, lijn 1310): `esc_name` → `data-filename` + `html.escape()`
       - `reauditBook` (library pagina, lijn 2018): `b["name"]` → `data-book-name` + `html.escape()`
       - `doSearch` (search pagina, lijn 6332): `json.dumps(qv)` → `data-query` + `html.escape()`
       - `html` module toegevoegd aan imports; `esc_name` variabele verwijderd (was dead code)
-      - Resterende onclick-interpolaties zijn LOW RISK (hex hashes + gecontroleerde waarden)
 
 - [x] **Duplicaatdetectie feature** — gebouwd (deel A–D)
       - A: `_extract_epub_dc_metadata` + `_extract_pdf_metadata` in parse_epub.py

@@ -2087,7 +2087,7 @@ def _library_section_html(section_key: str) -> str:
           Afbeeldingen extraheren na verwerking
         </label>
       </div>
-      <button type="button" onclick="uploadBook('{section_key}')"
+      <button type="button" data-section="{section_key}" onclick="uploadBook(this.dataset.section)"
               class="btn btn-primary">Uploaden + ingesteren</button>
       <span id="upload-msg-{section_key}" style="font-size:13px;color:#059669"></span>
     </form>
@@ -2333,7 +2333,7 @@ def _render_dup_banner(groups: list) -> str:
                 f"Dit verwijdert vectorchunks, afbeeldingen en het bestand definitief."
             )
             keep_btn = (
-                f'<button onclick="resolveDup(\'{bh}\',\'{delete_hash}\')"'
+                f'<button data-hash="{bh}" data-delete="{delete_hash}" onclick="resolveDup(this.dataset.hash,this.dataset.delete)"'
                 f' style="margin-top:8px;padding:5px 12px;background:#1A6B72;'
                 f'color:#fff;border:none;border-radius:6px;font-size:12px;'
                 f'cursor:pointer;font-weight:600">Bewaar dit \u2713</button>'
@@ -5664,8 +5664,9 @@ def _prio_dropdown_items(book_hash: str, cls_key: str, current: str) -> str:
     items = ""
     for p, lbl in [("high", "Hoog"), ("normal", "Normaal"), ("low", "Laag"), ("skip", "Overslaan")]:
         fw = "700" if current == p else "400"
-        items += (f'<button onclick="setPriority(\'{book_hash}\',\'{cls_key}\',\'{p}\')" '
-                  f'style="display:block;width:100%;text-align:left;padding:6px 10px;'
+        items += (f'<button data-hash="{book_hash}" data-cls="{cls_key}" data-prio="{p}"'
+                  f' onclick="setPriority(this.dataset.hash,this.dataset.cls,this.dataset.prio)"'
+                  f' style="display:block;width:100%;text-align:left;padding:6px 10px;'
                   f'border:none;background:none;cursor:pointer;font-size:13px;'
                   f'border-radius:4px;font-weight:{fw}">{lbl}</button>')
     return items
@@ -5760,7 +5761,7 @@ async def images_page(filter: str = "all", sort: str = "images"):
                         if bd["display_authors"] else "")
         if ck:
             prio_dropdown = f'''<div style="position:relative;margin-left:auto">
-        <button onclick="togglePrioMenu('{bh}')"
+        <button data-hash="{bh}" onclick="togglePrioMenu(this.dataset.hash)"
                 class="btn btn-secondary" style="font-size:12px;padding:4px 10px">
           Prioriteit &#9660;
         </button>
@@ -5780,7 +5781,7 @@ async def images_page(filter: str = "all", sort: str = "images"):
 <div class="book-row-img" id="brow-{bh}"
      style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;
             margin-bottom:10px;position:relative">
-  <div onclick="toggleImgBook('{bh}', this)"
+  <div data-hash="{bh}" onclick="toggleImgBook(this.dataset.hash, this)"
        style="padding:14px 18px;display:flex;align-items:center;
               gap:12px;cursor:pointer;flex-wrap:wrap">
     <div style="flex:1;min-width:160px">
@@ -5800,18 +5801,18 @@ async def images_page(filter: str = "all", sort: str = "images"):
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;
                 padding:10px 0 8px;border-bottom:1px solid #e2e8f0;margin-bottom:4px">
       <button class="img-filter-btn active" data-hash="{bh}" data-filter="all"
-              onclick="setImgFilter('{bh}','all',this)">Alle</button>
+              onclick="setImgFilter(this.dataset.hash,this.dataset.filter,this)">Alle</button>
       <button class="img-filter-btn" data-hash="{bh}" data-filter="with_alt"
-              onclick="setImgFilter('{bh}','with_alt',this)">Met Caption</button>
+              onclick="setImgFilter(this.dataset.hash,this.dataset.filter,this)">Met Caption</button>
       <button class="img-filter-btn" data-hash="{bh}" data-filter="without_alt"
-              onclick="setImgFilter('{bh}','without_alt',this)">Zonder Caption</button>
+              onclick="setImgFilter(this.dataset.hash,this.dataset.filter,this)">Zonder Caption</button>
       <div style="width:1px;height:20px;background:#e2e8f0;margin:0 2px"></div>
-      <button onclick="selectAllVisible('{bh}')"
+      <button data-hash="{bh}" onclick="selectAllVisible(this.dataset.hash)"
               style="padding:4px 10px;border-radius:6px;font-size:12px;
                      border:1px solid #e2e8f0;background:transparent;
                      cursor:pointer;color:#6b7280">Alles selecteren</button>
-      <button id="del-btn-{bh}"
-              onclick="deleteSelected('{bh}')"
+      <button id="del-btn-{bh}" data-hash="{bh}"
+              onclick="deleteSelected(this.dataset.hash)"
               style="display:none;padding:4px 12px;background:#fee2e2;
                      color:#991b1b;border:1px solid #fca5a5;border-radius:6px;
                      font-size:12px;cursor:pointer">
@@ -5825,7 +5826,7 @@ async def images_page(filter: str = "all", sort: str = "images"):
       <div style="color:#9ca3af;font-size:13px">Laden...</div>
     </div>
     <div id="more-{bh}" style="margin-top:12px;display:none;text-align:center">
-      <button onclick="loadMoreImgs('{bh}')"
+      <button data-hash="{bh}" onclick="loadMoreImgs(this.dataset.hash)"
               class="btn btn-secondary" style="font-size:13px">Meer laden</button>
     </div>
   </div>
