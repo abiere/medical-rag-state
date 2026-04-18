@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 07:32:27 UTC**
+> Last update: **2026-04-18 07:37:27 UTC**
 
 ## Services
 | Service | Status |
@@ -14,8 +14,8 @@
 ## Book Ingest
 | Metric | Value |
 |---|---|
-| Current job | `The QAT Life Pendant eu.pdf` (1 min) |
-| Queued | 8 |
+| Current job | `How to Use FlexBeam on Neck - Recharge Health.pdf` |
+| Queued | 5 |
 | Total books | 37 |
 | Ingested | 73 |
 | Vectors in medical_library | 19130 |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (21 min) |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` (26 min) |
 | Queued | 14 |
 | Done | 21 / 37 |
 | Vectors in nrt_video_transcripts | 241 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 15.47 GB / 32.86 GB (47%) |
-| CPU | 100.0% |
-| Disk used | 73.7 GB / 322.3 GB (24%) |
-| Uptime | up 1 day, 1 hour, 57 minutes |
+| RAM used | 16.71 GB / 32.86 GB (51%) |
+| CPU | 99.0% |
+| Disk used | 74.2 GB / 322.3 GB (24%) |
+| Uptime | up 1 day, 2 hours, 2 minutes |
 
 ## Recent markers
+- `2026-04-18T07:36:11.549305+00:00` **book_ingested** — How to Use FlexBeam on Elbows - Recharge Health.pdf → rlt_flexbeam: 3 chunks
+- `2026-04-18T07:33:27.975442+00:00` **book_ingested** — The QAT Life Pendant eu.pdf → qat_curriculum: 2 chunks
 - `2026-04-18T07:31:25.418161+00:00` **book_ingested** — The QAT Connect to the Brain eu.pdf → qat_curriculum: 2 chunks
 - `2026-04-18T07:29:10.816552+00:00` **book_ingested** — dokumen.pub_atlas-of-acupuncture-1nbsped-0443100284-9780443100284.pdf → medical_library: 879 chunks
 - `2026-04-18T07:11:27.682421+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
-- `2026-04-18T07:10:06.627685+00:00` **book_ingested** — Orthopedic Physical Assessment 7e editie - Magee, Manske.epub → medical_library: 1566 chunks
-- `2026-04-18T06:41:26.724209+00:00` **watchdog_restart** — transcription-queue hung (30 min stale) — restarted successfully
 
 ## Nightly Consistency
 ```
