@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-18 12:58:21 UTC**
+> Last update: **2026-04-18 13:03:22 UTC**
 
 ## Services
 | Service | Status |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` (4 min) |
+| Current job | `1.Upper_Body_Techniques.mp4` (9 min) |
 | Queued | 1 |
 | Done | 51 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 6.77 GB / 32.86 GB (21%) |
-| CPU | 97.6% |
+| RAM used | 7.04 GB / 32.86 GB (21%) |
+| CPU | 97.0% |
 | Disk used | 83.9 GB / 322.3 GB (27%) |
-| Uptime | up 1 day, 7 hours, 23 minutes |
+| Uptime | up 1 day, 7 hours, 28 minutes |
 
 ## Recent markers
 - `2026-04-18T12:53:54` **transcription_done** — NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.mp4 complete (51/14)
