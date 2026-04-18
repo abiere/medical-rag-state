@@ -5393,10 +5393,28 @@ async def images_page(filter: str = "all", sort: str = "images"):
         authors_html = (f'<div style="font-size:12px;color:#6b7280;margin-top:1px">'
                         f'{bd["display_authors"]}</div>'
                         if bd["display_authors"] else "")
+        if ck:
+            prio_dropdown = f'''<div style="position:relative;margin-left:auto">
+        <button onclick="togglePrioMenu('{bh}')"
+                class="btn btn-secondary" style="font-size:12px;padding:4px 10px">
+          Prioriteit &#9660;
+        </button>
+        <div id="prio-{bh}"
+             style="display:none;position:absolute;right:0;top:110%;
+                    background:#fff;border:1px solid #e2e8f0;border-radius:8px;
+                    padding:4px;min-width:140px;z-index:200;
+                    box-shadow:0 4px 12px rgba(0,0,0,.1)">
+          {_prio_dropdown_items(bh, ck, cur)}
+        </div>
+      </div>'''
+        else:
+            prio_dropdown = ('<span style="font-size:11px;color:#9ca3af;'
+                             'padding:4px 8px;margin-left:auto">'
+                             'Geen classificatie</span>')
         book_rows += f"""
 <div class="book-row-img" id="brow-{bh}"
      style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;
-            margin-bottom:10px;overflow:hidden">
+            margin-bottom:10px;position:relative">
   <div onclick="toggleImgBook('{bh}', this)"
        style="padding:14px 18px;display:flex;align-items:center;
               gap:12px;cursor:pointer;flex-wrap:wrap">
@@ -5434,19 +5452,7 @@ async def images_page(filter: str = "all", sort: str = "images"):
                      font-size:12px;cursor:pointer">
         Verwijder geselecteerde
       </button>
-      <div style="position:relative;margin-left:auto">
-        <button onclick="togglePrioMenu('{bh}')"
-                class="btn btn-secondary" style="font-size:12px;padding:4px 10px">
-          Prioriteit ▾
-        </button>
-        <div id="prio-{bh}"
-             style="display:none;position:absolute;right:0;top:110%;
-                    background:#fff;border:1px solid #e2e8f0;border-radius:8px;
-                    padding:4px;min-width:140px;z-index:100;
-                    box-shadow:0 4px 12px rgba(0,0,0,.1)">
-          {_prio_dropdown_items(bh, ck, cur)}
-        </div>
-      </div>
+      {prio_dropdown}
     </div>
     <div id="imgs-{bh}"
          style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
@@ -5536,7 +5542,7 @@ async function loadImgs(hash, reset) {
     if (reset) container.innerHTML = '';
     if (d.images.length === 0 && st.offset === 0) {
       container.innerHTML =
-        '<div style="color:#9ca3af;font-size:13px">Geen afbeeldingen gevonden</div>';
+        '<div style="color:#9ca3af;font-size:13px;padding:20px 0">Geen afbeeldingen \u2014 alle afbeeldingen zijn verwijderd</div>';
     } else {
       d.images.forEach(img => container.appendChild(_makeThumb(hash, img)));
       st.offset += d.images.length;
@@ -5792,12 +5798,18 @@ async def api_images_priority(request_data: dict):
 
     classifications = cfg.get("classifications", {})
 
-    # Find by cls_key or by book_hash match
-    if cls_key and cls_key in classifications:
-        classifications[cls_key]["image_priority_override"] = priority_override
-        classifications[cls_key]["image_evaluated"] = True
-    else:
+    if not cls_key:
+        return JSONResponse(
+            {"error": "Geen classificatie gevonden voor dit boek. "
+                      "Voeg het toe aan book_classifications.json."},
+            status_code=400
+        )
+
+    if cls_key not in classifications:
         return JSONResponse({"error": f"cls_key '{cls_key}' not found"}, status_code=404)
+
+    classifications[cls_key]["image_priority_override"] = priority_override
+    classifications[cls_key]["image_evaluated"] = True
 
     cfg_path.write_text(json.dumps(cfg, indent=2, ensure_ascii=False))
     return {"status": "ok", "cls_key": cls_key, "priority_override": priority_override}
