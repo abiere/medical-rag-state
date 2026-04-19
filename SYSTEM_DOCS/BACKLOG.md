@@ -1,8 +1,27 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-19 — GitHub sync observability: /api/status/sync + nav badge + error logging
+> Laatste update: 2026-04-19 — Banner no-ISBN only + ASIN lookup
 
 ---
+
+## ✅ Afgerond — 2026-04-19 (sessie 21)
+
+- [x] **Feature 1: Banner toont alleen boeken zonder ISBN**
+      - `_get_metadata_incomplete_count()`: filter aangepast — telt nu alleen boeken zonder ISBN (was: isbn OF title)
+      - `/api/schemas/metadata`: `needs_isbn` veld toegevoegd per boek
+      - Banner header: "N boeken hebben geen ISBN" (was: "onvolledige metadata")
+      - `loadLibraryMetadataStatus()` volledig herschreven: filtert op `!b.isbn`, toont 6 kolommen (bestandsnaam, auteurs, jaar, ISBN invoer, ASIN invoer, acties), geen "velden" badges meer
+      - `enrichAsin()` JS functie toegevoegd aan library script blok
+      - Verborgen wanneer alle boeken een ISBN hebben (server-side + client-side)
+
+- [x] **Feature 2: ASIN lookup via Amazon**
+      - `_fetch_amazon_asin(asin)` toegevoegd aan `book_metadata_vision.py` — scrapet Amazon productpagina voor ISBN-13, title, authors, publisher, year
+      - `POST /api/library/book/{hash}/enrich-asin` endpoint — valideert ASIN, scrapet Amazon, enriches via ISBN-APIs indien ISBN gevonden, sla altijd ASIN op
+      - Bot-detectie test (ASIN B01IGU361U): Amazon detecteert Hetzner datacenter IP → lege response → endpoint geeft duidelijke foutmelding
+
+- [x] **Bugfix: surrogate pair unicode error**
+      - `\uD83D\uDCC4` (UTF-16 surrogate) vervangen door `&#x1F4C4;` (HTML entity)
+      - Tests: 39/39 GESLAAGD
 
 ## ✅ Afgerond — 2026-04-19 (sessie 20)
 

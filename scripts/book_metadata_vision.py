@@ -638,6 +638,115 @@ def _fetch_loc(isbn: str) -> dict:
         return {}
 
 
+# ── Amazon ASIN scraper ───────────────────────────────────────────
+
+def _fetch_amazon_asin(asin: str) -> dict:
+    """
+    Scrape Amazon product page for book metadata.
+    Amazon product pages for books often include ISBN-13.
+    ASIN format: B01XXXXXXX or 10-digit alphanumeric.
+    Returns dict with available fields or empty dict.
+    """
+    if not asin:
+        return {}
+    asin = re.sub(r"[^A-Z0-9]", "", asin.upper().strip())
+    if len(asin) != 10:
+        return {}
+    url = f"https://www.amazon.com/dp/{asin}"
+    try:
+        req = urllib.request.Request(
+            url,
+            headers={
+                "User-Agent": (
+                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) "
+                    "Chrome/120.0.0.0 Safari/537.36"
+                ),
+                "Accept-Language": "en-US,en;q=0.9",
+                "Accept": (
+                    "text/html,application/xhtml+xml,"
+                    "application/xml;q=0.9,*/*;q=0.8"
+                ),
+            },
+        )
+        with urllib.request.urlopen(req, timeout=15) as r:
+            html_content = r.read().decode("utf-8", errors="ignore")
+
+        if ("Sorry, we just need" in html_content
+                or "robot check" in html_content.lower()
+                or "captcha" in html_content.lower()):
+            log.warning("Amazon bot detection for ASIN %s", asin)
+            return {}
+
+        try:
+            from bs4 import BeautifulSoup
+        except ImportError:
+            log.warning("BeautifulSoup not installed — Amazon scraper skipped")
+            return {}
+
+        soup = BeautifulSoup(html_content, "html.parser")
+        result: dict = {}
+
+        # Title
+        title_el = soup.find(id="productTitle")
+        if title_el:
+            result["title"] = title_el.get_text(strip=True)
+
+        # Authors
+        author_els = soup.select(
+            ".author .contributorNameID, "
+            ".author a.a-link-normal"
+        )
+        if author_els:
+            result["authors"] = [
+                a.get_text(strip=True).split(",")[0].strip()
+                for a in author_els[:5]
+                if a.get_text(strip=True)
+            ]
+
+        # Product details: ISBN-13, ISBN-10, publisher, year
+        detail_rows = soup.select(
+            "#detailBullets_feature_div li, "
+            "#productDetailsTable tr, "
+            ".detail-bullet-list li, "
+            "#bookDetails_feature_div .a-row"
+        )
+        for row in detail_rows:
+            text = row.get_text(" ", strip=True)
+
+            m = re.search(r"ISBN-13[:\s]+([0-9][\s\-0-9]{11,15}[0-9])", text)
+            if m:
+                clean = re.sub(r"[^0-9]", "", m.group(1))
+                if len(clean) == 13:
+                    result["isbn_13"] = clean
+
+            m = re.search(r"ISBN-10[:\s]+([0-9X][\s\-0-9X]{8,12})", text)
+            if m:
+                clean = re.sub(r"[^0-9X]", "", m.group(1))
+                if len(clean) == 10:
+                    result["isbn_10"] = clean
+
+            if "publisher" in text.lower():
+                parts = text.split(":", 1)
+                if len(parts) > 1:
+                    result["publisher"] = parts[1].strip()[:80]
+
+            m = re.search(r"\b(19|20)\d{2}\b", text)
+            if m and "year" not in result:
+                result["year"] = int(m.group(0))
+
+        if result:
+            log.info("Amazon ASIN %s: title=%s isbn=%s",
+                     asin,
+                     result.get("title", "?")[:40],
+                     result.get("isbn_13", "none"))
+        return result
+
+    except Exception as e:
+        log.warning("Amazon ASIN failed %s: %s", asin, e)
+        return {}
+
+
 # ── Merge with field-level priority ──────────────────────────────
 
 FIELD_PRIORITY = {
