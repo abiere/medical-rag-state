@@ -521,17 +521,36 @@ def _get_firecrawl_key() -> str:
 
 
 def _firecrawl_scrape(url: str) -> str:
-    """Scrape url via Firecrawl and return markdown, or '' on failure."""
+    """
+    Scrape a URL via Firecrawl and return markdown content.
+    Uses firecrawl-py v4.x: V1FirecrawlApp (FirecrawlApp is an empty alias).
+    Returns empty string on failure.
+    """
     key = _get_firecrawl_key()
     if not key:
         return ""
     try:
-        from firecrawl import FirecrawlApp
-        app = FirecrawlApp(api_key=key)
+        from firecrawl import V1FirecrawlApp
+        app = V1FirecrawlApp(api_key=key)
         result = app.scrape_url(url, formats=["markdown"])
-        return result.markdown or ""
+
+        content = None
+        if hasattr(result, "markdown") and result.markdown:
+            content = result.markdown
+        elif hasattr(result, "content") and result.content:
+            content = result.content
+        elif isinstance(result, dict):
+            content = result.get("markdown") or result.get("content", "")
+
+        if not content:
+            log.warning("Firecrawl returned empty content for %s", url)
+            return ""
+
+        log.info("Firecrawl scraped %s: %d chars", url, len(content))
+        return content
+
     except Exception as e:
-        log.warning("Firecrawl scrape failed url=%s: %s", url, e)
+        log.error("Firecrawl scrape failed for %s: %s", url, e)
         return ""
 
 

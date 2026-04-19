@@ -1,8 +1,20 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-19 — Firecrawl integratie
+> Laatste update: 2026-04-19 — Firecrawl bugfix V1FirecrawlApp
 
 ---
+
+## ✅ Afgerond — 2026-04-19 (sessie 23)
+
+- [x] **Bugfix: Firecrawl scrape mislukt — FirecrawlApp is lege alias**
+      - Root cause: `FirecrawlApp` in firecrawl-py v4.22.2 = lege alias zonder methoden (`Firecrawl` class, geen `scrape_url`)
+      - Fix: `_firecrawl_scrape()` gebruikt nu `V1FirecrawlApp` (heeft `scrape_url`, `V1ScrapeResponse` response)
+      - Toegevoegd: robuste content-extractie (`.markdown` → `.content` → dict fallback)
+      - Test endpoint `GET /api/settings/test-firecrawl`: response gewijzigd van `ok/snippet` → `success/chars/preview`
+      - JS `testFirecrawl()`: geüpdated naar `d.success` + toont chars-count
+      - ISBNsearch test: 12385 chars, title + ISBN correct geparsed
+      - Amazon ASIN B01IGU361U: title "Sobotta Atlas of Anatomy Classic", year 2016
+      - Tests: 39/39 GESLAAGD
 
 ## ✅ Afgerond — 2026-04-19 (sessie 22)
 

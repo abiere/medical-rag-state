@@ -4812,18 +4812,19 @@ async def api_test_firecrawl():
     try:
         from book_metadata_vision import _get_firecrawl_key, _firecrawl_scrape
     except ImportError as e:
-        return JSONResponse({"ok": False, "error": f"Import failed: {e}"}, status_code=500)
+        return JSONResponse({"success": False, "error": f"Import failed: {e}"}, status_code=500)
     key = _get_firecrawl_key()
     if not key:
-        return JSONResponse({"ok": False, "error": "Geen API key ingesteld"}, status_code=400)
-    md = _firecrawl_scrape("https://isbnsearch.org/isbn/9780443066849")
-    if not md:
-        return JSONResponse({"ok": False, "error": "Firecrawl returned empty response — check API key"}, status_code=502)
-    # Verify we got meaningful content (title present in markdown)
-    if len(md) > 100:
-        snippet = md[:200].replace("\n", " ").strip()
-        return {"ok": True, "snippet": snippet}
-    return JSONResponse({"ok": False, "error": "Response too short — possible auth failure"}, status_code=502)
+        return JSONResponse({"success": False, "error": "Geen API key ingesteld"}, status_code=400)
+    content = _firecrawl_scrape("https://isbnsearch.org/isbn/9780702046544")
+    if not content:
+        return JSONResponse(
+            {"success": False,
+             "error": "Firecrawl returned empty response. "
+                      "Check if the API key is valid and has remaining credits."},
+            status_code=502,
+        )
+    return {"success": True, "chars": len(content), "preview": content[:200]}
 
 
 # ── GET /api/schemas/metadata ─────────────────────────────────────────────────
@@ -5369,9 +5370,9 @@ async function testFirecrawl() {
   try {
     const r = await fetch('/api/settings/test-firecrawl');
     const d = await r.json();
-    if (d.ok) {
+    if (d.success) {
       resultEl.style.color = '#059669';
-      resultEl.textContent = '✓ Verbinding OK — ' + (d.snippet || '').substring(0, 80);
+      resultEl.textContent = '✓ Verbinding OK — ' + (d.chars || 0) + ' chars — ' + (d.preview || '').substring(0, 60);
     } else {
       resultEl.style.color = '#dc2626';
       resultEl.textContent = '✗ ' + (d.error || 'Onbekende fout');
