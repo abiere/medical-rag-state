@@ -1,12 +1,12 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-19 00:41:09 UTC**
+> Last update: **2026-04-19 00:46:10 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ✅ active |
-| book-ingest-queue | ✅ active |
+| transcription-queue | ⚠️ activating |
+| book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
 | ollama | ✅ healthy |
@@ -26,47 +26,47 @@
 | Metric | Value |
 |---|---|
 | Current job | idle |
-| Queued | 13 |
+| Queued | 0 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 3.71 GB / 32.86 GB (11%) |
-| CPU | 83.5% |
+| RAM used | 2.77 GB / 32.86 GB (8%) |
+| CPU | 0.0% |
 | Disk used | 84.4 GB / 322.3 GB (27%) |
-| Uptime | up 1 day, 19 hours, 5 minutes |
+| Uptime | up 1 day, 19 hours, 10 minutes |
 
 ## Recent markers
-- `2026-04-19T00:31:42` **queue_empty** — All 13 videos transcribed
-- `2026-04-19T00:31:42` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
-- `2026-04-19T00:31:42` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
-- `2026-04-19T00:31:42` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
-- `2026-04-19T00:31:42` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
+- `2026-04-19T00:45:46` **queue_empty** — All 13 videos transcribed
+- `2026-04-19T00:45:46` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-04-19T00:45:46` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-04-19T00:45:46` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-04-19T00:45:46` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
-  TRANSCRIPT ONTBREEKT IN QDRANT: Organs_and_Glands_Review.json (type: qat)
-  TRANSCRIPT ONTBREEKT IN QDRANT: 2.Lower_Body_Fundamentals.json (type: nrt)
-  TRANSCRIPT ONTBREEKT IN QDRANT: Pair_Balancing.json (type: qat)
-  TRANSCRIPT ONTBREEKT IN QDRANT: Neuromuscular_ReEducation.json (type: qat)
-  TRANSCRIPT ONTBREEKT IN QDRANT: Manual_Muscle_Testing_3.json (type: qat)
-  TRANSCRIPT ONTBREEKT IN QDRANT: Anti-Inflammatory_Procedure.json (type: qat)
+  TRANSCRIPT ONTBREEKT IN QDRANT: 1.Upper_Body_Techniques_part002.json (type: qat)
   TRANSCRIPT ONTBREEKT IN QDRANT: Manual_Muscle_Testing_1.json (type: qat)
+  TRANSCRIPT ONTBREEKT IN QDRANT: Everything_Reset_Sequence_-_Part_4_part001.json (type: qat)
   TRANSCRIPT ONTBREEKT IN QDRANT: Indicator_Muscle.json (type: qat)
+  BOEK ONTBREEKT IN QDRANT: test_acupuncture.pdf (collectie: medical_library)
+  BOEK ONTBREEKT IN QDRANT: Orthopedic Physical Assessment_nodrm.epub (collectie: medical_library)
+  BOEK ONTBREEKT IN QDRANT: Touch for Health_ The Complete Edition_ A Practical Guide to Natural Health With Acupressure Touch_nodrm.pdf (collectie: medical_library)
+  BOEK ONTBREEKT IN QDRANT: Bates Guide to Physical Examination 14e editie - Bickley.epub (collectie: medical_library)
 ```
 
 ## Queue log (last 10 lines)
 ```
-2026-04-19 00:36:12,715  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-19 00:36:42,715  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-19 00:37:12,716  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-19 00:37:42,717  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-19 00:38:12,718  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-19 00:38:42,718  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-19 00:39:12,718  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-19 00:39:42,719  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-19 00:40:12,719  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-19 00:40:42,720  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-19 00:45:45,864  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
+2026-04-19 00:45:46,043  INFO      DONE   nrt/NRT_Fascial_Activation_Application_Method.mp4  (0s, 3 segments)
+2026-04-19 00:45:46,044  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Fascial_Activation_Application_Method.json
+2026-04-19 00:45:46,174  INFO      START  nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (957 MB)
+2026-04-19 00:45:46,174  INFO      Using existing segments for NRT_Sports_Specific_or_Universal_Reset.mp4: 2 parts
+2026-04-19 00:45:46,174  INFO      Transcribing 2 segments for NRT_Sports_Specific_or_Universal_Reset.mp4
+2026-04-19 00:45:46,298  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
+2026-04-19 00:45:46,299  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
+2026-04-19 00:45:46,428  INFO      Queue empty — 13 video(s) processed. Exiting.
+2026-04-19 00:45:46,492  INFO      Transcription queue manager done
 ```
