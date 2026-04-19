@@ -2581,7 +2581,7 @@ async def library_page():
                 padding:10px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer"
          onclick="toggleMetaStatus()">
       <span style="font-size:13px;color:#854F0B">
-        &#x26A0; <span id="meta-isbn-count">{n}</span> {boeken} {hebben} geen ISBN
+        &#x26A0; <span id="meta-isbn-count">{n}</span> {boeken} {hebben} aandacht nodig
       </span>
       <span id="meta-toggle-label" style="font-size:13px;color:#854F0B;font-weight:600">Bekijk &#x25BE;</span>
     </div>
@@ -3495,12 +3495,12 @@ async function loadLibraryMetadataStatus() {
     const books = d.books || [];
     window._libMetaLoaded = true;
 
-    // Show only books without ISBN
-    const noIsbn = books.filter(b => !b.isbn);
+    // Show only books that need attention (no isbn, not manually reviewed)
+    const noIsbn = books.filter(b => b.needs_attention);
 
     if (!noIsbn.length) {
       cont.innerHTML = '<div style="color:#16a34a;font-size:13px;padding:8px 0">'
-        + '\u2713 Alle boeken hebben een ISBN.</div>';
+        + '\u2713 Alle boeken zijn compleet of handmatig beoordeeld.</div>';
       return;
     }
 
@@ -3591,7 +3591,7 @@ async function loadLibraryMetadataStatus() {
     });
     html += '</tbody></table>';
     html += '<div style="margin-top:10px;font-size:12px;color:#6b7280">'
-      + noIsbn.length + ' boeken zonder ISBN</div>';
+      + noIsbn.length + ' boeken hebben aandacht nodig</div>';
     cont.innerHTML = html;
   } catch(e) {
     cont.innerHTML = '<div style="color:#dc2626;font-size:13px">Laden mislukt: ' + e + '</div>';
@@ -4456,8 +4456,9 @@ async def api_metadata_manual(book_hash: str, request: Request):
     if body.get("edition_label"):
         bm["edition_label"] = body["edition_label"].strip()
 
-    bm["metadata_method"] = "manual"
-    bm["needs_review"]    = []
+    bm["metadata_method"]   = "manual_entry"
+    bm["manually_reviewed"] = True
+    bm["needs_review"]      = []
     state["book_metadata"] = bm
 
     tmp = state_path.with_suffix(".tmp")
@@ -4980,18 +4981,28 @@ async def api_schemas_metadata():
             bm = s.get("book_metadata", {})
             nr = bm.get("needs_review", [])
             isbn = bm.get("isbn") or ""
+            has_isbn          = bool(isbn)
+            manually_reviewed = bool(bm.get("manually_reviewed"))
+            has_minimum_data  = bool(bm.get("title")) and bool(bm.get("creator") or bm.get("authors"))
+            needs_attention   = (
+                not has_isbn
+                and not manually_reviewed
+                and not (has_minimum_data and bm.get("metadata_method") == "manual_entry")
+            )
             rows.append({
-                "filename":   s.get("filename", ""),
-                "book_hash":  s.get("book_hash", d.name),
-                "title":      bm.get("title") or "",
-                "authors":    (", ".join(bm["creator"]) if isinstance(bm.get("creator"), list) else bm.get("creator") or ""),
-                "isbn":       isbn,
-                "year":       str(bm.get("date") or "")[:4],
-                "method":     bm.get("metadata_method") or "tekst_extractie",
-                "sources":    bm.get("metadata_sources") or {},
-                "needs_review": nr,
-                "complete":   len(nr) == 0,
-                "needs_isbn": not bool(isbn),
+                "filename":        s.get("filename", ""),
+                "book_hash":       s.get("book_hash", d.name),
+                "title":           bm.get("title") or "",
+                "authors":         (", ".join(bm["creator"]) if isinstance(bm.get("creator"), list) else bm.get("creator") or ""),
+                "isbn":            isbn,
+                "year":            str(bm.get("date") or "")[:4],
+                "method":          bm.get("metadata_method") or "tekst_extractie",
+                "sources":         bm.get("metadata_sources") or {},
+                "needs_review":    nr,
+                "complete":        len(nr) == 0,
+                "needs_isbn":      not has_isbn,
+                "needs_attention": needs_attention,
+                "manually_reviewed": manually_reviewed,
             })
         # Sort: needs_review first (amber), no title (red), complete last (green)
         rows.sort(key=lambda r: (

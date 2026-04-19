@@ -1,8 +1,25 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-19 — Handmatig invoeren knop in ISBN banner
+> Laatste update: 2026-04-19 — Banner filter verbeterd met manually_reviewed flag
 
 ---
+
+## ✅ Afgerond — 2026-04-19 (sessie 25)
+
+- [x] **Fix 1: manually_reviewed flag bij handmatige invoer**
+      - `POST /api/library/book/{hash}/metadata-manual`: zet nu `manually_reviewed=True` + `metadata_method="manual_entry"`
+      - Was: `metadata_method="manual"`, geen `manually_reviewed` flag
+
+- [x] **Fix 2: Banner filter — sluit manually_reviewed boeken uit**
+      - `/api/schemas/metadata`: `needs_isbn` → `needs_attention` logica
+      - `needs_attention = not has_isbn AND not manually_reviewed AND not (has_minimum_data AND manual_entry)`
+      - JS filter: `books.filter(b => !b.isbn)` → `books.filter(b => b.needs_attention)`
+      - Banner tekst: "geen ISBN" → "aandacht nodig"
+      - Boeken met handmatige metadata of ASIN verdwijnen uit de banner
+
+- [x] **Fix 3: Backfill 14 bestaande entries**
+      - 14 boeken gemarkeerd met `manually_reviewed=True` (method='manual' + ASIN-boeken)
+      - Verificatie: 0 boeken hebben aandacht nodig, Sobotta Classic en CranioSacral uitgesloten
 
 ## ✅ Afgerond — 2026-04-19 (sessie 24)
 
