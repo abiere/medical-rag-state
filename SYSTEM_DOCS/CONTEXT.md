@@ -1,7 +1,7 @@
 # CONTEXT — Session Loader
 > Lees dit aan het begin van elke sessie. Max 150 regels.
 > Volledige technische detail: SYSTEM_DOCS/TECHNICAL.md
-> **Auto-gegenereerd:** 2026-04-19 19:24 UTC
+> **Auto-gegenereerd:** 2026-04-19 19:25 UTC
 
 ## Wat dit systeem is
 Privé, volledig lokaal RAG-systeem voor medische en acupunctuurliteratuur.
@@ -94,12 +94,8 @@ HE=HE-5   | LIV=LIV-5
 
 ## Open issues (uit BACKLOG.md)
 
-- Trail Guide ingest valideren
-- Deadman + Travell chunk counts valideren in Qdrant
-- Eerste protocol genereren via /protocols
-- Bestaande protocollen draaien door nieuwe setup valideren
-- Bibliotheek verder opbouwen — nieuwe boeken en transcripties
-- Appendix-Autoimmuun.md
+- Framework voor verdere werkwijze — door architect uit te werken
+- CLAUDE.md drift structureel oplossen
 
 ---
 
