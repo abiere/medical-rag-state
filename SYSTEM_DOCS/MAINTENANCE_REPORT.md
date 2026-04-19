@@ -1,7 +1,7 @@
 # Maintenance Report — Medical RAG
 
-**Datum:** 18-04-2026 00:30:53  
-**Duur:** 521.1s  
+**Datum:** 19-04-2026 00:31:53  
+**Duur:** 821.0s  
 **Uitslag:** ⚠️ WARNING  
 
 ---
@@ -10,83 +10,121 @@
 
 | Fase | Status | Duur | Bevinding |
 |---|---|---|---|
-| Pre-checks | ✅ OK | 0.1s | Schijf: 238.9 GB vrij, 23% gebruikt |
-| Qdrant maintenance | ✅ OK | 1.5s | nrt_curriculum: 0 vectoren, optimizer: ok |
-| Data consistentie | ⚠️ WARNING | 483.8s | 0 boeken in metadata, 0 ingested |
+| Pre-checks | ✅ OK | 0.1s | Schijf: 225.2 GB vrij, 27% gebruikt |
+| Qdrant maintenance | ✅ OK | 1.4s | nrt_curriculum: 0 vectoren, optimizer: ok |
+| Data consistentie | ⚠️ WARNING | 784.4s | 0 boeken in metadata, 0 ingested |
 | Retroaudit chunks | ✅ OK | 0.0s | Claude API actief — retroaudit wordt op aanvraag uitgevoerd via UI |
-| State integriteit | ✅ OK | 11.1s | State integriteit: 70 voltooide boeken gecontroleerd, 28 OK, 0 misma… |
-| Software check | ⚠️ WARNING | 24.5s | 89 pip-pakket(ten) verouderd: |
-| Opruimen | ✅ OK | 0.0s | /tmp: geen verouderde bestanden |
+| State integriteit | ✅ OK | 13.6s | State integriteit: 76 voltooide boeken gecontroleerd, 34 OK, 0 misma… |
+| Software check | ⚠️ WARNING | 21.6s | 93 pip-pakket(ten) verouderd: |
+| Opruimen | ✅ OK | 0.0s | /tmp: 5 verouderd(e) bestand(en) verwijderd |
 
-**Schijf voor:** 238.9 GB vrij  
-**Schijf na:** 238.5 GB vrij  
+**Schijf voor:** 225.2 GB vrij  
+**Schijf na:** 224.8 GB vrij  
 **Vrijgemaakt:** —  
 
 ---
 
 ## ✅ Pre-checks
 
-- Schijf: 238.9 GB vrij, 23% gebruikt
-- RAM: 16.9 GB beschikbaar, 48% gebruikt
+- Schijf: 225.2 GB vrij, 27% gebruikt
+- RAM: 30.1 GB beschikbaar, 8% gebruikt
 - Qdrant: ✓ online
 - Ollama: ✓ online (llama3.1:8b)
 - Docker: 2 container(s) actief
-  • qdrant: Up 19 hours (healthy)
-  • ollama: Up 19 hours (healthy)
+  • qdrant: Up 43 hours (healthy)
+  • ollama: Up 43 hours (healthy)
 
 ## ✅ Qdrant maintenance
 
 - nrt_curriculum: 0 vectoren, optimizer: ok
-- nrt_curriculum: snapshot aangemaakt: nrt_curriculum-5527570280445304-2026-04-18-00-30-54.snapshot
+- nrt_curriculum: snapshot aangemaakt: nrt_curriculum-5527570280445304-2026-04-19-00-31-53.snapshot
   → opgeslagen (5.4 MB)
 - qat_curriculum: 0 vectoren, optimizer: ok
-- qat_curriculum: snapshot aangemaakt: qat_curriculum-5527570280445304-2026-04-18-00-30-54.snapshot
-  → opgeslagen (1.7 MB)
+- qat_curriculum: snapshot aangemaakt: qat_curriculum-5527570280445304-2026-04-19-00-31-54.snapshot
+  → opgeslagen (1.8 MB)
 - rlt_flexbeam: 0 vectoren, optimizer: ok
-- rlt_flexbeam: snapshot aangemaakt: rlt_flexbeam-5527570280445304-2026-04-18-00-30-54.snapshot
+- rlt_flexbeam: snapshot aangemaakt: rlt_flexbeam-5527570280445304-2026-04-19-00-31-54.snapshot
   → opgeslagen (2.1 MB)
 - medical_library: 0 vectoren, optimizer: ok
-- medical_library: snapshot aangemaakt: medical_library-5527570280445304-2026-04-18-00-30-54.snapshot
-  → opgeslagen (157.0 MB)
+- medical_library: snapshot aangemaakt: medical_library-5527570280445304-2026-04-19-00-31-54.snapshot
+  → opgeslagen (179.1 MB)
 - pemf_qrs: 0 vectoren, optimizer: ok
-- pemf_qrs: snapshot aangemaakt: pemf_qrs-5527570280445304-2026-04-18-00-30-55.snapshot
+- pemf_qrs: snapshot aangemaakt: pemf_qrs-5527570280445304-2026-04-19-00-31-55.snapshot
   → opgeslagen (1.0 MB)
 - nrt_video_transcripts: 0 vectoren, optimizer: ok
-- nrt_video_transcripts: snapshot aangemaakt: nrt_video_transcripts-5527570280445304-2026-04-18-00-30-55.snapshot
-  → opgeslagen (3.0 MB)
+- nrt_video_transcripts: snapshot aangemaakt: nrt_video_transcripts-5527570280445304-2026-04-19-00-31-55.snapshot
+  → opgeslagen (3.1 MB)
 - qat_video_transcripts: 0 vectoren, optimizer: ok
-- qat_video_transcripts: snapshot aangemaakt: qat_video_transcripts-5527570280445304-2026-04-18-00-30-55.snapshot
-  → opgeslagen (0.1 MB)
+- qat_video_transcripts: snapshot aangemaakt: qat_video_transcripts-5527570280445304-2026-04-19-00-31-55.snapshot
+  → opgeslagen (1.5 MB)
 
 ## ⚠️ Data consistentie
 
 - 0 boeken in metadata, 0 ingested
-- 19608 afbeeldingen gecontroleerd — geen wees-bestanden
+- 25640 afbeeldingen gecontroleerd — geen wees-bestanden
 - Consistentie: geen problemen gevonden
-- Transcripts: 21 bestanden, 0 in Qdrant, 21 ontbreken
+- Transcripts: 55 bestanden, 0 in Qdrant, 55 ontbreken
+  → her-ingestered: NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows_part001.json
+  → her-ingestered: NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.json
+  → her-ingestered: NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows_part000.json
+  → her-ingestered: Everything_Reset_Sequence_-_Part_3_part000.json
   → her-ingestered: 16_Expanded__Revised__and_New_Techniques.json
   → her-ingestered: 2.Upper_Body_Fundamentals.json
+  → her-ingestered: Everything_Reset_Sequence_-_Part_1_part001.json
+  → her-ingestered: 1.Upper_Body_Techniques_part000.json
+  → her-ingestered: 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC_part000.json
   → her-ingestered: Healing_Organs_with_NRT.json
+  → her-ingestered: Miraculous_Sequence_-_Part_2_part000.json
   → her-ingestered: 3.Why_People_Hurt.json
+  → her-ingestered: How_to_Reset_23_More_Muscles_part000.json
+  → her-ingestered: Miraculous_Sequence_-_Part_1_part001.json
   → her-ingestered: Neurological_Disorganization.json
+  → her-ingestered: Everything_Reset_Sequence_-_Part_2_part002.json
+  → her-ingestered: Everything_Reset_Sequence_-_Part_5_part002.json
+  → her-ingestered: Everything_Reset_Sequence_-_Part_5_part000.json
+  → her-ingestered: Everything_Reset_Sequence_-_Part_4_part000.json
   → her-ingestered: Locating_Acupuncture_Points.json
   → her-ingestered: Provocative_Testing.json
   → her-ingestered: Emotional_Transformation_Technique.json
+  → her-ingestered: How_to_Reset_23_More_Muscles_part001.json
+  → her-ingestered: NRT_Fascial_Activation_Application_Method_part000.json
+  → her-ingestered: Miraculous_Sequence_-_Part_2_part001.json
   → her-ingestered: Meridian_Testing_and_Treatment.json
+  → her-ingestered: NRT_Fascial_Activation_Application_Method_part001.json
+  → her-ingestered: 1.Upper_Body_Techniques_part003.json
   → her-ingestered: Green_Square_Applications.json
+  → her-ingestered: Miraculous_Sequence_-_Part_1_part000.json
+  → her-ingestered: 1.Upper_Body_Techniques_part001.json
+  → her-ingestered: Everything_Reset_Sequence_-_Part_4_part002.json
+  → her-ingestered: Everything_Reset_Sequence_-_Part_2_part000.json
   → her-ingestered: 1.Lower_Body_Techniques.json
+  → her-ingestered: Everything_Reset_Sequence_-_Part_1_part000.json
   → her-ingestered: Connection_to_the_Brain.json
   → her-ingestered: Manual_Muscle_Testing_2.json
   → her-ingestered: Organs_and_Glands_Review.json
+  → her-ingestered: Everything_Reset_Sequence_-_Part_5_part001.json
   → her-ingestered: 2.Lower_Body_Fundamentals.json
   → her-ingestered: Pair_Balancing.json
+  → her-ingestered: NRT_Sports_Specific_or_Universal_Reset_part001.json
+  → her-ingestered: Everything_Reset_Sequence_-_Part_3_part001.json
+  → her-ingestered: NRT_Sports_Specific_or_Universal_Reset_part000.json
+  → her-ingestered: NRT_Fascial_Activation_Application_Method_part002.json
   → her-ingestered: Neuromuscular_ReEducation.json
   → her-ingestered: Manual_Muscle_Testing_3.json
+  → her-ingestered: Everything_Reset_Sequence_-_Part_2_part001.json
+  → her-ingestered: Everything_Reset_Sequence_-_Part_1_part002.json
+  → her-ingestered: 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC_part001.json
   → her-ingestered: Anti-Inflammatory_Procedure.json
+  → her-ingestered: 1.Upper_Body_Techniques_part002.json
   → her-ingestered: Manual_Muscle_Testing_1.json
+  → her-ingestered: Everything_Reset_Sequence_-_Part_4_part001.json
   → her-ingestered: Indicator_Muscle.json
-- Transcripts: 21 bestand(en) her-ingestered
-- Boeken: 64 goedgekeurde audit(s) gecontroleerd, 0 ontbreken in Qdrant, 0 her-in-wachtrij gezet
+- Transcripts: 55 bestand(en) her-ingestered
+- Boeken: 74 goedgekeurde audit(s) gecontroleerd, 4 ontbreken in Qdrant, 0 her-in-wachtrij gezet
+  → bestand niet gevonden op disk: test_acupuncture.pdf
+  → bestand niet gevonden op disk: Orthopedic Physical Assessment_nodrm.epub
+  → bestand niet gevonden op disk: Touch for Health_ The Complete Edition_ A Practical Guide to Natural Health With Acupressure Touch_nodrm.pdf
+  → bestand niet gevonden op disk: Bates Guide to Physical Examination 14e editie - Bickley.epub
 
 ## ✅ Retroaudit chunks
 
@@ -94,53 +132,53 @@
 
 ## ✅ State integriteit
 
-- State integriteit: 70 voltooide boeken gecontroleerd, 28 OK, 0 mismatches
-- QRS-101 Manual Englisch.pdf: 0 chunks — qdrant was leeg bij embed?
-- NRT UB Techniques and Fundamentals - Times.pdf: 0 chunks — qdrant was leeg bij embed?
-- NRT Upper Body.pdf: 0 chunks — qdrant was leeg bij embed?
-- How to Use FlexBeam to Boost Your Immunity - Recharge Health.pdf: 0 chunks — qdrant was leeg bij embed?
-- The Acupuncture Pendant eu.pdf: 0 chunks — qdrant was leeg bij embed?
-- How to Use FlexBeam on Feet and Ankles - Recharge Health.pdf: 0 chunks — qdrant was leeg bij embed?
-- QRS 101 Indication Settings English.pdf: 0 chunks — qdrant was leeg bij embed?
-- FlexBeam Applications and Usage Guide - Recharge Health.pdf: 0 chunks — qdrant was leeg bij embed?
+- State integriteit: 76 voltooide boeken gecontroleerd, 34 OK, 0 mismatches
 - Warnings and Cautions – Recharge.pdf: 0 chunks — qdrant was leeg bij embed?
-- How to Use FlexBeam on Skin and Scars - Recharge Health.pdf: 0 chunks — qdrant was leeg bij embed?
-- How Does Red Light Therapy Work_ – Recharge.pdf: 0 chunks — qdrant was leeg bij embed?
-- How to Use FlexBeam to Boost Your Energy - Recharge Health.pdf: 0 chunks — qdrant was leeg bij embed?
-- QRS 101 Operating Manual.pdf: 0 chunks — qdrant was leeg bij embed?
-- Why FlexBeam - Recharge Health.pdf: 0 chunks — qdrant was leeg bij embed?
-- QRS-101-Home-System-Brochure.pdf: 0 chunks — qdrant was leeg bij embed?
 - Advanced Seminar Manual- HS 08272022.pdf: 0 chunks — qdrant was leeg bij embed?
-- Quantum Alignment Technique - Home Study  2025 01092025.pdf: 0 chunks — qdrant was leeg bij embed?
-- The QAT Connect to the Brain eu.pdf: 0 chunks — qdrant was leeg bij embed?
-- How to Use FlexBeam to Improve Your Breathing - Recharge Health.pdf: 0 chunks — qdrant was leeg bij embed?
-- The QAT Life Pendant eu.pdf: 0 chunks — qdrant was leeg bij embed?
-- QRS Quantron Resonance 101 Home System.pdf: 0 chunks — qdrant was leeg bij embed?
-- Miraculous Sequence - Times.pdf: 0 chunks — qdrant was leeg bij embed?
-- Warnings and Cautions - Recharge Health.pdf: 0 chunks — qdrant was leeg bij embed?
-- How to Use FlexBeam on Hips - Recharge Health.pdf: 0 chunks — qdrant was leeg bij embed?
-- White-Paper-FlexBeam-Targeted-Red-Light-Device.pdf: 0 chunks — qdrant was leeg bij embed?
-- how-flexbeam-works-for-your-body.pdf: 0 chunks — qdrant was leeg bij embed?
 - How to Use FlexBeam to Sleep Better - Recharge Health.pdf: 0 chunks — qdrant was leeg bij embed?
-- How to Use FlexBeam on Elbows - Recharge Health.pdf: 0 chunks — qdrant was leeg bij embed?
+- FlexBeam Applications and Usage Guide - Recharge Health.pdf: 0 chunks — qdrant was leeg bij embed?
+- How Does Red Light Therapy Work_ – Recharge.pdf: 0 chunks — qdrant was leeg bij embed?
+- 16 Expanded Revised and New Techniques - Times.pdf: 0 chunks — qdrant was leeg bij embed?
+- How FlexBeam Works Using Red Light Therapy Principles – Recharge.pdf: 0 chunks — qdrant was leeg bij embed?
+- NRT LB Techniques and Fundamentals - Times.pdf: 0 chunks — qdrant was leeg bij embed?
+- QRS 101 Operating Manual.pdf: 0 chunks — qdrant was leeg bij embed?
+- How to Reset 23 More Muscles - Times.pdf: 0 chunks — qdrant was leeg bij embed?
+- Quantum Alignment Technique - Home Study  2025 01092025.pdf: 0 chunks — qdrant was leeg bij embed?
+- how-flexbeam-works-for-your-body.pdf: 0 chunks — qdrant was leeg bij embed?
 - flexbeam-wellness-ifu-2024-v2-19.pdf: 0 chunks — qdrant was leeg bij embed?
+- How to Use FlexBeam to Boost Your Energy - Recharge Health.pdf: 0 chunks — qdrant was leeg bij embed?
+- How to Use FlexBeam on Feet and Ankles - Recharge Health.pdf: 0 chunks — qdrant was leeg bij embed?
+- How to Use FlexBeam to Improve Your Breathing - Recharge Health.pdf: 0 chunks — qdrant was leeg bij embed?
+- The QAT Connect to the Brain eu.pdf: 0 chunks — qdrant was leeg bij embed?
+- NRT Lower Body.pdf: 0 chunks — qdrant was leeg bij embed?
+- How to Use FlexBeam on Lower Back - Recharge Health.pdf: 0 chunks — qdrant was leeg bij embed?
+- Everything Reset Sequence - Times.pdf: 0 chunks — qdrant was leeg bij embed?
+- The QAT Life Pendant eu.pdf: 0 chunks — qdrant was leeg bij embed?
+- QRS-101 Manual Englisch.pdf: 0 chunks — qdrant was leeg bij embed?
+- The Acupuncture Pendant eu.pdf: 0 chunks — qdrant was leeg bij embed?
+- How to Use FlexBeam on Shoulders - Recharge Health.pdf: 0 chunks — qdrant was leeg bij embed?
+- QAT_2025_overgenomen.pdf: 0 chunks — qdrant was leeg bij embed?
+- How to Use FlexBeam to Help Relieve Anxiety - Recharge Health.pdf: 0 chunks — qdrant was leeg bij embed?
+- White-Paper-FlexBeam-Targeted-Red-Light-Device.pdf: 0 chunks — qdrant was leeg bij embed?
+- How to Use FlexBeam to Boost Your Immunity - Recharge Health.pdf: 0 chunks — qdrant was leeg bij embed?
 - How to Use FlexBeam for Menstrual Cramps - Recharge Health.pdf: 0 chunks — qdrant was leeg bij embed?
 - FlexBeam_RLT_Documentation.pdf: 0 chunks — qdrant was leeg bij embed?
-- NRT Lower Body.pdf: 0 chunks — qdrant was leeg bij embed?
-- QAT_2025_overgenomen.pdf: 0 chunks — qdrant was leeg bij embed?
-- How to Use FlexBeam on Lower Back - Recharge Health.pdf: 0 chunks — qdrant was leeg bij embed?
-- How FlexBeam Works Using Red Light Therapy Principles – Recharge.pdf: 0 chunks — qdrant was leeg bij embed?
-- 16 Expanded Revised and New Techniques - Times.pdf: 0 chunks — qdrant was leeg bij embed?
+- Warnings and Cautions - Recharge Health.pdf: 0 chunks — qdrant was leeg bij embed?
+- QRS 101 Indication Settings English.pdf: 0 chunks — qdrant was leeg bij embed?
+- How to Use FlexBeam on Hips - Recharge Health.pdf: 0 chunks — qdrant was leeg bij embed?
+- Miraculous Sequence - Times.pdf: 0 chunks — qdrant was leeg bij embed?
+- NRT UB Techniques and Fundamentals - Times.pdf: 0 chunks — qdrant was leeg bij embed?
+- How to Use FlexBeam on Skin and Scars - Recharge Health.pdf: 0 chunks — qdrant was leeg bij embed?
+- Why FlexBeam - Recharge Health.pdf: 0 chunks — qdrant was leeg bij embed?
+- QRS Quantron Resonance 101 Home System.pdf: 0 chunks — qdrant was leeg bij embed?
+- QRS-101-Home-System-Brochure.pdf: 0 chunks — qdrant was leeg bij embed?
+- NRT Upper Body.pdf: 0 chunks — qdrant was leeg bij embed?
 - QRS101 Quick start - English.pdf: 0 chunks — qdrant was leeg bij embed?
-- How to Use FlexBeam on Shoulders - Recharge Health.pdf: 0 chunks — qdrant was leeg bij embed?
-- How to Reset 23 More Muscles - Times.pdf: 0 chunks — qdrant was leeg bij embed?
-- Everything Reset Sequence - Times.pdf: 0 chunks — qdrant was leeg bij embed?
-- NRT LB Techniques and Fundamentals - Times.pdf: 0 chunks — qdrant was leeg bij embed?
-- How to Use FlexBeam to Help Relieve Anxiety - Recharge Health.pdf: 0 chunks — qdrant was leeg bij embed?
+- How to Use FlexBeam on Elbows - Recharge Health.pdf: 0 chunks — qdrant was leeg bij embed?
 
 ## ⚠️ Software check
 
-- 89 pip-pakket(ten) verouderd:
+- 93 pip-pakket(ten) verouderd:
   • antlr4-python3-runtime  4.9.3 → 4.13.2
   • Automat  22.10.0 → 25.4.16
   • Babel  2.10.3 → 2.18.0
@@ -161,6 +199,8 @@
   • Faker  40.13.0 → 40.15.0
   • fastapi  0.135.3 → 0.136.0
   • filelock  3.25.2 → 3.28.0
+  • google-ai-generativelanguage  0.6.15 → 0.11.0
+  • grpcio-status  1.71.2 → 1.80.0
   • httplib2  0.20.4 → 0.31.2
   • huggingface_hub  1.10.2 → 1.11.0
   • identify  2.6.18 → 2.6.19
@@ -174,8 +214,10 @@
   • latex2mathml  3.80.0 → 3.81.0
   • launchpadlib  1.11.0 → 2.1.0
   • lazr.uri  1.0.6 → 1.0.7
+  • lxml  6.0.4 → 6.1.0
   • markdown-it-py  3.0.0 → 4.0.0
   • MarkupSafe  2.1.5 → 3.0.3
+  • mempalace  3.3.0 → 3.3.1
   • mpmath  1.3.0 → 1.4.1
   • nvidia-cublas  13.1.0.3 → 13.4.0.1
   • nvidia-cuda-cupti  13.0.85 → 13.2.75
@@ -198,7 +240,7 @@
   • pdfminer.six  20251230 → 20260107
   • pillow  10.4.0 → 12.2.0
   • pip  24.0 → 26.0.1
-  • protobuf  6.33.6 → 7.34.1
+  • protobuf  5.29.6 → 7.34.1
   • pyasn1  0.4.8 → 0.6.3
   • pyasn1-modules  0.2.8 → 0.4.2
   • pydantic  2.13.0 → 2.13.2
@@ -231,15 +273,15 @@
   • wheel  0.42.0 → 0.46.3
   • zope.interface  6.1 → 8.3
 - Docker images:
-  • ollama/ollama:latest	4 days ago	9.89GB
+  • ollama/ollama:latest	5 days ago	9.89GB
   • qdrant/qdrant:latest	3 weeks ago	285MB
 - Qdrant nieuwste release: v1.17.1 (2026-03-27)
 - Ollama nieuwste release: v0.21.0 (2026-04-16)
 
 ## ✅ Opruimen
 
-- /tmp: geen verouderde bestanden
-- Totaal vrijgemaakt: 0 (niets te verwijderen)
+- /tmp: 5 verouderd(e) bestand(en) verwijderd
+- Totaal vrijgemaakt: 38 KB
 
 ---
 
@@ -259,27 +301,65 @@
 
 ## ⚠ Data-inconsistenties
 
+- TRANSCRIPT ONTBREEKT IN QDRANT: NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows_part001.json (type: qat)
+- TRANSCRIPT ONTBREEKT IN QDRANT: NRT_for_Joint_Capsular_Ligaments_and_Tendons_Using_Direction_of_Ease_-_Demonstra.json (type: nrt)
+- TRANSCRIPT ONTBREEKT IN QDRANT: NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows_part000.json (type: qat)
+- TRANSCRIPT ONTBREEKT IN QDRANT: Everything_Reset_Sequence_-_Part_3_part000.json (type: qat)
 - TRANSCRIPT ONTBREEKT IN QDRANT: 16_Expanded__Revised__and_New_Techniques.json (type: nrt)
 - TRANSCRIPT ONTBREEKT IN QDRANT: 2.Upper_Body_Fundamentals.json (type: nrt)
+- TRANSCRIPT ONTBREEKT IN QDRANT: Everything_Reset_Sequence_-_Part_1_part001.json (type: qat)
+- TRANSCRIPT ONTBREEKT IN QDRANT: 1.Upper_Body_Techniques_part000.json (type: qat)
+- TRANSCRIPT ONTBREEKT IN QDRANT: 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC_part000.json (type: qat)
 - TRANSCRIPT ONTBREEKT IN QDRANT: Healing_Organs_with_NRT.json (type: nrt)
+- TRANSCRIPT ONTBREEKT IN QDRANT: Miraculous_Sequence_-_Part_2_part000.json (type: qat)
 - TRANSCRIPT ONTBREEKT IN QDRANT: 3.Why_People_Hurt.json (type: nrt)
+- TRANSCRIPT ONTBREEKT IN QDRANT: How_to_Reset_23_More_Muscles_part000.json (type: qat)
+- TRANSCRIPT ONTBREEKT IN QDRANT: Miraculous_Sequence_-_Part_1_part001.json (type: qat)
 - TRANSCRIPT ONTBREEKT IN QDRANT: Neurological_Disorganization.json (type: qat)
+- TRANSCRIPT ONTBREEKT IN QDRANT: Everything_Reset_Sequence_-_Part_2_part002.json (type: qat)
+- TRANSCRIPT ONTBREEKT IN QDRANT: Everything_Reset_Sequence_-_Part_5_part002.json (type: qat)
+- TRANSCRIPT ONTBREEKT IN QDRANT: Everything_Reset_Sequence_-_Part_5_part000.json (type: qat)
+- TRANSCRIPT ONTBREEKT IN QDRANT: Everything_Reset_Sequence_-_Part_4_part000.json (type: qat)
 - TRANSCRIPT ONTBREEKT IN QDRANT: Locating_Acupuncture_Points.json (type: qat)
 - TRANSCRIPT ONTBREEKT IN QDRANT: Provocative_Testing.json (type: qat)
 - TRANSCRIPT ONTBREEKT IN QDRANT: Emotional_Transformation_Technique.json (type: qat)
+- TRANSCRIPT ONTBREEKT IN QDRANT: How_to_Reset_23_More_Muscles_part001.json (type: qat)
+- TRANSCRIPT ONTBREEKT IN QDRANT: NRT_Fascial_Activation_Application_Method_part000.json (type: qat)
+- TRANSCRIPT ONTBREEKT IN QDRANT: Miraculous_Sequence_-_Part_2_part001.json (type: qat)
 - TRANSCRIPT ONTBREEKT IN QDRANT: Meridian_Testing_and_Treatment.json (type: qat)
+- TRANSCRIPT ONTBREEKT IN QDRANT: NRT_Fascial_Activation_Application_Method_part001.json (type: qat)
+- TRANSCRIPT ONTBREEKT IN QDRANT: 1.Upper_Body_Techniques_part003.json (type: qat)
 - TRANSCRIPT ONTBREEKT IN QDRANT: Green_Square_Applications.json (type: qat)
+- TRANSCRIPT ONTBREEKT IN QDRANT: Miraculous_Sequence_-_Part_1_part000.json (type: qat)
+- TRANSCRIPT ONTBREEKT IN QDRANT: 1.Upper_Body_Techniques_part001.json (type: qat)
+- TRANSCRIPT ONTBREEKT IN QDRANT: Everything_Reset_Sequence_-_Part_4_part002.json (type: qat)
+- TRANSCRIPT ONTBREEKT IN QDRANT: Everything_Reset_Sequence_-_Part_2_part000.json (type: qat)
 - TRANSCRIPT ONTBREEKT IN QDRANT: 1.Lower_Body_Techniques.json (type: nrt)
+- TRANSCRIPT ONTBREEKT IN QDRANT: Everything_Reset_Sequence_-_Part_1_part000.json (type: qat)
 - TRANSCRIPT ONTBREEKT IN QDRANT: Connection_to_the_Brain.json (type: qat)
 - TRANSCRIPT ONTBREEKT IN QDRANT: Manual_Muscle_Testing_2.json (type: qat)
 - TRANSCRIPT ONTBREEKT IN QDRANT: Organs_and_Glands_Review.json (type: qat)
+- TRANSCRIPT ONTBREEKT IN QDRANT: Everything_Reset_Sequence_-_Part_5_part001.json (type: qat)
 - TRANSCRIPT ONTBREEKT IN QDRANT: 2.Lower_Body_Fundamentals.json (type: nrt)
 - TRANSCRIPT ONTBREEKT IN QDRANT: Pair_Balancing.json (type: qat)
+- TRANSCRIPT ONTBREEKT IN QDRANT: NRT_Sports_Specific_or_Universal_Reset_part001.json (type: qat)
+- TRANSCRIPT ONTBREEKT IN QDRANT: Everything_Reset_Sequence_-_Part_3_part001.json (type: qat)
+- TRANSCRIPT ONTBREEKT IN QDRANT: NRT_Sports_Specific_or_Universal_Reset_part000.json (type: qat)
+- TRANSCRIPT ONTBREEKT IN QDRANT: NRT_Fascial_Activation_Application_Method_part002.json (type: qat)
 - TRANSCRIPT ONTBREEKT IN QDRANT: Neuromuscular_ReEducation.json (type: qat)
 - TRANSCRIPT ONTBREEKT IN QDRANT: Manual_Muscle_Testing_3.json (type: qat)
+- TRANSCRIPT ONTBREEKT IN QDRANT: Everything_Reset_Sequence_-_Part_2_part001.json (type: qat)
+- TRANSCRIPT ONTBREEKT IN QDRANT: Everything_Reset_Sequence_-_Part_1_part002.json (type: qat)
+- TRANSCRIPT ONTBREEKT IN QDRANT: 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC_part001.json (type: qat)
 - TRANSCRIPT ONTBREEKT IN QDRANT: Anti-Inflammatory_Procedure.json (type: qat)
+- TRANSCRIPT ONTBREEKT IN QDRANT: 1.Upper_Body_Techniques_part002.json (type: qat)
 - TRANSCRIPT ONTBREEKT IN QDRANT: Manual_Muscle_Testing_1.json (type: qat)
+- TRANSCRIPT ONTBREEKT IN QDRANT: Everything_Reset_Sequence_-_Part_4_part001.json (type: qat)
 - TRANSCRIPT ONTBREEKT IN QDRANT: Indicator_Muscle.json (type: qat)
+- BOEK ONTBREEKT IN QDRANT: test_acupuncture.pdf (collectie: medical_library)
+- BOEK ONTBREEKT IN QDRANT: Orthopedic Physical Assessment_nodrm.epub (collectie: medical_library)
+- BOEK ONTBREEKT IN QDRANT: Touch for Health_ The Complete Edition_ A Practical Guide to Natural Health With Acupressure Touch_nodrm.pdf (collectie: medical_library)
+- BOEK ONTBREEKT IN QDRANT: Bates Guide to Physical Examination 14e editie - Bickley.epub (collectie: medical_library)
 
 ---
 
@@ -290,4 +370,4 @@
 
 ---
 
-*Gegenereerd door `scripts/nightly_maintenance.py` op 18-04-2026 00:30:53*
+*Gegenereerd door `scripts/nightly_maintenance.py` op 19-04-2026 00:31:53*
