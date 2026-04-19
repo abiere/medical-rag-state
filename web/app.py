@@ -3040,6 +3040,11 @@ function renderCard(item) {
       <button data-hash="${escHtml(item.book_hash)}" onclick="saveBookEdit(this.dataset.hash)"
         style="font-size:13px;padding:5px 16px;background:#1A6B72;color:#fff;border:none;
                border-radius:6px;cursor:pointer">Opslaan</button>
+      <a href="/api/library/book/${escHtml(item.book_hash)}/view" target="_blank"
+         style="font-size:12px;padding:3px 10px;background:transparent;
+                border:0.5px solid #d1d5db;border-radius:4px;cursor:pointer;
+                color:#374151;text-decoration:none;
+                display:inline-flex;align-items:center;gap:4px">&#128196; Bekijk</a>
       <button data-hash="${escHtml(item.book_hash)}" onclick="toggleBookEdit(this.dataset.hash)"
         style="font-size:13px;padding:5px 12px;background:#fff;border:1px solid #d1d5db;
                color:#374151;border-radius:6px;cursor:pointer">Annuleer</button>
