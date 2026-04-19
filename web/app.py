@@ -3549,7 +3549,35 @@ async function loadLibraryMetadataStatus() {
       const actions = '<a href="/api/library/book/' + bh + '/view" target="_blank"'
         + ' style="font-size:11px;padding:3px 8px;background:#f3f4f6;border:1px solid #d1d5db;'
         + 'color:#374151;border-radius:5px;text-decoration:none;display:inline-block">'
-        + '&#x1F4C4; Bekijk PDF</a>';
+        + '&#x1F4C4; Bekijk PDF</a>'
+        + '<br><button data-hash="' + bh + '" onclick="toggleManualForm(this.dataset.hash)"'
+        + ' style="font-size:11px;padding:3px 8px;background:#f3f4f6;border:0.5px solid #d1d5db;'
+        + 'color:#374151;border-radius:5px;cursor:pointer;margin-top:4px">'
+        + '\u270F Handmatig invoeren</button>'
+        + '<div class="manual-form" data-hash="' + bh + '"'
+        + ' style="display:none;margin-top:8px;background:#fff;border:0.5px solid #e2e8f0;'
+        + 'border-radius:6px;padding:10px;min-width:320px">'
+        + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">'
+        + '<input type="text" data-field="title" placeholder="Volledige titel"'
+        + ' style="grid-column:1/-1;font-size:12px;padding:4px 8px;border:0.5px solid #e2e8f0;border-radius:4px">'
+        + '<input type="text" data-field="creator" placeholder="Auteurs (komma-gescheiden)"'
+        + ' style="font-size:12px;padding:4px 8px;border:0.5px solid #e2e8f0;border-radius:4px">'
+        + '<input type="text" data-field="date" placeholder="Jaar (bijv. 2016)"'
+        + ' style="font-size:12px;padding:4px 8px;border:0.5px solid #e2e8f0;border-radius:4px">'
+        + '<input type="text" data-field="isbn" placeholder="ISBN-13 (optioneel)"'
+        + ' style="font-size:12px;padding:4px 8px;border:0.5px solid #e2e8f0;border-radius:4px">'
+        + '<input type="text" data-field="publisher" placeholder="Uitgever (optioneel)"'
+        + ' style="font-size:12px;padding:4px 8px;border:0.5px solid #e2e8f0;border-radius:4px">'
+        + '<input type="text" data-field="edition_label" placeholder="Editie (optioneel)"'
+        + ' style="font-size:12px;padding:4px 8px;border:0.5px solid #e2e8f0;border-radius:4px">'
+        + '<div style="grid-column:1/-1;display:flex;justify-content:flex-end;gap:6px;margin-top:4px">'
+        + '<button data-hash="' + bh + '" onclick="toggleManualForm(this.dataset.hash)"'
+        + ' style="font-size:12px;padding:4px 10px;background:transparent;border:0.5px solid #e2e8f0;border-radius:5px;cursor:pointer">'
+        + 'Annuleren</button>'
+        + '<button data-hash="' + bh + '" onclick="saveManualMeta(this.dataset.hash)"'
+        + ' style="font-size:12px;padding:4px 12px;background:#1A6B72;color:#fff;border:none;border-radius:5px;cursor:pointer">'
+        + 'Opslaan</button>'
+        + '</div></div></div>';
 
       html += '<tr data-lib-book-hash="' + bh + '"'
         + ' style="background:#FAEEDA;border-bottom:1px solid #e5e7eb">';
@@ -3639,6 +3667,39 @@ function enrichAsin(hash) {
       btn.textContent = 'Amazon \u25b6';
     }
   });
+}
+
+function toggleManualForm(hash) {
+  const form = document.querySelector('.manual-form[data-hash="' + hash + '"]');
+  if (!form) return;
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+
+function saveManualMeta(hash) {
+  const form = document.querySelector('.manual-form[data-hash="' + hash + '"]');
+  if (!form) return;
+  const body = {};
+  form.querySelectorAll('input[data-field]').forEach(inp => {
+    if (inp.value.trim()) body[inp.dataset.field] = inp.value.trim();
+  });
+  if (!body.title) {
+    alert('Vul minimaal een titel in');
+    return;
+  }
+  fetch('/api/library/book/' + hash + '/metadata-manual', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(body)
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.error) {
+      alert('Fout: ' + d.error);
+    } else {
+      setTimeout(() => location.reload(), 800);
+    }
+  })
+  .catch(e => alert('Netwerkfout: ' + e));
 }
 </script>"""
     if dup_banner:
@@ -4341,6 +4402,75 @@ async def api_enrich_asin(book_hash: str, request: Request):
         "publisher": merged.get("publisher"),
         "sources":   merged.get("metadata_sources", {}),
     }
+
+
+# ── POST /api/library/book/{hash}/metadata-manual ─────────────────────────────
+
+@app.post("/api/library/book/{book_hash}/metadata-manual")
+async def api_metadata_manual(book_hash: str, request: Request):
+    """Manually set book metadata fields (title required)."""
+    import sys as _sys
+    _sys.path.insert(0, str(BASE / "scripts"))
+
+    try:
+        body = await request.json()
+    except Exception:
+        return JSONResponse({"error": "Invalid JSON"}, status_code=400)
+
+    title = (body.get("title") or "").strip()
+    if not title:
+        return JSONResponse({"error": "Titel is verplicht"}, status_code=400)
+
+    state_path = None
+    state: dict = {}
+    for d in CACHE_DIR.iterdir():
+        sp = d / "state.json"
+        if not sp.exists():
+            continue
+        try:
+            s = json.loads(sp.read_text())
+            if s.get("book_hash") == book_hash:
+                state_path, state = sp, s
+                break
+        except Exception:
+            continue
+
+    if not state_path:
+        return JSONResponse({"error": "Boek niet gevonden"}, status_code=404)
+
+    from book_metadata_vision import _validate_isbn13, _update_classifications
+
+    bm = state.get("book_metadata", {})
+    bm["title"] = title
+
+    if body.get("creator"):
+        bm["creator"] = body["creator"].strip()
+    if body.get("date"):
+        bm["date"] = str(body["date"]).strip()[:4]
+    if body.get("isbn"):
+        validated = _validate_isbn13(str(body["isbn"]).strip())
+        if validated:
+            bm["isbn"] = validated
+    if body.get("publisher"):
+        bm["publisher"] = body["publisher"].strip()
+    if body.get("edition_label"):
+        bm["edition_label"] = body["edition_label"].strip()
+
+    bm["metadata_method"] = "manual"
+    bm["needs_review"]    = []
+    state["book_metadata"] = bm
+
+    tmp = state_path.with_suffix(".tmp")
+    tmp.write_text(json.dumps(state, indent=2, ensure_ascii=False))
+    tmp.replace(state_path)
+
+    _update_classifications(state.get("filename", ""), {
+        "title":   title,
+        "authors": [a.strip() for a in bm.get("creator", "").split(",") if a.strip()],
+    })
+    _invalidate_items_cache()
+
+    return {"status": "saved", "title": title}
 
 
 # ── GET /library/ingest ────────────────────────────────────────────────────────

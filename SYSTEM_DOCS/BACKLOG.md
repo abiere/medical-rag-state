@@ -1,8 +1,23 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-19 — Firecrawl bugfix V1FirecrawlApp
+> Laatste update: 2026-04-19 — Handmatig invoeren knop in ISBN banner
 
 ---
+
+## ✅ Afgerond — 2026-04-19 (sessie 24)
+
+- [x] **Feature: "Handmatig invoeren" knop in amber ISBN banner**
+      - Knop was afwezig in de amber banner van /library
+      - `actions` kolom uitgebreid: ✏ Handmatig invoeren knop + togglebaar formulier per rij
+      - Formulier: 6 velden (titel, auteurs, jaar, ISBN, uitgever, editie) in 2-koloms grid
+      - `toggleManualForm(hash)` JS functie: toont/verbergt het formulier per boek
+      - `saveManualMeta(hash)` JS functie: POST naar endpoint, herlaadt pagina na succes
+      - `POST /api/library/book/{hash}/metadata-manual` endpoint: slaat handmatige metadata op
+        - Vereist: title; optioneel: creator, date, isbn, publisher, edition_label
+        - Valideert ISBN-13 indien opgegeven
+        - Zet metadata_method="manual", needs_review=[]
+        - Roept `_update_classifications()` + `_invalidate_items_cache()` aan
+      - Tests: 39/39 GESLAAGD
 
 ## ✅ Afgerond — 2026-04-19 (sessie 23)
 
