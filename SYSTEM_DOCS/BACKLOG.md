@@ -1,8 +1,19 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-19 — JS SyntaxError bugfix + structurele event handler standaard
+> Laatste update: 2026-04-19 — GitHub sync observability: /api/status/sync + nav badge + error logging
 
 ---
+
+## ✅ Afgerond — 2026-04-19 (sessie 20)
+
+- [x] **GitHub sync observability: diagnose + /api/status/sync + nav badge**
+      - Diagnose: sync was already working (timer active, push OK via gh auth git-credential)
+      - Added `data/sync_errors.log` (repo-internal) to sync_status.py — cleared on success, written on failure
+      - Added GET `/api/status/sync` endpoint: last_commit, timer_active, push_ok, last_error
+      - Added sync badge `⟳` / `🟢 Sync` / `🔴 Sync` to nav bar on all pages via _page_shell
+      - Updated CLAUDE.md with "GitHub sync health check" section + curl command
+      - Verified: push_ok=True, timer_active=True, GitHub timestamp 2026-04-19 08:19 UTC
+      - Tests: 39/39 GESLAAGD
 
 ## ✅ Afgerond — 2026-04-19 (sessie 19)
 

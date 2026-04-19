@@ -247,6 +247,25 @@ The PostToolUse hook `.claude/hooks/update_pipeline_diagrams.sh` calls
 
 **NOOIT** een nieuw orphan MD bestand aanmaken zonder trigger toe te voegen aan deze sectie.
 
+## GitHub sync health check
+
+At the start of every session, verify sync is working:
+
+```bash
+curl -s http://100.66.194.55:8000/api/status/sync | python3 -c "
+import json,sys; d=json.load(sys.stdin)
+print('push_ok:', d['push_ok'], '| timer:', d['timer_active'])
+print('last_commit:', d['last_commit'])
+if d['last_error']: print('ERROR:', d['last_error'])
+"
+```
+
+Als `push_ok=false` of `timer_active=false`:
+STOP en herstel sync eerst. Check:
+1. `systemctl status sync-status.timer` — timer actief?
+2. `git push` — credentials werkend?
+3. `cat data/sync_errors.log` — exacte foutmelding
+
 ## Anti-hallucinatie regels
 
 Deze regels zijn verplicht voor elke sessie — overtreding leidt

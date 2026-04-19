@@ -21,6 +21,7 @@ BOOK_CURRENT_FILE  = Path("/tmp/book_ingest_current.json")
 QUALITY_DIR        = BASE / "data" / "book_quality"
 CACHE_DIR          = BASE / "data" / "ingest_cache"
 TRANS_STATS_FILE   = BASE / "data" / "transcription_stats.json"
+SYNC_ERROR_LOG     = BASE / "data" / "sync_errors.log"
 
 SECTION_MAP = {
     "medical_literature": {
@@ -256,10 +257,36 @@ def _page_shell(title: str, active: str, body: str) -> str:
       <div style="color:#fff;font-size:20px;font-weight:700;letter-spacing:-.02em">⚕ Medical RAG</div>
       <div style="color:#e8f4f5;font-size:13px">NRT-Amsterdam.nl</div>
     </div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap">{nav}</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+      {nav}
+      <span id="sync-badge"
+            style="font-size:11px;color:rgba(255,255,255,.55);
+                   margin-left:4px;white-space:nowrap"
+            title="GitHub sync status">⟳</span>
+    </div>
   </div>
 </div>
 {body}
+<script>
+(function(){{
+  fetch('/api/status/sync')
+    .then(function(r){{return r.json();}})
+    .then(function(d){{
+      var badge = document.getElementById('sync-badge');
+      if (!badge) return;
+      if (d.push_ok && d.timer_active) {{
+        badge.textContent = '🟢 Sync';
+        badge.title = 'GitHub sync OK — ' + d.last_commit;
+        badge.style.color = 'rgba(255,255,255,.7)';
+      }} else {{
+        badge.textContent = '🔴 Sync';
+        badge.style.color = '#fca5a5';
+        badge.title = d.last_error || (d.timer_active ? 'Push mislukt' : 'Sync timer inactief');
+      }}
+    }})
+    .catch(function(){{}});
+}})();
+</script>
 </body></html>"""
 
 # ── video helpers ─────────────────────────────────────────────────────────────
@@ -1671,6 +1698,47 @@ async def status_markers():
     except Exception:
         pass
     return []
+
+
+# ── GET /api/status/sync ─────────────────────────────────────────────────────
+
+@app.get("/api/status/sync")
+async def api_sync_status():
+    """Check GitHub sync health: last commit, timer state, push errors."""
+    last_commit = ""
+    try:
+        r = subprocess.run(
+            ["git", "log", "-1", "--format=%ci"],
+            capture_output=True, text=True, cwd=BASE, timeout=5,
+        )
+        last_commit = r.stdout.strip()
+    except Exception:
+        pass
+
+    error: str | None = None
+    if SYNC_ERROR_LOG.exists():
+        try:
+            error = SYNC_ERROR_LOG.read_text()[:500]
+        except Exception:
+            pass
+
+    timer_active = False
+    try:
+        r = subprocess.run(
+            ["systemctl", "is-active", "sync-status.timer"],
+            capture_output=True, text=True, timeout=5,
+        )
+        timer_active = r.stdout.strip() == "active"
+    except Exception:
+        pass
+
+    return {
+        "last_commit":  last_commit,
+        "timer_active": timer_active,
+        "push_ok":      error is None,
+        "last_error":   error,
+        "github_url":   "https://github.com/abiere/medical-rag-state",
+    }
 
 
 # ── GET /terminal ─────────────────────────────────────────────────────────────

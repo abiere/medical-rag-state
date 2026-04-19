@@ -24,6 +24,7 @@ CURRENT_FILE = Path("/tmp/transcription_current.json")
 MARKERS_FILE  = Path("/var/log/markers.json")
 QUEUE_LOG     = Path("/var/log/transcription_queue.log")
 ERROR_LOG     = Path("/var/log/sync_status_errors.log")
+SYNC_ERROR_LOG = BASE / "data" / "sync_errors.log"  # repo-internal, readable by FastAPI
 CONSISTENCY_LOG = Path("/var/log/nightly_consistency.log")
 BOOKS_DIR          = BASE / "books"
 BOOK_QUEUE_FILE    = Path("/tmp/book_ingest_queue.json")
@@ -390,11 +391,21 @@ def main() -> None:
 
     if push_ok:
         print(f"Pushed at {ts_short}")
+        # Clear repo-internal error log so /api/status/sync shows green
+        try:
+            if SYNC_ERROR_LOG.exists():
+                SYNC_ERROR_LOG.unlink()
+        except Exception:
+            pass
     else:
         err_line = f"{datetime.now(timezone.utc).isoformat()} — push failed after 3 attempts: {last_push_err}\n"
         try:
             with open(ERROR_LOG, "a") as ef:
                 ef.write(err_line)
+        except Exception:
+            pass
+        try:
+            SYNC_ERROR_LOG.write_text(err_line)
         except Exception:
             pass
         print(f"All push attempts failed — LIVE_STATUS.md written locally, error logged to {ERROR_LOG}", file=sys.stderr)
