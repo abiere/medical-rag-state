@@ -1,8 +1,18 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-18 — TypeError fix + metadata status naar /library
+> Laatste update: 2026-04-19 — JS SyntaxError bugfix + structurele event handler standaard
 
 ---
+
+## ✅ Afgerond — 2026-04-19 (sessie 19)
+
+- [x] **JS SyntaxError bugfix /library + structurele event handler standaard**
+      - Root cause: `oninput="this.value=this.value.replace(/[^0-9]/g,'')"` — `''` als twee JS string literals → SyntaxError → heel script-blok crasht → boeken lijst bleef op "Laden..."
+      - Fix: named function `stripNonNumeric(el)` in library script-blok; `oninput="stripNonNumeric(this)"`
+      - Overige fixes: `confirmImageToggle` → `data-imghash` attribuut; videos page `showFileList`/`doUpload` → `data-vtype`; images sort-select → `imgFilterSort(this)` + `data-filter`
+      - Structureel: CLAUDE.md "HTML onclick standaard" → "HTML event handler standaard" (uitgebreid naar alle on* handlers + alle quote-types)
+      - Test toegevoegd: `test_no_quotes_in_event_handler_attrs` in IntegrationTests (script-blocks gestript, checked HTML attrs alleen)
+      - Testsuite: 39/39 GESLAAGD
 
 ## ✅ Afgerond — 2026-04-18 (sessie 18)
 

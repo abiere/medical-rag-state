@@ -1023,6 +1023,51 @@ class IntegrationTests(unittest.TestCase):
         self.assertIn("needs_review", merged)
 
 
+    def test_no_quotes_in_event_handler_attrs(self):
+        """Verify no JS event handlers in rendered HTML contain empty string
+        literals ('') that cause SyntaxError. Strips <script> blocks first so
+        JS source code with template literals is not scanned as HTML attributes.
+        Catches the category of bug that broke /library (oninput with '' in
+        f-string attribute).
+        """
+        import re
+        import urllib.request
+
+        pages = [
+            "http://localhost:8000/library",
+            "http://localhost:8000/images",
+        ]
+        violations = []
+        for url in pages:
+            try:
+                with urllib.request.urlopen(url, timeout=10) as r:
+                    html = r.read().decode("utf-8", errors="ignore")
+            except Exception:
+                continue
+
+            # Strip script blocks — only check HTML markup attributes
+            html_no_scripts = re.sub(
+                r"<script[^>]*>.*?</script>", "", html, flags=re.DOTALL
+            )
+
+            handlers = re.findall(
+                r'on(?:input|click|change|keyup|keydown|submit'
+                r'|blur|focus)="([^"]*)"',
+                html_no_scripts
+            )
+            for h in handlers:
+                if "''" in h:
+                    violations.append(f"{url}: '' in handler: {h[:60]}")
+                if '""' in h:
+                    violations.append(f"{url}: \"\" in handler: {h[:60]}")
+
+        self.assertFalse(
+            violations,
+            "Empty string literals found in event handler attributes "
+            "(will cause JS SyntaxError):\n" + "\n".join(violations)
+        )
+
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # RUNNER
 # ═══════════════════════════════════════════════════════════════════════════════

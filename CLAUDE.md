@@ -145,18 +145,34 @@ Read this skill before ANY UI task. Key tokens: teal `#1A6B72`, nav `NAV_ITEMS` 
 5. **Destructive actions:** Always show confirmation dialog with chunk count first.
 6. **Terminology:** NRT-Amsterdam.nl (with hyphen + .nl). Never "NRT Amsterdam".
 
-## HTML onclick standaard — ALTIJD VOLGEN
+## HTML event handler standaard — ALTIJD VOLGEN
 
-Gebruik NOOIT Python f-string variabelen direct in
-HTML onclick attributen. Dit veroorzaakt silent failures
-als de variabele aanhalingstekens bevat.
+Gebruik NOOIT quotes van welke soort dan ook in JS event
+handler attributen die via Python f-strings worden gegenereerd.
+Dit geldt voor: onclick, oninput, onchange, onkeyup, onsubmit,
+en ALLE andere on* attributen.
 
-FOUT:
-  <button onclick="myFunc('{variable}')">
+VERBODEN patronen in f-string gegenereerde HTML:
+  onclick="myFunc('{var}')"      ← f-string var in quotes → escape hell
+  oninput="...replace(/x/,'')"  ← '' → twee JS string literals → SyntaxError
+  onclick="confirm('tekst')"     ← quotes in attribuut → SyntaxError
+  onclick="myFunc(\"{var}\")"    ← dubbele quotes → attribuut eindigt te vroeg
+  onchange="...'\n'..."          ← \n in f-string → literal newline → SyntaxError
 
-GOED:
-  <button data-value="{variable}"
-          onclick="myFunc(this.dataset.value)">
+VERPLICHTE patronen:
+  Waarden doorgeven:    data-value="{var}" onclick="myFunc(this.dataset.value)"
+  Lege string nodig:    gebruik named JS function in <script> blok
+  Bevestiging:          data-msg="Weet je het zeker?" onclick="confirmAction(this)"
+  Escape-sequenties:    nooit \n in f-string JS — gebruik \\n of named function
+
+REGEL: Als een event handler iets anders bevat dan een
+functienaam + this, is het bijna zeker fout.
+
+GOED:   onclick="deleteBook(this)"
+GOED:   oninput="stripNonNumeric(this)"
+GOED:   onchange="onProviderChange(this)"
+FOUT:   onclick="deleteBook('{hash}')"
+FOUT:   oninput="this.value=this.value.replace(/[^0-9]/g,'')"
 
 Reden: data-* attributen zijn veilig voor alle tekens.
 JS template literals (${}) in backtick-strings zijn wél

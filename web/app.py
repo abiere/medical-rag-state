@@ -1346,8 +1346,8 @@ async def videos_page():
             f'<div id="mb-{vtype}" style="font-size:12px;color:#9ca3af;margin-top:4px"></div>'
             f'</div>'
             f'<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">'
-            f'<input type="file" id="file-{vtype}" multiple accept=".mp4,.mov,.mkv,.m4v" onchange="showFileList(\'{vtype}\')" style="flex:1;min-width:200px">'
-            f'<button onclick="doUpload(\'{vtype}\')" class="btn" style="background:{color};color:#fff">'
+            f'<input type="file" id="file-{vtype}" multiple accept=".mp4,.mov,.mkv,.m4v" data-vtype="{vtype}" onchange="showFileList(this.dataset.vtype)" style="flex:1;min-width:200px">'
+            f'<button data-vtype="{vtype}" onclick="doUpload(this.dataset.vtype)" class="btn" style="background:{color};color:#fff">'
             f'Uploaden naar {vtype.upper()}</button>'
             f'</div>'
             f'<div id="filelist-{vtype}" style="margin-top:10px"></div>'
@@ -3252,7 +3252,7 @@ function buildPhaseTable(d, meta) {
         + '<label style="display:flex;align-items:center;gap:6px;cursor:pointer">'
           + '<input type="checkbox" id="' + escHtml(toggleId) + '"'
             + (imgEnabled ? ' checked' : '')
-            + ' onchange="confirmImageToggle(\\'' + escJs(imgHash) + '\\',this.checked,this)"'
+            + ' data-imghash="' + escHtml(imgHash) + '" onchange="confirmImageToggle(this.dataset.imghash,this.checked,this)"'
             + ' style="width:14px;height:14px;cursor:pointer">'
           + '<span id="' + escHtml(toggleId) + '-lbl" style="font-size:12px;color:#6b7280">'
             + (imgEnabled ? 'Aan' : 'Uit')
@@ -3290,6 +3290,9 @@ function escHtml(s) {
 }
 function escJs(s) {
   return String(s).replace(/\\\\/g,'\\\\\\\\').replace(/'/g,"\\\\'");
+}
+function stripNonNumeric(el) {
+  el.value = el.value.replace(/[^0-9]/g, '');
 }
 
 function resumeBook(hash) {
@@ -3465,7 +3468,7 @@ async function loadLibraryMetadataStatus() {
         isbnCell = '<div style="display:flex;gap:6px;align-items:center">'
           + '<input type="text" class="lib-isbn-input" data-hash="' + bh + '"'
           + ' placeholder="9780XXXXXXXXXX"'
-          + ' oninput="this.value=this.value.replace(/[^0-9]/g,\'\')"'
+          + ' oninput="stripNonNumeric(this)"'
           + ' style="width:150px;font-size:12px;padding:4px 8px;border:1px solid #d1d5db;border-radius:5px;font-family:monospace">'
           + '<button class="lib-enrich-btn" data-hash="' + bh + '"'
           + ' onclick="enrichIsbnLib(this.dataset.hash)"'
@@ -6760,6 +6763,10 @@ function _openLightbox(url, alt, filename) {
   document.body.appendChild(overlay);
 }
 
+function imgFilterSort(el) {
+  location = '/images?filter=' + el.dataset.filter + '&sort=' + el.value;
+}
+
 function togglePrioMenu(bh) {
   const el = document.getElementById('prio-' + bh);
   el.style.display = el.style.display === 'none' ? 'block' : 'none';
@@ -6795,7 +6802,7 @@ function setPriority(bookHash, clsKey, priority) {
   </div>
   <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
     {filter_links}
-    <select onchange="location='/images?filter={filter}&sort='+this.value"
+    <select data-filter="{filter}" onchange="imgFilterSort(this)"
             style="margin-left:auto;padding:5px 10px;border-radius:6px;
                    border:1px solid #e2e8f0;font-size:13px;cursor:pointer">
       <option value="images" {"selected" if sort=="images" else ""}>Sorteren: Afbeeldingen</option>
