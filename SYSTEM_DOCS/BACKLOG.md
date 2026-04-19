@@ -1,8 +1,26 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-19 — Banner filter verbeterd met manually_reviewed flag
+> Laatste update: 2026-04-19 — Metadata merge fix + stub cleanup
 
 ---
+
+## ✅ Afgerond — 2026-04-19 (sessie 26)
+
+- [x] **Fix 1: _is_bad_title() in metadata merge — foute titels overgeslagen**
+      - Root cause: merge-logica sloeg no slechte titels over (ALL CAPS, 1-woord, telefoonnummers)
+      - `_is_bad_title()` functie toegevoegd: isupper+kort, 1-woord-kort, regex telefoonnummer, copyright
+      - `_merge_metadata()` past check toe voor title-veld, logt overgeslagen waarden
+      - Anatomy Trains: ANATOMY TRAINS → Anatomy Trains
+      - Sobotta Tables: Sobotta → Sobotta Lerntabellen Anatomie Muskeln, Gelenke und Nerven
+
+- [x] **Fix 2: 4 dode device/ cache-entries verwijderd**
+      - FlexBeam Neck/Knees/Stomach + Levels Mat entries in books/device/ (niet op disk)
+      - Levende entries in rlt_flexbeam/ en pemf_qrs/ onaangeroerd
+
+- [x] **Fix 3: 3 NRT ghost classificaties verwijderd uit book_classifications.json**
+      - body_keeps_score, emotion_code, body_code — geen cache-entries, geen vectoren
+      - Ingest cache was al schoon; alleen book_classifications.json opgeruimd
+      - Tests: 39/39 GESLAAGD
 
 ## ✅ Afgerond — 2026-04-19 (sessie 25)
 

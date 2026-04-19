@@ -808,6 +808,26 @@ def _fetch_amazon_asin(asin: str) -> dict:
 
 # ── Merge with field-level priority ──────────────────────────────
 
+def _is_bad_title(title: str) -> bool:
+    """Return True if title looks like a bad extraction (cover branding, etc.)."""
+    if not title:
+        return True
+    t = title.strip()
+    # All caps and short = likely cover branding, not real title
+    if t.isupper() and len(t) < 30:
+        return True
+    # Only one word and short = likely brand/surname only
+    if len(t.split()) == 1 and len(t) < 15:
+        return True
+    # Looks like a phone number
+    if re.search(r"\d{3}[\.\-]\d{3}", t):
+        return True
+    # Copyright text
+    if t.lower().startswith("copyright"):
+        return True
+    return False
+
+
 FIELD_PRIORITY = {
     "title":          ["google", "isbnsearch", "gemini", "loc", "openlibrary"],
     "subtitle":       ["google", "isbnsearch", "gemini", "openlibrary"],
@@ -849,10 +869,15 @@ def _merge_metadata(gemini: dict,
         source = None
         for src in priority:
             v = sources[src].get(field)
-            if v is not None and v != "" and v != []:
-                value  = v
-                source = src
-                break
+            if v is None or v == "" or v == []:
+                continue
+            # For title: skip values that look like bad extractions
+            if field == "title" and isinstance(v, str) and _is_bad_title(v):
+                log.debug("Skipping bad title from %s: %r", src, v[:40])
+                continue
+            value  = v
+            source = src
+            break
         merged[field]          = value
         merged[f"{field}_src"] = source
         if value is None:
