@@ -508,16 +508,86 @@ def _fetch_openlibrary(isbn: str) -> dict:
         return {}
 
 
-# ── ISBNsearch.org scraper ────────────────────────────────────────
+# ── Firecrawl helper ──────────────────────────────────────────────
+
+def _get_firecrawl_key() -> str:
+    """Return Firecrawl API key from settings.json, or '' if not set."""
+    try:
+        cfg_path = BASE / "config" / "settings.json"
+        cfg = json.loads(cfg_path.read_text())
+        return cfg.get("firecrawl_api", {}).get("api_key", "").strip()
+    except Exception:
+        return ""
+
+
+def _firecrawl_scrape(url: str) -> str:
+    """Scrape url via Firecrawl and return markdown, or '' on failure."""
+    key = _get_firecrawl_key()
+    if not key:
+        return ""
+    try:
+        from firecrawl import FirecrawlApp
+        app = FirecrawlApp(api_key=key)
+        result = app.scrape_url(url, formats=["markdown"])
+        return result.markdown or ""
+    except Exception as e:
+        log.warning("Firecrawl scrape failed url=%s: %s", url, e)
+        return ""
+
+
+# ── ISBNsearch.org scraper (Firecrawl) ───────────────────────────
 
 def _fetch_isbnsearch(isbn: str) -> dict:
     """
-    Scrape ISBNsearch.org for book metadata.
-    Good coverage of recent and international editions. No API key needed.
+    Scrape ISBNsearch.org via Firecrawl (bypasses bot detection).
+    Falls back to direct urllib request when no Firecrawl API key is set.
     """
     if not isbn:
         return {}
     url = f"https://isbnsearch.org/isbn/{isbn}"
+
+    key = _get_firecrawl_key()
+    if key:
+        md = _firecrawl_scrape(url)
+        if not md:
+            return {}
+        result: dict = {}
+        for line in md.splitlines():
+            line = line.strip()
+            m = re.match(r"\*?\*?([^:*]+)\*?\*?\s*:\s*(.+)", line)
+            if not m:
+                continue
+            label = m.group(1).strip().lower()
+            value = m.group(2).strip()
+            if label == "title" and not result.get("title"):
+                result["title"] = value
+            elif label in ("author", "authors") and not result.get("authors"):
+                result["authors"] = [
+                    a.split(",")[0].strip()
+                    for a in value.split(";")
+                    if a.strip()
+                ]
+            elif label == "publisher" and not result.get("publisher"):
+                result["publisher"] = value
+            elif label in ("published", "year") and not result.get("year"):
+                ym = re.search(r"\b(\d{4})\b", value)
+                if ym:
+                    result["year"] = int(ym.group(1))
+            elif label in ("isbn-13", "isbn13") and not result.get("isbn_13"):
+                clean = re.sub(r"[^\d]", "", value)
+                if len(clean) == 13:
+                    result["isbn_13"] = clean
+            elif label in ("isbn-10", "isbn10") and not result.get("isbn_10"):
+                clean = re.sub(r"[^\d]", "", value)
+                if len(clean) == 10:
+                    result["isbn_10"] = clean
+        if result:
+            log.info("ISBNsearch (Firecrawl): found %s (%s)",
+                     result.get("title", "?")[:40],
+                     result.get("year", "?"))
+        return result
+
+    # Fallback: direct urllib
     try:
         req = urllib.request.Request(
             url,
@@ -580,13 +650,12 @@ def _fetch_isbnsearch(isbn: str) -> dict:
                 if len(clean) == 10:
                     result["isbn_10"] = clean
 
-        # Try cover image from og:image
         og_img = soup.find("meta", property="og:image")
         if og_img and og_img.get("content"):
             result["cover_url"] = og_img["content"]
 
         if result:
-            log.info("ISBNsearch: found %s (%s)",
+            log.info("ISBNsearch (direct): found %s (%s)",
                      result.get("title", "?")[:40],
                      result.get("year", "?"))
         return result
@@ -638,113 +707,84 @@ def _fetch_loc(isbn: str) -> dict:
         return {}
 
 
-# ── Amazon ASIN scraper ───────────────────────────────────────────
+# ── Amazon ASIN scraper (Firecrawl) ──────────────────────────────
 
 def _fetch_amazon_asin(asin: str) -> dict:
     """
-    Scrape Amazon product page for book metadata.
-    Amazon product pages for books often include ISBN-13.
+    Scrape Amazon product page via Firecrawl (bypasses bot detection).
+    Falls back to empty dict without Firecrawl key — Hetzner IPs are blocked.
     ASIN format: B01XXXXXXX or 10-digit alphanumeric.
-    Returns dict with available fields or empty dict.
     """
     if not asin:
         return {}
     asin = re.sub(r"[^A-Z0-9]", "", asin.upper().strip())
     if len(asin) != 10:
         return {}
+
+    key = _get_firecrawl_key()
+    if not key:
+        log.warning("No Firecrawl API key — Amazon ASIN lookup skipped (Hetzner IPs blocked)")
+        return {}
+
     url = f"https://www.amazon.com/dp/{asin}"
-    try:
-        req = urllib.request.Request(
-            url,
-            headers={
-                "User-Agent": (
-                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-                    "AppleWebKit/537.36 (KHTML, like Gecko) "
-                    "Chrome/120.0.0.0 Safari/537.36"
-                ),
-                "Accept-Language": "en-US,en;q=0.9",
-                "Accept": (
-                    "text/html,application/xhtml+xml,"
-                    "application/xml;q=0.9,*/*;q=0.8"
-                ),
-            },
-        )
-        with urllib.request.urlopen(req, timeout=15) as r:
-            html_content = r.read().decode("utf-8", errors="ignore")
+    md = _firecrawl_scrape(url)
+    if not md:
+        return {}
 
-        if ("Sorry, we just need" in html_content
-                or "robot check" in html_content.lower()
-                or "captcha" in html_content.lower()):
-            log.warning("Amazon bot detection for ASIN %s", asin)
-            return {}
+    result: dict = {}
+    lines = md.splitlines()
 
-        try:
-            from bs4 import BeautifulSoup
-        except ImportError:
-            log.warning("BeautifulSoup not installed — Amazon scraper skipped")
-            return {}
+    # Title: usually first H1 or line starting with #
+    for line in lines:
+        line = line.strip()
+        if line.startswith("# "):
+            result["title"] = line[2:].strip()
+            break
 
-        soup = BeautifulSoup(html_content, "html.parser")
-        result: dict = {}
+    # Parse Key: Value lines for ISBN, publisher, year, authors
+    for line in lines:
+        line = line.strip()
+        m = re.match(r"\*?\*?([^:*\n]+)\*?\*?\s*:\s*(.+)", line)
+        if not m:
+            continue
+        label = m.group(1).strip().lower()
+        value = m.group(2).strip()
 
-        # Title
-        title_el = soup.find(id="productTitle")
-        if title_el:
-            result["title"] = title_el.get_text(strip=True)
-
-        # Authors
-        author_els = soup.select(
-            ".author .contributorNameID, "
-            ".author a.a-link-normal"
-        )
-        if author_els:
+        if "isbn-13" in label and not result.get("isbn_13"):
+            clean = re.sub(r"[^0-9]", "", value)
+            if len(clean) == 13:
+                result["isbn_13"] = clean
+        elif "isbn-10" in label and not result.get("isbn_10"):
+            clean = re.sub(r"[^0-9X]", "", value.upper())
+            if len(clean) == 10:
+                result["isbn_10"] = clean
+        elif label in ("publisher",) and not result.get("publisher"):
+            result["publisher"] = value.split(";")[0].strip()[:80]
+        elif label in ("publication date", "date", "year") and not result.get("year"):
+            ym = re.search(r"\b(19|20)\d{2}\b", value)
+            if ym:
+                result["year"] = int(ym.group(0))
+        elif label in ("author", "authors", "by") and not result.get("authors"):
             result["authors"] = [
-                a.get_text(strip=True).split(",")[0].strip()
-                for a in author_els[:5]
-                if a.get_text(strip=True)
+                a.split(",")[0].strip()
+                for a in re.split(r"[,;]", value)
+                if a.strip()
             ]
 
-        # Product details: ISBN-13, ISBN-10, publisher, year
-        detail_rows = soup.select(
-            "#detailBullets_feature_div li, "
-            "#productDetailsTable tr, "
-            ".detail-bullet-list li, "
-            "#bookDetails_feature_div .a-row"
-        )
-        for row in detail_rows:
-            text = row.get_text(" ", strip=True)
+    # Year fallback: scan for 4-digit year in detail lines
+    if not result.get("year"):
+        for line in lines:
+            ym = re.search(r"\b(19|20)\d{2}\b", line)
+            if ym:
+                result["year"] = int(ym.group(0))
+                break
 
-            m = re.search(r"ISBN-13[:\s]+([0-9][\s\-0-9]{11,15}[0-9])", text)
-            if m:
-                clean = re.sub(r"[^0-9]", "", m.group(1))
-                if len(clean) == 13:
-                    result["isbn_13"] = clean
-
-            m = re.search(r"ISBN-10[:\s]+([0-9X][\s\-0-9X]{8,12})", text)
-            if m:
-                clean = re.sub(r"[^0-9X]", "", m.group(1))
-                if len(clean) == 10:
-                    result["isbn_10"] = clean
-
-            if "publisher" in text.lower():
-                parts = text.split(":", 1)
-                if len(parts) > 1:
-                    result["publisher"] = parts[1].strip()[:80]
-
-            m = re.search(r"\b(19|20)\d{2}\b", text)
-            if m and "year" not in result:
-                result["year"] = int(m.group(0))
-
-        if result:
-            log.info("Amazon ASIN %s: title=%s isbn=%s",
-                     asin,
-                     result.get("title", "?")[:40],
-                     result.get("isbn_13", "none"))
-        return result
-
-    except Exception as e:
-        log.warning("Amazon ASIN failed %s: %s", asin, e)
-        return {}
+    if result:
+        log.info("Amazon ASIN %s (Firecrawl): title=%s isbn=%s",
+                 asin,
+                 result.get("title", "?")[:40],
+                 result.get("isbn_13", "none"))
+    return result
 
 
 # ── Merge with field-level priority ──────────────────────────────

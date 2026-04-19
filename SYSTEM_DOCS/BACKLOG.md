@@ -1,8 +1,26 @@
 # BACKLOG — Medical RAG
 > Bijgewerkt door Claude Code na elke sessie.
-> Laatste update: 2026-04-19 — Banner no-ISBN only + ASIN lookup
+> Laatste update: 2026-04-19 — Firecrawl integratie
 
 ---
+
+## ✅ Afgerond — 2026-04-19 (sessie 22)
+
+- [x] **Firecrawl integratie — bot-detectie bypass voor Amazon + ISBNsearch**
+      - `pip install firecrawl-py` — v4.22.2 geïnstalleerd
+      - `config/settings.json`: `firecrawl_api: {api_key: ""}` sectie toegevoegd
+      - `book_metadata_vision.py`:
+        - `_get_firecrawl_key()` helper — leest key uit settings.json
+        - `_firecrawl_scrape(url)` helper — scrapet via Firecrawl SDK, retourneert markdown
+        - `_fetch_isbnsearch()` herschreven: gebruikt Firecrawl indien key aanwezig, valt terug op urllib
+        - `_fetch_amazon_asin()` herschreven: gebruikt uitsluitend Firecrawl (Hetzner IPs geblokkeerd door Amazon), retourneert `{}` zonder key
+      - `web/app.py`:
+        - `GET /api/settings`: retourneert `firecrawl_api.api_key_set` + gemaskeerde key
+        - `POST /api/settings`: schrijft `firecrawl_api` sectie
+        - `GET /api/settings/test-firecrawl`: test scrape ISBNsearch.org, retourneert OK + snippet
+        - Firecrawl API card op `/settings` Parameters tab: password input, Testen knop, Opslaan knop
+        - `saveFirecrawl()` + `testFirecrawl()` JS functies
+      - Tests: 39/39 GESLAAGD
 
 ## ✅ Afgerond — 2026-04-19 (sessie 21)
 

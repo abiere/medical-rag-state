@@ -4774,6 +4774,12 @@ async def api_settings_get():
     }
     gv_defaults.update(cfg.get("google_vision") or {})
     cfg["google_vision"] = gv_defaults
+    # Mask Firecrawl API key
+    fc_key = (cfg.get("firecrawl_api") or {}).get("api_key", "")
+    if cfg.get("firecrawl_api") is None:
+        cfg["firecrawl_api"] = {}
+    cfg["firecrawl_api"]["api_key_set"] = bool(fc_key)
+    cfg["firecrawl_api"]["api_key_masked"] = ("●" * (len(fc_key) - 4) + fc_key[-4:]) if len(fc_key) > 4 else ("●" * len(fc_key))
     return cfg
 
 @app.post("/api/settings")
@@ -4786,7 +4792,7 @@ async def api_settings_post(request: Request):
     current = _load_settings_cfg()
 
     # Deep merge — only update known top-level sections
-    for section in ("claude_api", "nightly", "google_vision"):
+    for section in ("claude_api", "nightly", "google_vision", "firecrawl_api"):
         if section in body and isinstance(body[section], dict):
             if section not in current:
                 current[section] = {}
@@ -4796,6 +4802,29 @@ async def api_settings_post(request: Request):
 
     _save_settings_cfg(current)
     return {"ok": True}
+
+
+@app.get("/api/settings/test-firecrawl")
+async def api_test_firecrawl():
+    """Test Firecrawl API key by scraping a known ISBNsearch.org page."""
+    import sys as _sys
+    _sys.path.insert(0, str(BASE / "scripts"))
+    try:
+        from book_metadata_vision import _get_firecrawl_key, _firecrawl_scrape
+    except ImportError as e:
+        return JSONResponse({"ok": False, "error": f"Import failed: {e}"}, status_code=500)
+    key = _get_firecrawl_key()
+    if not key:
+        return JSONResponse({"ok": False, "error": "Geen API key ingesteld"}, status_code=400)
+    md = _firecrawl_scrape("https://isbnsearch.org/isbn/9780443066849")
+    if not md:
+        return JSONResponse({"ok": False, "error": "Firecrawl returned empty response — check API key"}, status_code=502)
+    # Verify we got meaningful content (title present in markdown)
+    if len(md) > 100:
+        snippet = md[:200].replace("\n", " ").strip()
+        return {"ok": True, "snippet": snippet}
+    return JSONResponse({"ok": False, "error": "Response too short — possible auth failure"}, status_code=502)
+
 
 # ── GET /api/schemas/metadata ─────────────────────────────────────────────────
 
@@ -5156,6 +5185,43 @@ async def settings_page():
       </div>
     </div>
 
+    <!-- Firecrawl API card -->
+    <div class="section" style="max-width:680px">
+      <div class="section-head" style="display:flex;align-items:center;justify-content:space-between">
+        <span class="section-title">Firecrawl API</span>
+        <span id="fc-key-status" style="font-size:12px;color:#6b7280"></span>
+      </div>
+      <div style="padding:20px 24px">
+        <div style="margin-bottom:14px">
+          <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">
+            API key
+          </label>
+          <div style="display:flex;gap:8px">
+            <input id="fc-api-key" type="password" placeholder="fc-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+              style="flex:1;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px">
+            <button onclick="testFirecrawl()"
+              style="padding:9px 16px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;
+                     border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap">
+              Testen
+            </button>
+          </div>
+          <div id="fc-test-result" style="margin-top:8px;font-size:12px;display:none"></div>
+        </div>
+        <p style="font-size:12px;color:#6b7280;margin:0 0 16px">
+          Gebruikt voor: Amazon ASIN scraping, ISBNsearch.org.
+          Omzeilt bot-detectie op externe websites.
+          Vraag een key aan op <a href="https://firecrawl.dev" target="_blank" style="color:#1A6B72">firecrawl.dev</a>.
+        </p>
+        <div style="display:flex;justify-content:flex-end">
+          <button onclick="saveFirecrawl()"
+            style="padding:10px 24px;background:#1A6B72;color:#fff;border:none;
+                   border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">
+            Opslaan
+          </button>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /pane-params -->
 
   <!-- TAB 3: AI Modellen -->
@@ -5238,6 +5304,12 @@ async function loadSettings() {
     if (_settings.vision_credentials_missing) {
       document.getElementById('vision-creds-banner').style.display = 'block';
     }
+    const fc = _settings.firecrawl_api || {};
+    if (fc.api_key_set) {
+      document.getElementById('fc-key-status').textContent = '✓ API key aanwezig';
+      document.getElementById('fc-key-status').style.color = '#059669';
+      document.getElementById('fc-api-key').placeholder = fc.api_key_masked || '••••••••••••';
+    }
   } catch(e) { console.error('loadSettings failed:', e); }
 }
 
@@ -5270,6 +5342,44 @@ async function saveVision() {
     body: JSON.stringify(payload)});
   const d = await r.json();
   showToast(d.ok ? 'Opgeslagen' : 'Fout');
+}
+
+async function saveFirecrawl() {
+  const key = document.getElementById('fc-api-key').value.trim();
+  if (!key) { showToast('Vul een API key in', true); return; }
+  const r = await fetch('/api/settings', {method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({firecrawl_api: {api_key: key}})});
+  const d = await r.json();
+  if (d.ok) {
+    document.getElementById('fc-key-status').textContent = '✓ API key aanwezig';
+    document.getElementById('fc-key-status').style.color = '#059669';
+    document.getElementById('fc-api-key').value = '';
+    document.getElementById('fc-api-key').placeholder = '••••••••••••';
+    showToast('Firecrawl key opgeslagen');
+  } else {
+    showToast('Opslaan mislukt', true);
+  }
+}
+
+async function testFirecrawl() {
+  const resultEl = document.getElementById('fc-test-result');
+  resultEl.style.display = 'block';
+  resultEl.style.color = '#6b7280';
+  resultEl.textContent = 'Testen…';
+  try {
+    const r = await fetch('/api/settings/test-firecrawl');
+    const d = await r.json();
+    if (d.ok) {
+      resultEl.style.color = '#059669';
+      resultEl.textContent = '✓ Verbinding OK — ' + (d.snippet || '').substring(0, 80);
+    } else {
+      resultEl.style.color = '#dc2626';
+      resultEl.textContent = '✗ ' + (d.error || 'Onbekende fout');
+    }
+  } catch(e) {
+    resultEl.style.color = '#dc2626';
+    resultEl.textContent = '✗ Verzoek mislukt: ' + e;
+  }
 }
 
 function showToast(msg, isError) {
