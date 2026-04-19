@@ -436,7 +436,7 @@
       "k": 2,
       "a": 2,
       "i": 3,
-      "library_category": "nrt_curriculum",
+      "library_category": "medical_literature",
       "role": "acupuncture_science",
       "full_title": "The Spark in the Machine",
       "authors": "Keown",
@@ -455,66 +455,11 @@
       "ingested": true,
       "ingested_at": "2026-04-17T20:47:29.730296+00:00"
     },
-    "body_keeps_score": {
-      "k": 2,
-      "a": 3,
-      "i": 3,
-      "library_category": "nrt_curriculum",
-      "role": "trauma_somatics",
-      "full_title": "The Body Keeps the Score",
-      "authors": "van der Kolk",
-      "format": "pdf",
-      "filename_patterns": [
-        "Body Keeps the Score",
-        "BodyKeepsScore"
-      ],
-      "notes": "Trauma stored in body — somatic healing, NRT context",
-      "image_source": "pdf_cropped",
-      "image_priority": "normal",
-      "image_priority_override": null,
-      "image_evaluated": false
-    },
-    "emotion_code": {
-      "k": 3,
-      "a": 3,
-      "i": 3,
-      "library_category": "nrt_curriculum",
-      "role": "energy_medicine",
-      "full_title": "The Emotion Code",
-      "authors": "Nelson",
-      "format": "pdf",
-      "filename_patterns": [
-        "Emotion Code"
-      ],
-      "notes": "Trapped emotions — muscle testing framework, QAT ETT context",
-      "image_source": "pdf_cropped",
-      "image_priority": "normal",
-      "image_priority_override": null,
-      "image_evaluated": false
-    },
-    "body_code": {
-      "k": 3,
-      "a": 3,
-      "i": 3,
-      "library_category": "nrt_curriculum",
-      "role": "energy_medicine",
-      "full_title": "The Body Code",
-      "authors": "Nelson",
-      "format": "pdf",
-      "filename_patterns": [
-        "Body Code"
-      ],
-      "notes": "Expanded Emotion Code — comprehensive imbalance map",
-      "image_source": "pdf_cropped",
-      "image_priority": "normal",
-      "image_priority_override": null,
-      "image_evaluated": false
-    },
     "applied_kinesiology": {
       "k": 2,
       "a": 2,
       "i": 3,
-      "library_category": "nrt_curriculum",
+      "library_category": "medical_literature",
       "role": "kinesiology_manual",
       "full_title": "Applied Kinesiology",
       "authors": "Walther",
@@ -917,26 +862,6 @@
       "library_category": "nrt_curriculum",
       "full_title": "Neural Reset Therapy® – Techniques For the Upper Body (52)"
     },
-    "unclassified_test_acupuncture": {
-      "k": 2,
-      "a": 2,
-      "i": 2,
-      "role": "unclassified",
-      "server_path": "/root/medical-rag/books/acupuncture/test_acupuncture.pdf",
-      "server_filename": "test_acupuncture.pdf",
-      "ingested": true,
-      "ingested_at": "2026-04-17T00:36:30.944100+00:00",
-      "filename_patterns": [
-        "test_acupuncture.pdf"
-      ],
-      "notes": "Auto-added — needs manual K/A/I classification",
-      "image_source": "pdf_cropped",
-      "image_priority": "normal",
-      "image_priority_override": null,
-      "image_evaluated": false,
-      "library_category": "medical_literature",
-      "full_title": "Chapter 1: Acupuncture Points"
-    },
     "unclassified_QRS Quantron Resonance 101 Hom": {
       "k": 2,
       "a": 2,
@@ -1053,7 +978,8 @@
       "image_priority_override": "skip",
       "image_evaluated": true,
       "library_category": "medical_literature",
-      "full_title": "Quantum-Touch 2.0 - The New Human"
+      "full_title": "Quantum-Touch 2.0 - The New Human",
+      "authors": "Gordon, Duffield, Wickhorst"
     },
     "unclassified_Quantum-Touch Core Transformat": {
       "k": 2,
@@ -1090,7 +1016,8 @@
       "image_priority_override": "skip",
       "image_evaluated": true,
       "library_category": "medical_literature",
-      "full_title": "Quantum-Touch"
+      "full_title": "Quantum-Touch",
+      "authors": "Gordon"
     },
     "unclassified_Sobotta Atlas of Anatomy, Vol.": {
       "k": 2,
@@ -1127,7 +1054,8 @@
       "image_priority_override": "skip",
       "image_evaluated": true,
       "full_title": "Whole Brain Living",
-      "library_category": "medical_literature"
+      "library_category": "medical_literature",
+      "authors": "Jill Bolte Taylor"
     },
     "unclassified_An Introduction to Craniosacra": {
       "k": 2,
@@ -1143,7 +1071,8 @@
       ],
       "notes": "Auto-added — needs manual K/A/I classification",
       "full_title": "An Introduction to",
-      "library_category": "medical_literature"
+      "library_category": "medical_literature",
+      "authors": "Don Cohen"
     },
     "unclassified_CranioSacral Therapy Study Gui": {
       "k": 2,
@@ -1178,7 +1107,8 @@
       ],
       "notes": "Auto-added — needs manual K/A/I classification",
       "full_title": "ENERGETIC KINESIOLOGY – PRINCIPLES",
-      "library_category": "medical_literature"
+      "library_category": "medical_literature",
+      "authors": "Charles Krebs"
     },
     "unclassified_Essentials of Anatomy and Phys": {
       "k": 2,
@@ -1196,7 +1126,8 @@
       "full_title": "Copyright © 2007 by F. A. Davis.",
       "image_priority_override": "skip",
       "image_evaluated": true,
-      "library_category": "medical_literature"
+      "library_category": "medical_literature",
+      "authors": "Valerie C. Scanlon, Tina Sanders"
     },
     "unclassified_Integrative Manual Therapy Aut": {
       "k": 2,
@@ -1233,7 +1164,8 @@
       "image_priority_override": "skip",
       "image_evaluated": true,
       "full_title": "INTEGRATIVE",
-      "library_category": "medical_literature"
+      "library_category": "medical_literature",
+      "authors": "Sharon Giammatteo, Jay Kain"
     },
     "unclassified_Integrative Manual Therapy Upp": {
       "k": 2,
@@ -1268,7 +1200,8 @@
       ],
       "notes": "Auto-added — needs manual K/A/I classification",
       "full_title": "the Myofascial",
-      "library_category": "medical_literature"
+      "library_category": "medical_literature",
+      "authors": "Doreen Killens"
     }
   },
   "query_profiles": {

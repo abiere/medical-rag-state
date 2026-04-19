@@ -2999,20 +2999,72 @@ function renderCard(item) {
   const bgColor  = isPaused ? '#FAEEDA' : '#fff';
   const bdrStyle = isPaused ? 'border:1px solid #EF9F27;' : '';
 
-  return `<div ${clickable}background:${bgColor};${bdrStyle}border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.07);
-                      padding:14px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-    <div style="flex:1;min-width:200px">
-      <div style="font-weight:600;font-size:15px;color:#111">${escHtml(item.title)}${item.library_category === 'medical_literature' && item.pub_year ? '<span style="font-weight:400;color:#6b7280;font-size:13px"> (' + item.pub_year + ')</span>' : ''}</div>
-      <div style="font-size:12px;color:#6b7280;margin-top:2px">${escHtml(item.authors || '')}</div>
-      ${pausedHtml}
+  const editBtn = item.book_hash
+    ? `<button data-hash="${escHtml(item.book_hash)}" onclick="editBook(event)"
+         title="Metagegevens bewerken"
+         style="font-size:13px;padding:3px 8px;background:#f0fafa;border:1px solid #1A6B72;
+                color:#1A6B72;border-radius:6px;cursor:pointer;white-space:nowrap;flex-shrink:0">&#9998;</button>`
+    : '';
+
+  const editForm = item.book_hash ? `<div class="book-edit-form" data-hash="${escHtml(item.book_hash)}"
+      style="display:none;background:#f8fffe;border:1px solid #b2d8db;border-radius:0 0 10px 10px;
+             padding:14px 18px;margin-top:-6px">
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px">
+      <div style="flex:1;min-width:180px">
+        <label style="font-size:11px;color:#6b7280;display:block;margin-bottom:2px">Titel</label>
+        <input data-field="title" value="${escHtml(item.meta_title || item.title || '')}"
+          style="width:100%;box-sizing:border-box;padding:5px 8px;border:1px solid #d1d5db;border-radius:6px;font-size:13px">
+      </div>
+      <div style="flex:1;min-width:180px">
+        <label style="font-size:11px;color:#6b7280;display:block;margin-bottom:2px">Auteur(s)</label>
+        <input data-field="creator" value="${escHtml(item.meta_creator || item.authors || '')}"
+          style="width:100%;box-sizing:border-box;padding:5px 8px;border:1px solid #d1d5db;border-radius:6px;font-size:13px">
+      </div>
+      <div style="min-width:90px">
+        <label style="font-size:11px;color:#6b7280;display:block;margin-bottom:2px">Jaar</label>
+        <input data-field="pub_year" value="${escHtml(item.pub_year || item.pub_date || '')}"
+          style="width:100%;box-sizing:border-box;padding:5px 8px;border:1px solid #d1d5db;border-radius:6px;font-size:13px">
+      </div>
+      <div style="min-width:120px">
+        <label style="font-size:11px;color:#6b7280;display:block;margin-bottom:2px">ISBN</label>
+        <input data-field="isbn" value="${escHtml(item.isbn || '')}"
+          style="width:100%;box-sizing:border-box;padding:5px 8px;border:1px solid #d1d5db;border-radius:6px;font-size:13px">
+      </div>
+      <div style="flex:1;min-width:150px">
+        <label style="font-size:11px;color:#6b7280;display:block;margin-bottom:2px">Uitgever</label>
+        <input data-field="publisher" value="${escHtml(item.publisher || '')}"
+          style="width:100%;box-sizing:border-box;padding:5px 8px;border:1px solid #d1d5db;border-radius:6px;font-size:13px">
+      </div>
     </div>
-    <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
-      ${kaiBadges}
+    <div style="display:flex;gap:8px;align-items:center">
+      <button data-hash="${escHtml(item.book_hash)}" onclick="saveBookEdit(this.dataset.hash)"
+        style="font-size:13px;padding:5px 16px;background:#1A6B72;color:#fff;border:none;
+               border-radius:6px;cursor:pointer">Opslaan</button>
+      <button data-hash="${escHtml(item.book_hash)}" onclick="toggleBookEdit(this.dataset.hash)"
+        style="font-size:13px;padding:5px 12px;background:#fff;border:1px solid #d1d5db;
+               color:#374151;border-radius:6px;cursor:pointer">Annuleer</button>
+      <span class="book-edit-msg" data-hash="${escHtml(item.book_hash)}" style="font-size:12px;color:#1A6B72"></span>
     </div>
-    <div style="display:flex;gap:6px;align-items:flex-start;flex-wrap:wrap">
-      <div style="display:flex;flex-direction:column;align-items:flex-end">${statusHtml}</div>
-      ${ocrBadge(item.ocr_engine)}
+  </div>` : '';
+
+  return `<div style="margin-bottom:0">
+    <div ${clickable}background:${bgColor};${bdrStyle}border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.07);
+                        padding:14px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div style="flex:1;min-width:200px">
+        <div style="font-weight:600;font-size:15px;color:#111">${escHtml(item.title)}${item.library_category === 'medical_literature' && item.pub_year ? '<span style="font-weight:400;color:#6b7280;font-size:13px"> (' + item.pub_year + ')</span>' : ''}</div>
+        <div style="font-size:12px;color:#6b7280;margin-top:2px">${escHtml(item.authors || '')}</div>
+        ${pausedHtml}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
+        ${kaiBadges}
+      </div>
+      <div style="display:flex;gap:6px;align-items:flex-start;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;align-items:flex-end">${statusHtml}</div>
+        ${ocrBadge(item.ocr_engine)}
+      </div>
+      ${editBtn}
     </div>
+    ${editForm}
   </div>`;
 }
 
@@ -3700,6 +3752,51 @@ function saveManualMeta(hash) {
     }
   })
   .catch(e => alert('Netwerkfout: ' + e));
+}
+
+function editBook(e) {
+  e.stopPropagation();
+  toggleBookEdit(e.currentTarget.dataset.hash);
+}
+
+function toggleBookEdit(hash) {
+  const form = document.querySelector('.book-edit-form[data-hash="' + hash + '"]');
+  if (!form) return;
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+
+function saveBookEdit(hash) {
+  const form = document.querySelector('.book-edit-form[data-hash="' + hash + '"]');
+  if (!form) return;
+  const body = {};
+  form.querySelectorAll('input[data-field]').forEach(inp => {
+    if (inp.value.trim()) body[inp.dataset.field] = inp.value.trim();
+  });
+  if (!body.title) {
+    alert('Vul minimaal een titel in');
+    return;
+  }
+  const msg = form.querySelector('.book-edit-msg[data-hash="' + hash + '"]');
+  if (msg) msg.textContent = 'Opslaan\u2026';
+  fetch('/api/library/book/' + hash + '/metadata-manual', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(body)
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.error) {
+      if (msg) msg.textContent = 'Fout: ' + d.error;
+      else alert('Fout: ' + d.error);
+    } else {
+      if (msg) { msg.style.color = '#1A6B72'; msg.textContent = 'Opgeslagen!'; }
+      setTimeout(() => location.reload(), 800);
+    }
+  })
+  .catch(e => {
+    if (msg) { msg.style.color = '#dc2626'; msg.textContent = 'Netwerkfout'; }
+    else alert('Netwerkfout: ' + e);
+  });
 }
 </script>"""
     if dup_banner:
