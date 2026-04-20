@@ -58,9 +58,7 @@
     "date": "2008",
     "isbn": "9780443074905",
     "title": "The Practice of Chinese Medicine",
-    "creator": [
-      "Giovanni Maciocia"
-    ],
+    "creator": "Giovanni Maciocia",
     "publisher": "Churchill Livingstone Elsevier",
     "isbn_lookup_source": "openlibrary",
     "subtitle": "The Treatment of Diseases with Acupuncture and Chinese Herbs",

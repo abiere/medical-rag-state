@@ -59,9 +59,7 @@
     "date": "2017",
     "isbn": "9780648022701",
     "title": "Explain Pain Supercharged",
-    "creator": [
-      "David Butler;Lorimer Moseley"
-    ],
+    "creator": "David Butler;Lorimer Moseley",
     "isbn_lookup_source": "google_books",
     "subtitle": "The clinician's manual",
     "edition_number": 1,

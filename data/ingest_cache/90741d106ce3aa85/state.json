@@ -59,9 +59,7 @@
     "date": "1995",
     "isbn": "9781556431838",
     "title": "An Introduction to Craniosacral Therapy",
-    "creator": [
-      "Don Cohen"
-    ],
+    "creator": "Don Cohen",
     "isbn_lookup_source": "google_books",
     "subtitle": "Anatomy, Function, and Treatment",
     "pages": 115,

@@ -59,9 +59,7 @@
     "date": "2002",
     "isbn": "9781556433740",
     "title": "APPLIED KINESIOLOGY",
-    "creator": [
-      "Robert Frost"
-    ],
+    "creator": "Robert Frost",
     "isbn_lookup_source": "openlibrary",
     "subtitle": "A TRAINING MANUAL AND REFERENCE BOOK OF BASIC PRINCIPLES AND PRACTICES",
     "pages": 272,

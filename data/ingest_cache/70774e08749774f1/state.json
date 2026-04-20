@@ -55,39 +55,30 @@
   "image_extraction_enabled": true,
   "parse_retry_count": 0,
   "book_metadata": {
-    "title": "ANATOMY TRAINS",
-    "creator": [
-      "Myers"
-    ],
-    "publisher": "Churchill Livingstone",
+    "title": "Anatomy Trains",
+    "creator": "Thomas W. Myers",
+    "publisher": "** Elsevier Health Sciences (US)",
     "date": "2014",
     "asin": "B00HG1QFGE",
     "language": "en",
     "isbn": "9780702046544",
     "isbn_lookup_source": "google_books",
-    "subtitle": "Myofascial Meridians for Manual & Movement Therapists",
+    "subtitle": "Myofascial Meridians for Manual and Movement Therapists",
     "pages": 317,
-    "cover_url": "https://covers.openlibrary.org/b/id/12484886-M.jpg",
+    "cover_url": "http://books.google.com/books/content?id=kHk6lAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
     "subjects": [
-      "Fasciae (Anatomy)",
-      "Kinesiology",
-      "Surgical and topographical Anatomy",
-      "Manipulation (Therapeutics)",
-      "Anatomy, surgical and topographical",
-      "Manipulation (therapeutics)",
-      "Physiology",
-      "Allied health & medical -> medical -> physiology"
+      "Anatomy, Surgical and topographical"
     ],
     "metadata_method": "vision_api_merge",
     "metadata_sources": {
       "gemini": true,
-      "google": false,
-      "openlibrary": true
+      "google": true,
+      "openlibrary": true,
+      "isbnsearch": true,
+      "loc": false
     },
     "needs_review": [
-      "isbn_13",
-      "description",
-      "language"
+      "isbn_13"
     ],
     "confidence": {
       "title": "high",
@@ -98,6 +89,7 @@
     },
     "description": "Presents an understanding of the role of fascia in healthy movement and postural distortion which is of vital importance to bodyworkers and movement therapists worldwide. This book presents a 'whole systems' view of myofascial/locomotor anatomy in which the body-wide connections among the muscles within the fascial net are described in detail.",
     "edition_number": 3,
-    "edition_label": "Third Edition"
+    "edition_label": "THIRD EDITION",
+    "manually_reviewed": true
   }
 }

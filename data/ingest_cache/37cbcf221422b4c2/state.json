@@ -55,36 +55,25 @@
   "image_extraction_enabled": true,
   "parse_retry_count": 0,
   "book_metadata": {
-    "title": "CranioSacral Therapy I Study Guide",
+    "title": "CranioSacral Therapy Study Guide",
     "publisher": "Upledger Institute",
-    "date": "1987",
-    "creator": [
-      "Upledger",
-      "Lowen"
-    ],
-    "metadata_method": "vision_api_merge",
+    "date": "2010",
+    "creator": "Upledger, John E.",
+    "metadata_method": "manual_entry",
     "metadata_sources": {
       "gemini": true,
       "google": false,
       "openlibrary": false
     },
-    "needs_review": [
-      "subtitle",
-      "edition_number",
-      "edition_label",
-      "isbn_13",
-      "pages",
-      "description",
-      "cover_url",
-      "language",
-      "subjects"
-    ],
+    "needs_review": [],
     "confidence": {
       "title": "high",
       "authors": "high",
       "edition": "none",
       "year": "medium",
       "isbn": "none"
-    }
+    },
+    "edition_label": "Revised 7/2010",
+    "manually_reviewed": true
   }
 }

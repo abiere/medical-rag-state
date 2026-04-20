@@ -56,37 +56,34 @@
   "parse_retry_count": 0,
   "book_metadata": {
     "title": "Bates' Guide to Physical Examination and History Taking",
-    "creator": [
-      "Soriano"
-    ],
-    "publisher": "Wolters Kluwer",
-    "date": "2025-06-12",
+    "creator": "Rainier P. Soriano",
+    "publisher": "Lippincott Williams & Wilkins",
+    "date": "2025",
     "asin": "B0G26CQLFQ",
     "language": "en",
     "metadata_method": "vision_api_merge",
     "metadata_sources": {
       "gemini": true,
-      "google": false,
-      "openlibrary": false
+      "google": true,
+      "openlibrary": true,
+      "isbnsearch": true,
+      "loc": false
     },
     "needs_review": [
       "subtitle",
-      "year",
-      "isbn_13",
-      "pages",
-      "description",
-      "cover_url",
-      "language",
-      "subjects"
+      "edition_number",
+      "edition_label"
     ],
-    "confidence": {
-      "title": "high",
-      "authors": "high",
-      "edition": "high",
-      "year": "none",
-      "isbn": "none"
-    },
+    "confidence": {},
     "edition_number": 14,
-    "edition_label": "Fourteenth Edition"
+    "edition_label": "Fourteenth Edition",
+    "isbn": "9781975218348",
+    "pages": 1248,
+    "description": "\"Bates' Guide to Physical Examination and History Taking, 14th Edition provides complete and authoritative guidance on performing physical examinations successfully. The focus is on training students on the skills needed for patient encounters - head-to-toe and physical examination skills, history taking, communication, patient note taking, and often touching on clinical reasoning and differential diagnosis\"--",
+    "cover_url": "http://books.google.com/books/content?id=xFka0QEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "subjects": [
+      "Medical"
+    ],
+    "manually_reviewed": true
   }
 }

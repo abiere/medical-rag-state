@@ -89,6 +89,7 @@
       "edition": "none",
       "year": "none",
       "isbn": "none"
-    }
+    },
+    "manually_reviewed": true
   }
 }

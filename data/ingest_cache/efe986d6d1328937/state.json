@@ -59,32 +59,27 @@
     "date": "2001",
     "title": "Acupuncture in Practice",
     "subtitle": "Beyond Points and Meridians",
-    "creator": [
-      "Campbell"
-    ],
+    "creator": "Anthony Campbell",
     "metadata_method": "vision_api_merge",
     "metadata_sources": {
       "gemini": true,
-      "google": false,
-      "openlibrary": false
+      "google": true,
+      "openlibrary": true,
+      "isbnsearch": true,
+      "loc": false
     },
     "needs_review": [
       "edition_number",
-      "edition_label",
-      "isbn_13",
-      "pages",
-      "description",
-      "cover_url",
-      "language",
-      "subjects"
+      "edition_label"
     ],
-    "confidence": {
-      "title": "high",
-      "authors": "high",
-      "edition": "none",
-      "year": "high",
-      "isbn": "none",
-      "publisher": "high"
-    }
+    "confidence": {},
+    "isbn": "9780750652421",
+    "pages": 160,
+    "description": "A practical manual describing the principles and practice of modern medical acupuncture. This book frees the practitioner from dependence on rule of thumb and builds on existing clinical knowledge. Demystifying the needling process, this book demonstrates quick but effective treatment of those disorders for which acupuncture is suitable.",
+    "cover_url": "http://books.google.com/books/content?id=aMpsAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "language": "en",
+    "subjects": [
+      "Medical"
+    ]
   }
 }

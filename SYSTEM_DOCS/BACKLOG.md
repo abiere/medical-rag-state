@@ -1,7 +1,21 @@
 # BACKLOG — NRT-Amsterdam.nl
-> Bijgewerkt: 2026-04-19 | Inventarisatie sessie — geen herstel uitgevoerd
-> Volgende architect-sessie pakt dit op.
+> Bijgewerkt: 2026-04-20 | Fase 0+1 MCP-infrastructuur voltooid
 > Open issues: zie OPEN_ISSUES.md | Design queue: zie DESIGN_QUEUE.md
+
+## ✅ Afgerond
+
+- [x] **Fase 0+1 — MCP-infrastructuur + schrijfbrug** (2026-04-20)
+  - fastmcp 3.2.4 + mcp 1.27.0 geïnstalleerd
+  - `@modelcontextprotocol/server-filesystem` globaal via npm
+  - supergateway globaal via npm (stdio→HTTP proxy)
+  - cloudflared 2026.3.0 geïnstalleerd
+  - `/root/nrt-rag/server.py` — FastMCP met 4 tools (health/write/read/list)
+  - `/root/nrt-docs/` directory structuur aangemaakt
+  - Systemd services: `nrt-rag-mcp` (3000) + `nrt-filesystem-mcp` (3001)
+  - CLAUDE.md bijgewerkt: services, MCP servers, sessie-start ritual, rolverdeling
+  - spec.yaml geschreven naar `/root/nrt-docs/designs/drafts/DESIGN-Sync-Infrastructuur-v1/`
+  - Succes-criterium: `nrt_write_file("/root/nrt-docs/test.txt", "ok")` → bestand bestaat ✅
+  - **Open actie voor Axel:** cloudflare tunnel credentials instellen (zie CLAUDE.md)
 
 ---
 

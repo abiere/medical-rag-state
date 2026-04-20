@@ -55,40 +55,34 @@
   "image_extraction_enabled": true,
   "parse_retry_count": 0,
   "book_metadata": {
-    "title": "Sobotta",
-    "creator": [
-      "Waschke",
-      "Böckers",
-      "Paulsen"
-    ],
+    "title": "Sobotta Anatomy Textbook",
+    "creator": "Friedrich Paulsen, Tobias M. Böckers, Jens Waschke",
     "publisher": "Elsevier",
-    "date": "2018-12-14",
+    "date": "2018",
     "asin": "B07LBS87C5",
     "language": "en",
     "metadata_method": "vision_api_merge",
     "metadata_sources": {
       "gemini": true,
-      "google": false,
-      "openlibrary": false
+      "google": true,
+      "openlibrary": true,
+      "isbnsearch": true,
+      "loc": false
     },
     "needs_review": [
       "edition_number",
-      "year",
-      "isbn_13",
-      "pages",
-      "description",
-      "cover_url",
-      "language",
-      "subjects"
+      "edition_label"
     ],
-    "confidence": {
-      "title": "high",
-      "authors": "high",
-      "edition": "medium",
-      "year": "none",
-      "isbn": "none"
-    },
-    "subtitle": "ANATOMY TEXTBOOK",
-    "edition_label": "English Edition"
+    "confidence": {},
+    "subtitle": "English Edition with Latin Nomenclature",
+    "edition_label": "English Edition",
+    "isbn": "9780702067600",
+    "pages": 840,
+    "description": "Like the Sobotta Atlas of Anatomy, this textbook guides students through the anatomy in a clear, structured manner that is easy to remember. Sobotta excels at comprehensibly explaining the fascinating world of anatomy and carries you safely through every test and your initial patient interactions. Clinical Cases: Presents a relevant practical medical case as it will be encountered during rotation . It highlights how students can gain valuable insights into the case by taking structured notes dur",
+    "cover_url": "http://books.google.com/books/content?id=-ZhyuwEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "subjects": [
+      "Medical"
+    ],
+    "manually_reviewed": true
   }
 }

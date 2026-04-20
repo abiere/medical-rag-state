@@ -56,9 +56,7 @@
   "parse_retry_count": 0,
   "book_metadata": {
     "title": "WHOLE BRAIN LIVING",
-    "creator": [
-      "Jill Bolte Taylor"
-    ],
+    "creator": "Jill Bolte Taylor",
     "publisher": "HAY HOUSE, INC.",
     "date": "2021",
     "asin": "B08W29Q2CR",
@@ -90,6 +88,7 @@
       "edition": "none",
       "year": "none",
       "isbn": "none"
-    }
+    },
+    "manually_reviewed": true
   }
 }

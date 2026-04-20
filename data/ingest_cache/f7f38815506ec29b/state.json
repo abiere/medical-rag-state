@@ -56,10 +56,7 @@
   "parse_retry_count": 0,
   "book_metadata": {
     "title": "Essentials of Anatomy and Physiology",
-    "creator": [
-      "Valerie C. Scanlon",
-      "Tina Sanders"
-    ],
+    "creator": "Valerie C. Scanlon, Tina Sanders",
     "publisher": "F. A. Davis Company",
     "date": "2006",
     "isbn": "9780803615465",

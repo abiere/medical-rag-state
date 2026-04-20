@@ -47,6 +47,9 @@ Results are written to `SYSTEM_DOCS/TEST_REPORT.md`. Do not deploy if any test h
 | ttyd terminal | 7682 | ✅ Active |
 | sync-status.timer | — | ✅ Every 5 min |
 | queue-watchdog.timer | — | ✅ Every 10 min |
+| nrt-rag-mcp | 3000 | ✅ Active (FastMCP streamable-http) |
+| nrt-filesystem-mcp | 3001 | ✅ Active (supergateway/stdio) |
+| cloudflared-nrt | — | ⚠️ Pending tunnel credentials |
 
 Restart web only: `systemctl restart medical-rag-web`
 **NEVER** restart book-ingest-queue during embedding — vectors will be lost.
@@ -114,6 +117,66 @@ Restart web only: `systemctl restart medical-rag-web`
 |---|---|---|
 | mempalace | `python3 -m mempalace.mcp_server` | Persistent memory — 116 drawers from SYSTEM_DOCS |
 | playwright | `playwright-mcp --headless` | UI testing — Chromium headless against port 8000 |
+| nrt-rag | `python3 /root/nrt-rag/server.py` | NRT schrijfbrug — 4 tools (health/write/read/list) op port 3000 |
+
+## NRT Schrijfbrug — sessie-start voor architect-chat
+
+De architect-chat (Claude op claude.ai) communiceert met de server via nrt-rag MCP tools.
+
+**Sessie-start ritual (architect):**
+1. `nrt_get_analysebestand("Literatuuranalyse-Overdracht-*.txt")` — haal overdracht op
+2. `nrt_list_files("/root/nrt-docs/designs/active")` — welke designs actief zijn
+3. `nrt_health()` — verifieer dat MCP draait
+
+**Schrijfroute voor bestanden:**
+Alle design-bestanden gaan via `nrt_write_file(path, content)`.
+- Nooit handmatig via git commit voor design-bestanden
+- Pad moet altijd beginnen met `/root/nrt-docs/`
+
+**Tunnel endpoints (productie):**
+- nrt-rag MCP: `https://mcp.nrt-amsterdam.nl/mcp`
+- filesystem MCP: `https://filesystem-mcp.nrt-amsterdam.nl/sse`
+- Tunnel opzetten: zie stap Cloudflare tunnel hieronder
+
+**Tunnel credentials instellen (eenmalig):**
+```bash
+# Optie A — token (aanbevolen, geen browser nodig):
+# Haal token op via Cloudflare Dashboard → Zero Trust → Tunnels → Create Tunnel
+systemctl edit cloudflared-nrt
+# Voeg toe: Environment=TUNNEL_TOKEN=<jouw-token>
+# En wijzig ExecStart naar: cloudflared tunnel run --token %E
+systemctl restart cloudflared-nrt
+
+# Optie B — browser login (op laptop, dan cert.pem naar server kopiëren):
+cloudflared tunnel login
+cloudflared tunnel create nrt-mcp
+cloudflared tunnel route dns nrt-mcp mcp.nrt-amsterdam.nl
+cloudflared tunnel route dns nrt-mcp filesystem-mcp.nrt-amsterdam.nl
+systemctl start cloudflared-nrt
+```
+
+## Rolverdeling — Brain + Limbs
+
+```
+Architect (claude.ai)    ← beslist technisch, schrijft specs, ontwerpt
+Axel                     ← geeft blessing, stelt prioriteiten
+Gemini                   ← reviewt specs en ontwerpen
+Claude Code (hier)       ← voert uit binnen goedgekeurde spec
+```
+
+**Brain + Limbs:**
+- `nrt-rag` (port 3000) = Brain — RAG queries, analyses, tool-orchestratie
+- `nrt-filesystem-mcp` (port 3001) = Limb — filesystem read/write
+- Toekomstig: Google Drive = Limb, SQLite = Limb
+
+**Vier-artefact patroon** (per feature):
+```
+designs/active/<naam>/
+├── design.md       ← beslissingen + rationale
+├── spec.yaml       ← formele spec voor uitvoering
+├── tests.py        ← acceptatietests
+└── manifest.json   ← gegenereerd (Fase 2+)
+```
 
 ## Active skills (.claude/skills/)
 

@@ -55,41 +55,33 @@
   "image_extraction_enabled": true,
   "parse_retry_count": 0,
   "book_metadata": {
-    "title": "Quantum-Touch 2.0 The New Human",
-    "creator": [
-      "Gordon",
-      "Duffield",
-      "Wickhorst"
-    ],
-    "publisher": "North Atlantic Books",
-    "date": "2013-02-12",
+    "title": "Quantum-Touch 2.0 - The New Human",
+    "creator": "Richard Gordon, Chris Duffield, Ph.D., Vickie Wickhorst Ph.D.",
+    "publisher": "Random House Publishing Services",
+    "date": "2013",
     "asin": "B007RG4JT8",
     "language": "en",
     "metadata_method": "vision_api_merge",
     "metadata_sources": {
       "gemini": true,
-      "google": false,
-      "openlibrary": false
+      "google": true,
+      "openlibrary": false,
+      "isbnsearch": true,
+      "loc": false
     },
     "needs_review": [
       "edition_number",
-      "edition_label",
-      "year",
-      "isbn_13",
-      "pages",
-      "description",
-      "cover_url",
-      "language",
-      "subjects"
+      "edition_label"
     ],
-    "confidence": {
-      "title": "high",
-      "authors": "high",
-      "edition": "none",
-      "year": "none",
-      "isbn": "none",
-      "publisher": "high"
-    },
-    "subtitle": "Discovering and Becoming"
+    "confidence": {},
+    "subtitle": "Discovering and Becoming",
+    "isbn": "9781583943809",
+    "pages": 265,
+    "description": "Quantum-Touch 2.0—The New Human endeavors to significantly enlarge the possibilities of what humans can be and do. In clear, step-by-step instructions, the reader will learn to easily demonstrate that human limits are as yet unknown. Readers can learn to do healing on multiple people at once to reduce their pain in minutes, work on multiple conditions at once, help people shift their own beliefs with the use of energy, and work across time and space. Readers will even learn to safely and visibly",
+    "cover_url": "http://books.google.com/books/content?id=Dudy9OlgCCsC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "subjects": [
+      "Health & Fitness"
+    ],
+    "manually_reviewed": true
   }
 }

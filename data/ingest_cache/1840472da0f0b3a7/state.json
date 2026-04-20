@@ -55,31 +55,31 @@
   "image_extraction_enabled": true,
   "parse_retry_count": 0,
   "book_metadata": {
-    "title": "Integrative Manual Therapy for the Connective Tissue System: Myofascial Release",
+    "title": "Integrative Manual Therapy for the Connective Tissue System",
     "creator": "Sharon Giammatteo, Jay Kain",
-    "publisher": "Adobe Acrobat 9.0 Paper Capture Plug-in with ClearScan",
-    "date": "2010",
+    "publisher": "North Atlantic Books",
+    "date": "2005",
     "metadata_method": "vision_api_merge",
     "metadata_sources": {
-      "gemini": false,
-      "google": false,
-      "openlibrary": false
+      "gemini": true,
+      "google": true,
+      "openlibrary": true,
+      "isbnsearch": true,
+      "loc": false
     },
     "needs_review": [
-      "title",
-      "subtitle",
-      "authors",
       "edition_number",
-      "edition_label",
-      "year",
-      "isbn_13",
-      "publisher",
-      "pages",
-      "description",
-      "cover_url",
-      "language",
-      "subjects"
+      "edition_label"
     ],
-    "confidence": {}
+    "confidence": {},
+    "subtitle": "Using Myofascial Release: The 3-Planar Fascial Fulcrum Approach",
+    "isbn": "9781556434693",
+    "pages": 224,
+    "description": "This book describes clinically proven hands-on techniques to decrease the pain and tensions of the myofascial tissues that cover every bodily organ. Included are protocols for lower back pain, respiratory discomfort, spinal dysfunction, headaches and migraines, joint problems, plantar fascitis, and more. Illustrated throughout, this is the fourth volume in the Integrative Manual Therapy series.",
+    "cover_url": "http://books.google.com/books/content?id=WxNOEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "language": "en",
+    "subjects": [
+      "Health & Fitness"
+    ]
   }
 }

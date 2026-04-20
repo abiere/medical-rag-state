@@ -56,10 +56,7 @@
   "parse_retry_count": 0,
   "book_metadata": {
     "title": "Sobotta Atlas of Anatomy",
-    "creator": [
-      "Paulsen",
-      "Waschke"
-    ],
+    "creator": "Paulsen, Waschke",
     "publisher": "Elsevier",
     "date": "2023-04-18",
     "asin": "B0C1NYNC9X",
@@ -90,6 +87,7 @@
       "edition": "high",
       "year": "none",
       "isbn": "none"
-    }
+    },
+    "manually_reviewed": true
   }
 }

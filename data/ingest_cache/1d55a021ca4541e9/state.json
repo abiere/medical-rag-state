@@ -58,9 +58,7 @@
     "isbn": "9780702052163",
     "title": "The Foundations of Chinese Medicine",
     "date": "2015",
-    "creator": [
-      "Giovanni Maciocia"
-    ],
+    "creator": "Giovanni Maciocia",
     "publisher": "Elsevier",
     "isbn_lookup_source": "google_books",
     "subtitle": "A Comprehensive Text",

@@ -60,9 +60,7 @@
     "isbn": "9781954773011",
     "title": "Advanced Acupuncture",
     "subtitle": "A Clinic Manual",
-    "creator": [
-      "Cecil-Sterman"
-    ],
+    "creator": "Cecil-Sterman",
     "edition_number": 2,
     "edition_label": "Second edition",
     "metadata_method": "vision_api_merge",

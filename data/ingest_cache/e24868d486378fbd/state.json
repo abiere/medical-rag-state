@@ -56,9 +56,7 @@
   "parse_retry_count": 0,
   "book_metadata": {
     "title": "Atlas of Acupuncture",
-    "creator": [
-      "Claudia Focks"
-    ],
+    "creator": "Claudia Focks",
     "publisher": "Churchill Livingstone",
     "date": "2008",
     "isbn": "9780443100284",

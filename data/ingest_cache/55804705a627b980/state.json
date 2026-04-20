@@ -56,10 +56,7 @@
   "parse_retry_count": 0,
   "book_metadata": {
     "title": "ORTHOPEDIC PHYSICAL ASSESSMENT",
-    "creator": [
-      "Magee",
-      "Manske"
-    ],
+    "creator": "Magee, Manske",
     "publisher": "Elsevier",
     "date": "2021",
     "asin": "B08TMPM4Q1",
@@ -88,6 +85,7 @@
       "isbn": "high",
       "publisher": "high"
     },
-    "isbn": "9780323712866"
+    "isbn": "9780323712866",
+    "manually_reviewed": true
   }
 }

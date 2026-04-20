@@ -56,9 +56,7 @@
   "parse_retry_count": 0,
   "book_metadata": {
     "title": "Energetic Kinesiology",
-    "creator": [
-      "Charles Krebs"
-    ],
+    "creator": "Charles Krebs",
     "publisher": "Handspring Publishing",
     "date": "2013",
     "isbn": "9781909141032",

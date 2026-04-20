@@ -56,37 +56,34 @@
     }
   },
   "book_metadata": {
-    "publisher": "Williams & Wilkins",
+    "publisher": "Lippincott Williams & Wilkins",
     "date": "1999",
-    "title": "Travell & Simons' Myofascial Pain and Dysfunction",
+    "title": "Travell & Simons' Myofascial Pain and Dysfunction: Upper half of body",
     "subtitle": "The Trigger Point Manual VOLUME 1. Upper Half of Body",
-    "creator": [
-      "Simons",
-      "Travell",
-      "Simons"
-    ],
+    "creator": "David G. Simons, Janet G. Travell, Lois S. Simons",
     "edition_number": 2,
     "edition_label": "Second Edition",
     "metadata_method": "vision_api_merge",
     "metadata_sources": {
       "gemini": true,
-      "google": false,
-      "openlibrary": false
+      "google": true,
+      "openlibrary": false,
+      "isbnsearch": true,
+      "loc": false
     },
     "needs_review": [
-      "isbn_13",
-      "pages",
-      "description",
-      "cover_url",
-      "language",
-      "subjects"
+      "subtitle",
+      "edition_number",
+      "edition_label"
     ],
-    "confidence": {
-      "title": "high",
-      "authors": "high",
-      "edition": "high",
-      "year": "high",
-      "isbn": "none"
-    }
+    "confidence": {},
+    "isbn": "9780683083637",
+    "pages": 1068,
+    "description": "This Second Edition presents introductory general information on all trigger points and also detailed descriptions of single muscle syndromes for the upper half of the body. It includes 107 new drawings, a number of trigger point release techniques in addition to spray and stretch, and a new chapter on intercostal muscles and diaphragm.",
+    "cover_url": "http://books.google.com/books/content?id=sU0XupX7DGsC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    "language": "en",
+    "subjects": [
+      "Medical"
+    ]
   }
 }

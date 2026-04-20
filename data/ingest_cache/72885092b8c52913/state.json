@@ -55,38 +55,23 @@
   "image_extraction_enabled": true,
   "parse_retry_count": 0,
   "book_metadata": {
-    "title": "Sobotta Atlas of Anatomy",
-    "creator": [
-      "Sobotta"
-    ],
-    "date": "2016-07-14",
+    "title": "Sobotta Atlas of Anatomy Classic",
+    "creator": "Paulsen, Waschke",
+    "date": "2016",
     "asin": "B01IGU361U",
     "language": "en",
-    "metadata_method": "vision_api_merge",
+    "metadata_method": "manual_entry",
     "metadata_sources": {
-      "gemini": true,
+      "gemini": false,
       "google": false,
-      "openlibrary": false
+      "openlibrary": false,
+      "isbnsearch": false,
+      "loc": false
     },
-    "needs_review": [
-      "subtitle",
-      "edition_number",
-      "year",
-      "isbn_13",
-      "publisher",
-      "pages",
-      "description",
-      "cover_url",
-      "language",
-      "subjects"
-    ],
-    "confidence": {
-      "title": "high",
-      "authors": "high",
-      "edition": "medium",
-      "year": "none",
-      "isbn": "none"
-    },
-    "edition_label": "CLASSIC"
+    "needs_review": [],
+    "confidence": {},
+    "edition_label": "Classic Edition",
+    "publisher": "Elsevier",
+    "manually_reviewed": true
   }
 }

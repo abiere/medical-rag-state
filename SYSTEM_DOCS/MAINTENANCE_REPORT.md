@@ -1,7 +1,7 @@
 # Maintenance Report — Medical RAG
 
-**Datum:** 19-04-2026 00:31:53  
-**Duur:** 821.0s  
+**Datum:** 20-04-2026 00:31:15  
+**Duur:** 609.3s  
 **Uitslag:** ⚠️ WARNING  
 
 ---
@@ -10,53 +10,53 @@
 
 | Fase | Status | Duur | Bevinding |
 |---|---|---|---|
-| Pre-checks | ✅ OK | 0.1s | Schijf: 225.2 GB vrij, 27% gebruikt |
-| Qdrant maintenance | ✅ OK | 1.4s | nrt_curriculum: 0 vectoren, optimizer: ok |
-| Data consistentie | ⚠️ WARNING | 784.4s | 0 boeken in metadata, 0 ingested |
+| Pre-checks | ✅ OK | 0.0s | Schijf: 224.6 GB vrij, 27% gebruikt |
+| Qdrant maintenance | ✅ OK | 1.3s | nrt_curriculum: 0 vectoren, optimizer: ok |
+| Data consistentie | ⚠️ WARNING | 575.2s | 0 boeken in metadata, 0 ingested |
 | Retroaudit chunks | ✅ OK | 0.0s | Claude API actief — retroaudit wordt op aanvraag uitgevoerd via UI |
-| State integriteit | ✅ OK | 13.6s | State integriteit: 76 voltooide boeken gecontroleerd, 34 OK, 0 misma… |
-| Software check | ⚠️ WARNING | 21.6s | 93 pip-pakket(ten) verouderd: |
-| Opruimen | ✅ OK | 0.0s | /tmp: 5 verouderd(e) bestand(en) verwijderd |
+| State integriteit | ✅ OK | 12.5s | State integriteit: 76 voltooide boeken gecontroleerd, 34 OK, 0 misma… |
+| Software check | ⚠️ WARNING | 20.2s | 93 pip-pakket(ten) verouderd: |
+| Opruimen | ✅ OK | 0.0s | /tmp: 3 verouderd(e) bestand(en) verwijderd |
 
-**Schijf voor:** 225.2 GB vrij  
-**Schijf na:** 224.8 GB vrij  
+**Schijf voor:** 224.6 GB vrij  
+**Schijf na:** 224.2 GB vrij  
 **Vrijgemaakt:** —  
 
 ---
 
 ## ✅ Pre-checks
 
-- Schijf: 225.2 GB vrij, 27% gebruikt
+- Schijf: 224.6 GB vrij, 27% gebruikt
 - RAM: 30.1 GB beschikbaar, 8% gebruikt
 - Qdrant: ✓ online
 - Ollama: ✓ online (llama3.1:8b)
 - Docker: 2 container(s) actief
-  • qdrant: Up 43 hours (healthy)
-  • ollama: Up 43 hours (healthy)
+  • qdrant: Up 2 days (healthy)
+  • ollama: Up 2 days (healthy)
 
 ## ✅ Qdrant maintenance
 
 - nrt_curriculum: 0 vectoren, optimizer: ok
-- nrt_curriculum: snapshot aangemaakt: nrt_curriculum-5527570280445304-2026-04-19-00-31-53.snapshot
+- nrt_curriculum: snapshot aangemaakt: nrt_curriculum-5527570280445304-2026-04-20-00-31-15.snapshot
   → opgeslagen (5.4 MB)
 - qat_curriculum: 0 vectoren, optimizer: ok
-- qat_curriculum: snapshot aangemaakt: qat_curriculum-5527570280445304-2026-04-19-00-31-54.snapshot
+- qat_curriculum: snapshot aangemaakt: qat_curriculum-5527570280445304-2026-04-20-00-31-15.snapshot
   → opgeslagen (1.8 MB)
 - rlt_flexbeam: 0 vectoren, optimizer: ok
-- rlt_flexbeam: snapshot aangemaakt: rlt_flexbeam-5527570280445304-2026-04-19-00-31-54.snapshot
+- rlt_flexbeam: snapshot aangemaakt: rlt_flexbeam-5527570280445304-2026-04-20-00-31-15.snapshot
   → opgeslagen (2.1 MB)
 - medical_library: 0 vectoren, optimizer: ok
-- medical_library: snapshot aangemaakt: medical_library-5527570280445304-2026-04-19-00-31-54.snapshot
+- medical_library: snapshot aangemaakt: medical_library-5527570280445304-2026-04-20-00-31-15.snapshot
   → opgeslagen (179.1 MB)
 - pemf_qrs: 0 vectoren, optimizer: ok
-- pemf_qrs: snapshot aangemaakt: pemf_qrs-5527570280445304-2026-04-19-00-31-55.snapshot
+- pemf_qrs: snapshot aangemaakt: pemf_qrs-5527570280445304-2026-04-20-00-31-16.snapshot
   → opgeslagen (1.0 MB)
 - nrt_video_transcripts: 0 vectoren, optimizer: ok
-- nrt_video_transcripts: snapshot aangemaakt: nrt_video_transcripts-5527570280445304-2026-04-19-00-31-55.snapshot
+- nrt_video_transcripts: snapshot aangemaakt: nrt_video_transcripts-5527570280445304-2026-04-20-00-31-16.snapshot
   → opgeslagen (3.1 MB)
 - qat_video_transcripts: 0 vectoren, optimizer: ok
-- qat_video_transcripts: snapshot aangemaakt: qat_video_transcripts-5527570280445304-2026-04-19-00-31-55.snapshot
-  → opgeslagen (1.5 MB)
+- qat_video_transcripts: snapshot aangemaakt: qat_video_transcripts-5527570280445304-2026-04-20-00-31-16.snapshot
+  → opgeslagen (5.3 MB)
 
 ## ⚠️ Data consistentie
 
@@ -198,7 +198,7 @@
   • docling-parse  5.8.0 → 5.9.0
   • Faker  40.13.0 → 40.15.0
   • fastapi  0.135.3 → 0.136.0
-  • filelock  3.25.2 → 3.28.0
+  • filelock  3.25.2 → 3.29.0
   • google-ai-generativelanguage  0.6.15 → 0.11.0
   • grpcio-status  1.71.2 → 1.80.0
   • httplib2  0.20.4 → 0.31.2
@@ -273,15 +273,15 @@
   • wheel  0.42.0 → 0.46.3
   • zope.interface  6.1 → 8.3
 - Docker images:
-  • ollama/ollama:latest	5 days ago	9.89GB
+  • ollama/ollama:latest	6 days ago	9.89GB
   • qdrant/qdrant:latest	3 weeks ago	285MB
 - Qdrant nieuwste release: v1.17.1 (2026-03-27)
 - Ollama nieuwste release: v0.21.0 (2026-04-16)
 
 ## ✅ Opruimen
 
-- /tmp: 5 verouderd(e) bestand(en) verwijderd
-- Totaal vrijgemaakt: 38 KB
+- /tmp: 3 verouderd(e) bestand(en) verwijderd
+- Totaal vrijgemaakt: 64 KB
 
 ---
 
@@ -370,4 +370,4 @@
 
 ---
 
-*Gegenereerd door `scripts/nightly_maintenance.py` op 19-04-2026 00:31:53*
+*Gegenereerd door `scripts/nightly_maintenance.py` op 20-04-2026 00:31:15*

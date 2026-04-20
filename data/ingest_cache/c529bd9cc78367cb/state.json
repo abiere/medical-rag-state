@@ -55,32 +55,29 @@
   "image_extraction_enabled": true,
   "parse_retry_count": 0,
   "book_metadata": {
-    "title": "Sobotta",
-    "creator": [
-      "Jens Waschke",
-      "Friedrich Paulsen"
-    ],
-    "publisher": "Elsevier",
-    "date": "2023",
+    "title": "Sobotta Lerntabellen Anatomie Muskeln, Gelenke und Nerven",
+    "creator": "Friedrich Paulsen, Jens Waschke",
+    "publisher": "** Urban & Fischer Verlag GmbH & Company KG",
+    "date": "2022",
     "asin": "B0BVBPF1NW",
-    "language": "en",
+    "language": "de",
     "isbn": "9783437441608",
     "isbn_lookup_source": "openlibrary",
-    "subtitle": "Muscles, Joints and Nerves Origin - Insertion - Innervation - Function",
+    "subtitle": "Ursprung - Ansatz - Innervation - Funktion",
     "edition_number": 3,
     "edition_label": "3rd Edition",
     "metadata_method": "vision_api_merge",
     "metadata_sources": {
       "gemini": true,
-      "google": false,
-      "openlibrary": true
+      "google": true,
+      "openlibrary": true,
+      "isbnsearch": true,
+      "loc": false
     },
     "needs_review": [
       "isbn_13",
-      "pages",
       "description",
       "cover_url",
-      "language",
       "subjects"
     ],
     "confidence": {
@@ -88,7 +85,10 @@
       "authors": "high",
       "edition": "high",
       "year": "none",
-      "isbn": "none"
-    }
+      "isbn": "none",
+      "publisher": "high"
+    },
+    "manually_reviewed": true,
+    "pages": 96
   }
 }
