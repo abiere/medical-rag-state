@@ -1,11 +1,11 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-19 23:56:38 UTC**
+> Last update: **2026-04-20 00:01:39 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ✅ active |
+| transcription-queue | ⚠️ activating |
 | book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 2.81 GB / 32.86 GB (9%) |
-| CPU | 5.3% |
+| RAM used | 2.81 GB / 32.86 GB (8%) |
+| CPU | 0.0% |
 | Disk used | 84.6 GB / 322.3 GB (27%) |
-| Uptime | up 2 days, 18 hours, 21 minutes |
+| Uptime | up 2 days, 18 hours, 26 minutes |
 
 ## Recent markers
-- `2026-04-19T23:56:39` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
-- `2026-04-19T23:56:39` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
-- `2026-04-19T23:56:39` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
-- `2026-04-19T23:56:39` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
-- `2026-04-19T23:56:39` **transcription_done** — NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4 complete (55/13)
+- `2026-04-20T00:01:10` **queue_empty** — All 13 videos transcribed
+- `2026-04-20T00:01:10` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-04-20T00:01:10` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-04-20T00:01:10` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-04-20T00:01:09` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-19 23:56:39,062  INFO      Using existing segments for NRT_Fascial_Activation_Application_Method.mp4: 3 parts
-2026-04-19 23:56:39,062  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
-2026-04-19 23:56:39,219  INFO      DONE   nrt/NRT_Fascial_Activation_Application_Method.mp4  (0s, 3 segments)
-2026-04-19 23:56:39,220  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Fascial_Activation_Application_Method.json
-2026-04-19 23:56:39,349  INFO      START  nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (957 MB)
-2026-04-19 23:56:39,350  INFO      Using existing segments for NRT_Sports_Specific_or_Universal_Reset.mp4: 2 parts
-2026-04-19 23:56:39,350  INFO      Transcribing 2 segments for NRT_Sports_Specific_or_Universal_Reset.mp4
-2026-04-19 23:56:39,480  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
-2026-04-19 23:56:39,481  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
-2026-04-19 23:56:39,610  INFO      Queue empty — 13 video(s) processed. Exiting.
+2026-04-20 00:01:09,779  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
+2026-04-20 00:01:09,951  INFO      DONE   nrt/NRT_Fascial_Activation_Application_Method.mp4  (0s, 3 segments)
+2026-04-20 00:01:09,952  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Fascial_Activation_Application_Method.json
+2026-04-20 00:01:10,081  INFO      START  nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (957 MB)
+2026-04-20 00:01:10,082  INFO      Using existing segments for NRT_Sports_Specific_or_Universal_Reset.mp4: 2 parts
+2026-04-20 00:01:10,082  INFO      Transcribing 2 segments for NRT_Sports_Specific_or_Universal_Reset.mp4
+2026-04-20 00:01:10,189  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
+2026-04-20 00:01:10,190  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
+2026-04-20 00:01:10,286  INFO      Queue empty — 13 video(s) processed. Exiting.
+2026-04-20 00:01:10,350  INFO      Transcription queue manager done
 ```
