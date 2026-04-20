@@ -1,11 +1,11 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-20 11:09:21 UTC**
+> Last update: **2026-04-20 11:14:21 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ⚠️ activating |
+| transcription-queue | ✅ active |
 | book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
@@ -25,8 +25,8 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | idle |
-| Queued | 0 |
+| Current job | `Everything_Reset_Sequence_-_Part_5.mp4` |
+| Queued | 7 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
@@ -34,16 +34,16 @@
 | Metric | Value |
 |---|---|
 | RAM used | 2.38 GB / 32.86 GB (7%) |
-| CPU | 0.1% |
+| CPU | 5.3% |
 | Disk used | 85.1 GB / 322.3 GB (28%) |
-| Uptime | up 3 days, 5 hours, 34 minutes |
+| Uptime | up 3 days, 5 hours, 39 minutes |
 
 ## Recent markers
-- `2026-04-20T11:09:17` **queue_empty** — All 13 videos transcribed
-- `2026-04-20T11:09:17` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
-- `2026-04-20T11:09:17` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
-- `2026-04-20T11:09:17` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
-- `2026-04-20T11:09:17` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
+- `2026-04-20T11:14:22` **transcription_done** — Everything_Reset_Sequence_-_Part_4.mp4 complete (55/13)
+- `2026-04-20T11:14:22` **ingest_failed** — Everything_Reset_Sequence_-_Part_4.mp4 ingest FAILED
+- `2026-04-20T11:14:21` **transcription_done** — Everything_Reset_Sequence_-_Part_3.mp4 complete (55/13)
+- `2026-04-20T11:14:21` **ingest_failed** — Everything_Reset_Sequence_-_Part_3.mp4 ingest FAILED
+- `2026-04-20T11:14:21` **transcription_done** — Everything_Reset_Sequence_-_Part_2.mp4 complete (55/13)
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-20 11:09:16,800  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
-2026-04-20 11:09:16,997  INFO      DONE   nrt/NRT_Fascial_Activation_Application_Method.mp4  (0s, 3 segments)
-2026-04-20 11:09:16,998  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Fascial_Activation_Application_Method.json
-2026-04-20 11:09:17,128  INFO      START  nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (957 MB)
-2026-04-20 11:09:17,129  INFO      Using existing segments for NRT_Sports_Specific_or_Universal_Reset.mp4: 2 parts
-2026-04-20 11:09:17,129  INFO      Transcribing 2 segments for NRT_Sports_Specific_or_Universal_Reset.mp4
-2026-04-20 11:09:17,270  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
-2026-04-20 11:09:17,271  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
-2026-04-20 11:09:17,401  INFO      Queue empty — 13 video(s) processed. Exiting.
-2026-04-20 11:09:17,465  INFO      Transcription queue manager done
+2026-04-20 11:14:21,881  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_3.mp4  (0s, 2 segments)
+2026-04-20 11:14:21,882  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_3.json
+2026-04-20 11:14:22,012  INFO      START  nrt/Everything_Reset_Sequence_-_Part_4.mp4  (690 MB)
+2026-04-20 11:14:22,012  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_4.mp4: 3 parts
+2026-04-20 11:14:22,012  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_4.mp4
+2026-04-20 11:14:22,280  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_4.mp4  (0s, 3 segments)
+2026-04-20 11:14:22,281  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_4.json
+2026-04-20 11:14:22,411  INFO      START  nrt/Everything_Reset_Sequence_-_Part_5.mp4  (618 MB)
+2026-04-20 11:14:22,412  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_5.mp4: 3 parts
+2026-04-20 11:14:22,412  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_5.mp4
 ```
