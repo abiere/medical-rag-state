@@ -1,12 +1,12 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-21 00:27:43 UTC**
+> Last update: **2026-04-21 00:32:43 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ⚠️ activating |
-| book-ingest-queue | ❌ inactive |
+| transcription-queue | ✅ active |
+| book-ingest-queue | ✅ active |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
 | ollama | ✅ healthy |
@@ -26,24 +26,24 @@
 | Metric | Value |
 |---|---|
 | Current job | idle |
-| Queued | 0 |
+| Queued | 11 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 2.71 GB / 32.86 GB (8%) |
-| CPU | 0.0% |
-| Disk used | 85.6 GB / 322.3 GB (28%) |
-| Uptime | up 3 days, 18 hours, 52 minutes |
+| RAM used | 3.11 GB / 32.86 GB (10%) |
+| CPU | 6.1% |
+| Disk used | 86.0 GB / 322.3 GB (28%) |
+| Uptime | up 3 days, 18 hours, 57 minutes |
 
 ## Recent markers
-- `2026-04-21T00:27:34` **queue_empty** — All 13 videos transcribed
-- `2026-04-21T00:27:34` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
-- `2026-04-21T00:27:34` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
-- `2026-04-21T00:27:34` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
-- `2026-04-21T00:27:34` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
+- `2026-04-21T00:30:55` **transcription_done** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 complete (55/13)
+- `2026-04-21T00:30:55` **ingest_failed** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 ingest FAILED
+- `2026-04-21T00:30:55` **transcription_done** — 1.Upper_Body_Techniques.mp4 complete (55/13)
+- `2026-04-21T00:30:54` **ingest_failed** — 1.Upper_Body_Techniques.mp4 ingest FAILED
+- `2026-04-21T00:30:24` **queue_empty** — All 13 videos transcribed
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-21 00:27:34,092  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
-2026-04-21 00:27:34,288  INFO      DONE   nrt/NRT_Fascial_Activation_Application_Method.mp4  (0s, 3 segments)
-2026-04-21 00:27:34,288  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Fascial_Activation_Application_Method.json
-2026-04-21 00:27:34,417  INFO      START  nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (957 MB)
-2026-04-21 00:27:34,418  INFO      Using existing segments for NRT_Sports_Specific_or_Universal_Reset.mp4: 2 parts
-2026-04-21 00:27:34,418  INFO      Transcribing 2 segments for NRT_Sports_Specific_or_Universal_Reset.mp4
-2026-04-21 00:27:34,534  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
-2026-04-21 00:27:34,535  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
-2026-04-21 00:27:34,664  INFO      Queue empty — 13 video(s) processed. Exiting.
-2026-04-21 00:27:34,728  INFO      Transcription queue manager done
+2026-04-21 00:30:54,961  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/1.Upper_Body_Techniques.json
+2026-04-21 00:30:55,090  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
+2026-04-21 00:30:55,091  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
+2026-04-21 00:30:55,091  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
+2026-04-21 00:30:55,214  INFO      DONE   nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (0s, 2 segments)
+2026-04-21 00:30:55,215  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.json
+2026-04-21 00:30:55,344  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-21 00:31:25,345  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-21 00:31:55,345  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-21 00:32:25,346  INFO      Queue paused (pause flag set) — waiting 30s
 ```
