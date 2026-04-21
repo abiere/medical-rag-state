@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-21 00:32:43 UTC**
+> Last update: **2026-04-21 00:37:44 UTC**
 
 ## Services
 | Service | Status |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 3.11 GB / 32.86 GB (10%) |
-| CPU | 6.1% |
+| RAM used | 3.09 GB / 32.86 GB (9%) |
+| CPU | 7.3% |
 | Disk used | 86.0 GB / 322.3 GB (28%) |
-| Uptime | up 3 days, 18 hours, 57 minutes |
+| Uptime | up 3 days, 19 hours, 2 minutes |
 
 ## Recent markers
 - `2026-04-21T00:30:55` **transcription_done** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 complete (55/13)
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-21 00:30:54,961  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/1.Upper_Body_Techniques.json
-2026-04-21 00:30:55,090  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
-2026-04-21 00:30:55,091  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
-2026-04-21 00:30:55,091  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
-2026-04-21 00:30:55,214  INFO      DONE   nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (0s, 2 segments)
-2026-04-21 00:30:55,215  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.json
-2026-04-21 00:30:55,344  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-21 00:31:25,345  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-21 00:31:55,345  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-21 00:32:25,346  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-21 00:32:55,346  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-21 00:33:25,347  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-21 00:33:55,347  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-21 00:34:25,347  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-21 00:34:55,348  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-21 00:35:25,348  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-21 00:35:55,349  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-21 00:36:25,349  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-21 00:36:55,350  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-21 00:37:25,350  INFO      Queue paused (pause flag set) — waiting 30s
 ```
