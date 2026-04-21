@@ -1,11 +1,11 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-21 11:10:20 UTC**
+> Last update: **2026-04-21 11:15:23 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ✅ active |
+| transcription-queue | ⚠️ activating |
 | book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
@@ -25,25 +25,25 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | idle |
-| Queued | 5 |
+| Current job | `1.Upper_Body_Techniques.mp4` |
+| Queued | 13 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 2.84 GB / 32.86 GB (9%) |
-| CPU | 5.4% |
+| RAM used | 2.8 GB / 32.86 GB (8%) |
+| CPU | 0.6% |
 | Disk used | 86.1 GB / 322.3 GB (28%) |
-| Uptime | up 4 days, 5 hours, 35 minutes |
+| Uptime | up 4 days, 5 hours, 40 minutes |
 
 ## Recent markers
-- `2026-04-21T11:10:21` **ingest_failed** — How_to_Reset_23_More_Muscles.mp4 ingest FAILED
-- `2026-04-21T11:10:21` **transcription_done** — Everything_Reset_Sequence_-_Part_5.mp4 complete (55/13)
-- `2026-04-21T11:10:21` **ingest_failed** — Everything_Reset_Sequence_-_Part_5.mp4 ingest FAILED
-- `2026-04-21T11:10:20` **transcription_done** — Everything_Reset_Sequence_-_Part_4.mp4 complete (55/13)
-- `2026-04-21T11:10:20` **ingest_failed** — Everything_Reset_Sequence_-_Part_4.mp4 ingest FAILED
+- `2026-04-21T11:14:53` **queue_empty** — All 13 videos transcribed
+- `2026-04-21T11:14:53` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-04-21T11:14:53` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-04-21T11:14:53` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-04-21T11:14:53` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-21 11:10:20,938  INFO      START  nrt/Everything_Reset_Sequence_-_Part_5.mp4  (618 MB)
-2026-04-21 11:10:20,938  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_5.mp4: 3 parts
-2026-04-21 11:10:20,938  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_5.mp4
-2026-04-21 11:10:21,103  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_5.mp4  (0s, 3 segments)
-2026-04-21 11:10:21,104  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_5.json
-2026-04-21 11:10:21,233  INFO      START  nrt/How_to_Reset_23_More_Muscles.mp4  (412 MB)
-2026-04-21 11:10:21,234  INFO      Using existing segments for How_to_Reset_23_More_Muscles.mp4: 2 parts
-2026-04-21 11:10:21,234  INFO      Transcribing 2 segments for How_to_Reset_23_More_Muscles.mp4
-2026-04-21 11:10:21,362  INFO      DONE   nrt/How_to_Reset_23_More_Muscles.mp4  (0s, 2 segments)
-2026-04-21 11:10:21,363  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/How_to_Reset_23_More_Muscles.json
+2026-04-21 11:14:53,409  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
+2026-04-21 11:14:53,410  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
+2026-04-21 11:14:53,540  INFO      Queue empty — 13 video(s) processed. Exiting.
+2026-04-21 11:14:53,605  INFO      Transcription queue manager done
+2026-04-21 11:15:23,721  INFO      ────────────────────────────────────────────────────────────
+2026-04-21 11:15:23,721  INFO      Transcription queue manager started
+2026-04-21 11:15:23,722  INFO      Startup scan: 13 untranscribed video(s) found, 13 new entry/entries added to queue
+2026-04-21 11:15:23,723  INFO      START  nrt/1.Upper_Body_Techniques.mp4  (525 MB)
+2026-04-21 11:15:23,723  INFO      Using existing segments for 1.Upper_Body_Techniques.mp4: 4 parts
+2026-04-21 11:15:23,723  INFO      Transcribing 4 segments for 1.Upper_Body_Techniques.mp4
 ```
