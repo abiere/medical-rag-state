@@ -1,11 +1,11 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-25 01:01:56 UTC**
+> Last update: **2026-04-25 01:06:56 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ✅ active |
+| transcription-queue | ⚠️ activating |
 | book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
@@ -25,25 +25,25 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4` |
-| Queued | 3 |
+| Current job | idle |
+| Queued | 0 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 3.47 GB / 32.86 GB (11%) |
-| CPU | 5.3% |
+| RAM used | 3.41 GB / 32.86 GB (10%) |
+| CPU | 0.1% |
 | Disk used | 88.0 GB / 322.3 GB (28%) |
-| Uptime | up 1 week, 19 hours, 26 minutes |
+| Uptime | up 1 week, 19 hours, 31 minutes |
 
 ## Recent markers
-- `2026-04-25T01:01:57` **transcription_done** — Miraculous_Sequence_-_Part_2.mp4 complete (55/13)
-- `2026-04-25T01:01:57` **ingest_failed** — Miraculous_Sequence_-_Part_2.mp4 ingest FAILED
-- `2026-04-25T01:01:57` **transcription_done** — Miraculous_Sequence_-_Part_1.mp4 complete (55/13)
-- `2026-04-25T01:01:56` **ingest_failed** — Miraculous_Sequence_-_Part_1.mp4 ingest FAILED
-- `2026-04-25T01:01:56` **transcription_done** — How_to_Reset_23_More_Muscles.mp4 complete (55/13)
+- `2026-04-25T01:06:30` **queue_empty** — All 13 videos transcribed
+- `2026-04-25T01:06:30` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-04-25T01:06:30` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-04-25T01:06:29` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-04-25T01:06:29` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-25 01:01:56,993  INFO      DONE   nrt/Miraculous_Sequence_-_Part_1.mp4  (0s, 2 segments)
-2026-04-25 01:01:56,994  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Miraculous_Sequence_-_Part_1.json
-2026-04-25 01:01:57,124  INFO      START  nrt/Miraculous_Sequence_-_Part_2.mp4  (664 MB)
-2026-04-25 01:01:57,124  INFO      Using existing segments for Miraculous_Sequence_-_Part_2.mp4: 2 parts
-2026-04-25 01:01:57,124  INFO      Transcribing 2 segments for Miraculous_Sequence_-_Part_2.mp4
-2026-04-25 01:01:57,250  INFO      DONE   nrt/Miraculous_Sequence_-_Part_2.mp4  (0s, 2 segments)
-2026-04-25 01:01:57,251  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Miraculous_Sequence_-_Part_2.json
-2026-04-25 01:01:57,381  INFO      START  nrt/NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4  (990 MB)
-2026-04-25 01:01:57,382  INFO      Using existing segments for NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4: 2 parts
-2026-04-25 01:01:57,382  INFO      Transcribing 2 segments for NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4
+2026-04-25 01:06:29,731  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
+2026-04-25 01:06:29,887  INFO      DONE   nrt/NRT_Fascial_Activation_Application_Method.mp4  (0s, 3 segments)
+2026-04-25 01:06:29,888  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Fascial_Activation_Application_Method.json
+2026-04-25 01:06:30,018  INFO      START  nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (957 MB)
+2026-04-25 01:06:30,018  INFO      Using existing segments for NRT_Sports_Specific_or_Universal_Reset.mp4: 2 parts
+2026-04-25 01:06:30,019  INFO      Transcribing 2 segments for NRT_Sports_Specific_or_Universal_Reset.mp4
+2026-04-25 01:06:30,148  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
+2026-04-25 01:06:30,148  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
+2026-04-25 01:06:30,278  INFO      Queue empty — 13 video(s) processed. Exiting.
+2026-04-25 01:06:30,342  INFO      Transcription queue manager done
 ```
