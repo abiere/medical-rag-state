@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-27 00:33:49 UTC**
+> Last update: **2026-04-27 00:38:49 UTC**
 
 ## Services
 | Service | Status |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 4.33 GB / 32.86 GB (13%) |
-| CPU | 6.3% |
+| RAM used | 4.48 GB / 32.86 GB (14%) |
+| CPU | 6.4% |
 | Disk used | 88.4 GB / 322.3 GB (29%) |
-| Uptime | up 1 week, 2 days, 18 hours, 58 minutes |
+| Uptime | up 1 week, 2 days, 19 hours, 3 minutes |
 
 ## Recent markers
 - `2026-04-27T00:31:28` **transcription_done** — 1.Upper_Body_Techniques.mp4 complete (55/13)
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-27 00:31:27,733  INFO      START  nrt/1.Upper_Body_Techniques.mp4  (525 MB)
-2026-04-27 00:31:27,733  INFO      Using existing segments for 1.Upper_Body_Techniques.mp4: 4 parts
-2026-04-27 00:31:27,733  INFO      Transcribing 4 segments for 1.Upper_Body_Techniques.mp4
-2026-04-27 00:31:27,969  INFO      DONE   nrt/1.Upper_Body_Techniques.mp4  (0s, 4 segments)
-2026-04-27 00:31:27,970  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/1.Upper_Body_Techniques.json
-2026-04-27 00:31:28,099  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-27 00:31:58,100  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-27 00:32:28,100  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-27 00:32:58,101  INFO      Queue paused (pause flag set) — waiting 30s
-2026-04-27 00:33:28,101  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-27 00:33:58,102  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-27 00:34:28,103  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-27 00:34:58,103  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-27 00:35:28,103  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-27 00:35:58,104  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-27 00:36:28,104  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-27 00:36:58,105  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-27 00:37:28,106  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-27 00:37:58,107  INFO      Queue paused (pause flag set) — waiting 30s
+2026-04-27 00:38:28,107  INFO      Queue paused (pause flag set) — waiting 30s
 ```
