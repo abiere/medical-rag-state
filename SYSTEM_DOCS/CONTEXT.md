@@ -1,7 +1,7 @@
 # CONTEXT — Session Loader
 > Lees dit aan het begin van elke sessie. Max 150 regels.
 > Volledige technische detail: SYSTEM_DOCS/TECHNICAL.md
-> **Auto-gegenereerd:** 2026-04-30 20:46 UTC
+> **Auto-gegenereerd:** 2026-04-30 20:50 UTC
 
 ## Wat dit systeem is
 Privé, volledig lokaal RAG-systeem voor medische en acupunctuurliteratuur.
