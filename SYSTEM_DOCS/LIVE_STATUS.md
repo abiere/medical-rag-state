@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-04-30 00:49:48 UTC**
+> Last update: **2026-04-30 00:54:54 UTC**
 
 ## Services
 | Service | Status |
@@ -25,25 +25,25 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | idle |
-| Queued | 0 |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` |
+| Queued | 12 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 4.64 GB / 32.86 GB (14%) |
-| CPU | 0.0% |
+| RAM used | 4.65 GB / 32.86 GB (14%) |
+| CPU | 7.1% |
 | Disk used | 89.0 GB / 322.3 GB (29%) |
-| Uptime | up 1 week, 5 days, 19 hours, 14 minutes |
+| Uptime | up 1 week, 5 days, 19 hours, 19 minutes |
 
 ## Recent markers
-- `2026-04-30T00:49:18` **queue_empty** — All 13 videos transcribed
-- `2026-04-30T00:49:18` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
-- `2026-04-30T00:49:18` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
-- `2026-04-30T00:49:18` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
-- `2026-04-30T00:49:18` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
+- `2026-04-30T00:54:54` **transcription_done** — 1.Upper_Body_Techniques.mp4 complete (55/13)
+- `2026-04-30T00:54:54` **ingest_failed** — 1.Upper_Body_Techniques.mp4 ingest FAILED
+- `2026-04-30T00:54:24` **queue_empty** — All 13 videos transcribed
+- `2026-04-30T00:54:24` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-04-30T00:54:24` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-04-30 00:49:18,468  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
-2026-04-30 00:49:18,469  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
-2026-04-30 00:49:18,598  INFO      Queue empty — 13 video(s) processed. Exiting.
-2026-04-30 00:49:18,662  INFO      Transcription queue manager done
-2026-04-30 00:49:48,879  INFO      ────────────────────────────────────────────────────────────
-2026-04-30 00:49:48,879  INFO      Transcription queue manager started
-2026-04-30 00:49:48,881  INFO      Startup scan: 13 untranscribed video(s) found, 13 new entry/entries added to queue
-2026-04-30 00:49:48,881  INFO      START  nrt/1.Upper_Body_Techniques.mp4  (525 MB)
-2026-04-30 00:49:48,881  INFO      Using existing segments for 1.Upper_Body_Techniques.mp4: 4 parts
-2026-04-30 00:49:48,882  INFO      Transcribing 4 segments for 1.Upper_Body_Techniques.mp4
+2026-04-30 00:54:54,437  INFO      START  nrt/1.Upper_Body_Techniques.mp4  (525 MB)
+2026-04-30 00:54:54,437  INFO      Using existing segments for 1.Upper_Body_Techniques.mp4: 4 parts
+2026-04-30 00:54:54,437  INFO      Transcribing 4 segments for 1.Upper_Body_Techniques.mp4
+2026-04-30 00:54:54,671  INFO      DONE   nrt/1.Upper_Body_Techniques.mp4  (0s, 4 segments)
+2026-04-30 00:54:54,673  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/1.Upper_Body_Techniques.json
+2026-04-30 00:54:54,803  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
+2026-04-30 00:54:54,804  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
+2026-04-30 00:54:54,804  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
+2026-04-30 00:54:54,923  INFO      DONE   nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (0s, 2 segments)
+2026-04-30 00:54:54,924  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.json
 ```
