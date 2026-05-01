@@ -1,11 +1,11 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-05-01 19:57:20 UTC**
+> Last update: **2026-05-01 20:02:20 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ⚠️ activating |
+| transcription-queue | ✅ active |
 | book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
@@ -25,25 +25,25 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | idle |
-| Queued | 0 |
+| Current job | `How_to_Reset_23_More_Muscles.mp4` |
+| Queued | 6 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 11.08 GB / 32.86 GB (34%) |
-| CPU | 1.0% |
+| RAM used | 5.01 GB / 32.86 GB (15%) |
+| CPU | 5.6% |
 | Disk used | 89.4 GB / 322.3 GB (29%) |
-| Uptime | up 2 weeks, 14 hours, 21 minutes |
+| Uptime | up 2 weeks, 14 hours, 27 minutes |
 
 ## Recent markers
-- `2026-05-01T19:57:17` **queue_empty** — All 13 videos transcribed
-- `2026-05-01T19:57:17` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
-- `2026-05-01T19:57:17` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
-- `2026-05-01T19:57:17` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
-- `2026-05-01T19:57:16` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
+- `2026-05-01T20:02:21` **transcription_done** — Everything_Reset_Sequence_-_Part_5.mp4 complete (55/13)
+- `2026-05-01T20:02:21` **ingest_failed** — Everything_Reset_Sequence_-_Part_5.mp4 ingest FAILED
+- `2026-05-01T20:02:21` **transcription_done** — Everything_Reset_Sequence_-_Part_4.mp4 complete (55/13)
+- `2026-05-01T20:02:21` **ingest_failed** — Everything_Reset_Sequence_-_Part_4.mp4 ingest FAILED
+- `2026-05-01T20:02:20` **transcription_done** — Everything_Reset_Sequence_-_Part_3.mp4 complete (55/13)
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-05-01 19:57:16,760  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
-2026-05-01 19:57:16,943  INFO      DONE   nrt/NRT_Fascial_Activation_Application_Method.mp4  (0s, 3 segments)
-2026-05-01 19:57:16,943  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Fascial_Activation_Application_Method.json
-2026-05-01 19:57:17,073  INFO      START  nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (957 MB)
-2026-05-01 19:57:17,074  INFO      Using existing segments for NRT_Sports_Specific_or_Universal_Reset.mp4: 2 parts
-2026-05-01 19:57:17,074  INFO      Transcribing 2 segments for NRT_Sports_Specific_or_Universal_Reset.mp4
-2026-05-01 19:57:17,204  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
-2026-05-01 19:57:17,205  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
-2026-05-01 19:57:17,334  INFO      Queue empty — 13 video(s) processed. Exiting.
-2026-05-01 19:57:17,398  INFO      Transcription queue manager done
+2026-05-01 20:02:21,205  INFO      START  nrt/Everything_Reset_Sequence_-_Part_5.mp4  (618 MB)
+2026-05-01 20:02:21,206  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_5.mp4: 3 parts
+2026-05-01 20:02:21,206  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_5.mp4
+2026-05-01 20:02:21,380  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_5.mp4  (0s, 3 segments)
+2026-05-01 20:02:21,381  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_5.json
+2026-05-01 20:02:21,511  INFO      START  nrt/How_to_Reset_23_More_Muscles.mp4  (412 MB)
+2026-05-01 20:02:21,512  INFO      Using existing segments for How_to_Reset_23_More_Muscles.mp4: 2 parts
+2026-05-01 20:02:21,512  INFO      Transcribing 2 segments for How_to_Reset_23_More_Muscles.mp4
+2026-05-01 20:02:21,628  INFO      DONE   nrt/How_to_Reset_23_More_Muscles.mp4  (0s, 2 segments)
+2026-05-01 20:02:21,629  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/How_to_Reset_23_More_Muscles.json
 ```
