@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-05-03 15:29:18 UTC**
+> Last update: **2026-05-03 15:34:21 UTC**
 
 ## Services
 | Service | Status |
@@ -26,24 +26,24 @@
 | Metric | Value |
 |---|---|
 | Current job | idle |
-| Queued | 12 |
+| Queued | 0 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 5.25 GB / 32.86 GB (16%) |
-| CPU | 4.8% |
+| RAM used | 5.26 GB / 32.86 GB (16%) |
+| CPU | 0.1% |
 | Disk used | 89.5 GB / 322.3 GB (29%) |
-| Uptime | up 2 weeks, 2 days, 9 hours, 53 minutes |
+| Uptime | up 2 weeks, 2 days, 9 hours, 59 minutes |
 
 ## Recent markers
-- `2026-05-03T15:29:18` **transcription_done** — 1.Upper_Body_Techniques.mp4 complete (55/13)
-- `2026-05-03T15:29:18` **ingest_failed** — 1.Upper_Body_Techniques.mp4 ingest FAILED
-- `2026-05-03T15:28:48` **queue_empty** — All 13 videos transcribed
-- `2026-05-03T15:28:48` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
-- `2026-05-03T15:28:48` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-05-03T15:33:54` **queue_empty** — All 13 videos transcribed
+- `2026-05-03T15:33:53` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-05-03T15:33:53` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-05-03T15:33:53` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-05-03T15:33:53` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-05-03 15:29:18,472  INFO      START  nrt/1.Upper_Body_Techniques.mp4  (525 MB)
-2026-05-03 15:29:18,472  INFO      Using existing segments for 1.Upper_Body_Techniques.mp4: 4 parts
-2026-05-03 15:29:18,472  INFO      Transcribing 4 segments for 1.Upper_Body_Techniques.mp4
-2026-05-03 15:29:18,731  INFO      DONE   nrt/1.Upper_Body_Techniques.mp4  (0s, 4 segments)
-2026-05-03 15:29:18,732  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/1.Upper_Body_Techniques.json
-2026-05-03 15:29:18,862  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
-2026-05-03 15:29:18,863  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
-2026-05-03 15:29:18,863  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
-2026-05-03 15:29:18,984  INFO      DONE   nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (0s, 2 segments)
-2026-05-03 15:29:18,985  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.json
+2026-05-03 15:33:53,508  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
+2026-05-03 15:33:53,697  INFO      DONE   nrt/NRT_Fascial_Activation_Application_Method.mp4  (0s, 3 segments)
+2026-05-03 15:33:53,698  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Fascial_Activation_Application_Method.json
+2026-05-03 15:33:53,827  INFO      START  nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (957 MB)
+2026-05-03 15:33:53,828  INFO      Using existing segments for NRT_Sports_Specific_or_Universal_Reset.mp4: 2 parts
+2026-05-03 15:33:53,828  INFO      Transcribing 2 segments for NRT_Sports_Specific_or_Universal_Reset.mp4
+2026-05-03 15:33:53,948  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
+2026-05-03 15:33:53,948  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
+2026-05-03 15:33:54,013  INFO      Queue empty — 13 video(s) processed. Exiting.
+2026-05-03 15:33:54,077  INFO      Transcription queue manager done
 ```
