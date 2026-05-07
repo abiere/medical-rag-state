@@ -1,7 +1,7 @@
 # CONTEXT — Session Loader
 > Lees dit aan het begin van elke sessie. Max 150 regels.
 > Volledige technische detail: SYSTEM_DOCS/TECHNICAL.md
-> **Auto-gegenereerd:** 2026-05-06 23:59 UTC
+> **Auto-gegenereerd:** 2026-05-07 00:00 UTC
 
 ## Wat dit systeem is
 Privé, volledig lokaal RAG-systeem voor medische en acupunctuurliteratuur.
@@ -29,7 +29,7 @@ Alleen via Tailscale (100.66.194.55). Outputs: behandelprotocollen, blogteksten,
 | sync-status.timer | — | ✅ Elke 5 min |
 | queue-watchdog.timer | — | ✅ Elke 10 min |
 
-## Qdrant collecties (stand 2026-05-06)
+## Qdrant collecties (stand 2026-05-07)
 | Collectie | Vectors | Gebruik |
 |---|---|---|
 | medical_library | 17.522 | Boekchunks (PDF/EPUB) |
