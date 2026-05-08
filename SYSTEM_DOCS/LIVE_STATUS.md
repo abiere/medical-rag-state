@@ -1,12 +1,12 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-05-08 07:02:18 UTC**
+> Last update: **2026-05-08 07:07:19 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
 | transcription-queue | ⚠️ activating |
-| book-ingest-queue | ✅ active |
+| book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
 | ollama | ✅ healthy |
@@ -25,8 +25,8 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` |
-| Queued | 13 |
+| Current job | idle |
+| Queued | 0 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
@@ -34,16 +34,16 @@
 | Metric | Value |
 |---|---|
 | RAM used | 5.68 GB / 32.86 GB (17%) |
-| CPU | 0.4% |
+| CPU | 0.0% |
 | Disk used | 90.5 GB / 322.3 GB (29%) |
-| Uptime | up 3 weeks, 1 hour, 26 minutes |
+| Uptime | up 3 weeks, 1 hour, 31 minutes |
 
 ## Recent markers
-- `2026-05-08T07:01:48` **queue_empty** — All 13 videos transcribed
-- `2026-05-08T07:01:48` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
-- `2026-05-08T07:01:48` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
-- `2026-05-08T07:01:48` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
-- `2026-05-08T07:01:48` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
+- `2026-05-08T07:06:56` **queue_empty** — All 13 videos transcribed
+- `2026-05-08T07:06:56` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-05-08T07:06:56` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-05-08T07:06:55` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-05-08T07:06:55` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-05-08 07:01:48,492  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
-2026-05-08 07:01:48,493  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
-2026-05-08 07:01:48,622  INFO      Queue empty — 13 video(s) processed. Exiting.
-2026-05-08 07:01:48,686  INFO      Transcription queue manager done
-2026-05-08 07:02:18,874  INFO      ────────────────────────────────────────────────────────────
-2026-05-08 07:02:18,874  INFO      Transcription queue manager started
-2026-05-08 07:02:18,875  INFO      Startup scan: 13 untranscribed video(s) found, 13 new entry/entries added to queue
-2026-05-08 07:02:18,876  INFO      START  nrt/1.Upper_Body_Techniques.mp4  (525 MB)
-2026-05-08 07:02:18,876  INFO      Using existing segments for 1.Upper_Body_Techniques.mp4: 4 parts
-2026-05-08 07:02:18,876  INFO      Transcribing 4 segments for 1.Upper_Body_Techniques.mp4
+2026-05-08 07:06:55,559  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
+2026-05-08 07:06:55,759  INFO      DONE   nrt/NRT_Fascial_Activation_Application_Method.mp4  (0s, 3 segments)
+2026-05-08 07:06:55,760  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Fascial_Activation_Application_Method.json
+2026-05-08 07:06:55,891  INFO      START  nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (957 MB)
+2026-05-08 07:06:55,891  INFO      Using existing segments for NRT_Sports_Specific_or_Universal_Reset.mp4: 2 parts
+2026-05-08 07:06:55,891  INFO      Transcribing 2 segments for NRT_Sports_Specific_or_Universal_Reset.mp4
+2026-05-08 07:06:56,067  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
+2026-05-08 07:06:56,068  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
+2026-05-08 07:06:56,197  INFO      Queue empty — 13 video(s) processed. Exiting.
+2026-05-08 07:06:56,262  INFO      Transcription queue manager done
 ```
