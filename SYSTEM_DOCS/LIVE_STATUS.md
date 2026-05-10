@@ -1,11 +1,11 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-05-10 08:51:27 UTC**
+> Last update: **2026-05-10 08:56:29 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ✅ active |
+| transcription-queue | ⚠️ activating |
 | book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
@@ -25,25 +25,25 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | idle |
-| Queued | 1 |
+| Current job | `1.Upper_Body_Techniques.mp4` |
+| Queued | 13 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 5.9 GB / 32.86 GB (18%) |
-| CPU | 5.3% |
+| RAM used | 11.97 GB / 32.86 GB (36%) |
+| CPU | 1.6% |
 | Disk used | 90.7 GB / 322.3 GB (29%) |
-| Uptime | up 3 weeks, 2 days, 3 hours, 16 minutes |
+| Uptime | up 3 weeks, 2 days, 3 hours, 21 minutes |
 
 ## Recent markers
-- `2026-05-10T08:51:27` **transcription_done** — NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4 complete (55/13)
-- `2026-05-10T08:51:27` **ingest_failed** — NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4 ingest FAILED
-- `2026-05-10T08:51:27` **transcription_done** — Miraculous_Sequence_-_Part_2.mp4 complete (55/13)
-- `2026-05-10T08:51:27` **ingest_failed** — Miraculous_Sequence_-_Part_2.mp4 ingest FAILED
-- `2026-05-10T08:51:27` **transcription_done** — Miraculous_Sequence_-_Part_1.mp4 complete (55/13)
+- `2026-05-10T08:55:59` **queue_empty** — All 13 videos transcribed
+- `2026-05-10T08:55:59` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-05-10T08:55:59` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-05-10T08:55:59` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-05-10T08:55:59` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-05-10 08:51:27,908  INFO      DONE   nrt/NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4  (0s, 2 segments)
-2026-05-10 08:51:27,909  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.json
-2026-05-10 08:51:28,038  INFO      START  nrt/NRT_Fascial_Activation_Application_Method.mp4  (1871 MB)
-2026-05-10 08:51:28,038  INFO      Using existing segments for NRT_Fascial_Activation_Application_Method.mp4: 3 parts
-2026-05-10 08:51:28,038  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
-2026-05-10 08:51:28,203  INFO      DONE   nrt/NRT_Fascial_Activation_Application_Method.mp4  (0s, 3 segments)
-2026-05-10 08:51:28,203  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Fascial_Activation_Application_Method.json
-2026-05-10 08:51:28,333  INFO      START  nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (957 MB)
-2026-05-10 08:51:28,333  INFO      Using existing segments for NRT_Sports_Specific_or_Universal_Reset.mp4: 2 parts
-2026-05-10 08:51:28,333  INFO      Transcribing 2 segments for NRT_Sports_Specific_or_Universal_Reset.mp4
+2026-05-10 08:55:59,500  INFO      Queue empty — 13 video(s) processed. Exiting.
+2026-05-10 08:55:59,565  INFO      Transcription queue manager done
+2026-05-10 08:56:29,737  INFO      ────────────────────────────────────────────────────────────
+2026-05-10 08:56:29,737  INFO      Transcription queue manager started
+2026-05-10 08:56:29,738  INFO      Startup scan: 13 untranscribed video(s) found, 13 new entry/entries added to queue
+2026-05-10 08:56:29,739  INFO      START  nrt/1.Upper_Body_Techniques.mp4  (525 MB)
+2026-05-10 08:56:29,739  INFO      Using existing segments for 1.Upper_Body_Techniques.mp4: 4 parts
+2026-05-10 08:56:29,739  INFO      Transcribing 4 segments for 1.Upper_Body_Techniques.mp4
+2026-05-10 08:56:29,974  INFO      DONE   nrt/1.Upper_Body_Techniques.mp4  (0s, 4 segments)
+2026-05-10 08:56:29,975  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/1.Upper_Body_Techniques.json
 ```
