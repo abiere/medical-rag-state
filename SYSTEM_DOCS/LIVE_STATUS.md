@@ -1,11 +1,11 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-05-13 17:10:01 UTC**
+> Last update: **2026-05-13 17:15:02 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ⚠️ activating |
+| transcription-queue | ✅ active |
 | book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
@@ -25,25 +25,25 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | idle |
-| Queued | 0 |
+| Current job | `Miraculous_Sequence_-_Part_1.mp4` |
+| Queued | 5 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 6.44 GB / 32.86 GB (20%) |
-| CPU | 6.6% |
+| RAM used | 12.49 GB / 32.86 GB (38%) |
+| CPU | 5.3% |
 | Disk used | 91.5 GB / 322.3 GB (30%) |
-| Uptime | up 3 weeks, 5 days, 11 hours, 34 minutes |
+| Uptime | up 3 weeks, 5 days, 11 hours, 39 minutes |
 
 ## Recent markers
-- `2026-05-13T17:09:57` **queue_empty** — All 13 videos transcribed
-- `2026-05-13T17:09:57` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
-- `2026-05-13T17:09:57` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
-- `2026-05-13T17:09:56` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
-- `2026-05-13T17:09:56` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
+- `2026-05-13T17:15:02` **transcription_done** — How_to_Reset_23_More_Muscles.mp4 complete (55/13)
+- `2026-05-13T17:15:02` **ingest_failed** — How_to_Reset_23_More_Muscles.mp4 ingest FAILED
+- `2026-05-13T17:15:02` **transcription_done** — Everything_Reset_Sequence_-_Part_5.mp4 complete (55/13)
+- `2026-05-13T17:15:02` **ingest_failed** — Everything_Reset_Sequence_-_Part_5.mp4 ingest FAILED
+- `2026-05-13T17:15:01` **transcription_done** — Everything_Reset_Sequence_-_Part_4.mp4 complete (55/13)
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-05-13 17:09:56,552  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
-2026-05-13 17:09:56,767  INFO      DONE   nrt/NRT_Fascial_Activation_Application_Method.mp4  (0s, 3 segments)
-2026-05-13 17:09:56,769  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Fascial_Activation_Application_Method.json
-2026-05-13 17:09:56,898  INFO      START  nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (957 MB)
-2026-05-13 17:09:56,899  INFO      Using existing segments for NRT_Sports_Specific_or_Universal_Reset.mp4: 2 parts
-2026-05-13 17:09:56,899  INFO      Transcribing 2 segments for NRT_Sports_Specific_or_Universal_Reset.mp4
-2026-05-13 17:09:57,004  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
-2026-05-13 17:09:57,005  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
-2026-05-13 17:09:57,135  INFO      Queue empty — 13 video(s) processed. Exiting.
-2026-05-13 17:09:57,200  INFO      Transcription queue manager done
+2026-05-13 17:15:02,421  INFO      DONE   nrt/How_to_Reset_23_More_Muscles.mp4  (0s, 2 segments)
+2026-05-13 17:15:02,422  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/How_to_Reset_23_More_Muscles.json
+2026-05-13 17:15:02,553  INFO      START  nrt/Miraculous_Sequence_-_Part_1.mp4  (689 MB)
+2026-05-13 17:15:02,553  INFO      Using existing segments for Miraculous_Sequence_-_Part_1.mp4: 2 parts
+2026-05-13 17:15:02,553  INFO      Transcribing 2 segments for Miraculous_Sequence_-_Part_1.mp4
+2026-05-13 17:15:02,682  INFO      DONE   nrt/Miraculous_Sequence_-_Part_1.mp4  (0s, 2 segments)
+2026-05-13 17:15:02,683  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Miraculous_Sequence_-_Part_1.json
+2026-05-13 17:15:02,813  INFO      START  nrt/Miraculous_Sequence_-_Part_2.mp4  (664 MB)
+2026-05-13 17:15:02,813  INFO      Using existing segments for Miraculous_Sequence_-_Part_2.mp4: 2 parts
+2026-05-13 17:15:02,814  INFO      Transcribing 2 segments for Miraculous_Sequence_-_Part_2.mp4
 ```
