@@ -1,12 +1,12 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-05-18 00:29:37 UTC**
+> Last update: **2026-05-18 00:34:38 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
 | transcription-queue | ✅ active |
-| book-ingest-queue | ❌ inactive |
+| book-ingest-queue | ✅ active |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
 | ollama | ✅ healthy |
@@ -26,24 +26,24 @@
 | Metric | Value |
 |---|---|
 | Current job | idle |
-| Queued | 11 |
+| Queued | 13 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 6.85 GB / 32.86 GB (21%) |
-| CPU | 5.4% |
+| RAM used | 7.43 GB / 32.86 GB (23%) |
+| CPU | 0.4% |
 | Disk used | 91.7 GB / 322.3 GB (30%) |
-| Uptime | up 4 weeks, 2 days, 18 hours, 54 minutes |
+| Uptime | up 4 weeks, 2 days, 18 hours, 59 minutes |
 
 ## Recent markers
-- `2026-05-18T00:29:38` **transcription_done** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 complete (55/13)
-- `2026-05-18T00:29:38` **ingest_failed** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 ingest FAILED
-- `2026-05-18T00:29:38` **transcription_done** — 1.Upper_Body_Techniques.mp4 complete (55/13)
-- `2026-05-18T00:29:38` **ingest_failed** — 1.Upper_Body_Techniques.mp4 ingest FAILED
-- `2026-05-18T00:29:07` **queue_empty** — All 13 videos transcribed
+- `2026-05-18T00:30:15` **queue_empty** — All 13 videos transcribed
+- `2026-05-18T00:30:15` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-05-18T00:30:15` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-05-18T00:30:15` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-05-18T00:30:15` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-05-18 00:29:38,351  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
-2026-05-18 00:29:38,352  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
-2026-05-18 00:29:38,352  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
-2026-05-18 00:29:38,487  INFO      DONE   nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (0s, 2 segments)
-2026-05-18 00:29:38,488  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.json
-2026-05-18 00:29:38,617  INFO      START  nrt/Everything_Reset_Sequence_-_Part_1.mp4  (649 MB)
-2026-05-18 00:29:38,618  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_1.mp4: 3 parts
-2026-05-18 00:29:38,618  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_1.mp4
-2026-05-18 00:29:38,829  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_1.mp4  (0s, 3 segments)
-2026-05-18 00:29:38,830  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_1.json
+2026-05-18 00:30:46,217  INFO      Transcription queue manager started
+2026-05-18 00:30:46,219  INFO      Startup scan: 13 untranscribed video(s) found, 13 new entry/entries added to queue
+2026-05-18 00:30:46,219  INFO      Queue paused (pause flag set) — waiting 30s
+2026-05-18 00:31:16,219  INFO      Queue paused (pause flag set) — waiting 30s
+2026-05-18 00:31:46,220  INFO      Queue paused (pause flag set) — waiting 30s
+2026-05-18 00:32:16,220  INFO      Queue paused (pause flag set) — waiting 30s
+2026-05-18 00:32:46,221  INFO      Queue paused (pause flag set) — waiting 30s
+2026-05-18 00:33:16,221  INFO      Queue paused (pause flag set) — waiting 30s
+2026-05-18 00:33:46,222  INFO      Queue paused (pause flag set) — waiting 30s
+2026-05-18 00:34:16,222  INFO      Queue paused (pause flag set) — waiting 30s
 ```
