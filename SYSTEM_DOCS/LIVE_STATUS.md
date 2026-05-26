@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-05-26 00:36:37 UTC**
+> Last update: **2026-05-26 00:41:37 UTC**
 
 ## Services
 | Service | Status |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 7.46 GB / 32.86 GB (23%) |
+| RAM used | 7.45 GB / 32.86 GB (23%) |
 | CPU | 6.4% |
 | Disk used | 91.6 GB / 322.3 GB (30%) |
-| Uptime | up 5 weeks, 3 days, 19 hours, 1 minute |
+| Uptime | up 5 weeks, 3 days, 19 hours, 6 minutes |
 
 ## Recent markers
 - `2026-05-26T00:30:26` **queue_empty** — All 13 videos transcribed
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-05-26 00:31:56,484  INFO      Queue paused (pause flag set) — waiting 30s
-2026-05-26 00:32:26,484  INFO      Queue paused (pause flag set) — waiting 30s
-2026-05-26 00:32:56,485  INFO      Queue paused (pause flag set) — waiting 30s
-2026-05-26 00:33:26,485  INFO      Queue paused (pause flag set) — waiting 30s
-2026-05-26 00:33:56,486  INFO      Queue paused (pause flag set) — waiting 30s
-2026-05-26 00:34:26,486  INFO      Queue paused (pause flag set) — waiting 30s
-2026-05-26 00:34:56,487  INFO      Queue paused (pause flag set) — waiting 30s
-2026-05-26 00:35:26,487  INFO      Queue paused (pause flag set) — waiting 30s
-2026-05-26 00:35:56,488  INFO      Queue paused (pause flag set) — waiting 30s
-2026-05-26 00:36:26,490  INFO      Queue paused (pause flag set) — waiting 30s
+2026-05-26 00:36:56,490  INFO      Queue paused (pause flag set) — waiting 30s
+2026-05-26 00:37:26,491  INFO      Queue paused (pause flag set) — waiting 30s
+2026-05-26 00:37:56,491  INFO      Queue paused (pause flag set) — waiting 30s
+2026-05-26 00:38:26,492  INFO      Queue paused (pause flag set) — waiting 30s
+2026-05-26 00:38:56,492  INFO      Queue paused (pause flag set) — waiting 30s
+2026-05-26 00:39:26,493  INFO      Queue paused (pause flag set) — waiting 30s
+2026-05-26 00:39:56,493  INFO      Queue paused (pause flag set) — waiting 30s
+2026-05-26 00:40:26,493  INFO      Queue paused (pause flag set) — waiting 30s
+2026-05-26 00:40:56,494  INFO      Queue paused (pause flag set) — waiting 30s
+2026-05-26 00:41:26,494  INFO      Queue paused (pause flag set) — waiting 30s
 ```
