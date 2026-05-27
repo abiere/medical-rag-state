@@ -1,18 +1,18 @@
 # WATCHDOG_LOG — Book Ingest Watchdog
-> Auto-updated by watchdog.py — last written: **2026-05-27 10:56:50 UTC**
+> Auto-updated by watchdog.py — last written: **2026-05-27 11:01:50 UTC**
 
 | Timestamp | Event | Detail |
 |---|---|---|
-| 2026-05-27 10:56:50 UTC | RESTART_OK | book-ingest-queue |
-| 2026-05-27 10:56:50 UTC | RESTART_BOOK_INGEST | service not active — restarting |
-| 2026-05-27 10:55:50 UTC | RESTART_OK | book-ingest-queue |
-| 2026-05-27 10:55:50 UTC | RESTART_BOOK_INGEST | service not active — restarting |
-| 2026-05-27 10:54:50 UTC | RESTART_OK | book-ingest-queue |
-| 2026-05-27 10:54:50 UTC | RESTART_BOOK_INGEST | service not active — restarting |
-| 2026-05-27 10:53:50 UTC | RESTART_OK | book-ingest-queue |
-| 2026-05-27 10:53:50 UTC | RESTART_BOOK_INGEST | service not active — restarting |
-| 2026-05-27 10:52:46 UTC | RESTART_OK | book-ingest-queue |
-| 2026-05-27 10:52:46 UTC | RESTART_BOOK_INGEST | service not active — restarting |
+| 2026-05-27 11:01:50 UTC | RESTART_OK | book-ingest-queue |
+| 2026-05-27 11:01:50 UTC | RESTART_BOOK_INGEST | service not active — restarting |
+| 2026-05-27 11:00:50 UTC | RESTART_OK | book-ingest-queue |
+| 2026-05-27 11:00:50 UTC | RESTART_BOOK_INGEST | service not active — restarting |
+| 2026-05-27 10:59:50 UTC | RESTART_OK | book-ingest-queue |
+| 2026-05-27 10:59:50 UTC | RESTART_BOOK_INGEST | service not active — restarting |
+| 2026-05-27 10:58:50 UTC | RESTART_OK | book-ingest-queue |
+| 2026-05-27 10:58:50 UTC | RESTART_BOOK_INGEST | service not active — restarting |
+| 2026-05-27 10:57:50 UTC | RESTART_OK | book-ingest-queue |
+| 2026-05-27 10:57:50 UTC | RESTART_BOOK_INGEST | service not active — restarting |
 
 ## Current state
 
