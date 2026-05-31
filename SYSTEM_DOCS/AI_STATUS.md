@@ -1,5 +1,5 @@
 # AI Status
-_Gegenereerd: 2026-05-31 08:16 UTC_
+_Gegenereerd: 2026-05-31 08:22 UTC_
 
 ## Use-case routing
 
