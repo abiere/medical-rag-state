@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-06-20 16:16:34 UTC**
+> Last update: **2026-06-20 16:21:34 UTC**
 
 ## Services
 | Service | Status |
@@ -25,25 +25,25 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` |
-| Queued | 12 |
+| Current job | idle |
+| Queued | 0 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 7.88 GB / 32.86 GB (24%) |
-| CPU | 5.9% |
+| RAM used | 7.87 GB / 32.86 GB (24%) |
+| CPU | 0.2% |
 | Disk used | 92.4 GB / 322.3 GB (30%) |
-| Uptime | up 9 weeks, 1 day, 10 hours, 41 minutes |
+| Uptime | up 9 weeks, 1 day, 10 hours, 46 minutes |
 
 ## Recent markers
-- `2026-06-20T16:16:34` **transcription_done** — 1.Upper_Body_Techniques.mp4 complete (55/13)
-- `2026-06-20T16:16:34` **ingest_failed** — 1.Upper_Body_Techniques.mp4 ingest FAILED
-- `2026-06-20T16:16:04` **queue_empty** — All 13 videos transcribed
-- `2026-06-20T16:16:04` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
-- `2026-06-20T16:16:04` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-06-20T16:21:09` **queue_empty** — All 13 videos transcribed
+- `2026-06-20T16:21:09` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-06-20T16:21:09` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-06-20T16:21:09` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-06-20T16:21:09` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-06-20 16:16:34,895  INFO      DONE   nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (0s, 2 segments)
-2026-06-20 16:16:34,895  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.json
-2026-06-20 16:16:35,025  INFO      START  nrt/Everything_Reset_Sequence_-_Part_1.mp4  (649 MB)
-2026-06-20 16:16:35,025  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_1.mp4: 3 parts
-2026-06-20 16:16:35,025  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_1.mp4
-2026-06-20 16:16:35,198  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_1.mp4  (0s, 3 segments)
-2026-06-20 16:16:35,199  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_1.json
-2026-06-20 16:16:35,329  INFO      START  nrt/Everything_Reset_Sequence_-_Part_2.mp4  (499 MB)
-2026-06-20 16:16:35,329  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_2.mp4: 3 parts
-2026-06-20 16:16:35,329  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_2.mp4
+2026-06-20 16:21:09,110  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
+2026-06-20 16:21:09,291  INFO      DONE   nrt/NRT_Fascial_Activation_Application_Method.mp4  (0s, 3 segments)
+2026-06-20 16:21:09,292  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Fascial_Activation_Application_Method.json
+2026-06-20 16:21:09,422  INFO      START  nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (957 MB)
+2026-06-20 16:21:09,423  INFO      Using existing segments for NRT_Sports_Specific_or_Universal_Reset.mp4: 2 parts
+2026-06-20 16:21:09,423  INFO      Transcribing 2 segments for NRT_Sports_Specific_or_Universal_Reset.mp4
+2026-06-20 16:21:09,553  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
+2026-06-20 16:21:09,554  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
+2026-06-20 16:21:09,650  INFO      Queue empty — 13 video(s) processed. Exiting.
+2026-06-20 16:21:09,715  INFO      Transcription queue manager done
 ```
