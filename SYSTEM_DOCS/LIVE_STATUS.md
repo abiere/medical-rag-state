@@ -1,11 +1,11 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-07-09 11:20:02 UTC**
+> Last update: **2026-07-09 11:25:03 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ✅ active |
+| transcription-queue | ⚠️ activating |
 | book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
@@ -26,24 +26,24 @@
 | Metric | Value |
 |---|---|
 | Current job | idle |
-| Queued | 11 |
+| Queued | 0 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 7.97 GB / 32.86 GB (24%) |
-| CPU | 5.6% |
+| RAM used | 7.98 GB / 32.86 GB (24%) |
+| CPU | 0.1% |
 | Disk used | 92.8 GB / 322.3 GB (30%) |
-| Uptime | up 11 weeks, 6 days, 5 hours, 44 minutes |
+| Uptime | up 11 weeks, 6 days, 5 hours, 49 minutes |
 
 ## Recent markers
-- `2026-07-09T11:20:02` **ingest_failed** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 ingest FAILED
-- `2026-07-09T11:20:02` **transcription_done** — 1.Upper_Body_Techniques.mp4 complete (55/13)
-- `2026-07-09T11:20:02` **ingest_failed** — 1.Upper_Body_Techniques.mp4 ingest FAILED
-- `2026-07-09T11:19:32` **queue_empty** — All 13 videos transcribed
-- `2026-07-09T11:19:32` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-07-09T11:24:38` **queue_empty** — All 13 videos transcribed
+- `2026-07-09T11:24:38` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-07-09T11:24:38` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-07-09T11:24:37` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-07-09T11:24:37` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-07-09 11:20:03,266  INFO      START  nrt/Everything_Reset_Sequence_-_Part_2.mp4  (499 MB)
-2026-07-09 11:20:03,266  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_2.mp4: 3 parts
-2026-07-09 11:20:03,266  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_2.mp4
-2026-07-09 11:20:03,453  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_2.mp4  (0s, 3 segments)
-2026-07-09 11:20:03,454  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_2.json
-2026-07-09 11:20:03,583  INFO      START  nrt/Everything_Reset_Sequence_-_Part_3.mp4  (565 MB)
-2026-07-09 11:20:03,584  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_3.mp4: 2 parts
-2026-07-09 11:20:03,584  INFO      Transcribing 2 segments for Everything_Reset_Sequence_-_Part_3.mp4
-2026-07-09 11:20:03,700  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_3.mp4  (0s, 2 segments)
-2026-07-09 11:20:03,701  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_3.json
+2026-07-09 11:24:37,560  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
+2026-07-09 11:24:37,742  INFO      DONE   nrt/NRT_Fascial_Activation_Application_Method.mp4  (0s, 3 segments)
+2026-07-09 11:24:37,743  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Fascial_Activation_Application_Method.json
+2026-07-09 11:24:37,872  INFO      START  nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (957 MB)
+2026-07-09 11:24:37,873  INFO      Using existing segments for NRT_Sports_Specific_or_Universal_Reset.mp4: 2 parts
+2026-07-09 11:24:37,873  INFO      Transcribing 2 segments for NRT_Sports_Specific_or_Universal_Reset.mp4
+2026-07-09 11:24:38,015  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
+2026-07-09 11:24:38,016  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
+2026-07-09 11:24:38,145  INFO      Queue empty — 13 video(s) processed. Exiting.
+2026-07-09 11:24:38,209  INFO      Transcription queue manager done
 ```
