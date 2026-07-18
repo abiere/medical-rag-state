@@ -1,12 +1,12 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-07-18 00:30:49 UTC**
+> Last update: **2026-07-18 00:35:49 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
 | transcription-queue | ✅ active |
-| book-ingest-queue | ❌ inactive |
+| book-ingest-queue | ✅ active |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
 | ollama | ✅ healthy |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 7.25 GB / 32.86 GB (22%) |
-| CPU | 6.4% |
+| RAM used | 7.35 GB / 32.86 GB (22%) |
+| CPU | 6.5% |
 | Disk used | 93.1 GB / 322.3 GB (30%) |
-| Uptime | up 13 weeks, 18 hours, 55 minutes |
+| Uptime | up 13 weeks, 19 hours, 0 minutes |
 
 ## Recent markers
 - `2026-07-18T00:30:35` **transcription_done** — Everything_Reset_Sequence_-_Part_5.mp4 complete (55/13)
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-07-18 00:30:34,646  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_4.mp4: 3 parts
-2026-07-18 00:30:34,647  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_4.mp4
-2026-07-18 00:30:34,831  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_4.mp4  (0s, 3 segments)
-2026-07-18 00:30:34,832  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_4.json
-2026-07-18 00:30:34,961  INFO      START  nrt/Everything_Reset_Sequence_-_Part_5.mp4  (618 MB)
-2026-07-18 00:30:34,962  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_5.mp4: 3 parts
-2026-07-18 00:30:34,962  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_5.mp4
-2026-07-18 00:30:35,150  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_5.mp4  (0s, 3 segments)
-2026-07-18 00:30:35,151  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_5.json
-2026-07-18 00:30:35,280  INFO      Queue paused (pause flag set) — waiting 30s
+2026-07-18 00:31:05,280  INFO      Queue paused (pause flag set) — waiting 30s
+2026-07-18 00:31:35,280  INFO      Queue paused (pause flag set) — waiting 30s
+2026-07-18 00:32:05,281  INFO      Queue paused (pause flag set) — waiting 30s
+2026-07-18 00:32:35,282  INFO      Queue paused (pause flag set) — waiting 30s
+2026-07-18 00:33:05,282  INFO      Queue paused (pause flag set) — waiting 30s
+2026-07-18 00:33:35,282  INFO      Queue paused (pause flag set) — waiting 30s
+2026-07-18 00:34:05,283  INFO      Queue paused (pause flag set) — waiting 30s
+2026-07-18 00:34:35,283  INFO      Queue paused (pause flag set) — waiting 30s
+2026-07-18 00:35:05,284  INFO      Queue paused (pause flag set) — waiting 30s
+2026-07-18 00:35:35,284  INFO      Queue paused (pause flag set) — waiting 30s
 ```
