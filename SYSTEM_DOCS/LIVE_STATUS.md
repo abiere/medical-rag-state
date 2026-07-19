@@ -1,11 +1,11 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-07-19 10:35:51 UTC**
+> Last update: **2026-07-19 10:40:53 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ✅ active |
+| transcription-queue | ⚠️ activating |
 | book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
@@ -26,24 +26,24 @@
 | Metric | Value |
 |---|---|
 | Current job | idle |
-| Queued | 5 |
+| Queued | 0 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 6.77 GB / 32.86 GB (21%) |
-| CPU | 5.4% |
+| RAM used | 6.74 GB / 32.86 GB (20%) |
+| CPU | 0.0% |
 | Disk used | 92.9 GB / 322.3 GB (30%) |
-| Uptime | up 13 weeks, 2 days, 5 hours, 0 minutes |
+| Uptime | up 13 weeks, 2 days, 5 hours, 5 minutes |
 
 ## Recent markers
-- `2026-07-19T10:35:51` **ingest_failed** — How_to_Reset_23_More_Muscles.mp4 ingest FAILED
-- `2026-07-19T10:35:51` **transcription_done** — Everything_Reset_Sequence_-_Part_5.mp4 complete (55/13)
-- `2026-07-19T10:35:51` **ingest_failed** — Everything_Reset_Sequence_-_Part_5.mp4 ingest FAILED
-- `2026-07-19T10:35:51` **transcription_done** — Everything_Reset_Sequence_-_Part_4.mp4 complete (55/13)
-- `2026-07-19T10:35:51` **ingest_failed** — Everything_Reset_Sequence_-_Part_4.mp4 ingest FAILED
+- `2026-07-19T10:40:24` **queue_empty** — All 13 videos transcribed
+- `2026-07-19T10:40:24` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-07-19T10:40:24` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-07-19T10:40:24` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-07-19T10:40:24` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-07-19 10:35:52,273  INFO      DONE   nrt/Miraculous_Sequence_-_Part_2.mp4  (0s, 2 segments)
-2026-07-19 10:35:52,273  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Miraculous_Sequence_-_Part_2.json
-2026-07-19 10:35:52,403  INFO      START  nrt/NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4  (990 MB)
-2026-07-19 10:35:52,404  INFO      Using existing segments for NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4: 2 parts
-2026-07-19 10:35:52,404  INFO      Transcribing 2 segments for NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4
-2026-07-19 10:35:52,543  INFO      DONE   nrt/NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4  (0s, 2 segments)
-2026-07-19 10:35:52,544  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.json
-2026-07-19 10:35:52,674  INFO      START  nrt/NRT_Fascial_Activation_Application_Method.mp4  (1871 MB)
-2026-07-19 10:35:52,674  INFO      Using existing segments for NRT_Fascial_Activation_Application_Method.mp4: 3 parts
-2026-07-19 10:35:52,674  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
+2026-07-19 10:40:24,830  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
+2026-07-19 10:40:24,831  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
+2026-07-19 10:40:24,960  INFO      Queue empty — 13 video(s) processed. Exiting.
+2026-07-19 10:40:25,025  INFO      Transcription queue manager done
+2026-07-19 10:40:55,219  INFO      ────────────────────────────────────────────────────────────
+2026-07-19 10:40:55,219  INFO      Transcription queue manager started
+2026-07-19 10:40:55,220  INFO      Startup scan: 13 untranscribed video(s) found, 13 new entry/entries added to queue
+2026-07-19 10:40:55,221  INFO      START  nrt/1.Upper_Body_Techniques.mp4  (525 MB)
+2026-07-19 10:40:55,221  INFO      Using existing segments for 1.Upper_Body_Techniques.mp4: 4 parts
+2026-07-19 10:40:55,221  INFO      Transcribing 4 segments for 1.Upper_Body_Techniques.mp4
 ```
