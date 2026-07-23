@@ -1,11 +1,11 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-07-23 07:14:35 UTC**
+> Last update: **2026-07-23 07:19:38 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ✅ active |
+| transcription-queue | ⚠️ activating |
 | book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
@@ -25,25 +25,25 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `Everything_Reset_Sequence_-_Part_5.mp4` |
-| Queued | 7 |
+| Current job | idle |
+| Queued | 0 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 6.84 GB / 32.86 GB (21%) |
-| CPU | 5.3% |
+| RAM used | 6.8 GB / 32.86 GB (21%) |
+| CPU | 0.1% |
 | Disk used | 93.2 GB / 322.3 GB (30%) |
-| Uptime | up 13 weeks, 6 days, 1 hour, 39 minutes |
+| Uptime | up 13 weeks, 6 days, 1 hour, 44 minutes |
 
 ## Recent markers
-- `2026-07-23T07:14:36` **transcription_done** — Everything_Reset_Sequence_-_Part_4.mp4 complete (55/13)
-- `2026-07-23T07:14:35` **ingest_failed** — Everything_Reset_Sequence_-_Part_4.mp4 ingest FAILED
-- `2026-07-23T07:14:35` **transcription_done** — Everything_Reset_Sequence_-_Part_3.mp4 complete (55/13)
-- `2026-07-23T07:14:35` **ingest_failed** — Everything_Reset_Sequence_-_Part_3.mp4 ingest FAILED
-- `2026-07-23T07:14:35` **transcription_done** — Everything_Reset_Sequence_-_Part_2.mp4 complete (55/13)
+- `2026-07-23T07:19:09` **queue_empty** — All 13 videos transcribed
+- `2026-07-23T07:19:09` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-07-23T07:19:09` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-07-23T07:19:09` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-07-23T07:19:09` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-07-23 07:14:36,693  INFO      START  nrt/Miraculous_Sequence_-_Part_1.mp4  (689 MB)
-2026-07-23 07:14:36,694  INFO      Using existing segments for Miraculous_Sequence_-_Part_1.mp4: 2 parts
-2026-07-23 07:14:36,694  INFO      Transcribing 2 segments for Miraculous_Sequence_-_Part_1.mp4
-2026-07-23 07:14:36,816  INFO      DONE   nrt/Miraculous_Sequence_-_Part_1.mp4  (0s, 2 segments)
-2026-07-23 07:14:36,816  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Miraculous_Sequence_-_Part_1.json
-2026-07-23 07:14:36,946  INFO      START  nrt/Miraculous_Sequence_-_Part_2.mp4  (664 MB)
-2026-07-23 07:14:36,946  INFO      Using existing segments for Miraculous_Sequence_-_Part_2.mp4: 2 parts
-2026-07-23 07:14:36,946  INFO      Transcribing 2 segments for Miraculous_Sequence_-_Part_2.mp4
-2026-07-23 07:14:37,057  INFO      DONE   nrt/Miraculous_Sequence_-_Part_2.mp4  (0s, 2 segments)
-2026-07-23 07:14:37,058  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Miraculous_Sequence_-_Part_2.json
+2026-07-23 07:19:09,452  INFO      Queue empty — 13 video(s) processed. Exiting.
+2026-07-23 07:19:09,517  INFO      Transcription queue manager done
+2026-07-23 07:19:39,718  INFO      ────────────────────────────────────────────────────────────
+2026-07-23 07:19:39,719  INFO      Transcription queue manager started
+2026-07-23 07:19:39,720  INFO      Startup scan: 13 untranscribed video(s) found, 13 new entry/entries added to queue
+2026-07-23 07:19:39,720  INFO      START  nrt/1.Upper_Body_Techniques.mp4  (525 MB)
+2026-07-23 07:19:39,721  INFO      Using existing segments for 1.Upper_Body_Techniques.mp4: 4 parts
+2026-07-23 07:19:39,721  INFO      Transcribing 4 segments for 1.Upper_Body_Techniques.mp4
+2026-07-23 07:19:39,960  INFO      DONE   nrt/1.Upper_Body_Techniques.mp4  (0s, 4 segments)
+2026-07-23 07:19:39,961  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/1.Upper_Body_Techniques.json
 ```
