@@ -1,12 +1,12 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-07-24 00:29:56 UTC**
+> Last update: **2026-07-24 00:34:56 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
 | transcription-queue | ✅ active |
-| book-ingest-queue | ❌ inactive |
+| book-ingest-queue | ✅ active |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
 | ollama | ✅ healthy |
@@ -26,24 +26,24 @@
 | Metric | Value |
 |---|---|
 | Current job | idle |
-| Queued | 6 |
+| Queued | 13 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 6.91 GB / 32.86 GB (21%) |
-| CPU | 5.8% |
+| RAM used | 7.43 GB / 32.86 GB (23%) |
+| CPU | 0.3% |
 | Disk used | 93.3 GB / 322.3 GB (30%) |
-| Uptime | up 13 weeks, 6 days, 18 hours, 54 minutes |
+| Uptime | up 13 weeks, 6 days, 18 hours, 59 minutes |
 
 ## Recent markers
-- `2026-07-24T00:29:56` **ingest_failed** — Everything_Reset_Sequence_-_Part_5.mp4 ingest FAILED
-- `2026-07-24T00:29:56` **transcription_done** — Everything_Reset_Sequence_-_Part_4.mp4 complete (55/13)
-- `2026-07-24T00:29:56` **ingest_failed** — Everything_Reset_Sequence_-_Part_4.mp4 ingest FAILED
-- `2026-07-24T00:29:56` **transcription_done** — Everything_Reset_Sequence_-_Part_3.mp4 complete (55/13)
-- `2026-07-24T00:29:56` **ingest_failed** — Everything_Reset_Sequence_-_Part_3.mp4 ingest FAILED
+- `2026-07-24T00:29:58` **queue_empty** — All 13 videos transcribed
+- `2026-07-24T00:29:58` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-07-24T00:29:58` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-07-24T00:29:58` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-07-24T00:29:58` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-07-24 00:29:57,545  INFO      START  nrt/Miraculous_Sequence_-_Part_2.mp4  (664 MB)
-2026-07-24 00:29:57,546  INFO      Using existing segments for Miraculous_Sequence_-_Part_2.mp4: 2 parts
-2026-07-24 00:29:57,546  INFO      Transcribing 2 segments for Miraculous_Sequence_-_Part_2.mp4
-2026-07-24 00:29:57,664  INFO      DONE   nrt/Miraculous_Sequence_-_Part_2.mp4  (0s, 2 segments)
-2026-07-24 00:29:57,665  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Miraculous_Sequence_-_Part_2.json
-2026-07-24 00:29:57,762  INFO      START  nrt/NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4  (990 MB)
-2026-07-24 00:29:57,763  INFO      Using existing segments for NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4: 2 parts
-2026-07-24 00:29:57,763  INFO      Transcribing 2 segments for NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4
-2026-07-24 00:29:57,869  INFO      DONE   nrt/NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4  (0s, 2 segments)
-2026-07-24 00:29:57,870  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.json
+2026-07-24 00:30:28,719  INFO      Startup scan: 13 untranscribed video(s) found, 13 new entry/entries added to queue
+2026-07-24 00:30:28,719  INFO      Queue paused (pause flag set) — waiting 30s
+2026-07-24 00:30:58,720  INFO      Queue paused (pause flag set) — waiting 30s
+2026-07-24 00:31:28,720  INFO      Queue paused (pause flag set) — waiting 30s
+2026-07-24 00:31:58,721  INFO      Queue paused (pause flag set) — waiting 30s
+2026-07-24 00:32:28,721  INFO      Queue paused (pause flag set) — waiting 30s
+2026-07-24 00:32:58,721  INFO      Queue paused (pause flag set) — waiting 30s
+2026-07-24 00:33:28,722  INFO      Queue paused (pause flag set) — waiting 30s
+2026-07-24 00:33:58,722  INFO      Queue paused (pause flag set) — waiting 30s
+2026-07-24 00:34:28,723  INFO      Queue paused (pause flag set) — waiting 30s
 ```
