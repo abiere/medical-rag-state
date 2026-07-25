@@ -1,11 +1,11 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-07-25 13:46:15 UTC**
+> Last update: **2026-07-25 13:51:16 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ✅ active |
+| transcription-queue | ⚠️ activating |
 | book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
@@ -26,24 +26,24 @@
 | Metric | Value |
 |---|---|
 | Current job | idle |
-| Queued | 1 |
+| Queued | 0 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 6.38 GB / 32.86 GB (19%) |
-| CPU | 5.6% |
+| RAM used | 6.36 GB / 32.86 GB (19%) |
+| CPU | 0.1% |
 | Disk used | 93.4 GB / 322.3 GB (30%) |
-| Uptime | up 14 weeks, 1 day, 8 hours, 10 minutes |
+| Uptime | up 14 weeks, 1 day, 8 hours, 15 minutes |
 
 ## Recent markers
-- `2026-07-25T13:46:15` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
-- `2026-07-25T13:46:15` **transcription_done** — NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4 complete (55/13)
-- `2026-07-25T13:46:15` **ingest_failed** — NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4 ingest FAILED
-- `2026-07-25T13:46:15` **transcription_done** — Miraculous_Sequence_-_Part_2.mp4 complete (55/13)
-- `2026-07-25T13:46:15` **ingest_failed** — Miraculous_Sequence_-_Part_2.mp4 ingest FAILED
+- `2026-07-25T13:50:47` **queue_empty** — All 13 videos transcribed
+- `2026-07-25T13:50:47` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-07-25T13:50:47` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-07-25T13:50:47` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-07-25T13:50:47` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-07-25 13:46:15,582  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
-2026-07-25 13:46:15,766  INFO      DONE   nrt/NRT_Fascial_Activation_Application_Method.mp4  (0s, 3 segments)
-2026-07-25 13:46:15,767  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Fascial_Activation_Application_Method.json
-2026-07-25 13:46:15,897  INFO      START  nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (957 MB)
-2026-07-25 13:46:15,898  INFO      Using existing segments for NRT_Sports_Specific_or_Universal_Reset.mp4: 2 parts
-2026-07-25 13:46:15,898  INFO      Transcribing 2 segments for NRT_Sports_Specific_or_Universal_Reset.mp4
-2026-07-25 13:46:16,021  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
-2026-07-25 13:46:16,022  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
-2026-07-25 13:46:16,153  INFO      Queue empty — 13 video(s) processed. Exiting.
-2026-07-25 13:46:16,217  INFO      Transcription queue manager done
+2026-07-25 13:50:47,690  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
+2026-07-25 13:50:47,691  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
+2026-07-25 13:50:47,820  INFO      Queue empty — 13 video(s) processed. Exiting.
+2026-07-25 13:50:47,885  INFO      Transcription queue manager done
+2026-07-25 13:51:17,964  INFO      ────────────────────────────────────────────────────────────
+2026-07-25 13:51:17,964  INFO      Transcription queue manager started
+2026-07-25 13:51:17,966  INFO      Startup scan: 13 untranscribed video(s) found, 13 new entry/entries added to queue
+2026-07-25 13:51:17,966  INFO      START  nrt/1.Upper_Body_Techniques.mp4  (525 MB)
+2026-07-25 13:51:17,966  INFO      Using existing segments for 1.Upper_Body_Techniques.mp4: 4 parts
+2026-07-25 13:51:17,966  INFO      Transcribing 4 segments for 1.Upper_Body_Techniques.mp4
 ```
