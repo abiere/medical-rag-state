@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-08-17 21:35:19 UTC**
+> Last update: **2026-08-17 21:40:23 UTC**
 
 ## Services
 | Service | Status |
@@ -25,25 +25,25 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | idle |
-| Queued | 0 |
+| Current job | `1.Upper_Body_Techniques.mp4` |
+| Queued | 13 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 5.46 GB / 32.86 GB (17%) |
-| CPU | 0.0% |
+| RAM used | 5.47 GB / 32.86 GB (17%) |
+| CPU | 1.0% |
 | Disk used | 94.4 GB / 322.3 GB (30%) |
-| Uptime | up 17 weeks, 3 days, 15 hours, 59 minutes |
+| Uptime | up 17 weeks, 3 days, 16 hours, 5 minutes |
 
 ## Recent markers
-- `2026-08-17T21:34:49` **queue_empty** — All 13 videos transcribed
-- `2026-08-17T21:34:49` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
-- `2026-08-17T21:34:49` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
-- `2026-08-17T21:34:49` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
-- `2026-08-17T21:34:49` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
+- `2026-08-17T21:39:54` **queue_empty** — All 13 videos transcribed
+- `2026-08-17T21:39:54` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-08-17T21:39:54` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-08-17T21:39:54` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-08-17T21:39:53` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-08-17 21:35:20,510  INFO      START  nrt/Everything_Reset_Sequence_-_Part_1.mp4  (649 MB)
-2026-08-17 21:35:20,511  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_1.mp4: 3 parts
-2026-08-17 21:35:20,511  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_1.mp4
-2026-08-17 21:35:20,674  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_1.mp4  (0s, 3 segments)
-2026-08-17 21:35:20,675  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_1.json
-2026-08-17 21:35:20,804  INFO      START  nrt/Everything_Reset_Sequence_-_Part_2.mp4  (499 MB)
-2026-08-17 21:35:20,805  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_2.mp4: 3 parts
-2026-08-17 21:35:20,805  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_2.mp4
-2026-08-17 21:35:20,986  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_2.mp4  (0s, 3 segments)
-2026-08-17 21:35:20,987  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_2.json
+2026-08-17 21:40:25,221  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_1.mp4  (0s, 3 segments)
+2026-08-17 21:40:25,222  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_1.json
+2026-08-17 21:40:25,351  INFO      START  nrt/Everything_Reset_Sequence_-_Part_2.mp4  (499 MB)
+2026-08-17 21:40:25,352  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_2.mp4: 3 parts
+2026-08-17 21:40:25,352  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_2.mp4
+2026-08-17 21:40:25,525  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_2.mp4  (0s, 3 segments)
+2026-08-17 21:40:25,526  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_2.json
+2026-08-17 21:40:25,655  INFO      START  nrt/Everything_Reset_Sequence_-_Part_3.mp4  (565 MB)
+2026-08-17 21:40:25,656  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_3.mp4: 2 parts
+2026-08-17 21:40:25,656  INFO      Transcribing 2 segments for Everything_Reset_Sequence_-_Part_3.mp4
 ```
