@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-08-19 16:29:55 UTC**
+> Last update: **2026-08-19 16:34:59 UTC**
 
 ## Services
 | Service | Status |
@@ -25,7 +25,7 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` |
+| Current job | idle |
 | Queued | 12 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 5.42 GB / 32.86 GB (16%) |
-| CPU | 4.6% |
+| RAM used | 5.44 GB / 32.86 GB (16%) |
+| CPU | 4.0% |
 | Disk used | 94.6 GB / 322.3 GB (31%) |
-| Uptime | up 17 weeks, 5 days, 10 hours, 54 minutes |
+| Uptime | up 17 weeks, 5 days, 10 hours, 59 minutes |
 
 ## Recent markers
-- `2026-08-19T16:29:55` **transcription_done** — 1.Upper_Body_Techniques.mp4 complete (55/13)
-- `2026-08-19T16:29:55` **ingest_failed** — 1.Upper_Body_Techniques.mp4 ingest FAILED
-- `2026-08-19T16:29:25` **queue_empty** — All 13 videos transcribed
-- `2026-08-19T16:29:25` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
-- `2026-08-19T16:29:25` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-08-19T16:35:00` **ingest_failed** — 1.Upper_Body_Techniques.mp4 ingest FAILED
+- `2026-08-19T16:34:30` **queue_empty** — All 13 videos transcribed
+- `2026-08-19T16:34:29` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-08-19T16:34:29` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-08-19T16:34:29` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-08-19 16:29:56,567  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_2.mp4  (0s, 3 segments)
-2026-08-19 16:29:56,568  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_2.json
-2026-08-19 16:29:56,665  INFO      START  nrt/Everything_Reset_Sequence_-_Part_3.mp4  (565 MB)
-2026-08-19 16:29:56,665  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_3.mp4: 2 parts
-2026-08-19 16:29:56,665  INFO      Transcribing 2 segments for Everything_Reset_Sequence_-_Part_3.mp4
-2026-08-19 16:29:56,785  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_3.mp4  (0s, 2 segments)
-2026-08-19 16:29:56,786  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_3.json
-2026-08-19 16:29:56,916  INFO      START  nrt/Everything_Reset_Sequence_-_Part_4.mp4  (690 MB)
-2026-08-19 16:29:56,916  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_4.mp4: 3 parts
-2026-08-19 16:29:56,916  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_4.mp4
+2026-08-19 16:35:01,332  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_2.mp4  (0s, 3 segments)
+2026-08-19 16:35:01,333  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_2.json
+2026-08-19 16:35:01,462  INFO      START  nrt/Everything_Reset_Sequence_-_Part_3.mp4  (565 MB)
+2026-08-19 16:35:01,463  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_3.mp4: 2 parts
+2026-08-19 16:35:01,463  INFO      Transcribing 2 segments for Everything_Reset_Sequence_-_Part_3.mp4
+2026-08-19 16:35:01,589  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_3.mp4  (0s, 2 segments)
+2026-08-19 16:35:01,590  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_3.json
+2026-08-19 16:35:01,720  INFO      START  nrt/Everything_Reset_Sequence_-_Part_4.mp4  (690 MB)
+2026-08-19 16:35:01,721  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_4.mp4: 3 parts
+2026-08-19 16:35:01,721  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_4.mp4
 ```
