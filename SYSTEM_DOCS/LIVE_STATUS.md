@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-08-20 00:32:50 UTC**
+> Last update: **2026-08-20 00:37:50 UTC**
 
 ## Services
 | Service | Status |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 5.82 GB / 32.86 GB (18%) |
-| CPU | 6.5% |
+| RAM used | 6.01 GB / 32.86 GB (18%) |
+| CPU | 1.0% |
 | Disk used | 94.6 GB / 322.3 GB (31%) |
-| Uptime | up 17 weeks, 5 days, 18 hours, 57 minutes |
+| Uptime | up 17 weeks, 5 days, 19 hours, 2 minutes |
 
 ## Recent markers
 - `2026-08-20T00:30:32` **queue_empty** — All 13 videos transcribed
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-08-20 00:30:31,958  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
-2026-08-20 00:30:32,087  INFO      Queue empty — 13 video(s) processed. Exiting.
-2026-08-20 00:30:32,152  INFO      Transcription queue manager done
-2026-08-20 00:31:02,469  INFO      ────────────────────────────────────────────────────────────
-2026-08-20 00:31:02,469  INFO      Transcription queue manager started
-2026-08-20 00:31:02,471  INFO      Startup scan: 13 untranscribed video(s) found, 13 new entry/entries added to queue
-2026-08-20 00:31:02,471  INFO      Queue paused (pause flag set) — waiting 30s
-2026-08-20 00:31:32,471  INFO      Queue paused (pause flag set) — waiting 30s
-2026-08-20 00:32:02,472  INFO      Queue paused (pause flag set) — waiting 30s
-2026-08-20 00:32:32,472  INFO      Queue paused (pause flag set) — waiting 30s
+2026-08-20 00:33:02,472  INFO      Queue paused (pause flag set) — waiting 30s
+2026-08-20 00:33:32,473  INFO      Queue paused (pause flag set) — waiting 30s
+2026-08-20 00:34:02,473  INFO      Queue paused (pause flag set) — waiting 30s
+2026-08-20 00:34:32,473  INFO      Queue paused (pause flag set) — waiting 30s
+2026-08-20 00:35:02,474  INFO      Queue paused (pause flag set) — waiting 30s
+2026-08-20 00:35:32,474  INFO      Queue paused (pause flag set) — waiting 30s
+2026-08-20 00:36:02,475  INFO      Queue paused (pause flag set) — waiting 30s
+2026-08-20 00:36:32,475  INFO      Queue paused (pause flag set) — waiting 30s
+2026-08-20 00:37:02,475  INFO      Queue paused (pause flag set) — waiting 30s
+2026-08-20 00:37:32,476  INFO      Queue paused (pause flag set) — waiting 30s
 ```
