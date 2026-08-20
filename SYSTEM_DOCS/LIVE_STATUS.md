@@ -1,11 +1,11 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-08-20 13:01:52 UTC**
+> Last update: **2026-08-20 13:06:55 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ✅ active |
+| transcription-queue | ⚠️ activating |
 | book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
@@ -25,25 +25,25 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `Everything_Reset_Sequence_-_Part_1.mp4` |
-| Queued | 11 |
+| Current job | idle |
+| Queued | 0 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 5.44 GB / 32.86 GB (17%) |
-| CPU | 5.4% |
+| RAM used | 5.41 GB / 32.86 GB (16%) |
+| CPU | 2.0% |
 | Disk used | 94.6 GB / 322.3 GB (31%) |
-| Uptime | up 17 weeks, 6 days, 7 hours, 26 minutes |
+| Uptime | up 17 weeks, 6 days, 7 hours, 31 minutes |
 
 ## Recent markers
-- `2026-08-20T13:01:52` **transcription_done** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 complete (55/13)
-- `2026-08-20T13:01:52` **ingest_failed** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 ingest FAILED
-- `2026-08-20T13:01:52` **transcription_done** — 1.Upper_Body_Techniques.mp4 complete (55/13)
-- `2026-08-20T13:01:52` **ingest_failed** — 1.Upper_Body_Techniques.mp4 ingest FAILED
-- `2026-08-20T13:01:21` **queue_empty** — All 13 videos transcribed
+- `2026-08-20T13:06:26` **queue_empty** — All 13 videos transcribed
+- `2026-08-20T13:06:26` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-08-20T13:06:26` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-08-20T13:06:26` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-08-20T13:06:26` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-08-20 13:01:53,570  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_3.mp4  (0s, 2 segments)
-2026-08-20 13:01:53,571  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_3.json
-2026-08-20 13:01:53,701  INFO      START  nrt/Everything_Reset_Sequence_-_Part_4.mp4  (690 MB)
-2026-08-20 13:01:53,701  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_4.mp4: 3 parts
-2026-08-20 13:01:53,701  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_4.mp4
-2026-08-20 13:01:53,890  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_4.mp4  (0s, 3 segments)
-2026-08-20 13:01:53,891  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_4.json
-2026-08-20 13:01:54,021  INFO      START  nrt/Everything_Reset_Sequence_-_Part_5.mp4  (618 MB)
-2026-08-20 13:01:54,021  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_5.mp4: 3 parts
-2026-08-20 13:01:54,021  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_5.mp4
+2026-08-20 13:06:26,521  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
+2026-08-20 13:06:26,521  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
+2026-08-20 13:06:26,650  INFO      Queue empty — 13 video(s) processed. Exiting.
+2026-08-20 13:06:26,715  INFO      Transcription queue manager done
+2026-08-20 13:06:56,982  INFO      ────────────────────────────────────────────────────────────
+2026-08-20 13:06:56,982  INFO      Transcription queue manager started
+2026-08-20 13:06:56,983  INFO      Startup scan: 13 untranscribed video(s) found, 13 new entry/entries added to queue
+2026-08-20 13:06:56,984  INFO      START  nrt/1.Upper_Body_Techniques.mp4  (525 MB)
+2026-08-20 13:06:56,984  INFO      Using existing segments for 1.Upper_Body_Techniques.mp4: 4 parts
+2026-08-20 13:06:56,984  INFO      Transcribing 4 segments for 1.Upper_Body_Techniques.mp4
 ```
