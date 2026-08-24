@@ -1,12 +1,12 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-08-24 00:39:05 UTC**
+> Last update: **2026-08-24 00:44:07 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ✅ active |
-| book-ingest-queue | ✅ active |
+| transcription-queue | ⚠️ activating |
+| book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
 | ollama | ✅ healthy |
@@ -26,24 +26,24 @@
 | Metric | Value |
 |---|---|
 | Current job | idle |
-| Queued | 13 |
+| Queued | 0 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 5.41 GB / 32.86 GB (16%) |
-| CPU | 6.4% |
+| RAM used | 5.18 GB / 32.86 GB (16%) |
+| CPU | 0.2% |
 | Disk used | 94.5 GB / 322.3 GB (31%) |
-| Uptime | up 18 weeks, 2 days, 19 hours, 3 minutes |
+| Uptime | up 18 weeks, 2 days, 19 hours, 8 minutes |
 
 ## Recent markers
-- `2026-08-24T00:31:23` **queue_empty** — All 13 videos transcribed
-- `2026-08-24T00:31:23` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
-- `2026-08-24T00:31:23` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
-- `2026-08-24T00:31:23` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
-- `2026-08-24T00:31:23` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
+- `2026-08-24T00:43:38` **queue_empty** — All 13 videos transcribed
+- `2026-08-24T00:43:38` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-08-24T00:43:38` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-08-24T00:43:38` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-08-24T00:43:38` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-08-24 00:34:23,722  INFO      Queue paused (pause flag set) — waiting 30s
-2026-08-24 00:34:53,723  INFO      Queue paused (pause flag set) — waiting 30s
-2026-08-24 00:35:23,723  INFO      Queue paused (pause flag set) — waiting 30s
-2026-08-24 00:35:53,724  INFO      Queue paused (pause flag set) — waiting 30s
-2026-08-24 00:36:23,724  INFO      Queue paused (pause flag set) — waiting 30s
-2026-08-24 00:36:53,724  INFO      Queue paused (pause flag set) — waiting 30s
-2026-08-24 00:37:23,725  INFO      Queue paused (pause flag set) — waiting 30s
-2026-08-24 00:37:53,725  INFO      Queue paused (pause flag set) — waiting 30s
-2026-08-24 00:38:23,725  INFO      Queue paused (pause flag set) — waiting 30s
-2026-08-24 00:38:53,726  INFO      Queue paused (pause flag set) — waiting 30s
+2026-08-24 00:44:08,957  INFO      DONE   nrt/1.Upper_Body_Techniques.mp4  (0s, 4 segments)
+2026-08-24 00:44:08,958  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/1.Upper_Body_Techniques.json
+2026-08-24 00:44:09,087  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
+2026-08-24 00:44:09,088  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
+2026-08-24 00:44:09,088  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
+2026-08-24 00:44:09,205  INFO      DONE   nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (0s, 2 segments)
+2026-08-24 00:44:09,206  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.json
+2026-08-24 00:44:09,336  INFO      START  nrt/Everything_Reset_Sequence_-_Part_1.mp4  (649 MB)
+2026-08-24 00:44:09,336  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_1.mp4: 3 parts
+2026-08-24 00:44:09,336  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_1.mp4
 ```
