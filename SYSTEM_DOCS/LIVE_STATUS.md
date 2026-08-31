@@ -1,11 +1,11 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-08-31 22:38:05 UTC**
+> Last update: **2026-08-31 22:43:08 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ✅ active |
+| transcription-queue | ⚠️ activating |
 | book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
@@ -26,24 +26,24 @@
 | Metric | Value |
 |---|---|
 | Current job | idle |
-| Queued | 11 |
+| Queued | 0 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 4.39 GB / 32.86 GB (13%) |
-| CPU | 5.4% |
+| RAM used | 4.4 GB / 32.86 GB (13%) |
+| CPU | 0.2% |
 | Disk used | 94.7 GB / 322.3 GB (31%) |
-| Uptime | up 19 weeks, 3 days, 17 hours, 2 minutes |
+| Uptime | up 19 weeks, 3 days, 17 hours, 7 minutes |
 
 ## Recent markers
-- `2026-08-31T22:38:05` **transcription_done** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 complete (55/13)
-- `2026-08-31T22:38:05` **ingest_failed** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 ingest FAILED
-- `2026-08-31T22:38:05` **transcription_done** — 1.Upper_Body_Techniques.mp4 complete (55/13)
-- `2026-08-31T22:38:05` **ingest_failed** — 1.Upper_Body_Techniques.mp4 ingest FAILED
-- `2026-08-31T22:37:34` **queue_empty** — All 13 videos transcribed
+- `2026-08-31T22:42:39` **queue_empty** — All 13 videos transcribed
+- `2026-08-31T22:42:39` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-08-31T22:42:39` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-08-31T22:42:39` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-08-31T22:42:39` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-08-31 22:38:06,601  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_3.mp4  (0s, 2 segments)
-2026-08-31 22:38:06,602  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_3.json
-2026-08-31 22:38:06,731  INFO      START  nrt/Everything_Reset_Sequence_-_Part_4.mp4  (690 MB)
-2026-08-31 22:38:06,732  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_4.mp4: 3 parts
-2026-08-31 22:38:06,732  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_4.mp4
-2026-08-31 22:38:06,912  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_4.mp4  (0s, 3 segments)
-2026-08-31 22:38:06,912  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_4.json
-2026-08-31 22:38:07,042  INFO      START  nrt/Everything_Reset_Sequence_-_Part_5.mp4  (618 MB)
-2026-08-31 22:38:07,042  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_5.mp4: 3 parts
-2026-08-31 22:38:07,042  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_5.mp4
+2026-08-31 22:42:39,727  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
+2026-08-31 22:42:39,728  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
+2026-08-31 22:42:39,858  INFO      Queue empty — 13 video(s) processed. Exiting.
+2026-08-31 22:42:39,923  INFO      Transcription queue manager done
+2026-08-31 22:43:10,220  INFO      ────────────────────────────────────────────────────────────
+2026-08-31 22:43:10,220  INFO      Transcription queue manager started
+2026-08-31 22:43:10,221  INFO      Startup scan: 13 untranscribed video(s) found, 13 new entry/entries added to queue
+2026-08-31 22:43:10,222  INFO      START  nrt/1.Upper_Body_Techniques.mp4  (525 MB)
+2026-08-31 22:43:10,222  INFO      Using existing segments for 1.Upper_Body_Techniques.mp4: 4 parts
+2026-08-31 22:43:10,222  INFO      Transcribing 4 segments for 1.Upper_Body_Techniques.mp4
 ```
