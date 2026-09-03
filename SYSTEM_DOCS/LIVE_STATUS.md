@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-09-03 08:28:39 UTC**
+> Last update: **2026-09-03 08:33:39 UTC**
 
 ## Services
 | Service | Status |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 4.3 GB / 32.86 GB (13%) |
-| CPU | 0.1% |
+| RAM used | 4.32 GB / 32.86 GB (13%) |
+| CPU | 0.0% |
 | Disk used | 95.0 GB / 322.3 GB (31%) |
-| Uptime | up 19 weeks, 6 days, 2 hours, 53 minutes |
+| Uptime | up 19 weeks, 6 days, 2 hours, 58 minutes |
 
 ## Recent markers
-- `2026-09-03T08:28:14` **queue_empty** — All 13 videos transcribed
-- `2026-09-03T08:28:14` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
-- `2026-09-03T08:28:14` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
-- `2026-09-03T08:28:14` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
-- `2026-09-03T08:28:14` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
+- `2026-09-03T08:33:20` **queue_empty** — All 13 videos transcribed
+- `2026-09-03T08:33:20` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-09-03T08:33:20` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-09-03T08:33:19` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-09-03T08:33:19` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-09-03 08:28:14,432  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
-2026-09-03 08:28:14,609  INFO      DONE   nrt/NRT_Fascial_Activation_Application_Method.mp4  (0s, 3 segments)
-2026-09-03 08:28:14,610  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Fascial_Activation_Application_Method.json
-2026-09-03 08:28:14,739  INFO      START  nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (957 MB)
-2026-09-03 08:28:14,740  INFO      Using existing segments for NRT_Sports_Specific_or_Universal_Reset.mp4: 2 parts
-2026-09-03 08:28:14,740  INFO      Transcribing 2 segments for NRT_Sports_Specific_or_Universal_Reset.mp4
-2026-09-03 08:28:14,853  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
-2026-09-03 08:28:14,854  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
-2026-09-03 08:28:14,983  INFO      Queue empty — 13 video(s) processed. Exiting.
-2026-09-03 08:28:15,048  INFO      Transcription queue manager done
+2026-09-03 08:33:19,587  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
+2026-09-03 08:33:19,771  INFO      DONE   nrt/NRT_Fascial_Activation_Application_Method.mp4  (0s, 3 segments)
+2026-09-03 08:33:19,772  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Fascial_Activation_Application_Method.json
+2026-09-03 08:33:19,901  INFO      START  nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (957 MB)
+2026-09-03 08:33:19,901  INFO      Using existing segments for NRT_Sports_Specific_or_Universal_Reset.mp4: 2 parts
+2026-09-03 08:33:19,901  INFO      Transcribing 2 segments for NRT_Sports_Specific_or_Universal_Reset.mp4
+2026-09-03 08:33:20,034  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
+2026-09-03 08:33:20,035  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
+2026-09-03 08:33:20,164  INFO      Queue empty — 13 video(s) processed. Exiting.
+2026-09-03 08:33:20,228  INFO      Transcription queue manager done
 ```
