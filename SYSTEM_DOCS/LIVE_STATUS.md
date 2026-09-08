@@ -1,11 +1,11 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-09-08 08:18:06 UTC**
+> Last update: **2026-09-08 08:23:09 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ✅ active |
+| transcription-queue | ⚠️ activating |
 | book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
@@ -25,25 +25,25 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `Everything_Reset_Sequence_-_Part_1.mp4` |
-| Queued | 11 |
+| Current job | idle |
+| Queued | 0 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 10.21 GB / 32.86 GB (31%) |
-| CPU | 5.4% |
+| RAM used | 4.06 GB / 32.86 GB (12%) |
+| CPU | 0.1% |
 | Disk used | 95.0 GB / 322.3 GB (31%) |
-| Uptime | up 20 weeks, 4 days, 2 hours, 42 minutes |
+| Uptime | up 20 weeks, 4 days, 2 hours, 47 minutes |
 
 ## Recent markers
-- `2026-09-08T08:18:06` **transcription_done** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 complete (55/13)
-- `2026-09-08T08:18:06` **ingest_failed** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 ingest FAILED
-- `2026-09-08T08:18:06` **transcription_done** — 1.Upper_Body_Techniques.mp4 complete (55/13)
-- `2026-09-08T08:18:06` **ingest_failed** — 1.Upper_Body_Techniques.mp4 ingest FAILED
-- `2026-09-08T08:17:35` **queue_empty** — All 13 videos transcribed
+- `2026-09-08T08:22:41` **queue_empty** — All 13 videos transcribed
+- `2026-09-08T08:22:41` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-09-08T08:22:40` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-09-08T08:22:40` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-09-08T08:22:40` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-09-08 08:18:07,378  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_3.mp4  (0s, 2 segments)
-2026-09-08 08:18:07,378  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_3.json
-2026-09-08 08:18:07,508  INFO      START  nrt/Everything_Reset_Sequence_-_Part_4.mp4  (690 MB)
-2026-09-08 08:18:07,509  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_4.mp4: 3 parts
-2026-09-08 08:18:07,509  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_4.mp4
-2026-09-08 08:18:07,688  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_4.mp4  (0s, 3 segments)
-2026-09-08 08:18:07,689  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_4.json
-2026-09-08 08:18:07,818  INFO      START  nrt/Everything_Reset_Sequence_-_Part_5.mp4  (618 MB)
-2026-09-08 08:18:07,819  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_5.mp4: 3 parts
-2026-09-08 08:18:07,819  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_5.mp4
+2026-09-08 08:22:41,077  INFO      Queue empty — 13 video(s) processed. Exiting.
+2026-09-08 08:22:41,141  INFO      Transcription queue manager done
+2026-09-08 08:23:11,216  INFO      ────────────────────────────────────────────────────────────
+2026-09-08 08:23:11,216  INFO      Transcription queue manager started
+2026-09-08 08:23:11,217  INFO      Startup scan: 13 untranscribed video(s) found, 13 new entry/entries added to queue
+2026-09-08 08:23:11,218  INFO      START  nrt/1.Upper_Body_Techniques.mp4  (525 MB)
+2026-09-08 08:23:11,218  INFO      Using existing segments for 1.Upper_Body_Techniques.mp4: 4 parts
+2026-09-08 08:23:11,218  INFO      Transcribing 4 segments for 1.Upper_Body_Techniques.mp4
+2026-09-08 08:23:11,504  INFO      DONE   nrt/1.Upper_Body_Techniques.mp4  (0s, 4 segments)
+2026-09-08 08:23:11,505  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/1.Upper_Body_Techniques.json
 ```
