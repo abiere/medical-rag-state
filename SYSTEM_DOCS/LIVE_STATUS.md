@@ -1,12 +1,12 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-09-11 00:30:13 UTC**
+> Last update: **2026-09-11 00:35:13 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ⚠️ activating |
-| book-ingest-queue | ❌ inactive |
+| transcription-queue | ✅ active |
+| book-ingest-queue | ✅ active |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
 | ollama | ✅ healthy |
@@ -26,17 +26,17 @@
 | Metric | Value |
 |---|---|
 | Current job | idle |
-| Queued | 0 |
+| Queued | 13 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 4.14 GB / 32.86 GB (13%) |
-| CPU | 0.9% |
+| RAM used | 4.58 GB / 32.86 GB (14%) |
+| CPU | 6.3% |
 | Disk used | 95.2 GB / 322.3 GB (31%) |
-| Uptime | up 20 weeks, 6 days, 18 hours, 54 minutes |
+| Uptime | up 20 weeks, 6 days, 18 hours, 59 minutes |
 
 ## Recent markers
 - `2026-09-11T00:30:00` **queue_empty** — All 13 videos transcribed
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-09-11 00:29:59,552  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
-2026-09-11 00:29:59,736  INFO      DONE   nrt/NRT_Fascial_Activation_Application_Method.mp4  (0s, 3 segments)
-2026-09-11 00:29:59,737  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Fascial_Activation_Application_Method.json
-2026-09-11 00:29:59,867  INFO      START  nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (957 MB)
-2026-09-11 00:29:59,867  INFO      Using existing segments for NRT_Sports_Specific_or_Universal_Reset.mp4: 2 parts
-2026-09-11 00:29:59,867  INFO      Transcribing 2 segments for NRT_Sports_Specific_or_Universal_Reset.mp4
-2026-09-11 00:30:00,000  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
-2026-09-11 00:30:00,002  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
-2026-09-11 00:30:00,132  INFO      Queue empty — 13 video(s) processed. Exiting.
-2026-09-11 00:30:00,196  INFO      Transcription queue manager done
+2026-09-11 00:30:30,465  INFO      Queue paused (pause flag set) — waiting 30s
+2026-09-11 00:31:00,465  INFO      Queue paused (pause flag set) — waiting 30s
+2026-09-11 00:31:30,466  INFO      Queue paused (pause flag set) — waiting 30s
+2026-09-11 00:32:00,466  INFO      Queue paused (pause flag set) — waiting 30s
+2026-09-11 00:32:30,467  INFO      Queue paused (pause flag set) — waiting 30s
+2026-09-11 00:33:00,467  INFO      Queue paused (pause flag set) — waiting 30s
+2026-09-11 00:33:30,467  INFO      Queue paused (pause flag set) — waiting 30s
+2026-09-11 00:34:00,468  INFO      Queue paused (pause flag set) — waiting 30s
+2026-09-11 00:34:30,468  INFO      Queue paused (pause flag set) — waiting 30s
+2026-09-11 00:35:00,468  INFO      Queue paused (pause flag set) — waiting 30s
 ```
