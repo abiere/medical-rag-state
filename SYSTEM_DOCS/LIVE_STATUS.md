@@ -1,11 +1,11 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-09-16 07:53:55 UTC**
+> Last update: **2026-09-16 07:58:58 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ✅ active |
+| transcription-queue | ⚠️ activating |
 | book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
@@ -25,25 +25,25 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `Everything_Reset_Sequence_-_Part_5.mp4` |
-| Queued | 7 |
+| Current job | idle |
+| Queued | 0 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 3.86 GB / 32.86 GB (12%) |
-| CPU | 5.3% |
-| Disk used | 95.3 GB / 322.3 GB (31%) |
-| Uptime | up 21 weeks, 5 days, 2 hours, 18 minutes |
+| RAM used | 3.8 GB / 32.86 GB (12%) |
+| CPU | 0.1% |
+| Disk used | 95.2 GB / 322.3 GB (31%) |
+| Uptime | up 21 weeks, 5 days, 2 hours, 23 minutes |
 
 ## Recent markers
-- `2026-09-16T07:53:55` **transcription_done** — Everything_Reset_Sequence_-_Part_4.mp4 complete (55/13)
-- `2026-09-16T07:53:55` **ingest_failed** — Everything_Reset_Sequence_-_Part_4.mp4 ingest FAILED
-- `2026-09-16T07:53:55` **transcription_done** — Everything_Reset_Sequence_-_Part_3.mp4 complete (55/13)
-- `2026-09-16T07:53:55` **ingest_failed** — Everything_Reset_Sequence_-_Part_3.mp4 ingest FAILED
-- `2026-09-16T07:53:55` **transcription_done** — Everything_Reset_Sequence_-_Part_2.mp4 complete (55/13)
+- `2026-09-16T07:58:29` **queue_empty** — All 13 videos transcribed
+- `2026-09-16T07:58:29` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-09-16T07:58:29` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-09-16T07:58:29` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-09-16T07:58:29` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-09-16 07:53:56,835  INFO      START  nrt/NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4  (990 MB)
-2026-09-16 07:53:56,836  INFO      Using existing segments for NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4: 2 parts
-2026-09-16 07:53:56,836  INFO      Transcribing 2 segments for NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4
-2026-09-16 07:53:56,981  INFO      DONE   nrt/NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4  (0s, 2 segments)
-2026-09-16 07:53:56,982  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.json
-2026-09-16 07:53:57,079  INFO      START  nrt/NRT_Fascial_Activation_Application_Method.mp4  (1871 MB)
-2026-09-16 07:53:57,080  INFO      Using existing segments for NRT_Fascial_Activation_Application_Method.mp4: 3 parts
-2026-09-16 07:53:57,080  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
-2026-09-16 07:53:57,245  INFO      DONE   nrt/NRT_Fascial_Activation_Application_Method.mp4  (0s, 3 segments)
-2026-09-16 07:53:57,245  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Fascial_Activation_Application_Method.json
+2026-09-16 07:59:00,080  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
+2026-09-16 07:59:00,080  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
+2026-09-16 07:59:00,081  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
+2026-09-16 07:59:00,204  INFO      DONE   nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (0s, 2 segments)
+2026-09-16 07:59:00,205  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.json
+2026-09-16 07:59:00,335  INFO      START  nrt/Everything_Reset_Sequence_-_Part_1.mp4  (649 MB)
+2026-09-16 07:59:00,335  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_1.mp4: 3 parts
+2026-09-16 07:59:00,335  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_1.mp4
+2026-09-16 07:59:00,519  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_1.mp4  (0s, 3 segments)
+2026-09-16 07:59:00,520  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_1.json
 ```
