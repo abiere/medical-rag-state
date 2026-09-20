@@ -1,12 +1,12 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-09-20 00:40:06 UTC**
+> Last update: **2026-09-20 00:45:10 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
 | transcription-queue | ✅ active |
-| book-ingest-queue | ✅ active |
+| book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
 | ollama | ✅ healthy |
@@ -26,24 +26,24 @@
 | Metric | Value |
 |---|---|
 | Current job | idle |
-| Queued | 12 |
+| Queued | 11 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 2.87 GB / 32.86 GB (9%) |
-| CPU | 6.4% |
+| RAM used | 2.75 GB / 32.86 GB (8%) |
+| CPU | 5.8% |
 | Disk used | 98.3 GB / 322.3 GB (32%) |
-| Uptime | up 22 weeks, 1 day, 19 hours, 4 minutes |
+| Uptime | up 22 weeks, 1 day, 19 hours, 9 minutes |
 
 ## Recent markers
-- `2026-09-20T00:30:09` **transcription_done** — 1.Upper_Body_Techniques.mp4 complete (55/13)
-- `2026-09-20T00:30:09` **ingest_failed** — 1.Upper_Body_Techniques.mp4 ingest FAILED
-- `2026-09-20T00:29:38` **queue_empty** — All 13 videos transcribed
-- `2026-09-20T00:29:38` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
-- `2026-09-20T00:29:38` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-09-20T00:45:10` **transcription_done** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 complete (55/13)
+- `2026-09-20T00:45:10` **ingest_failed** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 ingest FAILED
+- `2026-09-20T00:45:10` **transcription_done** — 1.Upper_Body_Techniques.mp4 complete (55/13)
+- `2026-09-20T00:45:10` **ingest_failed** — 1.Upper_Body_Techniques.mp4 ingest FAILED
+- `2026-09-20T00:44:39` **queue_empty** — All 13 videos transcribed
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-09-20 00:35:09,591  INFO      Queue paused (pause flag set) — waiting 30s
-2026-09-20 00:35:39,592  INFO      Queue paused (pause flag set) — waiting 30s
-2026-09-20 00:36:09,592  INFO      Queue paused (pause flag set) — waiting 30s
-2026-09-20 00:36:39,592  INFO      Queue paused (pause flag set) — waiting 30s
-2026-09-20 00:37:09,593  INFO      Queue paused (pause flag set) — waiting 30s
-2026-09-20 00:37:39,593  INFO      Queue paused (pause flag set) — waiting 30s
-2026-09-20 00:38:09,594  INFO      Queue paused (pause flag set) — waiting 30s
-2026-09-20 00:38:39,594  INFO      Queue paused (pause flag set) — waiting 30s
-2026-09-20 00:39:09,594  INFO      Queue paused (pause flag set) — waiting 30s
-2026-09-20 00:39:39,595  INFO      Queue paused (pause flag set) — waiting 30s
+2026-09-20 00:45:11,724  INFO      START  nrt/Everything_Reset_Sequence_-_Part_4.mp4  (690 MB)
+2026-09-20 00:45:11,724  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_4.mp4: 3 parts
+2026-09-20 00:45:11,725  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_4.mp4
+2026-09-20 00:45:11,901  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_4.mp4  (0s, 3 segments)
+2026-09-20 00:45:11,901  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_4.json
+2026-09-20 00:45:12,031  INFO      START  nrt/Everything_Reset_Sequence_-_Part_5.mp4  (618 MB)
+2026-09-20 00:45:12,031  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_5.mp4: 3 parts
+2026-09-20 00:45:12,031  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_5.mp4
+2026-09-20 00:45:12,205  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_5.mp4  (0s, 3 segments)
+2026-09-20 00:45:12,206  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_5.json
 ```
