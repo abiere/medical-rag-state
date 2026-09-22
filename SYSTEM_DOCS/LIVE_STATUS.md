@@ -1,11 +1,11 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-09-22 05:07:40 UTC**
+> Last update: **2026-09-22 05:12:43 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ✅ active |
+| transcription-queue | ⚠️ activating |
 | book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
@@ -26,24 +26,24 @@
 | Metric | Value |
 |---|---|
 | Current job | idle |
-| Queued | 11 |
+| Queued | 0 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 2.78 GB / 32.86 GB (8%) |
-| CPU | 5.4% |
+| RAM used | 2.8 GB / 32.86 GB (8%) |
+| CPU | 0.0% |
 | Disk used | 98.4 GB / 322.3 GB (32%) |
-| Uptime | up 22 weeks, 3 days, 23 hours, 32 minutes |
+| Uptime | up 22 weeks, 3 days, 23 hours, 37 minutes |
 
 ## Recent markers
-- `2026-09-22T05:07:40` **transcription_done** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 complete (55/13)
-- `2026-09-22T05:07:40` **ingest_failed** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 ingest FAILED
-- `2026-09-22T05:07:40` **transcription_done** — 1.Upper_Body_Techniques.mp4 complete (55/13)
-- `2026-09-22T05:07:40` **ingest_failed** — 1.Upper_Body_Techniques.mp4 ingest FAILED
-- `2026-09-22T05:07:10` **queue_empty** — All 13 videos transcribed
+- `2026-09-22T05:12:14` **queue_empty** — All 13 videos transcribed
+- `2026-09-22T05:12:14` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-09-22T05:12:14` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-09-22T05:12:14` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-09-22T05:12:14` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-09-22 05:07:41,635  INFO      START  nrt/Everything_Reset_Sequence_-_Part_4.mp4  (690 MB)
-2026-09-22 05:07:41,636  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_4.mp4: 3 parts
-2026-09-22 05:07:41,636  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_4.mp4
-2026-09-22 05:07:41,810  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_4.mp4  (0s, 3 segments)
-2026-09-22 05:07:41,811  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_4.json
-2026-09-22 05:07:41,941  INFO      START  nrt/Everything_Reset_Sequence_-_Part_5.mp4  (618 MB)
-2026-09-22 05:07:41,941  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_5.mp4: 3 parts
-2026-09-22 05:07:41,941  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_5.mp4
-2026-09-22 05:07:42,114  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_5.mp4  (0s, 3 segments)
-2026-09-22 05:07:42,114  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_5.json
+2026-09-22 05:12:14,826  INFO      Queue empty — 13 video(s) processed. Exiting.
+2026-09-22 05:12:14,891  INFO      Transcription queue manager done
+2026-09-22 05:12:44,962  INFO      ────────────────────────────────────────────────────────────
+2026-09-22 05:12:44,962  INFO      Transcription queue manager started
+2026-09-22 05:12:44,964  INFO      Startup scan: 13 untranscribed video(s) found, 13 new entry/entries added to queue
+2026-09-22 05:12:44,964  INFO      START  nrt/1.Upper_Body_Techniques.mp4  (525 MB)
+2026-09-22 05:12:44,964  INFO      Using existing segments for 1.Upper_Body_Techniques.mp4: 4 parts
+2026-09-22 05:12:44,964  INFO      Transcribing 4 segments for 1.Upper_Body_Techniques.mp4
+2026-09-22 05:12:45,206  INFO      DONE   nrt/1.Upper_Body_Techniques.mp4  (0s, 4 segments)
+2026-09-22 05:12:45,207  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/1.Upper_Body_Techniques.json
 ```
