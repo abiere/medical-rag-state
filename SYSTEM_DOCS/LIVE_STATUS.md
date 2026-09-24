@@ -1,12 +1,12 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-09-24 00:28:45 UTC**
+> Last update: **2026-09-24 00:33:45 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ⚠️ activating |
-| book-ingest-queue | ❌ inactive |
+| transcription-queue | ✅ active |
+| book-ingest-queue | ✅ active |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
 | ollama | ✅ healthy |
@@ -26,24 +26,24 @@
 | Metric | Value |
 |---|---|
 | Current job | idle |
-| Queued | 0 |
+| Queued | 9 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 2.74 GB / 32.86 GB (8%) |
-| CPU | 1.4% |
+| RAM used | 3.36 GB / 32.86 GB (10%) |
+| CPU | 6.7% |
 | Disk used | 98.7 GB / 322.3 GB (32%) |
-| Uptime | up 22 weeks, 5 days, 18 hours, 53 minutes |
+| Uptime | up 22 weeks, 5 days, 18 hours, 58 minutes |
 
 ## Recent markers
-- `2026-09-24T00:28:40` **queue_empty** — All 13 videos transcribed
-- `2026-09-24T00:28:40` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
-- `2026-09-24T00:28:40` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
-- `2026-09-24T00:28:40` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
-- `2026-09-24T00:28:40` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
+- `2026-09-24T00:30:53` **transcription_done** — Everything_Reset_Sequence_-_Part_2.mp4 complete (55/13)
+- `2026-09-24T00:30:53` **ingest_failed** — Everything_Reset_Sequence_-_Part_2.mp4 ingest FAILED
+- `2026-09-24T00:30:53` **transcription_done** — Everything_Reset_Sequence_-_Part_1.mp4 complete (55/13)
+- `2026-09-24T00:30:53` **ingest_failed** — Everything_Reset_Sequence_-_Part_1.mp4 ingest FAILED
+- `2026-09-24T00:30:53` **transcription_done** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 complete (55/13)
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-09-24 00:28:40,251  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
-2026-09-24 00:28:40,418  INFO      DONE   nrt/NRT_Fascial_Activation_Application_Method.mp4  (0s, 3 segments)
-2026-09-24 00:28:40,418  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Fascial_Activation_Application_Method.json
-2026-09-24 00:28:40,483  INFO      START  nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (957 MB)
-2026-09-24 00:28:40,484  INFO      Using existing segments for NRT_Sports_Specific_or_Universal_Reset.mp4: 2 parts
-2026-09-24 00:28:40,484  INFO      Transcribing 2 segments for NRT_Sports_Specific_or_Universal_Reset.mp4
-2026-09-24 00:28:40,595  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
-2026-09-24 00:28:40,596  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
-2026-09-24 00:28:40,692  INFO      Queue empty — 13 video(s) processed. Exiting.
-2026-09-24 00:28:40,757  INFO      Transcription queue manager done
+2026-09-24 00:30:53,714  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_2.mp4: 3 parts
+2026-09-24 00:30:53,714  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_2.mp4
+2026-09-24 00:30:53,889  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_2.mp4  (0s, 3 segments)
+2026-09-24 00:30:53,890  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_2.json
+2026-09-24 00:30:54,019  INFO      Queue paused (pause flag set) — waiting 30s
+2026-09-24 00:31:24,020  INFO      Queue paused (pause flag set) — waiting 30s
+2026-09-24 00:31:54,020  INFO      Queue paused (pause flag set) — waiting 30s
+2026-09-24 00:32:24,020  INFO      Queue paused (pause flag set) — waiting 30s
+2026-09-24 00:32:54,021  INFO      Queue paused (pause flag set) — waiting 30s
+2026-09-24 00:33:24,021  INFO      Queue paused (pause flag set) — waiting 30s
 ```
