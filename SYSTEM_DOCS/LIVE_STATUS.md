@@ -1,11 +1,11 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-10-05 05:47:07 UTC**
+> Last update: **2026-10-05 05:52:10 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ✅ active |
+| transcription-queue | ⚠️ activating |
 | book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
@@ -25,25 +25,25 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4` |
-| Queued | 3 |
+| Current job | idle |
+| Queued | 11 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 2.85 GB / 32.86 GB (9%) |
-| CPU | 8.6% |
+| RAM used | 2.79 GB / 32.86 GB (8%) |
+| CPU | 5.9% |
 | Disk used | 98.8 GB / 322.3 GB (32%) |
-| Uptime | up 24 weeks, 3 days, 11 minutes |
+| Uptime | up 24 weeks, 3 days, 16 minutes |
 
 ## Recent markers
-- `2026-10-05T05:47:08` **transcription_done** — Miraculous_Sequence_-_Part_2.mp4 complete (55/13)
-- `2026-10-05T05:47:08` **ingest_failed** — Miraculous_Sequence_-_Part_2.mp4 ingest FAILED
-- `2026-10-05T05:47:08` **transcription_done** — Miraculous_Sequence_-_Part_1.mp4 complete (55/13)
-- `2026-10-05T05:47:08` **ingest_failed** — Miraculous_Sequence_-_Part_1.mp4 ingest FAILED
-- `2026-10-05T05:47:07` **transcription_done** — How_to_Reset_23_More_Muscles.mp4 complete (55/13)
+- `2026-10-05T05:52:11` **transcription_done** — 1.Upper_Body_Techniques.mp4 complete (55/13)
+- `2026-10-05T05:52:11` **ingest_failed** — 1.Upper_Body_Techniques.mp4 ingest FAILED
+- `2026-10-05T05:51:40` **queue_empty** — All 13 videos transcribed
+- `2026-10-05T05:51:40` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-10-05T05:51:40` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-10-05 05:47:08,781  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
-2026-10-05 05:47:08,962  INFO      DONE   nrt/NRT_Fascial_Activation_Application_Method.mp4  (0s, 3 segments)
-2026-10-05 05:47:08,963  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Fascial_Activation_Application_Method.json
-2026-10-05 05:47:09,093  INFO      START  nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (957 MB)
-2026-10-05 05:47:09,093  INFO      Using existing segments for NRT_Sports_Specific_or_Universal_Reset.mp4: 2 parts
-2026-10-05 05:47:09,093  INFO      Transcribing 2 segments for NRT_Sports_Specific_or_Universal_Reset.mp4
-2026-10-05 05:47:09,219  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
-2026-10-05 05:47:09,220  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
-2026-10-05 05:47:09,350  INFO      Queue empty — 13 video(s) processed. Exiting.
-2026-10-05 05:47:09,414  INFO      Transcription queue manager done
+2026-10-05 05:52:12,669  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_4.mp4  (0s, 3 segments)
+2026-10-05 05:52:12,670  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_4.json
+2026-10-05 05:52:12,799  INFO      START  nrt/Everything_Reset_Sequence_-_Part_5.mp4  (618 MB)
+2026-10-05 05:52:12,800  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_5.mp4: 3 parts
+2026-10-05 05:52:12,800  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_5.mp4
+2026-10-05 05:52:12,986  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_5.mp4  (0s, 3 segments)
+2026-10-05 05:52:12,987  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_5.json
+2026-10-05 05:52:13,085  INFO      START  nrt/How_to_Reset_23_More_Muscles.mp4  (412 MB)
+2026-10-05 05:52:13,085  INFO      Using existing segments for How_to_Reset_23_More_Muscles.mp4: 2 parts
+2026-10-05 05:52:13,085  INFO      Transcribing 2 segments for How_to_Reset_23_More_Muscles.mp4
 ```
