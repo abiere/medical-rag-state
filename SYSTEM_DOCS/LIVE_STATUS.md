@@ -1,12 +1,12 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-10-06 00:38:32 UTC**
+> Last update: **2026-10-06 00:43:33 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ✅ active |
-| book-ingest-queue | ✅ active |
+| transcription-queue | ⚠️ activating |
+| book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
 | ollama | ✅ healthy |
@@ -25,25 +25,25 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | idle |
-| Queued | 12 |
+| Current job | `1.Upper_Body_Techniques.mp4` |
+| Queued | 13 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 9.27 GB / 32.86 GB (28%) |
-| CPU | 55.6% |
+| RAM used | 8.72 GB / 32.86 GB (26%) |
+| CPU | 51.4% |
 | Disk used | 98.9 GB / 322.3 GB (32%) |
-| Uptime | up 24 weeks, 3 days, 19 hours, 3 minutes |
+| Uptime | up 24 weeks, 3 days, 19 hours, 8 minutes |
 
 ## Recent markers
-- `2026-10-06T00:30:59` **transcription_done** — 1.Upper_Body_Techniques.mp4 complete (55/13)
-- `2026-10-06T00:30:59` **ingest_failed** — 1.Upper_Body_Techniques.mp4 ingest FAILED
-- `2026-10-06T00:30:29` **queue_empty** — All 13 videos transcribed
-- `2026-10-06T00:30:28` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
-- `2026-10-06T00:30:28` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-10-06T00:43:03` **queue_empty** — All 13 videos transcribed
+- `2026-10-06T00:43:03` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-10-06T00:43:03` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-10-06T00:43:03` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-10-06T00:43:02` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-10-06 00:33:59,595  INFO      Queue paused (pause flag set) — waiting 30s
-2026-10-06 00:34:29,595  INFO      Queue paused (pause flag set) — waiting 30s
-2026-10-06 00:34:59,596  INFO      Queue paused (pause flag set) — waiting 30s
-2026-10-06 00:35:29,596  INFO      Queue paused (pause flag set) — waiting 30s
-2026-10-06 00:35:59,597  INFO      Queue paused (pause flag set) — waiting 30s
-2026-10-06 00:36:29,597  INFO      Queue paused (pause flag set) — waiting 30s
-2026-10-06 00:36:59,597  INFO      Queue paused (pause flag set) — waiting 30s
-2026-10-06 00:37:29,598  INFO      Queue paused (pause flag set) — waiting 30s
-2026-10-06 00:37:59,598  INFO      Queue paused (pause flag set) — waiting 30s
-2026-10-06 00:38:29,599  INFO      Queue paused (pause flag set) — waiting 30s
+2026-10-06 00:43:36,781  INFO      START  nrt/Miraculous_Sequence_-_Part_2.mp4  (664 MB)
+2026-10-06 00:43:36,781  INFO      Using existing segments for Miraculous_Sequence_-_Part_2.mp4: 2 parts
+2026-10-06 00:43:36,782  INFO      Transcribing 2 segments for Miraculous_Sequence_-_Part_2.mp4
+2026-10-06 00:43:36,935  INFO      DONE   nrt/Miraculous_Sequence_-_Part_2.mp4  (0s, 2 segments)
+2026-10-06 00:43:36,936  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Miraculous_Sequence_-_Part_2.json
+2026-10-06 00:43:37,066  INFO      START  nrt/NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4  (990 MB)
+2026-10-06 00:43:37,066  INFO      Using existing segments for NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4: 2 parts
+2026-10-06 00:43:37,066  INFO      Transcribing 2 segments for NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4
+2026-10-06 00:43:37,219  INFO      DONE   nrt/NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4  (0s, 2 segments)
+2026-10-06 00:43:37,219  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.json
 ```
