@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-10-09 04:59:10 UTC**
+> Last update: **2026-10-09 05:04:15 UTC**
 
 ## Services
 | Service | Status |
@@ -25,8 +25,8 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `1.Upper_Body_Techniques.mp4` |
-| Queued | 13 |
+| Current job | idle |
+| Queued | 0 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
@@ -34,16 +34,16 @@
 | Metric | Value |
 |---|---|
 | RAM used | 2.79 GB / 32.86 GB (8%) |
-| CPU | 1.7% |
+| CPU | 1.4% |
 | Disk used | 99.1 GB / 322.3 GB (32%) |
-| Uptime | up 24 weeks, 6 days, 23 hours, 23 minutes |
+| Uptime | up 24 weeks, 6 days, 23 hours, 28 minutes |
 
 ## Recent markers
-- `2026-10-09T04:58:40` **queue_empty** — All 13 videos transcribed
-- `2026-10-09T04:58:40` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
-- `2026-10-09T04:58:40` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
-- `2026-10-09T04:58:40` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
-- `2026-10-09T04:58:40` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
+- `2026-10-09T05:03:46` **queue_empty** — All 13 videos transcribed
+- `2026-10-09T05:03:46` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-10-09T05:03:45` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-10-09T05:03:45` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-10-09T05:03:45` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-10-09 04:59:11,933  INFO      START  nrt/Everything_Reset_Sequence_-_Part_3.mp4  (565 MB)
-2026-10-09 04:59:11,934  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_3.mp4: 2 parts
-2026-10-09 04:59:11,934  INFO      Transcribing 2 segments for Everything_Reset_Sequence_-_Part_3.mp4
-2026-10-09 04:59:12,051  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_3.mp4  (0s, 2 segments)
-2026-10-09 04:59:12,052  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_3.json
-2026-10-09 04:59:12,181  INFO      START  nrt/Everything_Reset_Sequence_-_Part_4.mp4  (690 MB)
-2026-10-09 04:59:12,182  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_4.mp4: 3 parts
-2026-10-09 04:59:12,182  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_4.mp4
-2026-10-09 04:59:12,376  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_4.mp4  (0s, 3 segments)
-2026-10-09 04:59:12,377  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_4.json
+2026-10-09 05:04:16,711  INFO      DONE   nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (0s, 2 segments)
+2026-10-09 05:04:16,712  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.json
+2026-10-09 05:04:16,841  INFO      START  nrt/Everything_Reset_Sequence_-_Part_1.mp4  (649 MB)
+2026-10-09 05:04:16,842  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_1.mp4: 3 parts
+2026-10-09 05:04:16,842  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_1.mp4
+2026-10-09 05:04:17,023  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_1.mp4  (0s, 3 segments)
+2026-10-09 05:04:17,024  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_1.json
+2026-10-09 05:04:17,153  INFO      START  nrt/Everything_Reset_Sequence_-_Part_2.mp4  (499 MB)
+2026-10-09 05:04:17,154  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_2.mp4: 3 parts
+2026-10-09 05:04:17,154  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_2.mp4
 ```
