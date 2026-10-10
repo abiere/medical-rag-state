@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-10-10 00:35:45 UTC**
+> Last update: **2026-10-10 00:40:45 UTC**
 
 ## Services
 | Service | Status |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 3.04 GB / 32.86 GB (9%) |
-| CPU | 6.4% |
+| RAM used | 3.41 GB / 32.86 GB (10%) |
+| CPU | 6.6% |
 | Disk used | 99.2 GB / 322.3 GB (32%) |
-| Uptime | up 25 weeks, 19 hours, 0 minutes |
+| Uptime | up 25 weeks, 19 hours, 5 minutes |
 
 ## Recent markers
 - `2026-10-10T00:30:24` **queue_empty** — All 13 videos transcribed
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-10-10 00:30:54,224  INFO      Queue paused (pause flag set) — waiting 30s
-2026-10-10 00:31:24,225  INFO      Queue paused (pause flag set) — waiting 30s
-2026-10-10 00:31:54,225  INFO      Queue paused (pause flag set) — waiting 30s
-2026-10-10 00:32:24,225  INFO      Queue paused (pause flag set) — waiting 30s
-2026-10-10 00:32:54,226  INFO      Queue paused (pause flag set) — waiting 30s
-2026-10-10 00:33:24,226  INFO      Queue paused (pause flag set) — waiting 30s
-2026-10-10 00:33:54,226  INFO      Queue paused (pause flag set) — waiting 30s
-2026-10-10 00:34:24,227  INFO      Queue paused (pause flag set) — waiting 30s
-2026-10-10 00:34:54,227  INFO      Queue paused (pause flag set) — waiting 30s
-2026-10-10 00:35:24,227  INFO      Queue paused (pause flag set) — waiting 30s
+2026-10-10 00:35:54,228  INFO      Queue paused (pause flag set) — waiting 30s
+2026-10-10 00:36:24,228  INFO      Queue paused (pause flag set) — waiting 30s
+2026-10-10 00:36:54,229  INFO      Queue paused (pause flag set) — waiting 30s
+2026-10-10 00:37:24,229  INFO      Queue paused (pause flag set) — waiting 30s
+2026-10-10 00:37:54,229  INFO      Queue paused (pause flag set) — waiting 30s
+2026-10-10 00:38:24,230  INFO      Queue paused (pause flag set) — waiting 30s
+2026-10-10 00:38:54,230  INFO      Queue paused (pause flag set) — waiting 30s
+2026-10-10 00:39:24,230  INFO      Queue paused (pause flag set) — waiting 30s
+2026-10-10 00:39:54,231  INFO      Queue paused (pause flag set) — waiting 30s
+2026-10-10 00:40:24,231  INFO      Queue paused (pause flag set) — waiting 30s
 ```
