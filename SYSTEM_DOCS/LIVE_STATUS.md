@@ -1,11 +1,11 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-10-12 10:04:08 UTC**
+> Last update: **2026-10-12 10:09:10 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ✅ active |
+| transcription-queue | ⚠️ activating |
 | book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
@@ -25,25 +25,25 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | idle |
-| Queued | 0 |
+| Current job | `1.Upper_Body_Techniques.mp4` |
+| Queued | 13 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 9.47 GB / 32.86 GB (29%) |
-| CPU | 47.2% |
+| RAM used | 9.51 GB / 32.86 GB (29%) |
+| CPU | 2.5% |
 | Disk used | 118.3 GB / 322.3 GB (38%) |
-| Uptime | up 25 weeks, 3 days, 4 hours, 28 minutes |
+| Uptime | up 25 weeks, 3 days, 4 hours, 33 minutes |
 
 ## Recent markers
-- `2026-10-12T10:04:08` **queue_empty** — All 13 videos transcribed
-- `2026-10-12T10:04:08` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
-- `2026-10-12T10:04:08` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
-- `2026-10-12T10:04:08` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
-- `2026-10-12T10:04:08` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
+- `2026-10-12T10:08:40` **queue_empty** — All 13 videos transcribed
+- `2026-10-12T10:08:40` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-10-12T10:08:40` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-10-12T10:08:40` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-10-12T10:08:40` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-10-12 10:04:07,828  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
-2026-10-12 10:04:08,128  INFO      DONE   nrt/NRT_Fascial_Activation_Application_Method.mp4  (0s, 3 segments)
-2026-10-12 10:04:08,129  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Fascial_Activation_Application_Method.json
-2026-10-12 10:04:08,259  INFO      START  nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (957 MB)
-2026-10-12 10:04:08,259  INFO      Using existing segments for NRT_Sports_Specific_or_Universal_Reset.mp4: 2 parts
-2026-10-12 10:04:08,259  INFO      Transcribing 2 segments for NRT_Sports_Specific_or_Universal_Reset.mp4
-2026-10-12 10:04:08,395  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
-2026-10-12 10:04:08,396  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
-2026-10-12 10:04:08,526  INFO      Queue empty — 13 video(s) processed. Exiting.
-2026-10-12 10:04:08,591  INFO      Transcription queue manager done
+2026-10-12 10:09:13,229  INFO      DONE   nrt/Miraculous_Sequence_-_Part_1.mp4  (0s, 2 segments)
+2026-10-12 10:09:13,229  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Miraculous_Sequence_-_Part_1.json
+2026-10-12 10:09:13,359  INFO      START  nrt/Miraculous_Sequence_-_Part_2.mp4  (664 MB)
+2026-10-12 10:09:13,359  INFO      Using existing segments for Miraculous_Sequence_-_Part_2.mp4: 2 parts
+2026-10-12 10:09:13,359  INFO      Transcribing 2 segments for Miraculous_Sequence_-_Part_2.mp4
+2026-10-12 10:09:13,477  INFO      DONE   nrt/Miraculous_Sequence_-_Part_2.mp4  (0s, 2 segments)
+2026-10-12 10:09:13,477  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Miraculous_Sequence_-_Part_2.json
+2026-10-12 10:09:13,607  INFO      START  nrt/NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4  (990 MB)
+2026-10-12 10:09:13,607  INFO      Using existing segments for NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4: 2 parts
+2026-10-12 10:09:13,608  INFO      Transcribing 2 segments for NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4
 ```
