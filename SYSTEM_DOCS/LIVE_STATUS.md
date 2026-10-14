@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-10-14 00:37:12 UTC**
+> Last update: **2026-10-14 00:42:13 UTC**
 
 ## Services
 | Service | Status |
@@ -33,10 +33,10 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 3.51 GB / 32.86 GB (11%) |
-| CPU | 6.3% |
+| RAM used | 3.65 GB / 32.86 GB (11%) |
+| CPU | 5.8% |
 | Disk used | 118.4 GB / 322.3 GB (38%) |
-| Uptime | up 25 weeks, 4 days, 19 hours, 1 minute |
+| Uptime | up 25 weeks, 4 days, 19 hours, 6 minutes |
 
 ## Recent markers
 - `2026-10-14T00:31:42` **transcription_done** — 1.Upper_Body_Techniques.mp4 complete (55/13)
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-10-14 00:32:42,344  INFO      Queue paused (pause flag set) — waiting 30s
-2026-10-14 00:33:12,345  INFO      Queue paused (pause flag set) — waiting 30s
-2026-10-14 00:33:42,345  INFO      Queue paused (pause flag set) — waiting 30s
-2026-10-14 00:34:12,346  INFO      Queue paused (pause flag set) — waiting 30s
-2026-10-14 00:34:42,346  INFO      Queue paused (pause flag set) — waiting 30s
-2026-10-14 00:35:12,346  INFO      Queue paused (pause flag set) — waiting 30s
-2026-10-14 00:35:42,347  INFO      Queue paused (pause flag set) — waiting 30s
-2026-10-14 00:36:12,347  INFO      Queue paused (pause flag set) — waiting 30s
-2026-10-14 00:36:42,348  INFO      Queue paused (pause flag set) — waiting 30s
-2026-10-14 00:37:12,348  INFO      Queue paused (pause flag set) — waiting 30s
+2026-10-14 00:37:42,349  INFO      Queue paused (pause flag set) — waiting 30s
+2026-10-14 00:38:12,349  INFO      Queue paused (pause flag set) — waiting 30s
+2026-10-14 00:38:42,350  INFO      Queue paused (pause flag set) — waiting 30s
+2026-10-14 00:39:12,350  INFO      Queue paused (pause flag set) — waiting 30s
+2026-10-14 00:39:42,350  INFO      Queue paused (pause flag set) — waiting 30s
+2026-10-14 00:40:12,351  INFO      Queue paused (pause flag set) — waiting 30s
+2026-10-14 00:40:42,351  INFO      Queue paused (pause flag set) — waiting 30s
+2026-10-14 00:41:12,352  INFO      Queue paused (pause flag set) — waiting 30s
+2026-10-14 00:41:42,352  INFO      Queue paused (pause flag set) — waiting 30s
+2026-10-14 00:42:12,353  INFO      Queue paused (pause flag set) — waiting 30s
 ```
