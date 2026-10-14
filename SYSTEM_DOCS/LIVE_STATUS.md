@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-10-14 17:12:56 UTC**
+> Last update: **2026-10-14 17:18:00 UTC**
 
 ## Services
 | Service | Status |
@@ -25,25 +25,25 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | `NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4` |
-| Queued | 3 |
+| Current job | idle |
+| Queued | 11 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 3.3 GB / 32.86 GB (10%) |
-| CPU | 8.9% |
+| RAM used | 3.25 GB / 32.86 GB (10%) |
+| CPU | 7.3% |
 | Disk used | 118.5 GB / 322.3 GB (38%) |
-| Uptime | up 25 weeks, 5 days, 11 hours, 37 minutes |
+| Uptime | up 25 weeks, 5 days, 11 hours, 42 minutes |
 
 ## Recent markers
-- `2026-10-14T17:12:57` **transcription_done** — Miraculous_Sequence_-_Part_2.mp4 complete (55/13)
-- `2026-10-14T17:12:57` **ingest_failed** — Miraculous_Sequence_-_Part_2.mp4 ingest FAILED
-- `2026-10-14T17:12:57` **transcription_done** — Miraculous_Sequence_-_Part_1.mp4 complete (55/13)
-- `2026-10-14T17:12:57` **ingest_failed** — Miraculous_Sequence_-_Part_1.mp4 ingest FAILED
-- `2026-10-14T17:12:57` **transcription_done** — How_to_Reset_23_More_Muscles.mp4 complete (55/13)
+- `2026-10-14T17:18:00` **transcription_done** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 complete (55/13)
+- `2026-10-14T17:18:00` **ingest_failed** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 ingest FAILED
+- `2026-10-14T17:18:00` **transcription_done** — 1.Upper_Body_Techniques.mp4 complete (55/13)
+- `2026-10-14T17:18:00` **ingest_failed** — 1.Upper_Body_Techniques.mp4 ingest FAILED
+- `2026-10-14T17:17:29` **queue_empty** — All 13 videos transcribed
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-10-14 17:12:57,749  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
-2026-10-14 17:12:57,929  INFO      DONE   nrt/NRT_Fascial_Activation_Application_Method.mp4  (0s, 3 segments)
-2026-10-14 17:12:57,929  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Fascial_Activation_Application_Method.json
-2026-10-14 17:12:58,059  INFO      START  nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (957 MB)
-2026-10-14 17:12:58,060  INFO      Using existing segments for NRT_Sports_Specific_or_Universal_Reset.mp4: 2 parts
-2026-10-14 17:12:58,060  INFO      Transcribing 2 segments for NRT_Sports_Specific_or_Universal_Reset.mp4
-2026-10-14 17:12:58,167  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
-2026-10-14 17:12:58,168  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
-2026-10-14 17:12:58,297  INFO      Queue empty — 13 video(s) processed. Exiting.
-2026-10-14 17:12:58,362  INFO      Transcription queue manager done
+2026-10-14 17:18:02,118  INFO      START  nrt/Everything_Reset_Sequence_-_Part_5.mp4  (618 MB)
+2026-10-14 17:18:02,119  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_5.mp4: 3 parts
+2026-10-14 17:18:02,119  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_5.mp4
+2026-10-14 17:18:02,319  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_5.mp4  (0s, 3 segments)
+2026-10-14 17:18:02,320  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_5.json
+2026-10-14 17:18:02,449  INFO      START  nrt/How_to_Reset_23_More_Muscles.mp4  (412 MB)
+2026-10-14 17:18:02,449  INFO      Using existing segments for How_to_Reset_23_More_Muscles.mp4: 2 parts
+2026-10-14 17:18:02,449  INFO      Transcribing 2 segments for How_to_Reset_23_More_Muscles.mp4
+2026-10-14 17:18:02,572  INFO      DONE   nrt/How_to_Reset_23_More_Muscles.mp4  (0s, 2 segments)
+2026-10-14 17:18:02,573  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/How_to_Reset_23_More_Muscles.json
 ```
