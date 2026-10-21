@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-10-21 00:44:13 UTC**
+> Last update: **2026-10-21 00:49:15 UTC**
 
 ## Services
 | Service | Status |
@@ -25,25 +25,25 @@
 ## Video Transcription
 | Metric | Value |
 |---|---|
-| Current job | idle |
-| Queued | 0 |
+| Current job | `2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4` |
+| Queued | 12 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 3.34 GB / 32.86 GB (10%) |
-| CPU | 0.0% |
+| RAM used | 3.31 GB / 32.86 GB (10%) |
+| CPU | 4.8% |
 | Disk used | 118.6 GB / 322.3 GB (38%) |
-| Uptime | up 26 weeks, 4 days, 19 hours, 8 minutes |
+| Uptime | up 26 weeks, 4 days, 19 hours, 13 minutes |
 
 ## Recent markers
-- `2026-10-21T00:44:13` **queue_empty** — All 13 videos transcribed
-- `2026-10-21T00:44:13` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
-- `2026-10-21T00:44:13` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
-- `2026-10-21T00:44:12` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
-- `2026-10-21T00:44:12` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
+- `2026-10-21T00:49:15` **transcription_done** — 1.Upper_Body_Techniques.mp4 complete (55/13)
+- `2026-10-21T00:49:15` **ingest_failed** — 1.Upper_Body_Techniques.mp4 ingest FAILED
+- `2026-10-21T00:48:45` **queue_empty** — All 13 videos transcribed
+- `2026-10-21T00:48:45` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-10-21T00:48:45` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-10-21 00:44:12,684  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
-2026-10-21 00:44:12,856  INFO      DONE   nrt/NRT_Fascial_Activation_Application_Method.mp4  (0s, 3 segments)
-2026-10-21 00:44:12,857  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Fascial_Activation_Application_Method.json
-2026-10-21 00:44:12,987  INFO      START  nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (957 MB)
-2026-10-21 00:44:12,988  INFO      Using existing segments for NRT_Sports_Specific_or_Universal_Reset.mp4: 2 parts
-2026-10-21 00:44:12,988  INFO      Transcribing 2 segments for NRT_Sports_Specific_or_Universal_Reset.mp4
-2026-10-21 00:44:13,105  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
-2026-10-21 00:44:13,105  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
-2026-10-21 00:44:13,235  INFO      Queue empty — 13 video(s) processed. Exiting.
-2026-10-21 00:44:13,299  INFO      Transcription queue manager done
+2026-10-21 00:49:17,047  INFO      START  nrt/Everything_Reset_Sequence_-_Part_4.mp4  (690 MB)
+2026-10-21 00:49:17,047  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_4.mp4: 3 parts
+2026-10-21 00:49:17,047  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_4.mp4
+2026-10-21 00:49:17,218  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_4.mp4  (0s, 3 segments)
+2026-10-21 00:49:17,219  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_4.json
+2026-10-21 00:49:17,349  INFO      START  nrt/Everything_Reset_Sequence_-_Part_5.mp4  (618 MB)
+2026-10-21 00:49:17,349  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_5.mp4: 3 parts
+2026-10-21 00:49:17,350  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_5.mp4
+2026-10-21 00:49:17,524  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_5.mp4  (0s, 3 segments)
+2026-10-21 00:49:17,525  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_5.json
 ```
