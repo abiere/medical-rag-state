@@ -1,11 +1,11 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-11-03 04:47:47 UTC**
+> Last update: **2026-11-03 04:52:49 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ✅ active |
+| transcription-queue | ⚠️ activating |
 | book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
@@ -26,24 +26,24 @@
 | Metric | Value |
 |---|---|
 | Current job | idle |
-| Queued | 11 |
+| Queued | 0 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 3.31 GB / 32.86 GB (10%) |
-| CPU | 5.5% |
+| RAM used | 3.33 GB / 32.86 GB (10%) |
+| CPU | 0.1% |
 | Disk used | 119.0 GB / 322.3 GB (38%) |
-| Uptime | up 28 weeks, 3 days, 23 hours, 12 minutes |
+| Uptime | up 28 weeks, 3 days, 23 hours, 17 minutes |
 
 ## Recent markers
-- `2026-11-03T04:47:47` **ingest_failed** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 ingest FAILED
-- `2026-11-03T04:47:47` **transcription_done** — 1.Upper_Body_Techniques.mp4 complete (55/13)
-- `2026-11-03T04:47:47` **ingest_failed** — 1.Upper_Body_Techniques.mp4 ingest FAILED
-- `2026-11-03T04:47:16` **queue_empty** — All 13 videos transcribed
-- `2026-11-03T04:47:16` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-11-03T04:52:21` **queue_empty** — All 13 videos transcribed
+- `2026-11-03T04:52:21` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-11-03T04:52:21` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-11-03T04:52:21` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-11-03T04:52:21` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-11-03 04:47:49,789  INFO      DONE   nrt/Miraculous_Sequence_-_Part_1.mp4  (0s, 2 segments)
-2026-11-03 04:47:49,790  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Miraculous_Sequence_-_Part_1.json
-2026-11-03 04:47:49,919  INFO      START  nrt/Miraculous_Sequence_-_Part_2.mp4  (664 MB)
-2026-11-03 04:47:49,919  INFO      Using existing segments for Miraculous_Sequence_-_Part_2.mp4: 2 parts
-2026-11-03 04:47:49,920  INFO      Transcribing 2 segments for Miraculous_Sequence_-_Part_2.mp4
-2026-11-03 04:47:50,046  INFO      DONE   nrt/Miraculous_Sequence_-_Part_2.mp4  (0s, 2 segments)
-2026-11-03 04:47:50,047  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Miraculous_Sequence_-_Part_2.json
-2026-11-03 04:47:50,177  INFO      START  nrt/NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4  (990 MB)
-2026-11-03 04:47:50,178  INFO      Using existing segments for NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4: 2 parts
-2026-11-03 04:47:50,178  INFO      Transcribing 2 segments for NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4
+2026-11-03 04:52:52,474  INFO      DONE   nrt/1.Upper_Body_Techniques.mp4  (0s, 4 segments)
+2026-11-03 04:52:52,474  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/1.Upper_Body_Techniques.json
+2026-11-03 04:52:52,605  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
+2026-11-03 04:52:52,606  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
+2026-11-03 04:52:52,606  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
+2026-11-03 04:52:52,725  INFO      DONE   nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (0s, 2 segments)
+2026-11-03 04:52:52,726  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.json
+2026-11-03 04:52:52,855  INFO      START  nrt/Everything_Reset_Sequence_-_Part_1.mp4  (649 MB)
+2026-11-03 04:52:52,856  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_1.mp4: 3 parts
+2026-11-03 04:52:52,856  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_1.mp4
 ```
