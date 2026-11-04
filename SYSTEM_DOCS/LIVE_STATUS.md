@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-11-04 15:16:05 UTC**
+> Last update: **2026-11-04 15:21:11 UTC**
 
 ## Services
 | Service | Status |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 3.33 GB / 32.86 GB (10%) |
+| RAM used | 3.31 GB / 32.86 GB (10%) |
 | CPU | 5.8% |
 | Disk used | 119.1 GB / 322.3 GB (38%) |
-| Uptime | up 28 weeks, 5 days, 9 hours, 40 minutes |
+| Uptime | up 28 weeks, 5 days, 9 hours, 45 minutes |
 
 ## Recent markers
-- `2026-11-04T15:16:05` **ingest_failed** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 ingest FAILED
-- `2026-11-04T15:16:05` **transcription_done** — 1.Upper_Body_Techniques.mp4 complete (55/13)
-- `2026-11-04T15:16:05` **ingest_failed** — 1.Upper_Body_Techniques.mp4 ingest FAILED
-- `2026-11-04T15:15:35` **queue_empty** — All 13 videos transcribed
-- `2026-11-04T15:15:34` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-11-04T15:21:11` **ingest_failed** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 ingest FAILED
+- `2026-11-04T15:21:11` **transcription_done** — 1.Upper_Body_Techniques.mp4 complete (55/13)
+- `2026-11-04T15:21:11` **ingest_failed** — 1.Upper_Body_Techniques.mp4 ingest FAILED
+- `2026-11-04T15:20:40` **queue_empty** — All 13 videos transcribed
+- `2026-11-04T15:20:40` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-11-04 15:16:07,310  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_5.mp4  (0s, 3 segments)
-2026-11-04 15:16:07,311  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_5.json
-2026-11-04 15:16:07,441  INFO      START  nrt/How_to_Reset_23_More_Muscles.mp4  (412 MB)
-2026-11-04 15:16:07,441  INFO      Using existing segments for How_to_Reset_23_More_Muscles.mp4: 2 parts
-2026-11-04 15:16:07,441  INFO      Transcribing 2 segments for How_to_Reset_23_More_Muscles.mp4
-2026-11-04 15:16:07,590  INFO      DONE   nrt/How_to_Reset_23_More_Muscles.mp4  (0s, 2 segments)
-2026-11-04 15:16:07,591  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/How_to_Reset_23_More_Muscles.json
-2026-11-04 15:16:07,721  INFO      START  nrt/Miraculous_Sequence_-_Part_1.mp4  (689 MB)
-2026-11-04 15:16:07,722  INFO      Using existing segments for Miraculous_Sequence_-_Part_1.mp4: 2 parts
-2026-11-04 15:16:07,722  INFO      Transcribing 2 segments for Miraculous_Sequence_-_Part_1.mp4
+2026-11-04 15:21:13,430  INFO      START  nrt/How_to_Reset_23_More_Muscles.mp4  (412 MB)
+2026-11-04 15:21:13,431  INFO      Using existing segments for How_to_Reset_23_More_Muscles.mp4: 2 parts
+2026-11-04 15:21:13,431  INFO      Transcribing 2 segments for How_to_Reset_23_More_Muscles.mp4
+2026-11-04 15:21:13,557  INFO      DONE   nrt/How_to_Reset_23_More_Muscles.mp4  (0s, 2 segments)
+2026-11-04 15:21:13,558  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/How_to_Reset_23_More_Muscles.json
+2026-11-04 15:21:13,688  INFO      START  nrt/Miraculous_Sequence_-_Part_1.mp4  (689 MB)
+2026-11-04 15:21:13,689  INFO      Using existing segments for Miraculous_Sequence_-_Part_1.mp4: 2 parts
+2026-11-04 15:21:13,689  INFO      Transcribing 2 segments for Miraculous_Sequence_-_Part_1.mp4
+2026-11-04 15:21:13,816  INFO      DONE   nrt/Miraculous_Sequence_-_Part_1.mp4  (0s, 2 segments)
+2026-11-04 15:21:13,817  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Miraculous_Sequence_-_Part_1.json
 ```
