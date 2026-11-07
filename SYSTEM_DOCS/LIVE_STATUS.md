@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-11-07 11:08:29 UTC**
+> Last update: **2026-11-07 11:13:32 UTC**
 
 ## Services
 | Service | Status |
@@ -26,24 +26,24 @@
 | Metric | Value |
 |---|---|
 | Current job | idle |
-| Queued | 0 |
+| Queued | 11 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 9.18 GB / 32.86 GB (28%) |
-| CPU | 5.5% |
+| RAM used | 3.35 GB / 32.86 GB (10%) |
+| CPU | 7.0% |
 | Disk used | 119.3 GB / 322.3 GB (39%) |
-| Uptime | up 29 weeks, 1 day, 5 hours, 33 minutes |
+| Uptime | up 29 weeks, 1 day, 5 hours, 38 minutes |
 
 ## Recent markers
-- `2026-11-07T11:08:29` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
-- `2026-11-07T11:08:29` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
-- `2026-11-07T11:08:29` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
-- `2026-11-07T11:08:29` **transcription_done** — NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4 complete (55/13)
-- `2026-11-07T11:08:29` **ingest_failed** — NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4 ingest FAILED
+- `2026-11-07T11:13:32` **transcription_done** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 complete (55/13)
+- `2026-11-07T11:13:32` **ingest_failed** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 ingest FAILED
+- `2026-11-07T11:13:32` **transcription_done** — 1.Upper_Body_Techniques.mp4 complete (55/13)
+- `2026-11-07T11:13:32` **ingest_failed** — 1.Upper_Body_Techniques.mp4 ingest FAILED
+- `2026-11-07T11:13:01` **queue_empty** — All 13 videos transcribed
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-11-07 11:08:29,538  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
-2026-11-07 11:08:29,723  INFO      DONE   nrt/NRT_Fascial_Activation_Application_Method.mp4  (0s, 3 segments)
-2026-11-07 11:08:29,723  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Fascial_Activation_Application_Method.json
-2026-11-07 11:08:29,853  INFO      START  nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (957 MB)
-2026-11-07 11:08:29,853  INFO      Using existing segments for NRT_Sports_Specific_or_Universal_Reset.mp4: 2 parts
-2026-11-07 11:08:29,854  INFO      Transcribing 2 segments for NRT_Sports_Specific_or_Universal_Reset.mp4
-2026-11-07 11:08:29,981  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
-2026-11-07 11:08:29,982  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
-2026-11-07 11:08:30,111  INFO      Queue empty — 13 video(s) processed. Exiting.
-2026-11-07 11:08:30,176  INFO      Transcription queue manager done
+2026-11-07 11:13:34,232  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_5.mp4  (0s, 3 segments)
+2026-11-07 11:13:34,233  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_5.json
+2026-11-07 11:13:34,363  INFO      START  nrt/How_to_Reset_23_More_Muscles.mp4  (412 MB)
+2026-11-07 11:13:34,363  INFO      Using existing segments for How_to_Reset_23_More_Muscles.mp4: 2 parts
+2026-11-07 11:13:34,363  INFO      Transcribing 2 segments for How_to_Reset_23_More_Muscles.mp4
+2026-11-07 11:13:34,494  INFO      DONE   nrt/How_to_Reset_23_More_Muscles.mp4  (0s, 2 segments)
+2026-11-07 11:13:34,495  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/How_to_Reset_23_More_Muscles.json
+2026-11-07 11:13:34,625  INFO      START  nrt/Miraculous_Sequence_-_Part_1.mp4  (689 MB)
+2026-11-07 11:13:34,625  INFO      Using existing segments for Miraculous_Sequence_-_Part_1.mp4: 2 parts
+2026-11-07 11:13:34,625  INFO      Transcribing 2 segments for Miraculous_Sequence_-_Part_1.mp4
 ```
