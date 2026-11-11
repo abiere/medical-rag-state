@@ -1,11 +1,11 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-11-11 15:00:18 UTC**
+> Last update: **2026-11-11 15:05:21 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ⚠️ activating |
+| transcription-queue | ✅ active |
 | book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
@@ -26,24 +26,24 @@
 | Metric | Value |
 |---|---|
 | Current job | idle |
-| Queued | 0 |
+| Queued | 11 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 3.56 GB / 32.86 GB (11%) |
-| CPU | 1.1% |
+| RAM used | 3.54 GB / 32.86 GB (11%) |
+| CPU | 5.8% |
 | Disk used | 119.4 GB / 322.3 GB (39%) |
-| Uptime | up 29 weeks, 5 days, 9 hours, 24 minutes |
+| Uptime | up 29 weeks, 5 days, 9 hours, 30 minutes |
 
 ## Recent markers
-- `2026-11-11T15:00:18` **queue_empty** — All 13 videos transcribed
-- `2026-11-11T15:00:18` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
-- `2026-11-11T15:00:18` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
-- `2026-11-11T15:00:17` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
-- `2026-11-11T15:00:17` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
+- `2026-11-11T15:05:21` **ingest_failed** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 ingest FAILED
+- `2026-11-11T15:05:21` **transcription_done** — 1.Upper_Body_Techniques.mp4 complete (55/13)
+- `2026-11-11T15:05:21` **ingest_failed** — 1.Upper_Body_Techniques.mp4 ingest FAILED
+- `2026-11-11T15:04:50` **queue_empty** — All 13 videos transcribed
+- `2026-11-11T15:04:50` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-11-11 15:00:17,731  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
-2026-11-11 15:00:17,925  INFO      DONE   nrt/NRT_Fascial_Activation_Application_Method.mp4  (0s, 3 segments)
-2026-11-11 15:00:17,926  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Fascial_Activation_Application_Method.json
-2026-11-11 15:00:18,056  INFO      START  nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (957 MB)
-2026-11-11 15:00:18,056  INFO      Using existing segments for NRT_Sports_Specific_or_Universal_Reset.mp4: 2 parts
-2026-11-11 15:00:18,056  INFO      Transcribing 2 segments for NRT_Sports_Specific_or_Universal_Reset.mp4
-2026-11-11 15:00:18,181  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
-2026-11-11 15:00:18,182  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
-2026-11-11 15:00:18,311  INFO      Queue empty — 13 video(s) processed. Exiting.
-2026-11-11 15:00:18,375  INFO      Transcription queue manager done
+2026-11-11 15:05:23,508  INFO      START  nrt/How_to_Reset_23_More_Muscles.mp4  (412 MB)
+2026-11-11 15:05:23,508  INFO      Using existing segments for How_to_Reset_23_More_Muscles.mp4: 2 parts
+2026-11-11 15:05:23,508  INFO      Transcribing 2 segments for How_to_Reset_23_More_Muscles.mp4
+2026-11-11 15:05:23,631  INFO      DONE   nrt/How_to_Reset_23_More_Muscles.mp4  (0s, 2 segments)
+2026-11-11 15:05:23,632  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/How_to_Reset_23_More_Muscles.json
+2026-11-11 15:05:23,762  INFO      START  nrt/Miraculous_Sequence_-_Part_1.mp4  (689 MB)
+2026-11-11 15:05:23,762  INFO      Using existing segments for Miraculous_Sequence_-_Part_1.mp4: 2 parts
+2026-11-11 15:05:23,762  INFO      Transcribing 2 segments for Miraculous_Sequence_-_Part_1.mp4
+2026-11-11 15:05:23,890  INFO      DONE   nrt/Miraculous_Sequence_-_Part_1.mp4  (0s, 2 segments)
+2026-11-11 15:05:23,891  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Miraculous_Sequence_-_Part_1.json
 ```
