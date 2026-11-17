@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-11-17 02:33:56 UTC**
+> Last update: **2026-11-17 02:39:01 UTC**
 
 ## Services
 | Service | Status |
@@ -33,17 +33,17 @@
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 3.96 GB / 32.86 GB (12%) |
-| CPU | 0.0% |
+| RAM used | 3.99 GB / 32.86 GB (12%) |
+| CPU | 0.1% |
 | Disk used | 138.3 GB / 322.3 GB (45%) |
-| Uptime | up 30 weeks, 3 days, 20 hours, 58 minutes |
+| Uptime | up 30 weeks, 3 days, 21 hours, 3 minutes |
 
 ## Recent markers
-- `2026-11-17T02:33:26` **queue_empty** — All 13 videos transcribed
-- `2026-11-17T02:33:26` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
-- `2026-11-17T02:33:26` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
-- `2026-11-17T02:33:26` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
-- `2026-11-17T02:33:26` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
+- `2026-11-17T02:38:32` **queue_empty** — All 13 videos transcribed
+- `2026-11-17T02:38:32` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-11-17T02:38:32` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-11-17T02:38:32` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-11-17T02:38:32` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-11-17 02:33:58,415  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_3.mp4  (0s, 2 segments)
-2026-11-17 02:33:58,416  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_3.json
-2026-11-17 02:33:58,546  INFO      START  nrt/Everything_Reset_Sequence_-_Part_4.mp4  (690 MB)
-2026-11-17 02:33:58,547  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_4.mp4: 3 parts
-2026-11-17 02:33:58,547  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_4.mp4
-2026-11-17 02:33:58,746  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_4.mp4  (0s, 3 segments)
-2026-11-17 02:33:58,747  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_4.json
-2026-11-17 02:33:58,877  INFO      START  nrt/Everything_Reset_Sequence_-_Part_5.mp4  (618 MB)
-2026-11-17 02:33:58,877  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_5.mp4: 3 parts
-2026-11-17 02:33:58,877  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_5.mp4
+2026-11-17 02:39:03,638  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
+2026-11-17 02:39:03,638  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
+2026-11-17 02:39:03,639  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
+2026-11-17 02:39:03,762  INFO      DONE   nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (0s, 2 segments)
+2026-11-17 02:39:03,763  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.json
+2026-11-17 02:39:03,893  INFO      START  nrt/Everything_Reset_Sequence_-_Part_1.mp4  (649 MB)
+2026-11-17 02:39:03,893  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_1.mp4: 3 parts
+2026-11-17 02:39:03,893  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_1.mp4
+2026-11-17 02:39:04,092  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_1.mp4  (0s, 3 segments)
+2026-11-17 02:39:04,093  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_1.json
 ```
