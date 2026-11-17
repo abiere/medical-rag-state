@@ -1,5 +1,5 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-11-17 21:40:36 UTC**
+> Last update: **2026-11-17 21:45:41 UTC**
 
 ## Services
 | Service | Status |
@@ -26,24 +26,24 @@
 | Metric | Value |
 |---|---|
 | Current job | idle |
-| Queued | 12 |
+| Queued | 0 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 4.05 GB / 32.86 GB (12%) |
-| CPU | 4.6% |
+| RAM used | 4.06 GB / 32.86 GB (12%) |
+| CPU | 0.1% |
 | Disk used | 138.4 GB / 322.3 GB (45%) |
-| Uptime | up 30 weeks, 4 days, 16 hours, 5 minutes |
+| Uptime | up 30 weeks, 4 days, 16 hours, 10 minutes |
 
 ## Recent markers
-- `2026-11-17T21:40:36` **transcription_done** — 1.Upper_Body_Techniques.mp4 complete (55/13)
-- `2026-11-17T21:40:36` **ingest_failed** — 1.Upper_Body_Techniques.mp4 ingest FAILED
-- `2026-11-17T21:40:06` **queue_empty** — All 13 videos transcribed
-- `2026-11-17T21:40:06` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
-- `2026-11-17T21:40:06` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-11-17T21:45:13` **queue_empty** — All 13 videos transcribed
+- `2026-11-17T21:45:13` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-11-17T21:45:13` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-11-17T21:45:12` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-11-17T21:45:12` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-11-17 21:40:38,343  INFO      START  nrt/Everything_Reset_Sequence_-_Part_5.mp4  (618 MB)
-2026-11-17 21:40:38,343  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_5.mp4: 3 parts
-2026-11-17 21:40:38,343  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_5.mp4
-2026-11-17 21:40:38,540  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_5.mp4  (0s, 3 segments)
-2026-11-17 21:40:38,541  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_5.json
-2026-11-17 21:40:38,671  INFO      START  nrt/How_to_Reset_23_More_Muscles.mp4  (412 MB)
-2026-11-17 21:40:38,672  INFO      Using existing segments for How_to_Reset_23_More_Muscles.mp4: 2 parts
-2026-11-17 21:40:38,672  INFO      Transcribing 2 segments for How_to_Reset_23_More_Muscles.mp4
-2026-11-17 21:40:38,801  INFO      DONE   nrt/How_to_Reset_23_More_Muscles.mp4  (0s, 2 segments)
-2026-11-17 21:40:38,802  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/How_to_Reset_23_More_Muscles.json
+2026-11-17 21:45:43,468  INFO      START  nrt/1.Upper_Body_Techniques.mp4  (525 MB)
+2026-11-17 21:45:43,468  INFO      Using existing segments for 1.Upper_Body_Techniques.mp4: 4 parts
+2026-11-17 21:45:43,468  INFO      Transcribing 4 segments for 1.Upper_Body_Techniques.mp4
+2026-11-17 21:45:43,720  INFO      DONE   nrt/1.Upper_Body_Techniques.mp4  (0s, 4 segments)
+2026-11-17 21:45:43,721  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/1.Upper_Body_Techniques.json
+2026-11-17 21:45:43,852  INFO      START  nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (1060 MB)
+2026-11-17 21:45:43,852  INFO      Using existing segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4: 2 parts
+2026-11-17 21:45:43,852  INFO      Transcribing 2 segments for 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4
+2026-11-17 21:45:43,981  INFO      DONE   nrt/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4  (0s, 2 segments)
+2026-11-17 21:45:43,982  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.json
 ```
