@@ -1,11 +1,11 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-11-18 01:52:02 UTC**
+> Last update: **2026-11-18 01:57:05 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ✅ active |
+| transcription-queue | ⚠️ activating |
 | book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
@@ -26,24 +26,24 @@
 | Metric | Value |
 |---|---|
 | Current job | idle |
-| Queued | 2 |
+| Queued | 0 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 4.07 GB / 32.86 GB (12%) |
-| CPU | 6.0% |
+| RAM used | 4.05 GB / 32.86 GB (12%) |
+| CPU | 1.5% |
 | Disk used | 138.4 GB / 322.3 GB (45%) |
-| Uptime | up 30 weeks, 4 days, 20 hours, 16 minutes |
+| Uptime | up 30 weeks, 4 days, 20 hours, 21 minutes |
 
 ## Recent markers
-- `2026-11-18T01:52:02` **transcription_done** — NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4 complete (55/13)
-- `2026-11-18T01:52:02` **ingest_failed** — NRT_Brain_Reset_plus_NRT_Correction_for_Congested_or_Blocked_Meridian_Flows.mp4 ingest FAILED
-- `2026-11-18T01:52:02` **transcription_done** — Miraculous_Sequence_-_Part_2.mp4 complete (55/13)
-- `2026-11-18T01:52:02` **ingest_failed** — Miraculous_Sequence_-_Part_2.mp4 ingest FAILED
-- `2026-11-18T01:52:02` **transcription_done** — Miraculous_Sequence_-_Part_1.mp4 complete (55/13)
+- `2026-11-18T01:56:36` **queue_empty** — All 13 videos transcribed
+- `2026-11-18T01:56:36` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-11-18T01:56:36` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-11-18T01:56:35` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-11-18T01:56:35` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-11-18 01:52:02,798  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
-2026-11-18 01:52:03,009  INFO      DONE   nrt/NRT_Fascial_Activation_Application_Method.mp4  (0s, 3 segments)
-2026-11-18 01:52:03,010  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Fascial_Activation_Application_Method.json
-2026-11-18 01:52:03,140  INFO      START  nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (957 MB)
-2026-11-18 01:52:03,141  INFO      Using existing segments for NRT_Sports_Specific_or_Universal_Reset.mp4: 2 parts
-2026-11-18 01:52:03,141  INFO      Transcribing 2 segments for NRT_Sports_Specific_or_Universal_Reset.mp4
-2026-11-18 01:52:03,271  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
-2026-11-18 01:52:03,272  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
-2026-11-18 01:52:03,401  INFO      Queue empty — 13 video(s) processed. Exiting.
-2026-11-18 01:52:03,465  INFO      Transcription queue manager done
+2026-11-18 01:57:07,344  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_1.mp4  (0s, 3 segments)
+2026-11-18 01:57:07,345  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_1.json
+2026-11-18 01:57:07,475  INFO      START  nrt/Everything_Reset_Sequence_-_Part_2.mp4  (499 MB)
+2026-11-18 01:57:07,475  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_2.mp4: 3 parts
+2026-11-18 01:57:07,475  INFO      Transcribing 3 segments for Everything_Reset_Sequence_-_Part_2.mp4
+2026-11-18 01:57:07,652  INFO      DONE   nrt/Everything_Reset_Sequence_-_Part_2.mp4  (0s, 3 segments)
+2026-11-18 01:57:07,653  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Everything_Reset_Sequence_-_Part_2.json
+2026-11-18 01:57:07,783  INFO      START  nrt/Everything_Reset_Sequence_-_Part_3.mp4  (565 MB)
+2026-11-18 01:57:07,784  INFO      Using existing segments for Everything_Reset_Sequence_-_Part_3.mp4: 2 parts
+2026-11-18 01:57:07,784  INFO      Transcribing 2 segments for Everything_Reset_Sequence_-_Part_3.mp4
 ```
