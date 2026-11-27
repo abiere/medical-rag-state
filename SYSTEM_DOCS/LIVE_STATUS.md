@@ -1,11 +1,11 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-11-27 15:04:47 UTC**
+> Last update: **2026-11-27 15:09:49 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ⚠️ activating |
+| transcription-queue | ✅ active |
 | book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
@@ -26,24 +26,24 @@
 | Metric | Value |
 |---|---|
 | Current job | idle |
-| Queued | 0 |
+| Queued | 11 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 4.25 GB / 32.86 GB (13%) |
-| CPU | 0.0% |
+| RAM used | 4.23 GB / 32.86 GB (13%) |
+| CPU | 5.8% |
 | Disk used | 167.9 GB / 322.3 GB (54%) |
-| Uptime | up 32 weeks, 9 hours, 29 minutes |
+| Uptime | up 32 weeks, 9 hours, 34 minutes |
 
 ## Recent markers
-- `2026-11-27T15:04:44` **queue_empty** — All 13 videos transcribed
-- `2026-11-27T15:04:44` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
-- `2026-11-27T15:04:44` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
-- `2026-11-27T15:04:44` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
-- `2026-11-27T15:04:44` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
+- `2026-11-27T15:09:49` **ingest_failed** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 ingest FAILED
+- `2026-11-27T15:09:49` **transcription_done** — 1.Upper_Body_Techniques.mp4 complete (55/13)
+- `2026-11-27T15:09:49` **ingest_failed** — 1.Upper_Body_Techniques.mp4 ingest FAILED
+- `2026-11-27T15:09:18` **queue_empty** — All 13 videos transcribed
+- `2026-11-27T15:09:18` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-11-27 15:04:44,352  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
-2026-11-27 15:04:44,545  INFO      DONE   nrt/NRT_Fascial_Activation_Application_Method.mp4  (0s, 3 segments)
-2026-11-27 15:04:44,546  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Fascial_Activation_Application_Method.json
-2026-11-27 15:04:44,675  INFO      START  nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (957 MB)
-2026-11-27 15:04:44,676  INFO      Using existing segments for NRT_Sports_Specific_or_Universal_Reset.mp4: 2 parts
-2026-11-27 15:04:44,676  INFO      Transcribing 2 segments for NRT_Sports_Specific_or_Universal_Reset.mp4
-2026-11-27 15:04:44,811  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
-2026-11-27 15:04:44,812  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
-2026-11-27 15:04:44,941  INFO      Queue empty — 13 video(s) processed. Exiting.
-2026-11-27 15:04:45,006  INFO      Transcription queue manager done
+2026-11-27 15:09:51,778  INFO      START  nrt/Miraculous_Sequence_-_Part_1.mp4  (689 MB)
+2026-11-27 15:09:51,778  INFO      Using existing segments for Miraculous_Sequence_-_Part_1.mp4: 2 parts
+2026-11-27 15:09:51,778  INFO      Transcribing 2 segments for Miraculous_Sequence_-_Part_1.mp4
+2026-11-27 15:09:51,910  INFO      DONE   nrt/Miraculous_Sequence_-_Part_1.mp4  (0s, 2 segments)
+2026-11-27 15:09:51,911  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Miraculous_Sequence_-_Part_1.json
+2026-11-27 15:09:52,040  INFO      START  nrt/Miraculous_Sequence_-_Part_2.mp4  (664 MB)
+2026-11-27 15:09:52,041  INFO      Using existing segments for Miraculous_Sequence_-_Part_2.mp4: 2 parts
+2026-11-27 15:09:52,041  INFO      Transcribing 2 segments for Miraculous_Sequence_-_Part_2.mp4
+2026-11-27 15:09:52,181  INFO      DONE   nrt/Miraculous_Sequence_-_Part_2.mp4  (0s, 2 segments)
+2026-11-27 15:09:52,182  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Miraculous_Sequence_-_Part_2.json
 ```
