@@ -1,11 +1,11 @@
 # LIVE STATUS — auto-updated every 5 minutes
-> Last update: **2026-11-27 15:09:49 UTC**
+> Last update: **2026-11-27 15:14:51 UTC**
 
 ## Services
 | Service | Status |
 |---|---|
 | medical-rag-web | ✅ active |
-| transcription-queue | ✅ active |
+| transcription-queue | ⚠️ activating |
 | book-ingest-queue | ❌ inactive |
 | ttyd | ✅ active |
 | qdrant | ✅ healthy |
@@ -26,24 +26,24 @@
 | Metric | Value |
 |---|---|
 | Current job | idle |
-| Queued | 11 |
+| Queued | 0 |
 | Done | 55 / 69 |
 | Vectors in nrt_video_transcripts | 250 |
 
 ## System
 | Metric | Value |
 |---|---|
-| RAM used | 4.23 GB / 32.86 GB (13%) |
-| CPU | 5.8% |
+| RAM used | 4.25 GB / 32.86 GB (13%) |
+| CPU | 0.0% |
 | Disk used | 167.9 GB / 322.3 GB (54%) |
-| Uptime | up 32 weeks, 9 hours, 34 minutes |
+| Uptime | up 32 weeks, 9 hours, 39 minutes |
 
 ## Recent markers
-- `2026-11-27T15:09:49` **ingest_failed** — 2021_Demos_Finding_and_Fixing_the_Glitch__Sports_Specific_Reset__and_Advanced_SC.mp4 ingest FAILED
-- `2026-11-27T15:09:49` **transcription_done** — 1.Upper_Body_Techniques.mp4 complete (55/13)
-- `2026-11-27T15:09:49` **ingest_failed** — 1.Upper_Body_Techniques.mp4 ingest FAILED
-- `2026-11-27T15:09:18` **queue_empty** — All 13 videos transcribed
-- `2026-11-27T15:09:18` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-11-27T15:14:27` **queue_empty** — All 13 videos transcribed
+- `2026-11-27T15:14:27` **transcription_done** — NRT_Sports_Specific_or_Universal_Reset.mp4 complete (55/13)
+- `2026-11-27T15:14:27` **ingest_failed** — NRT_Sports_Specific_or_Universal_Reset.mp4 ingest FAILED
+- `2026-11-27T15:14:26` **transcription_done** — NRT_Fascial_Activation_Application_Method.mp4 complete (55/13)
+- `2026-11-27T15:14:26` **ingest_failed** — NRT_Fascial_Activation_Application_Method.mp4 ingest FAILED
 
 ## Nightly Consistency
 ```
@@ -59,14 +59,14 @@
 
 ## Queue log (last 10 lines)
 ```
-2026-11-27 15:09:51,778  INFO      START  nrt/Miraculous_Sequence_-_Part_1.mp4  (689 MB)
-2026-11-27 15:09:51,778  INFO      Using existing segments for Miraculous_Sequence_-_Part_1.mp4: 2 parts
-2026-11-27 15:09:51,778  INFO      Transcribing 2 segments for Miraculous_Sequence_-_Part_1.mp4
-2026-11-27 15:09:51,910  INFO      DONE   nrt/Miraculous_Sequence_-_Part_1.mp4  (0s, 2 segments)
-2026-11-27 15:09:51,911  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Miraculous_Sequence_-_Part_1.json
-2026-11-27 15:09:52,040  INFO      START  nrt/Miraculous_Sequence_-_Part_2.mp4  (664 MB)
-2026-11-27 15:09:52,041  INFO      Using existing segments for Miraculous_Sequence_-_Part_2.mp4: 2 parts
-2026-11-27 15:09:52,041  INFO      Transcribing 2 segments for Miraculous_Sequence_-_Part_2.mp4
-2026-11-27 15:09:52,181  INFO      DONE   nrt/Miraculous_Sequence_-_Part_2.mp4  (0s, 2 segments)
-2026-11-27 15:09:52,182  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/Miraculous_Sequence_-_Part_2.json
+2026-11-27 15:14:26,565  INFO      Transcribing 3 segments for NRT_Fascial_Activation_Application_Method.mp4
+2026-11-27 15:14:26,794  INFO      DONE   nrt/NRT_Fascial_Activation_Application_Method.mp4  (0s, 3 segments)
+2026-11-27 15:14:26,794  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Fascial_Activation_Application_Method.json
+2026-11-27 15:14:26,924  INFO      START  nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (957 MB)
+2026-11-27 15:14:26,925  INFO      Using existing segments for NRT_Sports_Specific_or_Universal_Reset.mp4: 2 parts
+2026-11-27 15:14:26,925  INFO      Transcribing 2 segments for NRT_Sports_Specific_or_Universal_Reset.mp4
+2026-11-27 15:14:27,098  INFO      DONE   nrt/NRT_Sports_Specific_or_Universal_Reset.mp4  (0s, 2 segments)
+2026-11-27 15:14:27,098  WARNING   Transcript not found for ingestion: /root/medical-rag/data/transcripts/NRT_Sports_Specific_or_Universal_Reset.json
+2026-11-27 15:14:27,229  INFO      Queue empty — 13 video(s) processed. Exiting.
+2026-11-27 15:14:27,294  INFO      Transcription queue manager done
 ```
